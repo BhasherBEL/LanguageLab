@@ -16,3 +16,14 @@ class UserCreate(BaseModel):
     password: str
     type: int = UserType.STUDENT.value
     is_active: bool = True
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+
+    class Config:
+        from_attributes = True

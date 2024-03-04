@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 import schemas, crud
 from database import SessionLocal, Base, engine
+import hashing
 
 
 Base.metadata.create_all(bind=engine)
@@ -20,8 +21,20 @@ def get_db():
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
-async def root():
+def health():
     return {}
+
+
+@app.post("/login/", response_model=schemas.Token)
+def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_username_and_password(db, user)
+    if db_user is None:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {
+        "access_token": hashing.create_access_token(db_user),
+        "refresh_token": hashing.create_refresh_token(db_user),
+    }   
 
 
 @app.post("/users/", status_code=status.HTTP_201_CREATED)
