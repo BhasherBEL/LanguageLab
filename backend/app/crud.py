@@ -12,11 +12,11 @@ def get_user_by_username(db: Session, username: str):
     return db.query(models.User).filter(models.User.username == username.lower()).first()
 
 
-def get_user_by_username_and_password(db: Session, user: schemas.UserLogin):
-    user_db = get_user_by_username(db, user.username)
+def get_user_by_username_and_password(db: Session, username: str, password: str):
+    user_db = get_user_by_username(db, username)
     if user_db is None:
         return None
-    if not Hasher.verify_password(user.password, user_db.password):
+    if not Hasher.verify_password(password, user_db.password):
         return None
     return user_db
 
