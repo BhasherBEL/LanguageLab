@@ -59,6 +59,9 @@ def get_jwt_user(token: str = Depends(reuseable_oauth), db: Session = Depends(ge
             raise HTTPException(status_code=401, detail="Token has expired")
 
         db_user = crud.get_user(db, user_id=int(token_data.sub))
+    
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
 
     except(jwt.JWTError, jwt.ExpiredSignatureError, ValidationError, ValueError) as e:
         print(e)

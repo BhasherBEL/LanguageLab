@@ -11,14 +11,6 @@ class User(BaseModel):
     class Config:
         from_attributes = True
 
-    def toJSON(self):
-        return {
-            "id": self.id,
-            "username": self.username,
-            "type": self.type,
-            "is_active": self.is_active
-        }
-
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -39,6 +31,15 @@ class Token(BaseModel):
 class TokenPayload(BaseModel):
     sub: str = None
     exp: int = None
+
+    class Config:
+        from_attributes = True
+
+class Session(BaseModel):
+    id: int
+    token: str
+    is_active: bool
+    users: list[User]
 
     class Config:
         from_attributes = True
