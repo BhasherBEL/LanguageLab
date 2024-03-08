@@ -2,6 +2,7 @@
 	import session from '$lib/stores/session';
 	import { get } from 'svelte/store';
 	import Logout from 'svelte-material-icons/Logout.svelte';
+	import Login from 'svelte-material-icons/Login.svelte';
 </script>
 
 <header>
@@ -9,9 +10,9 @@
 	<span>
 		{#if session.isLoggedIn}
 			<span>Connecté en tant <strong>{get(session.username)}</strong></span>
-			<a href="/logout">
-				<Logout />
-			</a>
+			<a href="/logout"><Logout /></a>
+		{:else}
+			<a href="/login"><Login /></a>
 		{/if}
 	</span>
 </header>
