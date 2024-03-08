@@ -1,6 +1,7 @@
 from fastapi import APIRouter, FastAPI, status, Depends, HTTPException
 from sqlalchemy.orm import Session, session
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 import schemas, crud
@@ -24,6 +25,15 @@ async def lifespan(app: FastAPI):
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 apiRouter = APIRouter(prefix="/api")
 v1Router = APIRouter(prefix="/v1")
 authRouter = APIRouter(prefix="/auth", tags=["auth"])
@@ -39,7 +49,7 @@ def health():
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username_and_password(db, form_data.username, form_data.password)
     if db_user is None:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
 
     return {
         "access_token": hashing.create_access_token(db_user),

@@ -14,3 +14,4 @@ JWT_REFRESH_SECRET_KEY = os.getenv('JWT_REFRESH_SECRET_KEY', secrets.token_urlsa
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin')
 DEBUG = os.getenv('DEBUG', 'false').lower() in ('true', '1')
+ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', '*').split(',')

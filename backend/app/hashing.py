@@ -31,7 +31,7 @@ class Hasher():
         return pwd_context.hash(password)
 
 def create_access_token(user: models.User, expires_delta: int = -1) -> str:
-    if expires_delta < 0:
+    if expires_delta > 0:
         expires_delta = int(datetime.now(UTC).timestamp()) + expires_delta
     else:
         expires_delta = int((datetime.now(UTC) + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)).timestamp())
@@ -41,7 +41,7 @@ def create_access_token(user: models.User, expires_delta: int = -1) -> str:
     return encoded_jwt
 
 def create_refresh_token(user: models.User, expires_delta: int = -1) -> str:
-    if expires_delta < 0:
+    if expires_delta > 0:
         expires_delta = int(datetime.now(UTC).timestamp()) + expires_delta
     else:
         expires_delta = int((datetime.now(UTC) + timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)).timestamp())
