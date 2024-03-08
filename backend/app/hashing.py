@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
-from jose import jwt
-from datetime import datetime, timedelta
+from jose import jwt, exceptions as jwte
+from datetime import date, datetime, timedelta, UTC
 from pydantic import ValidationError
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -30,21 +30,21 @@ class Hasher():
     def get_password_hash(password):
         return pwd_context.hash(password)
 
-def create_access_token(user: models.User, expires_delta: int = None) -> str:
-    if expires_delta is not None:
-        expires_delta = datetime.utcnow() + expires_delta
+def create_access_token(user: models.User, expires_delta: int = -1) -> str:
+    if expires_delta < 0:
+        expires_delta = int(datetime.now(UTC).timestamp()) + expires_delta
     else:
-        expires_delta = datetime.utcnow() + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expires_delta = int((datetime.now(UTC) + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)).timestamp())
     
     to_encode = {"exp": expires_delta, "sub": str(user.id), "type": user.type, "username": user.username, "is_active": user.is_active}
     encoded_jwt = jwt.encode(to_encode, config.JWT_SECRET_KEY, config.ALGORITHM)
     return encoded_jwt
 
-def create_refresh_token(user: models.User, expires_delta: int = None) -> str:
-    if expires_delta is not None:
-        expires_delta = datetime.utcnow() + expires_delta
+def create_refresh_token(user: models.User, expires_delta: int = -1) -> str:
+    if expires_delta < 0:
+        expires_delta = int(datetime.now(UTC).timestamp()) + expires_delta
     else:
-        expires_delta = datetime.utcnow() + timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)
+        expires_delta = int((datetime.now(UTC) + timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)).timestamp())
     
     to_encode = {"exp": expires_delta, "sub": str(user.id), "type": user.type, "username": user.username, "is_active": user.is_active}
     encoded_jwt = jwt.encode(to_encode, config.JWT_REFRESH_SECRET_KEY, config.ALGORITHM)
@@ -60,10 +60,10 @@ def get_jwt_user(token: str = Depends(reuseable_oauth), db: Session = Depends(ge
 
         db_user = crud.get_user(db, user_id=int(token_data.sub))
     
-    except jwt.ExpiredSignatureError:
+    except jwte.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
 
-    except(jwt.JWTError, jwt.ExpiredSignatureError, ValidationError, ValueError) as e:
+    except(jwte.JWTError, jwte.ExpiredSignatureError, ValidationError, ValueError) as e:
         print(e)
         raise HTTPException(status_code=403, detail="Invalid token")
 
