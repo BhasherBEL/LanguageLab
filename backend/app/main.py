@@ -1,17 +1,29 @@
 from fastapi import FastAPI, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
+from contextlib import asynccontextmanager
 
 import schemas, crud
 import models
-from database import Base, engine, get_db
+from database import Base, engine, get_db, SessionLocal
 import hashing
 from utils import check_user_level
+import config
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    db = SessionLocal()
+    try:
+        if crud.get_user_by_username(db, config.ADMIN_USERNAME) is None:
+            crud.create_user(db, schemas.UserCreate(username=config.ADMIN_USERNAME, password=config.ADMIN_PASSWORD, type=models.UserType.ADMIN.value))
+    finally:
+        db.close()
+    yield
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
@@ -173,3 +185,8 @@ def invite_to_session(session_id: int, db: Session = Depends(get_db), current_us
         raise HTTPException(status_code=401, detail="You do not have permission to invite to this session")
 
     return f"/sessions/{db_session.id}/join/{db_session.token}"
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=config.DEBUG)
