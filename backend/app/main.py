@@ -134,8 +134,10 @@ def delete_session(session_id: int, db: Session = Depends(get_db), current_user:
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(status_code=401, detail="You do not have permission to delete a session")
 
-    if not crud.delete_session(db, session_id):
-        raise HTTPException(status_code=404, detail="Session not found")
+    crud.delete_session(db, session_id)
+
+    # if not crud.delete_session(db, session_id):
+        # raise HTTPException(status_code=404, detail="Session not found")
 
 @sessionsRouter.post("/{session_id}/users/{user_id}", status_code=status.HTTP_201_CREATED)
 def add_user_to_session(session_id: int, user_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):

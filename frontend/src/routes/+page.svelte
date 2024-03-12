@@ -17,7 +17,7 @@
 	}
 
 	async function deleteSession(session: Session) {
-		await session.delete();
+		window.confirm('Are you sure you want to delete this session?') && (await session.delete());
 	}
 </script>
 
@@ -36,7 +36,7 @@
 				<th>#</th>
 				<th>Date</th>
 				<th>participants</th>
-				<th></th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
