@@ -1,10 +1,19 @@
 <script lang="ts">
 	import { loginAPI } from '$lib/api/auth';
 	import Header from '$lib/components/header.svelte';
+	import session from '$lib/stores/session';
+	import { onMount } from 'svelte';
 
 	let username = '';
 	let password = '';
 	$: message = '';
+
+	onMount(() => {
+		if (session.isLoggedIn()) {
+			const redirect = new URLSearchParams(window.location.search).get('redirect') ?? '/';
+			window.location.href = redirect;
+		}
+	});
 
 	async function login() {
 		message = '';

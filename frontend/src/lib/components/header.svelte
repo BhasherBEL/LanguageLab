@@ -8,11 +8,15 @@
 <header>
 	<h1>LanguageLab</h1>
 	<span>
-		{#if session.isLoggedIn}
+		{#if session.isLoggedIn()}
 			<span>Connecté en tant que <strong>{get(session.username)}</strong></span>
 			<a href="/logout"><Logout /></a>
 		{:else}
-			<a href="/login"><Login /></a>
+			<a
+				href="/login?redirect={encodeURIComponent(
+					window.location.pathname + window.location.search
+				)}"><Login /></a
+			>
 		{/if}
 	</span>
 </header>

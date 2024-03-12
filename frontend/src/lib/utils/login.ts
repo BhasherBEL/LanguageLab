@@ -5,6 +5,7 @@ export function requireLogin() {
 		window.location.href = '/login?redirect=' + window.location.pathname;
 	}
 }
+
 export interface JWTContent {
 	sub: string;
 	type: number;
