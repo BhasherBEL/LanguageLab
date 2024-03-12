@@ -1,7 +1,7 @@
 import session from '$lib/stores/session';
 
 export function requireLogin() {
-	if (!session.isLoggedIn) {
+	if (!session.isLoggedIn()) {
 		window.location.href = '/login?redirect=' + window.location.pathname;
 	}
 }

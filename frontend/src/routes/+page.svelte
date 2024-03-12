@@ -1,8 +1,9 @@
-<script>
-	import { createSessionAPI, getSessionsAPI } from '$lib/api/sessions';
+<script lang="ts">
+	import { getSessionsAPI } from '$lib/api/sessions';
 	import Header from '$lib/components/header.svelte';
 	import Session, { sessions } from '$lib/types/session';
 	import { requireLogin } from '$lib/utils/login';
+	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
@@ -10,13 +11,21 @@
 
 		Session.parseAll(await getSessionsAPI());
 	});
+
+	async function createSession() {
+		await Session.create();
+	}
+
+	async function deleteSession(session: Session) {
+		await session.delete();
+	}
 </script>
 
 <Header />
 
 <h1>Sessions</h1>
 
-<button on:click|preventDefault={() => Session.create()}>Create session</button>
+<button on:click|preventDefault={createSession}>Create session</button>
 
 {#if $sessions.length === 0}
 	<p>No sessions found</p>
@@ -27,6 +36,7 @@
 				<th>#</th>
 				<th>Date</th>
 				<th>participants</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -35,6 +45,11 @@
 					<td>{session.id}</td>
 					<td></td>
 					<td>{session.usersList()}</td>
+					<td
+						><button on:click|preventDefault|stopPropagation={() => deleteSession(session)}
+							>X</button
+						></td
+					>
 				</tr>
 			{/each}
 		</tbody>

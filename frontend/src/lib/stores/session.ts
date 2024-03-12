@@ -13,6 +13,7 @@ const refreshToken = localWritable('refreshToken', '');
 const username = localWritable('username', '');
 const type = localWritable('type', '');
 const id = localWritable('id', '');
+const exp = localWritable('exp', '');
 
 export default {
 	accessToken,
@@ -20,5 +21,14 @@ export default {
 	username,
 	type,
 	id,
-	isLoggedIn: get(accessToken) !== ''
+	exp,
+	isLoggedIn: () => {
+		if (get(accessToken) === '') return false;
+
+		const expiration = parseInt(get(exp));
+
+		if (isNaN(expiration) || expiration < Date.now() / 1000) return false;
+
+		return true;
+	}
 };

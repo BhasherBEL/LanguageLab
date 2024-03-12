@@ -27,3 +27,17 @@ export function toastWarning(title: string, subtitle: string = '', persistant: b
 		pausable: true
 	});
 }
+
+export function toastSuccess(title: string, subtitle: string = '', persistant: boolean = false) {
+	toast.push(`<strong>${title}</strong><br>${subtitle}`, {
+		theme: {
+			'--toastBackground': '#52c41a',
+			'--toastBarBackground': '#389e0d',
+			'--toastColor': '#fff'
+		},
+		initial: persistant ? 0 : 1,
+		next: 0,
+		duration: 3000,
+		pausable: true
+	});
+}

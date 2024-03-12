@@ -25,10 +25,10 @@
 	{#if message}
 		<div class="errorCard">{message}</div>
 	{/if}
-	<label for="username">Username:</label>
+	<label for="username">Nom d'utilisateur:</label>
 	<input type="text" id="username" name="username" bind:value={username} required />
 
-	<label for="password">Password:</label>
+	<label for="password">Mot de passe:</label>
 	<input type="password" id="password" name="password" bind:value={password} required />
 
 	<button type="submit" on:click|preventDefault={login}>Login</button>

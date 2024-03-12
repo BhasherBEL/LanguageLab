@@ -9,7 +9,7 @@
 	<h1>LanguageLab</h1>
 	<span>
 		{#if session.isLoggedIn}
-			<span>Connecté en tant <strong>{get(session.username)}</strong></span>
+			<span>Connecté en tant que <strong>{get(session.username)}</strong></span>
 			<a href="/logout"><Logout /></a>
 		{:else}
 			<a href="/login"><Login /></a>

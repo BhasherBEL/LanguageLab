@@ -9,7 +9,8 @@ export const sessions = {
 	subscribe,
 	set,
 	update,
-	reload: () => update((sessions) => sessions)
+	reload: () => update((sessions) => sessions),
+	add: (session: Session) => update((sessions) => [...sessions, session])
 };
 
 export default class Session {
@@ -47,6 +48,18 @@ export default class Session {
 			return users;
 		}
 		return users.substring(0, maxLength) + '...';
+	}
+
+	async delete(): Promise<boolean> {
+		const response = await axiosInstance.delete(`/sessions/${this.id}`);
+
+		if (response.status !== 204) {
+			toastAlert('Failed to delete session');
+			return false;
+		}
+
+		sessions.update((sessions) => sessions.filter((s) => s.id !== this.id));
+		return true;
 	}
 
 	static parse(json: any): Session {
