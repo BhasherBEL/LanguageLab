@@ -62,6 +62,34 @@ export default class Session {
 		return true;
 	}
 
+	async addUser(user: User): Promise<boolean> {
+		const response = await axiosInstance.post(`/sessions/${this.id}/users/${user.id}`);
+
+		if (response.status !== 204) {
+			toastAlert('Failed to add user to session');
+			return false;
+		}
+
+		this.users.push(user);
+
+		sessions.reload();
+		return true;
+	}
+
+	async removeUser(user: User): Promise<boolean> {
+		const response = await axiosInstance.delete(`/sessions/${this.id}/users/${user.id}`);
+
+		if (response.status !== 204) {
+			toastAlert('Failed to remove user from session');
+			return false;
+		}
+
+		this._users = this._users.filter((u) => u.id !== user.id);
+
+		sessions.reload();
+		return true;
+	}
+
 	static parse(json: any): Session {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse session: json is null');

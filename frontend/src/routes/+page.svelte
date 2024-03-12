@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { getSessionsAPI } from '$lib/api/sessions';
 	import Header from '$lib/components/header.svelte';
+	import CloseIcon from '$lib/components/icons/closeIcon.svelte';
+	import UserIcon from '$lib/components/icons/userIcon.svelte';
+	import EditParticipants from '$lib/components/sessions/editParticipants.svelte';
 	import Session, { sessions } from '$lib/types/session';
 	import { requireLogin } from '$lib/utils/login';
-	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
 	import { onMount } from 'svelte';
+
+	let editParticipantsSession: Session | null;
 
 	onMount(async () => {
 		requireLogin();
@@ -18,6 +22,10 @@
 
 	async function deleteSession(session: Session) {
 		window.confirm('Are you sure you want to delete this session?') && (await session.delete());
+	}
+
+	function editParticipants(session: Session) {
+		editParticipantsSession = session;
 	}
 </script>
 
@@ -45,12 +53,22 @@
 					<td>{session.id}</td>
 					<td></td>
 					<td>{session.usersList()}</td>
-					<td
-						><button on:click|preventDefault|stopPropagation={() => deleteSession(session)}
-							>X</button
-						></td
-					>
+					<td>
+						<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
+							<UserIcon />
+						</button>
+						<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
+							<CloseIcon />
+						</button>
+					</td>
 				</tr>
+
+				{#if editParticipantsSession === session}
+					<EditParticipants
+						bind:session={editParticipantsSession}
+						onClose={() => (editParticipantsSession = null)}
+					/>
+				{/if}
 			{/each}
 		</tbody>
 	</table>

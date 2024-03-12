@@ -1,4 +1,17 @@
 import { toastAlert } from '$lib/utils/toasts';
+import { get, writable } from 'svelte/store';
+
+const { subscribe, set, update } = writable<User[]>([]);
+
+export const users = {
+	subscribe,
+	set,
+	update,
+	reload: () => update((users) => users),
+	add: (user: User) => update((users) => [...users, user]),
+	delete: (id: number) => update((users) => users.filter((user) => user.id !== id)),
+	search: (username: string) => get(users).find((user) => user.username.includes(username))
+};
 
 export default class User {
 	private _id: number;
