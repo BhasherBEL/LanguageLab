@@ -1,3 +1,4 @@
+import { getUsersAPI } from '$lib/api/users';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
 
@@ -10,7 +11,8 @@ export const users = {
 	reload: () => update((users) => users),
 	add: (user: User) => update((users) => [...users, user]),
 	delete: (id: number) => update((users) => users.filter((user) => user.id !== id)),
-	search: (username: string) => get(users).find((user) => user.username.includes(username))
+	search: (username: string) => get(users).find((user) => user.username.includes(username)),
+	fetch: async () => User.parseAll(await getUsersAPI())
 };
 
 export default class User {
@@ -48,7 +50,21 @@ export default class User {
 			return json;
 		}
 
-		return new User(json.id, json.username, json.type, json.is_active);
+		console.log(json);
+
+		const user = new User(json.id, json.username, json.type, json.is_active);
+
+		users.update((us) => {
+			console.log(us);
+
+			if (!us.find((user) => user.id === user.id)) {
+				return [...us, user];
+			}
+
+			return us.map((u) => (u.id === user.id ? user : u));
+		});
+
+		return user;
 	}
 
 	static parseAll(json: any): User[] {
