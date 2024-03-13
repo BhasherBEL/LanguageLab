@@ -52,6 +52,7 @@ export default class User {
 		return this.id === user.id;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static parse(json: any): User {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse user: json is null');
@@ -71,6 +72,7 @@ export default class User {
 		return user;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static parseAll(json: any): User[] {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse users: json is null');

@@ -94,6 +94,7 @@ export default class Session {
 		return true;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static parse(json: any): Session {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse session: json is null');
@@ -114,6 +115,7 @@ export default class Session {
 		return session;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static parseAll(json: any): Session[] {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse sessions: json is null');
