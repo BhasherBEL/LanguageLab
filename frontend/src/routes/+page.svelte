@@ -7,6 +7,7 @@
 	import Session, { sessions } from '$lib/types/session';
 	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
+	import { displayDate } from '$lib/utils/date';
 
 	let editParticipantsSession: Session | null;
 
@@ -51,7 +52,7 @@
 			{#each $sessions as session (session.id)}
 				<tr on:click={() => (window.location.href = '/session?id=' + session.id)} tabindex="0">
 					<td>{session.id}</td>
-					<td></td>
+					<td>{displayDate(session.created_at)}</td>
 					<td>{session.usersList()}</td>
 					<td>
 						<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>

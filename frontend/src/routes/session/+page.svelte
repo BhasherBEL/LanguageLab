@@ -17,12 +17,6 @@
 </div>
 
 <style lang="less">
-	html,
-	body {
-		height: 100%;
-		margin: 0;
-	}
-
 	.container {
 		display: flex;
 		flex-direction: column;

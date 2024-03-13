@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from enum import Enum
 
 from database import Base
+import datetime
 
 
 class UserType(Enum):
@@ -29,6 +30,7 @@ class Session(Base):
     id = Column(Integer, primary_key=True, index=True)
     token = Column(String, unique=True, index=True)
     is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     users = relationship("User", secondary="user_sessions", back_populates="sessions")
 
@@ -47,3 +49,4 @@ class Message(Base):
     content = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
     session_id = Column(Integer, ForeignKey('sessions.id'))
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

@@ -2,6 +2,7 @@ import { toastAlert } from '$lib/utils/toasts';
 import { writable } from 'svelte/store';
 import User from './user';
 import { axiosInstance } from '$lib/api/apiInstance';
+import { getMessagesAPI } from '$lib/api/sessions';
 
 const { subscribe, set, update } = writable<Session[]>([]);
 
@@ -18,12 +19,22 @@ export default class Session {
 	private _token: string;
 	private _is_active: boolean;
 	private _users: User[];
+	private _messages: string[];
+	private _created_at: Date;
 
-	private constructor(id: number, token: string, is_active: boolean, users: User[]) {
+	private constructor(
+		id: number,
+		token: string,
+		is_active: boolean,
+		users: User[],
+		created_at: Date
+	) {
 		this._id = id;
 		this._token = token;
 		this._is_active = is_active;
 		this._users = users;
+		this._messages = [];
+		this._created_at = created_at;
 	}
 
 	get id(): number {
@@ -40,6 +51,10 @@ export default class Session {
 
 	get users(): User[] {
 		return this._users;
+	}
+
+	get created_at(): Date {
+		return this._created_at;
 	}
 
 	usersList(maxLength = 30): string {
@@ -80,6 +95,12 @@ export default class Session {
 		return this._users.some((u) => u.equals(user));
 	}
 
+	async loadMessages(): Promise<boolean> {
+		const messagesStr = await getMessagesAPI(this.id);
+
+		const messages: Message[] = [];
+	}
+
 	async removeUser(user: User): Promise<boolean> {
 		const response = await axiosInstance.delete(`/sessions/${this.id}/users/${user.id}`);
 
@@ -101,7 +122,7 @@ export default class Session {
 			return json;
 		}
 
-		const session = new Session(json.id, json.token, json.is_active, []);
+		const session = new Session(json.id, json.token, json.is_active, [], new Date(json.created_at));
 
 		session._users = User.parseAll(json.users);
 

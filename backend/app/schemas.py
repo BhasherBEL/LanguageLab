@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 from models import UserType
+import datetime
 
 class User(BaseModel):
     id: int
@@ -40,6 +41,7 @@ class Session(BaseModel):
     token: str
     is_active: bool
     users: list[User]
+    created_at: datetime.datetime
 
     class Config:
         from_attributes = True
