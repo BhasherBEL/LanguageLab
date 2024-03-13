@@ -156,7 +156,7 @@ def add_user_to_session(session_id: int, user_id: int, db: Session = Depends(get
     db.commit()
     db.refresh(db_session)
 
-@sessionsRouter.delete("/session_id}/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@sessionsRouter.delete("/{session_id}/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_user_from_session(session_id: int, user_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     if not check_user_level(current_user, models.UserType.ADMIN) and (current_user.id != user_id or current_user.type != models.UserType.TUTOR):
         raise HTTPException(status_code=401, detail="You do not have permission to remove a user from a session")

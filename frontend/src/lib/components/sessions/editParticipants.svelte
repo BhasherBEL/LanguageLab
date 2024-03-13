@@ -11,33 +11,40 @@
 
 	export let onClose: () => void;
 
-	let newParticipant = '';
-	let selected: User | null;
+	let sessionUsers = session.users;
+
+	let selected: { value: User; label: string } | null;
 	let dropDownUsers: { value: User; label: string }[] = [];
+
+	function calculateDropDownUsers() {
+		dropDownUsers = get(users)
+			.filter((user) => !session.hasUser(user))
+			.map((user) => {
+				return {
+					value: user,
+					label: user.username
+				};
+			});
+	}
 
 	onMount(async () => {
 		await users.fetch();
-		dropDownUsers = get(users).map((user) => {
-			return {
-				value: user,
-				label: user.username
-			};
-		});
+		calculateDropDownUsers();
 	});
 
 	async function removeParticipant(user: User) {
 		await session.removeUser(user);
+		sessionUsers = session.users;
+		calculateDropDownUsers();
 	}
 
 	async function addParticipant() {
-		if (newParticipant === '') return;
-
-		const user = users.search(newParticipant);
-		if (user === null || user == undefined) {
-			return;
-		}
-
+		if (selected === null) return;
+		const user = selected.value;
 		await session.addUser(user);
+		sessionUsers = session.users;
+		selected = null;
+		calculateDropDownUsers();
 	}
 </script>
 
@@ -53,7 +60,7 @@
 					<th>Actions</th>
 				</tr>
 			</thead>
-			{#each session.users as user (user.id)}
+			{#each sessionUsers as user (user.id)}
 				<tr>
 					<td>{user.username}</td>
 					<td>

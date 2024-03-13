@@ -44,20 +44,24 @@ export default class User {
 		return this._is_active;
 	}
 
+	equals<T>(obj: T): boolean {
+		if (obj === null || obj === undefined) return false;
+		if (!(obj instanceof User)) return false;
+		const user = obj as User;
+
+		return this.id === user.id;
+	}
+
 	static parse(json: any): User {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse user: json is null');
 			return json;
 		}
 
-		console.log(json);
-
 		const user = new User(json.id, json.username, json.type, json.is_active);
 
 		users.update((us) => {
-			console.log(us);
-
-			if (!us.find((user) => user.id === user.id)) {
+			if (!us.find((u) => u.id === user.id)) {
 				return [...us, user];
 			}
 
@@ -73,12 +77,12 @@ export default class User {
 			return json;
 		}
 
-		const users: User[] = [];
+		const us: User[] = [];
 
 		for (const user of json) {
-			users.push(User.parse(user));
+			us.push(User.parse(user));
 		}
 
-		return users;
+		return us;
 	}
 }

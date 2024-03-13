@@ -65,15 +65,19 @@ export default class Session {
 	async addUser(user: User): Promise<boolean> {
 		const response = await axiosInstance.post(`/sessions/${this.id}/users/${user.id}`);
 
-		if (response.status !== 204) {
+		if (response.status !== 201) {
 			toastAlert('Failed to add user to session');
 			return false;
 		}
 
-		this.users.push(user);
+		this._users = [...this._users, user];
 
 		sessions.reload();
 		return true;
+	}
+
+	hasUser(user: User): boolean {
+		return this._users.some((u) => u.equals(user));
 	}
 
 	async removeUser(user: User): Promise<boolean> {
