@@ -174,10 +174,10 @@ def remove_user_from_session(session_id: int, user_id: int, db: Session = Depend
 
 @sessionsRouter.get("/", response_model=list[schemas.Session])
 def read_sessions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
-    if not check_user_level(current_user, models.UserType.ADMIN):
-        raise HTTPException(status_code=401, detail="You do not have permission to view sessions")
+    if check_user_level(current_user, models.UserType.ADMIN):
+        return crud.get_all_sessions(db, skip=skip, limit=limit)
 
-    return crud.get_sessions(db, skip=skip, limit=limit)
+    return crud.get_sessions(db, current_user, skip=skip, limit=limit)
 
 @sessionsRouter.post("/{session_id}/join/{token}", status_code=status.HTTP_201_CREATED)
 def join_session(session_id: int, token: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):

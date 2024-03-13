@@ -50,7 +50,16 @@ def create_session(db: Session, user: schemas.User):
 def get_session(db: Session, session_id: int):
     return db.query(models.Session).filter(models.Session.id == session_id).first()
 
-def get_sessions(db: Session, skip: int = 0, limit: int = 100):
+def get_sessions(db: Session, user: schemas.User, skip: int = 0, limit: int = 100):
+    return (
+        db.query(models.Session)
+        .filter(models.Session.users.any(models.User.id == user.id))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+def get_all_sessions(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Session).offset(skip).limit(limit).all()
 
 def delete_session(db: Session, session_id: int):
