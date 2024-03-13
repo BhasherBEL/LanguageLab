@@ -1,19 +1,38 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { getSessionAPI } from '$lib/api/sessions';
 	import Header from '$lib/components/header.svelte';
 	import Chatbox from '$lib/components/sessions/chatbox.svelte';
+	import Session from '$lib/types/session';
 	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 
-	onMount(() => {
+	let session: Session | null = null;
+
+	onMount(async () => {
 		requireLogin();
+
+		const param = $page.url.searchParams.get('id');
+		if (!param) return;
+
+		const id = parseInt(param);
+
+		if (!id) return;
+		else {
+			session = Session.parse(await getSessionAPI(id));
+		}
 	});
 </script>
 
 <div class="container">
 	<Header />
-	<div class="vareas">
-		<Chatbox />
-	</div>
+	{#if session}
+		<div class="vareas">
+			<Chatbox {session} />
+		</div>
+	{:else}
+		<p>Unknown session</p>
+	{/if}
 </div>
 
 <style lang="less">

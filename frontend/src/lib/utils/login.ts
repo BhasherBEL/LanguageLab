@@ -1,4 +1,4 @@
-import session from '$lib/stores/session';
+import session from '$lib/stores/JWTSession';
 
 export function requireLogin() {
 	if (!session.isLoggedIn()) {

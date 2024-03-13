@@ -1,5 +1,5 @@
 <script>
-	import session from '$lib/stores/session';
+	import session from '$lib/stores/JWTSession';
 	import { get } from 'svelte/store';
 	import Logout from 'svelte-material-icons/Logout.svelte';
 	import Login from 'svelte-material-icons/Login.svelte';

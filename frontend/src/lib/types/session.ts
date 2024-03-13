@@ -1,8 +1,9 @@
 import { toastAlert } from '$lib/utils/toasts';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import User from './user';
 import { axiosInstance } from '$lib/api/apiInstance';
-import { getMessagesAPI } from '$lib/api/sessions';
+import { createMessageAPI, getMessagesAPI } from '$lib/api/sessions';
+import Message from './message';
 
 const { subscribe, set, update } = writable<Session[]>([]);
 
@@ -19,7 +20,7 @@ export default class Session {
 	private _token: string;
 	private _is_active: boolean;
 	private _users: User[];
-	private _messages: string[];
+	private _messages: Message[];
 	private _created_at: Date;
 
 	private constructor(
@@ -55,6 +56,10 @@ export default class Session {
 
 	get created_at(): Date {
 		return this._created_at;
+	}
+
+	get messages(): Message[] {
+		return this._messages;
 	}
 
 	usersList(maxLength = 30): string {
@@ -98,7 +103,24 @@ export default class Session {
 	async loadMessages(): Promise<boolean> {
 		const messagesStr = await getMessagesAPI(this.id);
 
-		const messages: Message[] = [];
+		this._messages = Message.parseAll(messagesStr);
+
+		return true;
+	}
+
+	async sendMessage(sender: User, content: string): Promise<Message | null> {
+		const id = await createMessageAPI(this.id, content);
+		if (id == null) return null;
+
+		const message = new Message(id, content, new Date().toISOString(), sender, this);
+
+		this._messages = [...this._messages, message];
+
+		return message;
+	}
+
+	static find(id: number): Session | undefined {
+		return get(sessions).find((session) => session.id === id);
 	}
 
 	async removeUser(user: User): Promise<boolean> {
@@ -116,10 +138,10 @@ export default class Session {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	static parse(json: any): Session {
+	static parse(json: any): Session | null {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse session: json is null');
-			return json;
+			return null;
 		}
 
 		const session = new Session(json.id, json.token, json.is_active, [], new Date(json.created_at));
@@ -146,7 +168,8 @@ export default class Session {
 		const sessions: Session[] = [];
 
 		for (const session of json) {
-			sessions.push(Session.parse(session));
+			const s = Session.parse(session);
+			if (s) sessions.push(s);
 		}
 
 		return sessions;

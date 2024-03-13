@@ -52,6 +52,10 @@ export default class User {
 		return this.id === user.id;
 	}
 
+	static find(user_id: number): User | undefined {
+		return get(users).find((user) => user.id === user_id);
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static parse(json: any): User {
 		if (json === null || json === undefined) {

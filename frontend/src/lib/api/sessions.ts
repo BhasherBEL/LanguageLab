@@ -15,6 +15,17 @@ export async function createSessionAPI() {
 	}
 }
 
+export async function getSessionAPI(id: number) {
+	const response = await axiosInstance.get(`/sessions/${id}`);
+
+	if (response.status !== 200) {
+		toastAlert('Failed to get session');
+		return null;
+	}
+
+	return response.data;
+}
+
 export async function deleteSessionAPI(id: number) {
 	const response = await axiosInstance.delete(`/sessions/${id}`);
 
@@ -29,10 +40,13 @@ export async function getMessagesAPI(id: number) {
 	return response.data;
 }
 
-export async function createMessageAPI(id: number, content: string) {
+export async function createMessageAPI(id: number, content: string): Promise<number | null> {
 	const response = await axiosInstance.post(`/sessions/${id}/messages`, { content });
 
 	if (response.status !== 201) {
 		toastAlert('Failed to send message');
+		return null;
 	}
+
+	return response.data;
 }

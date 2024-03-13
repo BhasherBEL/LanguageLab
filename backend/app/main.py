@@ -223,7 +223,7 @@ def create_message(session_id: int, message: schemas.MessageCreate, db: Session 
     if not check_user_level(current_user, models.UserType.ADMIN) and current_user not in db_session.users:
         raise HTTPException(status_code=401, detail="You do not have permission to create a message in this session")
 
-    crud.create_message(db, message, current_user, db_session)
+    return crud.create_message(db, message, current_user, db_session).id
 
 
 v1Router.include_router(authRouter)

@@ -1,3 +1,4 @@
+import User from '$lib/types/user';
 import { get, writable } from 'svelte/store';
 
 function localWritable(name: string, start: string) {
@@ -30,5 +31,6 @@ export default {
 		if (isNaN(expiration) || expiration < Date.now() / 1000) return false;
 
 		return true;
-	}
+	},
+	user: () => User.find(parseInt(get(id)))
 };

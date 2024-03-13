@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { loginAPI } from '$lib/api/auth';
 	import Header from '$lib/components/header.svelte';
-	import session from '$lib/stores/session';
+	import session from '$lib/stores/JWTSession';
 	import { onMount } from 'svelte';
 
 	let username = '';
