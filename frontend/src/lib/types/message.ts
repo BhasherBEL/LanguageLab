@@ -5,17 +5,11 @@ import { toastAlert } from '$lib/utils/toasts';
 export default class Message {
 	private _id: number;
 	private _content: string;
-	private _created_at: string;
+	private _created_at: Date;
 	private _user: User;
 	private _session: Session;
 
-	public constructor(
-		id: number,
-		content: string,
-		created_at: string,
-		user: User,
-		session: Session
-	) {
+	public constructor(id: number, content: string, created_at: Date, user: User, session: Session) {
 		this._id = id;
 		this._content = content;
 		this._created_at = created_at;
@@ -31,7 +25,7 @@ export default class Message {
 		return this._content;
 	}
 
-	get created_at(): string {
+	get created_at(): Date {
 		return this._created_at;
 	}
 
@@ -70,7 +64,7 @@ export default class Message {
 			}
 		}
 
-		const message = new Message(json.id, json.content, json.created_at, user, session);
+		const message = new Message(json.id, json.content, new Date(json.created_at), user, session);
 
 		return message;
 	}

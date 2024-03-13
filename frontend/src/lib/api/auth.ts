@@ -1,4 +1,4 @@
-import session from '$lib/stores/session';
+import session from '$lib/stores/JWTSession';
 import { setAuthTokens } from 'axios-jwt';
 import { axiosPublicInstance } from './apiInstance';
 import { jwtDecode } from 'jwt-decode';

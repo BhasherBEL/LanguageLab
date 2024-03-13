@@ -30,7 +30,7 @@
 
 <div id="mainbox">
 	<div id="chatbox">
-		{#each messages as message (message.id)}
+		{#each messages.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as message (message.id)}
 			{#if message.user === JWTSession.user()}
 				<div>You: {message.content}</div>
 			{:else}

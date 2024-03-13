@@ -6,7 +6,7 @@
 </script>
 
 <header>
-	<h1>LanguageLab</h1>
+	<h1><a href="/">LanguageLab</a></h1>
 	<span>
 		{#if session.isLoggedIn()}
 			<span>Connecté en tant que <strong>{get(session.username)}</strong></span>

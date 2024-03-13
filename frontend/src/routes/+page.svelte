@@ -49,7 +49,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each $sessions as session (session.id)}
+			{#each $sessions.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as session (session.id)}
 				<tr on:click={() => (window.location.href = '/session?id=' + session.id)} tabindex="0">
 					<td>{session.id}</td>
 					<td>{displayDate(session.created_at)}</td>

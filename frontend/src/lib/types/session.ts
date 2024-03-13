@@ -112,7 +112,7 @@ export default class Session {
 		const id = await createMessageAPI(this.id, content);
 		if (id == null) return null;
 
-		const message = new Message(id, content, new Date().toISOString(), sender, this);
+		const message = new Message(id, content, new Date(), sender, this);
 
 		this._messages = [...this._messages, message];
 

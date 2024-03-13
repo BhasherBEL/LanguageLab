@@ -30,8 +30,6 @@
 		<div class="vareas">
 			<Chatbox {session} />
 		</div>
-	{:else}
-		<p>Unknown session</p>
 	{/if}
 </div>
 
