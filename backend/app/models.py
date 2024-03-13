@@ -38,3 +38,12 @@ class UserSession(Base):
 
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True, index=True)
     session_id = Column(String, ForeignKey('sessions.id'), primary_key=True, index=True)
+
+
+class Message(Base):
+    __tablename__ = 'messages'
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(String)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    session_id = Column(Integer, ForeignKey('sessions.id'))

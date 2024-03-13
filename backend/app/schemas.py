@@ -43,3 +43,18 @@ class Session(BaseModel):
 
     class Config:
         from_attributes = True
+
+class Message(BaseModel):
+    id: int
+    content: str
+    user_id: int
+    session_id: int
+
+    class Config:
+        from_attributes = True
+
+class MessageCreate(BaseModel):
+    content: str
+
+    class Config:
+        from_attributes = True

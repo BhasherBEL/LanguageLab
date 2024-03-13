@@ -66,3 +66,13 @@ def delete_session(db: Session, session_id: int):
     db.query(models.Session).filter(models.Session.id == session_id).delete()
     db.commit()
     return None
+
+def get_messages(db: Session, session_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Message).filter(models.Message.session_id == session_id).offset(skip).limit(limit).all()
+
+def create_message(db: Session, message: schemas.MessageCreate, user: schemas.User, session: schemas.Session):
+    db_message = models.Message(content=message.content, user_id=user.id, session_id=session.id)
+    db.add(db_message)
+    db.commit()
+    db.refresh(db_message)
+    return db_message

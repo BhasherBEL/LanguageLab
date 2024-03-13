@@ -203,6 +203,28 @@ def invite_to_session(session_id: int, db: Session = Depends(get_db), current_us
 
     return f"/sessions/{db_session.id}/join/{db_session.token}"
 
+@sessionsRouter.get("/{session_id}/messages", response_model=list[schemas.Message])
+def read_messages(session_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if not check_user_level(current_user, models.UserType.ADMIN) and current_user not in db_session.users:
+        raise HTTPException(status_code=401, detail="You do not have permission to view messages in this session")
+
+    return crud.get_messages(db, session_id, skip=skip, limit=limit)
+
+@sessionsRouter.post("/{session_id}/messages", status_code=status.HTTP_201_CREATED)
+def create_message(session_id: int, message: schemas.MessageCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if not check_user_level(current_user, models.UserType.ADMIN) and current_user not in db_session.users:
+        raise HTTPException(status_code=401, detail="You do not have permission to create a message in this session")
+
+    crud.create_message(db, message, current_user, db_session)
+
 
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
