@@ -30,56 +30,31 @@
 
 <Header />
 
-<form action="#">
-	{#if message}
-		<div class="errorCard">{message}</div>
-	{/if}
-	<label for="username">Nom d'utilisateur:</label>
-	<input type="text" id="username" name="username" bind:value={username} required />
+<div class="flex items-center justify-center h-screen">
+	<form action="#" class="shadow-md max-w-md mb-7 flex items-center flex-col p-5">
+		{#if message}
+			<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
+				{message}
+			</div>
+		{/if}
+		<div class="flex w-full mb-4">
+			<label for="username">Nom d'utilisateur</label>
+			<input type="text" id="username" name="username" bind:value={username} required />
+		</div>
+		<div class="flex w-full mb-4">
+			<label for="password">Mot de passe</label>
+			<input type="password" id="password" name="password" bind:value={password} required />
+		</div>
+		<button type="submit" on:click|preventDefault={login} class="button">Login</button>
+	</form>
+</div>
 
-	<label for="password">Mot de passe:</label>
-	<input type="password" id="password" name="password" bind:value={password} required />
-
-	<button type="submit" on:click|preventDefault={login}>Login</button>
-</form>
-
-<style lang="less">
-	form {
-		padding: 20px;
-		border-radius: 8px;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-		width: 300px;
-		margin: 50px auto 0 auto;
-	}
-
+<style lang="postcss">
 	label {
-		display: block;
-		margin-bottom: 8px;
+		@apply font-bold pr-4 w-1/2 flex items-center justify-end;
 	}
 
 	input {
-		width: 100%;
-		padding: 8px;
-		margin-bottom: 16px;
-		box-sizing: border-box;
-	}
-
-	button {
-		background-color: #0060df;
-		color: #fff;
-		border: none;
-		padding: 10px;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-
-	.errorCard {
-		background-color: #ff5252;
-		color: white;
-		padding: 10px;
-		border-radius: 5px;
-		margin-bottom: 10px;
-		text-align: center;
-		font-weight: bold;
+		@apply border-2 bg-gray-200 w-1/2 rounded py-2 px-4;
 	}
 </style>
