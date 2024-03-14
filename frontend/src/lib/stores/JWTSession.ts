@@ -32,5 +32,9 @@ export default {
 
 		return true;
 	},
-	user: () => User.find(parseInt(get(id)))
+	user: () => {
+		const user = User.find(parseInt(get(id)));
+
+		return user;
+	}
 };

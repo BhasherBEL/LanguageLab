@@ -10,11 +10,14 @@
 	import { Eye, EyeSlash, Icon, Trash, User } from 'svelte-hero-icons';
 
 	let editParticipantsSession: Session | null;
+	let ready = false;
 
 	onMount(async () => {
 		if (!requireLogin()) return;
 
 		Session.parseAll(await getSessionsAPI());
+
+		ready = true;
 	});
 
 	async function createSession() {
@@ -35,61 +38,65 @@
 	}
 </script>
 
-<Header />
+{#if ready}
+	<Header />
 
-<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
-	<button on:click|preventDefault={createSession} class="button float-end mb-4">
-		Créer une nouvelle session
-	</button>
-	<table class="w-full shadow-md">
-		<thead class="bg-gray-200 uppercase text-sm">
-			<tr>
-				<th class="py-2 px-6">#</th>
-				<th class="py-2 px-6">Date</th>
-				<th class="py-2 px-6">participants</th>
-				<th class="py-2 px-6">Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each $sessions.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as session (session.id)}
-				<tr
-					on:click={() => (window.location.href = '/session?id=' + session.id)}
-					tabindex="0"
-					class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
-					class:text-gray-500={!session.is_active}
-				>
-					<td class="py-3 px-6" class:line-through={!session.is_active}>{session.id}</td>
-					<td class="py-3 px-6" class:line-through={!session.is_active}
-						>{displayDate(session.created_at)}</td
-					>
-					<td class="py-3 px-6" class:line-through={!session.is_active}>{session.usersList()}</td>
-
-					<td class="py-3 px-6">
-						<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
-							<Icon src={User} class="w-5 hover:text-secondaryHover" />
-						</button>
-						<button on:click|preventDefault|stopPropagation={() => disableSession(session)}>
-							{#if session.is_active}
-								<Icon src={EyeSlash} class="w-5  hover:text-secondaryHover" />
-							{:else}
-								<Icon src={Eye} class="w-5  hover:text-secondaryHover" />
-							{/if}
-						</button>
-						{#if JWTSession.user()?.is_admin}
-							<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
-								<Icon src={Trash} class="w-5  hover:text-secondaryHover" />
-							</button>
-						{/if}
-					</td>
+	<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
+		{#if JWTSession.user()?.is_tutor}
+			<button on:click|preventDefault={createSession} class="button float-end mb-4">
+				Créer une nouvelle session
+			</button>
+		{/if}
+		<table class="w-full shadow-md">
+			<thead class="bg-gray-200 uppercase text-sm">
+				<tr>
+					<th class="py-2 px-6">#</th>
+					<th class="py-2 px-6">Date</th>
+					<th class="py-2 px-6">participants</th>
+					<th class="py-2 px-6">Actions</th>
 				</tr>
+			</thead>
+			<tbody>
+				{#each $sessions.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as session (session.id)}
+					<tr
+						on:click={() => (window.location.href = '/session?id=' + session.id)}
+						tabindex="0"
+						class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
+						class:text-gray-500={!session.is_active}
+					>
+						<td class="py-3 px-6" class:line-through={!session.is_active}>{session.id}</td>
+						<td class="py-3 px-6" class:line-through={!session.is_active}
+							>{displayDate(session.created_at)}</td
+						>
+						<td class="py-3 px-6" class:line-through={!session.is_active}>{session.usersList()}</td>
 
-				{#if editParticipantsSession === session}
-					<EditParticipants
-						bind:session={editParticipantsSession}
-						onClose={() => (editParticipantsSession = null)}
-					/>
-				{/if}
-			{/each}
-		</tbody>
-	</table>
-</div>
+						<td class="py-3 px-6">
+							<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
+								<Icon src={User} class="w-5 hover:text-secondaryHover" />
+							</button>
+							<button on:click|preventDefault|stopPropagation={() => disableSession(session)}>
+								{#if session.is_active}
+									<Icon src={EyeSlash} class="w-5  hover:text-secondaryHover" />
+								{:else}
+									<Icon src={Eye} class="w-5  hover:text-secondaryHover" />
+								{/if}
+							</button>
+							{#if JWTSession.user()?.is_admin}
+								<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
+									<Icon src={Trash} class="w-5  hover:text-secondaryHover" />
+								</button>
+							{/if}
+						</td>
+					</tr>
+
+					{#if editParticipantsSession === session}
+						<EditParticipants
+							bind:session={editParticipantsSession}
+							onClose={() => (editParticipantsSession = null)}
+						/>
+					{/if}
+				{/each}
+			</tbody>
+		</table>
+	</div>
+{/if}

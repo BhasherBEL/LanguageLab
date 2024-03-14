@@ -48,6 +48,10 @@ export default class User {
 		return this._type === 0;
 	}
 
+	get is_tutor(): boolean {
+		return this._type <= 1;
+	}
+
 	equals<T>(obj: T): boolean {
 		if (obj === null || obj === undefined) return false;
 		if (!(obj instanceof User)) return false;
