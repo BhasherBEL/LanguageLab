@@ -63,7 +63,7 @@ def refresh_token(current_user: models.User = Depends(hashing.get_jwt_user)):
         "refresh_token": hashing.create_refresh_token(current_user),
     }
 
-@usersRouter.post("/", status_code=status.HTTP_201_CREATED)
+@usersRouter.post("", status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(status_code=401, detail="You do not have permission to create a user")
@@ -85,7 +85,7 @@ def read_user(user_id: int, db: Session = Depends(get_db), current_user: schemas
 
     return db_user
 
-@usersRouter.get("/", response_model=list[schemas.User])
+@usersRouter.get("", response_model=list[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(status_code=401, detail="You do not have permission to view users")
@@ -111,7 +111,7 @@ def read_user_sessions(user_id: int, db: Session = Depends(get_db), current_user
 
     return db_user.sessions
 
-@sessionsRouter.post("/", response_model=schemas.Session)
+@sessionsRouter.post("", response_model=schemas.Session)
 def create_session(db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     if not check_user_level(current_user, models.UserType.TUTOR):
         raise HTTPException(status_code=401, detail="You do not have permission to create a session")
@@ -172,7 +172,7 @@ def remove_user_from_session(session_id: int, user_id: int, db: Session = Depend
     db_session.users.remove(db_user)
     db.commit()
 
-@sessionsRouter.get("/", response_model=list[schemas.Session])
+@sessionsRouter.get("", response_model=list[schemas.Session])
 def read_sessions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     if check_user_level(current_user, models.UserType.ADMIN):
         return crud.get_all_sessions(db, skip=skip, limit=limit)
