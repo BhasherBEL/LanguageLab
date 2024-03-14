@@ -53,7 +53,9 @@
 					<th class="py-2 px-6">#</th>
 					<th class="py-2 px-6">Date</th>
 					<th class="py-2 px-6">participants</th>
-					<th class="py-2 px-6">Actions</th>
+					{#if JWTSession.user()?.is_tutor}
+						<th class="py-2 px-6">Actions</th>
+					{/if}
 				</tr>
 			</thead>
 			<tbody>
@@ -70,23 +72,25 @@
 						>
 						<td class="py-3 px-6" class:line-through={!session.is_active}>{session.usersList()}</td>
 
-						<td class="py-3 px-6">
-							<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
-								<Icon src={User} class="w-5 hover:text-secondaryHover" />
-							</button>
-							<button on:click|preventDefault|stopPropagation={() => disableSession(session)}>
-								{#if session.is_active}
-									<Icon src={EyeSlash} class="w-5  hover:text-secondaryHover" />
-								{:else}
-									<Icon src={Eye} class="w-5  hover:text-secondaryHover" />
-								{/if}
-							</button>
-							{#if JWTSession.user()?.is_admin}
-								<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
-									<Icon src={Trash} class="w-5  hover:text-secondaryHover" />
+						{#if JWTSession.user()?.is_tutor}
+							<td class="py-3 px-6">
+								<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
+									<Icon src={User} class="w-5 hover:text-secondaryHover" />
 								</button>
-							{/if}
-						</td>
+								<button on:click|preventDefault|stopPropagation={() => disableSession(session)}>
+									{#if session.is_active}
+										<Icon src={EyeSlash} class="w-5  hover:text-secondaryHover" />
+									{:else}
+										<Icon src={Eye} class="w-5  hover:text-secondaryHover" />
+									{/if}
+								</button>
+								{#if JWTSession.user()?.is_admin}
+									<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
+										<Icon src={Trash} class="w-5  hover:text-secondaryHover" />
+									</button>
+								{/if}
+							</td>
+						{/if}
 					</tr>
 
 					{#if editParticipantsSession === session}
