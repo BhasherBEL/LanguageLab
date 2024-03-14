@@ -6,6 +6,7 @@
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
+	import { Icon, XMark } from 'svelte-hero-icons';
 
 	export let session: Session;
 
@@ -50,35 +51,41 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div id="bg" on:click|preventDefault|stopPropagation={onClose}>
-	<div class="menu" on:click|stopPropagation>
-		<h1>Edit Participants</h1>
-		<table>
-			<thead>
+<div
+	on:click|preventDefault|stopPropagation={onClose}
+	class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center"
+>
+	<div class="bg-white w-full min-w-fit max-w-md rounded p-4" on:click|stopPropagation>
+		<div class="float-right w-8 hover:text-red-500 hover:cursor-pointer" on:click={onClose}>
+			<Icon src={XMark} />
+		</div>
+		<h1 class="text-xl font-bold pb-4">Participants</h1>
+		<table class="w-full shadow-md">
+			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
-					<th>Username</th>
-					<th>Actions</th>
+					<th class="py-2 px-6">Username</th>
+					<th class="py-2 px-6">Actions</th>
 				</tr>
 			</thead>
 			{#each sessionUsers as user (user.id)}
-				<tr>
-					<td>{user.username}</td>
-					<td>
+				<tr class="even:bg-white odd:bg-gray-100 text-center">
+					<td class="py-3 px-6 w-2/3">{user.username}</td>
+					<td class="py-3 px-6 w-1/3">
 						<button on:click={() => removeParticipant(user)}>
-							<TrashIcon />
+							<Icon src={XMark} class="w-6" />
 						</button>
 					</td>
 				</tr>
 			{/each}
-			<tr>
+			<tr class="text-center">
 				<!-- <td><input bind:value={newParticipant} placeholder="Add new participant" /></td> -->
-				<Select items={dropDownUsers} bind:value={selected}></Select>
-				<td><button on:click={addParticipant}>Add Participant</button></td>
+				<td><Select items={dropDownUsers} bind:value={selected}></Select></td>
+				<td><button on:click={addParticipant} class="button">Ajouter</button></td>
 			</tr>
 		</table>
 	</div>
 </div>
-
+<!-- 
 <style lang="less">
 	.menu {
 		position: fixed;
@@ -102,4 +109,4 @@
 	td {
 		min-width: 200px;
 	}
-</style>
+</style> -->
