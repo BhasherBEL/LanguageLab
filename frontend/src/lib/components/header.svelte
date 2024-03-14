@@ -5,12 +5,12 @@
 	import Login from 'svelte-material-icons/Login.svelte';
 </script>
 
-<header>
-	<h1><a href="/">LanguageLab</a></h1>
-	<span>
+<header class="bg-secondary text-white flex align-middle justify-between px-4 py-2">
+	<h1 class="font-bold text-2xl"><a href="/">LanguageLab</a></h1>
+	<div class="flex align-middle">
 		{#if session.isLoggedIn()}
-			<span>Connecté en tant que <strong>{get(session.username)}</strong></span>
-			<a href="/logout"><Logout /></a>
+			<span class="pr-2">Connecté en tant que <strong>{get(session.username)}</strong></span>
+			<a href="/logout"><Logout class="h-4/5" /></a>
 		{:else}
 			<a
 				href="/login?redirect={encodeURIComponent(
@@ -18,26 +18,5 @@
 				)}"><Login /></a
 			>
 		{/if}
-	</span>
+	</div>
 </header>
-
-<style lang="less">
-	header {
-		background-color: #00214e;
-		color: white;
-		padding: 0.5em 1em;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	h1 {
-		margin: 0;
-		font-size: 1.5em;
-	}
-
-	a {
-		color: inherit;
-		text-decoration: none;
-	}
-</style>

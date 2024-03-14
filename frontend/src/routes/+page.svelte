@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { getSessionsAPI } from '$lib/api/sessions';
 	import Header from '$lib/components/header.svelte';
-	import CloseIcon from '$lib/components/icons/closeIcon.svelte';
-	import UserIcon from '$lib/components/icons/userIcon.svelte';
 	import EditParticipants from '$lib/components/sessions/editParticipants.svelte';
 	import Session, { sessions } from '$lib/types/session';
 	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 	import { displayDate } from '$lib/utils/date';
+	import JWTSession from '$lib/stores/JWTSession';
+	import { Icon, Trash, User } from 'svelte-hero-icons';
 
 	let editParticipantsSession: Session | null;
 
@@ -22,7 +22,8 @@
 	}
 
 	async function deleteSession(session: Session) {
-		window.confirm('Are you sure you want to delete this session?') && (await session.delete());
+		window.confirm('Are you sure you want to delete this session? All data will be lost!') &&
+			(await session.delete());
 	}
 
 	function editParticipants(session: Session) {
@@ -32,35 +33,38 @@
 
 <Header />
 
-<h1>Sessions</h1>
-
-<button on:click|preventDefault={createSession}>Create session</button>
-
-{#if $sessions.length === 0}
-	<p>No sessions found</p>
-{:else}
-	<table>
-		<thead>
+<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
+	<button on:click|preventDefault={createSession} class="button float-end mb-4">
+		Créer une nouvelle session
+	</button>
+	<table class="w-full shadow-md">
+		<thead class="bg-gray-200 uppercase text-sm">
 			<tr>
-				<th>#</th>
-				<th>Date</th>
-				<th>participants</th>
-				<th>Actions</th>
+				<th class="py-2 px-6">#</th>
+				<th class="py-2 px-6">Date</th>
+				<th class="py-2 px-6">participants</th>
+				<th class="py-2 px-6">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each $sessions.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as session (session.id)}
-				<tr on:click={() => (window.location.href = '/session?id=' + session.id)} tabindex="0">
-					<td>{session.id}</td>
-					<td>{displayDate(session.created_at)}</td>
-					<td>{session.usersList()}</td>
-					<td>
+				<tr
+					on:click={() => (window.location.href = '/session?id=' + session.id)}
+					tabindex="0"
+					class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
+				>
+					<td class="py-3 px-6">{session.id}</td>
+					<td class="py-3 px-6">{displayDate(session.created_at)}</td>
+					<td class="py-3 px-6">{session.usersList()}</td>
+					<td class="py-3 px-6">
 						<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
-							<UserIcon />
+							<Icon src={User} class="w-5" />
 						</button>
-						<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
-							<CloseIcon />
-						</button>
+						{#if JWTSession.user()?.is_admin}
+							<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
+								<Icon src={Trash} class="w-5" />
+							</button>
+						{/if}
 					</td>
 				</tr>
 
@@ -73,31 +77,4 @@
 			{/each}
 		</tbody>
 	</table>
-{/if}
-
-<style lang="less">
-	table {
-		border-collapse: collapse;
-		margin-bottom: 20px;
-	}
-
-	th,
-	td {
-		padding: 10px;
-		border: 1px solid #ddd;
-		text-align: left;
-	}
-
-	thead {
-		background-color: #f2f2f2;
-	}
-
-	tr:nth-child(even) {
-		background-color: #f9f9f9;
-	}
-
-	tbody tr:hover {
-		background-color: #e5e5e5;
-		cursor: pointer;
-	}
-</style>
+</div>

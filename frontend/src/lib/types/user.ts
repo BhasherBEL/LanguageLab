@@ -44,6 +44,10 @@ export default class User {
 		return this._is_active;
 	}
 
+	get is_admin(): boolean {
+		return this._type === 0;
+	}
+
 	equals<T>(obj: T): boolean {
 		if (obj === null || obj === undefined) return false;
 		if (!(obj instanceof User)) return false;
