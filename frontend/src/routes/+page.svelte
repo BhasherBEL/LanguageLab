@@ -7,12 +7,12 @@
 	import { onMount } from 'svelte';
 	import { displayDate } from '$lib/utils/date';
 	import JWTSession from '$lib/stores/JWTSession';
-	import { Icon, Trash, User } from 'svelte-hero-icons';
+	import { Eye, EyeSlash, Icon, Trash, User } from 'svelte-hero-icons';
 
 	let editParticipantsSession: Session | null;
 
 	onMount(async () => {
-		requireLogin();
+		if (!requireLogin()) return;
 
 		Session.parseAll(await getSessionsAPI());
 	});
@@ -24,6 +24,10 @@
 	async function deleteSession(session: Session) {
 		window.confirm('Are you sure you want to delete this session? All data will be lost!') &&
 			(await session.delete());
+	}
+
+	async function disableSession(session: Session) {
+		await session.disable();
 	}
 
 	function editParticipants(session: Session) {
@@ -52,17 +56,26 @@
 					on:click={() => (window.location.href = '/session?id=' + session.id)}
 					tabindex="0"
 					class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
+					class:text-gray-500={!session.is_active}
+					class:line-trough={!session.is_active}
 				>
 					<td class="py-3 px-6">{session.id}</td>
 					<td class="py-3 px-6">{displayDate(session.created_at)}</td>
 					<td class="py-3 px-6">{session.usersList()}</td>
 					<td class="py-3 px-6">
 						<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
-							<Icon src={User} class="w-5" />
+							<Icon src={User} class="w-5 hover:text-secondaryHover" />
+						</button>
+						<button on:click|preventDefault|stopPropagation={() => disableSession(session)}>
+							{#if session.is_active}
+								<Icon src={EyeSlash} class="w-5  hover:text-secondaryHover" />
+							{:else}
+								<Icon src={Eye} class="w-5  hover:text-secondaryHover" />
+							{/if}
 						</button>
 						{#if JWTSession.user()?.is_admin}
 							<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
-								<Icon src={Trash} class="w-5" />
+								<Icon src={Trash} class="w-5  hover:text-secondaryHover" />
 							</button>
 						{/if}
 					</td>

@@ -82,6 +82,21 @@ export default class Session {
 		return true;
 	}
 
+	async disable(): Promise<boolean> {
+		const response = await axiosInstance.patch(`/sessions/${this.id}`, {
+			is_active: false
+		});
+
+		if (response.status !== 204) {
+			toastAlert('Failed to disable session');
+			return false;
+		}
+
+		this._is_active = false;
+		sessions.reload();
+		return true;
+	}
+
 	async addUser(user: User): Promise<boolean> {
 		const response = await axiosInstance.post(`/sessions/${this.id}/users/${user.id}`);
 

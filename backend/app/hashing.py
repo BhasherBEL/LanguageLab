@@ -20,6 +20,11 @@ reuseable_oauth = OAuth2PasswordBearer(
     scheme_name="JWT"
 )
 
+reuseable_refresh_oauth = OAuth2PasswordBearer(
+    tokenUrl="/refresh",
+    scheme_name="JWT"
+)
+
 
 class Hasher():
     @staticmethod
@@ -69,3 +74,6 @@ def get_jwt_user(token: str = Depends(reuseable_oauth), db: Session = Depends(ge
 
 
     return db_user
+
+def get_jwt_user_from_refresh_token(token: str = Depends(reuseable_refresh_oauth), db: Session = Depends(get_db)):
+    return get_jwt_user(token, db)

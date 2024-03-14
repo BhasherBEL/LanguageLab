@@ -57,7 +57,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     }   
 
 @authRouter.post("/refresh", response_model=schemas.Token)
-def refresh_token(current_user: models.User = Depends(hashing.get_jwt_user)):
+def refresh_token(current_user: models.User = Depends(hashing.get_jwt_user_from_refresh_token)):
     return {
         "access_token": hashing.create_access_token(current_user),
         "refresh_token": hashing.create_refresh_token(current_user),
@@ -136,8 +136,16 @@ def delete_session(session_id: int, db: Session = Depends(get_db), current_user:
 
     crud.delete_session(db, session_id)
 
-    # if not crud.delete_session(db, session_id):
-        # raise HTTPException(status_code=404, detail="Session not found")
+@sessionsRouter.patch("/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_session(session_id: int, session: schemas.SessionUpdate, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if not check_user_level(current_user, models.UserType.ADMIN) and (current_user.type != models.UserType.TUTOR or current_user not in db_session.users):
+        raise HTTPException(status_code=401, detail="You do not have permission to update this session")
+
+    crud.update_session(db, session, session_id)
 
 @sessionsRouter.post("/{session_id}/users/{user_id}", status_code=status.HTTP_201_CREATED)
 def add_user_to_session(session_id: int, user_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):

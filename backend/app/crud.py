@@ -65,7 +65,10 @@ def get_all_sessions(db: Session, skip: int = 0, limit: int = 100):
 def delete_session(db: Session, session_id: int):
     db.query(models.Session).filter(models.Session.id == session_id).delete()
     db.commit()
-    return None
+
+def update_session(db: Session, session: schemas.SessionUpdate, session_id: int):
+    db.query(models.Session).filter(models.Session.id == session_id).update(session.dict(exclude_unset=True))
+    db.commit()
 
 def get_messages(db: Session, session_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Message).filter(models.Message.session_id == session_id).offset(skip).limit(limit).all()

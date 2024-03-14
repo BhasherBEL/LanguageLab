@@ -45,6 +45,13 @@ class Session(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class SessionUpdate(BaseModel):
+    token: str | None = None
+    is_active: bool | None = None
+
+    class Config:
+        from_attributes = True
 
 class Message(BaseModel):
     id: int

@@ -5,6 +5,9 @@ import {
 	type IAuthTokens,
 	type TokenRefreshRequest
 } from 'axios-jwt';
+import session from '$lib/stores/JWTSession';
+import { jwtDecode } from 'jwt-decode';
+import type { JWTContent } from '$lib/utils/login';
 
 export const API_URL = 'http://localhost:8000/api/v1';
 
@@ -29,12 +32,34 @@ export const axiosInstance = axios.create({
 const requestRefresh: TokenRefreshRequest = async (
 	refreshToken: string
 ): Promise<IAuthTokens | string> => {
-	const response = await axios.post(`${API_URL}/auth/refresh`, { token: refreshToken });
+	return axiosPublicInstance
+		.post(`auth/refresh`, { token: refreshToken })
 
-	return {
-		accessToken: response.data.access_token,
-		refreshToken: response.data.refresh_token
-	};
+		.then((response) => {
+			if (response.status === 401) {
+				return response.data.detail ?? 'Unauthorized';
+			} else if (response.status === 422) {
+				return 'Invalid request';
+			} else if (response.status === 200) {
+				session.accessToken.set(response.data.access_token);
+				session.refreshToken.set(response.data.refresh_token);
+
+				const decoded = jwtDecode<JWTContent>(response.data.access_token);
+
+				session.username.set(decoded.username);
+				session.type.set(decoded.type.toFixed(0));
+				session.id.set(decoded.sub);
+				session.exp.set(decoded.exp.toFixed(0));
+			}
+
+			return {
+				accessToken: response.data.access_token,
+				refreshToken: response.data.refresh_token
+			};
+		})
+		.catch((error) => {
+			return error.toString();
+		});
 };
 
 applyAuthTokenInterceptor(axiosInstance, { requestRefresh });
