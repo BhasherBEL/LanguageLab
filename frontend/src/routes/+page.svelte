@@ -27,7 +27,7 @@
 	}
 
 	async function disableSession(session: Session) {
-		await session.disable();
+		await session.toggleDisable();
 	}
 
 	function editParticipants(session: Session) {
@@ -57,11 +57,13 @@
 					tabindex="0"
 					class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
 					class:text-gray-500={!session.is_active}
-					class:line-trough={!session.is_active}
 				>
-					<td class="py-3 px-6">{session.id}</td>
-					<td class="py-3 px-6">{displayDate(session.created_at)}</td>
-					<td class="py-3 px-6">{session.usersList()}</td>
+					<td class="py-3 px-6" class:line-through={!session.is_active}>{session.id}</td>
+					<td class="py-3 px-6" class:line-through={!session.is_active}
+						>{displayDate(session.created_at)}</td
+					>
+					<td class="py-3 px-6" class:line-through={!session.is_active}>{session.usersList()}</td>
+
 					<td class="py-3 px-6">
 						<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
 							<Icon src={User} class="w-5 hover:text-secondaryHover" />

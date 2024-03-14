@@ -82,17 +82,17 @@ export default class Session {
 		return true;
 	}
 
-	async disable(): Promise<boolean> {
+	async toggleDisable(): Promise<boolean> {
 		const response = await axiosInstance.patch(`/sessions/${this.id}`, {
-			is_active: false
+			is_active: !this.is_active
 		});
 
 		if (response.status !== 204) {
-			toastAlert('Failed to disable session');
+			toastAlert('Failed to toggle activite session');
 			return false;
 		}
 
-		this._is_active = false;
+		this._is_active = !this.is_active;
 		sessions.reload();
 		return true;
 	}

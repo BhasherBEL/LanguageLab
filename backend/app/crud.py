@@ -54,6 +54,7 @@ def get_sessions(db: Session, user: schemas.User, skip: int = 0, limit: int = 10
     return (
         db.query(models.Session)
         .filter(models.Session.users.any(models.User.id == user.id))
+        .filter(models.Session.is_active or user.type < 2)
         .offset(skip)
         .limit(limit)
         .all()
