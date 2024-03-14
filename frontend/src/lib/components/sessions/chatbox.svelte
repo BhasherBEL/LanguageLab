@@ -3,7 +3,8 @@
 	import Message from '$lib/types/message';
 	import type Session from '$lib/types/session';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
+	import MessageC from './message.svelte';
+	import { Icon, PaperAirplane } from 'svelte-hero-icons';
 
 	let message = '';
 	export let session: Session;
@@ -26,32 +27,36 @@
 		message = '';
 		messages = session.messages;
 	}
+
+	function scrollToBottom(node: HTMLElement) {
+		node.scrollTop = node.scrollHeight;
+	}
 </script>
 
-<div id="mainbox">
-	<div id="chatbox">
+<div class="flex flex-col md:my-8 min-w-fit w-full max-w-4xl border-2">
+	<div class="flex-grow h-48 overflow-auto px-4 flex flex-col" use:scrollToBottom>
 		{#each messages.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as message (message.id)}
-			{#if message.user === JWTSession.user()}
-				<div>You: {message.content}</div>
-			{:else}
-				<div>{message.user.username}: {message.content}</div>
-			{/if}
+			<MessageC {message} />
 		{/each}
 	</div>
-	<input
-		type="text"
-		id="chatinput"
-		placeholder="Send a message..."
-		bind:value={message}
-		on:keypress={async (e) => {
-			if (e.key === 'Enter') {
-				await sendMessage();
-			}
-		}}
-	/>
+	<div class="flex flex-row h-20 mt-2">
+		<textarea
+			class="flex-grow border-2 border-gray-300 rounded-md p-2 resize-none overflow-y-hidden"
+			placeholder="Send a message..."
+			bind:value={message}
+			on:keypress={async (e) => {
+				if (e.key === 'Enter' && !e.shiftKey) {
+					await sendMessage();
+				}
+			}}
+		/>
+		<button class="w-12 button rounded-md" on:click={sendMessage}>
+			<Icon src={PaperAirplane} />
+		</button>
+	</div>
 </div>
 
-<style lang="less">
+<!-- <style lang="less">
 	#mainbox {
 		display: flex;
 		flex-direction: column;
@@ -69,4 +74,4 @@
 	#chatinput {
 		height: 50px;
 	}
-</style>
+</style> -->

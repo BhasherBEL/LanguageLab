@@ -24,26 +24,11 @@
 	});
 </script>
 
-<div class="container">
+<div class="h-screen flex flex-col">
 	<Header />
 	{#if session}
-		<div class="vareas">
+		<div class="flex flex-row flex-grow justify-evenly">
 			<Chatbox {session} />
 		</div>
 	{/if}
 </div>
-
-<style lang="less">
-	.container {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;
-	}
-
-	.vareas {
-		display: flex;
-		flex-direction: row;
-		flex-grow: 1;
-		justify-content: space-evenly;
-	}
-</style>

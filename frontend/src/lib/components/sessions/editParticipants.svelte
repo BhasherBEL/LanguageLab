@@ -85,28 +85,3 @@
 		</table>
 	</div>
 </div>
-<!-- 
-<style lang="less">
-	.menu {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -75%);
-		background-color: white;
-		padding: 20px;
-		border-radius: 10px;
-	}
-
-	#bg {
-		background-color: #000c;
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-
-	td {
-		min-width: 200px;
-	}
-</style> -->
