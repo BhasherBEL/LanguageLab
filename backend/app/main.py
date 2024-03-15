@@ -1,10 +1,11 @@
 from collections import defaultdict
-from fastapi import APIRouter, FastAPI, status, Depends, HTTPException
+from fastapi import APIRouter, FastAPI, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocket
 from contextlib import asynccontextmanager
+import json
 
 import schemas, crud
 import models
@@ -226,8 +227,20 @@ def read_messages(session_id: int, skip: int = 0, limit: int = 100, db: Session 
 
     return crud.get_messages(db, session_id, skip=skip, limit=limit)
 
+def send_websoket_message(session_id: int, message: schemas.Message):
+
+    content = json.dumps({
+        "type": "message",
+        "action": "create",
+        "data": message
+    })
+
+    for _, user_websockets in websocket_users[session_id].items():
+        for user_websocket in user_websockets:
+            user_websocket.send_text(content)
+
 @sessionsRouter.post("/{session_id}/messages", status_code=status.HTTP_201_CREATED)
-def create_message(session_id: int, message: schemas.MessageCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+def create_message(session_id: int, message: schemas.MessageCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     db_session = crud.get_session(db, session_id)
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -235,7 +248,12 @@ def create_message(session_id: int, message: schemas.MessageCreate, db: Session 
     if not check_user_level(current_user, models.UserType.ADMIN) and current_user not in db_session.users:
         raise HTTPException(status_code=401, detail="You do not have permission to create a message in this session")
 
-    return crud.create_message(db, message, current_user, db_session).id
+    message = crud.create_message(db, message, current_user, db_session)
+
+    background_tasks.add_task(send_websoket_message, session_id, message)
+
+    return message.id
+
 
 @websocketRouter.websocket("/{session_id}")
 async def websocket_session(session_id: int, websocket: WebSocket, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
@@ -270,6 +288,9 @@ v1Router.include_router(sessionsRouter)
 v1Router.include_router(websocketRouter)
 apiRouter.include_router(v1Router)
 app.include_router(apiRouter)
+
+
+
 
 
 if __name__ == "__main__":

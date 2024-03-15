@@ -10,6 +10,7 @@ import { jwtDecode } from 'jwt-decode';
 import type { JWTContent } from '$lib/utils/login';
 
 export const API_URL = 'http://localhost:8000/api/v1';
+export const WS_URL = 'ws://localhost:8000/api/v1/ws';
 
 export const axiosPublicInstance = axios.create({
 	...axios.defaults,
@@ -63,7 +64,3 @@ const requestRefresh: TokenRefreshRequest = async (
 };
 
 applyAuthTokenInterceptor(axiosInstance, { requestRefresh });
-
-const getStorage = getBrowserLocalStorage;
-
-applyAuthTokenInterceptor(axiosInstance, { requestRefresh, getStorage });

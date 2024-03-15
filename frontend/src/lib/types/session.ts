@@ -1,7 +1,7 @@
 import { toastAlert } from '$lib/utils/toasts';
-import { get, writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
 import User from './user';
-import { axiosInstance } from '$lib/api/apiInstance';
+import { WS_URL, axiosInstance } from '$lib/api/apiInstance';
 import { createMessageAPI, getMessagesAPI } from '$lib/api/sessions';
 import Message from './message';
 
@@ -20,8 +20,10 @@ export default class Session {
 	private _token: string;
 	private _is_active: boolean;
 	private _users: User[];
-	private _messages: Message[];
+	private _messages: Writable<Message[]>;
 	private _created_at: Date;
+	private _ws: WebSocket | null = null;
+	private _ws_connected = false;
 
 	private constructor(
 		id: number,
@@ -34,7 +36,7 @@ export default class Session {
 		this._token = token;
 		this._is_active = is_active;
 		this._users = users;
-		this._messages = [];
+		this._messages = writable<Message[]>([]);
 		this._created_at = created_at;
 	}
 
@@ -58,7 +60,7 @@ export default class Session {
 		return this._created_at;
 	}
 
-	get messages(): Message[] {
+	get messages(): Writable<Message[]> {
 		return this._messages;
 	}
 
@@ -118,7 +120,7 @@ export default class Session {
 	async loadMessages(): Promise<boolean> {
 		const messagesStr = await getMessagesAPI(this.id);
 
-		this._messages = Message.parseAll(messagesStr);
+		this._messages.set(Message.parseAll(messagesStr));
 
 		return true;
 	}
@@ -129,9 +131,49 @@ export default class Session {
 
 		const message = new Message(id, content, new Date(), sender, this);
 
-		this._messages = [...this._messages, message];
+		this._messages.update((messages) => [...messages, message]);
 
 		return message;
+	}
+
+	public wsConnect() {
+		if (this._ws_connected) return;
+
+		this._ws = new WebSocket(`${WS_URL}/${this.id}`);
+
+		this._ws.onopen = () => {
+			this._ws_connected = true;
+			console.log('WS connected');
+		};
+
+		this._ws.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+
+			if (data['type'] === 'message') {
+				if (data['action'] === 'create') {
+					const message = Message.parse(data['data']);
+					if (message) {
+						console.log('Received message:', message);
+						this._messages.update((messages) => {
+							if (!messages.find((m) => m.id === message.id)) {
+								return [...messages, message];
+							}
+							return messages.map((m) => (m.id === message.id ? message : m));
+						});
+
+						return;
+					}
+				}
+			}
+			console.error('Failed to parse ws:', data);
+		};
+
+		this._ws.onclose = () => {
+			this._ws = null;
+			this._ws_connected = false;
+			console.log('WS closed, reconnecting in 1s');
+			setTimeout(() => this.wsConnect(), 1000);
+		};
 	}
 
 	static find(id: number): Session | undefined {
