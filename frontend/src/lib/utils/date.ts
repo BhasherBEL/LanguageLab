@@ -60,3 +60,28 @@ export function displayDate(date: Date): string {
 		);
 	}
 }
+
+export function displayTime(date: Date): string {
+	if (date === null) return '??';
+
+	const now = new Date();
+
+	if (now.getTime() - date.getTime() < 1000 * 60 * 60) {
+		if (now.getTime() - date.getTime() < 1000 * 60) {
+			const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+			if (seconds === 0) return 'now';
+
+			return seconds + 's';
+		}
+
+		const minutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+
+		return minutes + 'm';
+	}
+
+	const hours = date.getHours().toString().padStart(2, '0');
+	const minutes = date.getMinutes().toString().padStart(2, '0');
+
+	return hours + ':' + minutes;
+}

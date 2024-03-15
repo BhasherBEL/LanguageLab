@@ -8,12 +8,18 @@
 
 	let message = '';
 	export let session: Session;
+	let htmlMessages: HTMLElement;
+	let scrollBottom = 0;
 
 	$: messages = session.messages;
 
 	onMount(async () => {
 		await session.loadMessages();
 		messages = session.messages;
+
+		console.log(messages);
+
+		// scrollToBottom();
 	});
 
 	async function sendMessage() {
@@ -28,14 +34,24 @@
 		messages = session.messages;
 	}
 
-	function scrollToBottom(node: HTMLElement) {
-		node.scrollTop = node.scrollHeight;
+	function scrollToBottom() {
+		htmlMessages.scroll({
+			top: htmlMessages.scrollHeight,
+			behavior: 'smooth'
+		});
+		console.log(htmlMessages.scrollTop, htmlMessages.scrollHeight, htmlMessages.clientHeight);
 	}
 </script>
 
 <div class="flex flex-col md:my-8 min-w-fit w-full max-w-4xl border-2">
-	<div class="flex-grow h-48 overflow-auto px-4 flex flex-col" use:scrollToBottom>
-		{#each messages.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as message (message.id)}
+	<div
+		class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex"
+		bind:this={htmlMessages}
+		on:scroll={() =>
+			(scrollBottom =
+				htmlMessages.scrollHeight - htmlMessages.scrollTop - htmlMessages.clientHeight)}
+	>
+		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.id)}
 			<MessageC {message} />
 		{/each}
 	</div>

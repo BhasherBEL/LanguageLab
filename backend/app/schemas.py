@@ -30,8 +30,8 @@ class Token(BaseModel):
         from_attributes = True
 
 class TokenPayload(BaseModel):
-    sub: str = None
-    exp: int = None
+    sub: str | None = None
+    exp: int | None = None
 
     class Config:
         from_attributes = True
@@ -58,6 +58,7 @@ class Message(BaseModel):
     content: str
     user_id: int
     session_id: int
+    created_at: datetime.datetime
 
     class Config:
         from_attributes = True

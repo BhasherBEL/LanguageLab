@@ -1,8 +1,18 @@
 <script lang="ts">
 	import JWTSession from '$lib/stores/JWTSession';
 	import type Message from '$lib/types/message';
+	import { displayTime } from '$lib/utils/date';
 
 	export let message: Message;
+
+	let timer: number;
+	$: displayedTime = displayTime(message.created_at);
+	$: {
+		clearInterval(timer);
+		timer = setInterval(() => {
+			displayedTime = displayTime(message.created_at);
+		}, 1000);
+	}
 
 	const isSender = message.user == JWTSession.user();
 </script>
@@ -18,5 +28,8 @@
 			{message.user.username}
 		</div>
 		<div class="max-w-3xl">{message.content}</div>
+		<div class="text-right text-gray-500">
+			{displayedTime}
+		</div>
 	</div>
 </div>
