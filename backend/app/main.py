@@ -1,7 +1,9 @@
+from collections import defaultdict
 from fastapi import APIRouter, FastAPI, status, Depends, HTTPException
-from sqlalchemy.orm import Session, session
+from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.websockets import WebSocket
 from contextlib import asynccontextmanager
 
 import schemas, crud
@@ -11,6 +13,7 @@ import hashing
 from utils import check_user_level
 import config
 
+websocket_users = defaultdict(lambda: defaultdict(set))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,6 +42,7 @@ v1Router = APIRouter(prefix="/v1")
 authRouter = APIRouter(prefix="/auth", tags=["auth"])
 usersRouter = APIRouter(prefix="/users", tags=["users"])
 sessionsRouter = APIRouter(prefix="/sessions", tags=["sessions"])
+websocketRouter = APIRouter(prefix="/ws", tags=["websocket"])
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
@@ -233,10 +237,37 @@ def create_message(session_id: int, message: schemas.MessageCreate, db: Session 
 
     return crud.create_message(db, message, current_user, db_session).id
 
+@websocketRouter.websocket("/{session_id}")
+async def websocket_session(session_id: int, websocket: WebSocket, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if not check_user_level(current_user, models.UserType.ADMIN) and current_user not in db_session.users:
+        raise HTTPException(status_code=401, detail="You do not have permission to access this session")
+
+    await websocket.accept()
+
+    websocket_users[session_id][current_user.id].add(websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            for user_id, user_websockets in websocket_users[session_id].items():
+                if user_id == current_user.id:
+                    continue
+
+                for user_websocket in user_websockets:
+                    await user_websocket.send_text(data)
+    except:
+        websocket_users[session_id][current_user.id].remove(websocket)
+        await websocket.close()
+
 
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
 v1Router.include_router(sessionsRouter)
+v1Router.include_router(websocketRouter)
 apiRouter.include_router(v1Router)
 app.include_router(apiRouter)
 
