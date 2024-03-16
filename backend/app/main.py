@@ -293,11 +293,3 @@ v1Router.include_router(sessionsRouter)
 v1Router.include_router(websocketRouter)
 apiRouter.include_router(v1Router)
 app.include_router(apiRouter)
-
-
-
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=config.DEBUG)

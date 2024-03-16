@@ -49,4 +49,4 @@ class Message(Base):
     content = Column(String)
     user_id = Column(Integer, ForeignKey('users.id'))
     session_id = Column(Integer, ForeignKey('sessions.id'))
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.now)
