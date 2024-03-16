@@ -23,7 +23,7 @@ export default class Session {
 	private _messages: Writable<Message[]>;
 	private _created_at: Date;
 	private _ws: WebSocket | null = null;
-	private _ws_connected = false;
+	private _ws_connected = writable(false);
 
 	private constructor(
 		id: number,
@@ -62,6 +62,10 @@ export default class Session {
 
 	get messages(): Writable<Message[]> {
 		return this._messages;
+	}
+
+	get wsConnected(): Writable<boolean> {
+		return this._ws_connected;
 	}
 
 	usersList(maxLength = 30): string {
@@ -142,14 +146,14 @@ export default class Session {
 	}
 
 	public wsConnect() {
-		if (this._ws_connected) return;
+		if (get(this._ws_connected)) return;
 
 		const token = localStorage.getItem('accessToken');
 
 		this._ws = new WebSocket(`${WS_URL}/${token}/${this.id}`);
 
 		this._ws.onopen = () => {
-			this._ws_connected = true;
+			this._ws_connected.set(true);
 			console.log('WS connected');
 		};
 
@@ -160,7 +164,6 @@ export default class Session {
 				if (data['action'] === 'create') {
 					const message = Message.parse(data['data']);
 					if (message) {
-						console.log('Received message:', message);
 						this._messages.update((messages) => {
 							if (!messages.find((m) => m.id === message.id)) {
 								return [...messages, message];
@@ -177,7 +180,7 @@ export default class Session {
 
 		this._ws.onclose = () => {
 			this._ws = null;
-			this._ws_connected = false;
+			this._ws_connected.set(false);
 			console.log('WS closed, reconnecting in 1s');
 			setTimeout(() => this.wsConnect(), 1000);
 		};
