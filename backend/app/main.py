@@ -284,7 +284,10 @@ async def websocket_session(token: str, session_id: int, websocket: WebSocket, d
                     await user_websocket.send_text(data)
     except:
         websocket_users[session_id][current_user.id].remove(websocket)
-        await websocket.close()
+        try:
+            await websocket.close()
+        except:
+            pass
 
 
 v1Router.include_router(authRouter)
