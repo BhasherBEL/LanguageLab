@@ -63,6 +63,15 @@ class Message(BaseModel):
     class Config:
         from_attributes = True
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "content": self.content,
+            "user_id": self.user_id,
+            "session_id": self.session_id,
+            "created_at": self.created_at.isoformat(),
+        }
+
 class MessageCreate(BaseModel):
     content: str
 

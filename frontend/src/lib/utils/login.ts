@@ -2,7 +2,7 @@ import session from '$lib/stores/JWTSession';
 
 export function requireLogin(): boolean {
 	if (!session.isLoggedIn()) {
-		window.location.href = '/login?redirect=' + window.location.pathname;
+		window.location.href = '/login?redirect=' + encodeURIComponent(window.location.href);
 		return false;
 	}
 	return true;

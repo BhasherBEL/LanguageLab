@@ -23,7 +23,9 @@
 			return;
 		}
 
-		const redirect = new URLSearchParams(window.location.search).get('redirect') ?? '/';
+		const redirect = decodeURIComponent(
+			new URLSearchParams(window.location.search).get('redirect') ?? '/'
+		);
 		window.location.href = redirect;
 	}
 </script>

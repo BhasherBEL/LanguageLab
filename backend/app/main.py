@@ -227,17 +227,17 @@ def read_messages(session_id: int, skip: int = 0, limit: int = 100, db: Session 
 
     return crud.get_messages(db, session_id, skip=skip, limit=limit)
 
-def send_websoket_message(session_id: int, message: schemas.Message):
+async def send_websoket_message(session_id: int, message: schemas.Message):
 
     content = json.dumps({
         "type": "message",
         "action": "create",
-        "data": message
+        "data": message.to_dict()
     })
 
     for _, user_websockets in websocket_users[session_id].items():
         for user_websocket in user_websockets:
-            user_websocket.send_text(content)
+            await user_websocket.send_text(content)
 
 @sessionsRouter.post("/{session_id}/messages", status_code=status.HTTP_201_CREATED)
 def create_message(session_id: int, message: schemas.MessageCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
@@ -250,13 +250,18 @@ def create_message(session_id: int, message: schemas.MessageCreate, background_t
 
     message = crud.create_message(db, message, current_user, db_session)
 
-    background_tasks.add_task(send_websoket_message, session_id, message)
+    background_tasks.add_task(send_websoket_message, session_id, schemas.Message.model_validate(message))
 
     return message.id
 
 
-@websocketRouter.websocket("/{session_id}")
-async def websocket_session(session_id: int, websocket: WebSocket, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+@websocketRouter.websocket("/{token}/{session_id}")
+async def websocket_session(token: str, session_id: int, websocket: WebSocket, db: Session = Depends(get_db)):
+    current_user = hashing.get_jwt_user(token=token, db=db)
+
+    if current_user is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
     db_session = crud.get_session(db, session_id)
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")

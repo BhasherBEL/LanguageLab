@@ -6,10 +6,16 @@
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { get } from 'svelte/store';
+	import Message from '$lib/types/message';
 
 	let message = '';
 	export let session: Session;
 	let htmlMessages: HTMLElement;
+	let messages = get(session.messages);
+
+	session.messages.subscribe((newMessages) => {
+		messages = newMessages;
+	});
 
 	onMount(async () => {
 		await session.loadMessages();
@@ -35,7 +41,7 @@
 
 <div class="flex flex-col md:my-8 min-w-fit w-full max-w-4xl border-2">
 	<div class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex" bind:this={htmlMessages}>
-		{#each get(session.messages).sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.id)}
+		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.id)}
 			<MessageC {message} />
 		{/each}
 	</div>

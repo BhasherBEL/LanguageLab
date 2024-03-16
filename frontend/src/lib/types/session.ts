@@ -131,7 +131,12 @@ export default class Session {
 
 		const message = new Message(id, content, new Date(), sender, this);
 
-		this._messages.update((messages) => [...messages, message]);
+		this._messages.update((messages) => {
+			if (!messages.find((m) => m.id === message.id)) {
+				return [...messages, message];
+			}
+			return messages.map((m) => (m.id === message.id ? message : m));
+		});
 
 		return message;
 	}
@@ -139,7 +144,9 @@ export default class Session {
 	public wsConnect() {
 		if (this._ws_connected) return;
 
-		this._ws = new WebSocket(`${WS_URL}/${this.id}`);
+		const token = localStorage.getItem('accessToken');
+
+		this._ws = new WebSocket(`${WS_URL}/${token}/${this.id}`);
 
 		this._ws.onopen = () => {
 			this._ws_connected = true;

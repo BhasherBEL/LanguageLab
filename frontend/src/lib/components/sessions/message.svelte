@@ -19,8 +19,9 @@
 
 <div class="w-full flex" class:justify-end={isSender}>
 	<div
-		class="bg-gray-200 rounded-b-xl my-2 p-4 w-fit"
+		class="rounded-b-xl my-2 p-4 w-fit"
 		class:bg-blue-200={isSender}
+		class:bg-gray-200={!isSender}
 		class:rounded-tl-xl={isSender}
 		class:rounded-tr-xl={!isSender}
 	>
