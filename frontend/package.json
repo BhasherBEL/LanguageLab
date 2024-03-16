@@ -12,6 +12,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@rollup/plugin-json": "^6.1.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-static": "^3.0.1",
 		"@sveltejs/kit": "^2.0.0",
@@ -42,6 +43,7 @@
 		"axios": "^1.6.7",
 		"axios-jwt": "^4.0.2",
 		"jwt-decode": "^4.0.0",
+		"svelte-i18n": "^4.0.0",
 		"svelte-material-icons": "^3.0.5",
 		"svelte-select": "^5.8.3"
 	}
