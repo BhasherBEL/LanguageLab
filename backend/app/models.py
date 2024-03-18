@@ -33,6 +33,7 @@ class Session(Base):
     is_active = Column(Boolean, default=True)
     start_time = Column(DateTime, default=datetime.datetime.now)
     end_time = Column(DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(hours=12))
+    language = Column(String, default="fr")
 
     users = relationship("User", secondary="user_sessions", back_populates="sessions")
 

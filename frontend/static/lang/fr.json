@@ -16,7 +16,15 @@
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
 		"createSession": "Créer une nouvelle session",
 		"participantPlaceholder": "Selectionnez",
-		"remainingDuration": "Durée restante"
+		"remainingDuration": "Durée restante",
+		"nickname": "Pseudo",
+		"learningLanguage": "Langue d'apprentissage",
+		"confirm": "Confirmer"
+	},
+	"login": {
+		"email": "Email",
+		"password": "Mot de passe",
+		"login": "Se connecter"
 	},
 	"utils": {
 		"month": {
@@ -32,11 +40,10 @@
 			"october": "octobre",
 			"november": "novembre",
 			"december": "décembre"
+		},
+		"language": {
+			"fr": "Français",
+			"en": "Anglais"
 		}
-	},
-	"login": {
-		"email": "Email",
-		"password": "Mot de passe",
-		"login": "Se connecter"
 	}
 }

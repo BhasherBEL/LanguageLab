@@ -5,12 +5,16 @@
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import { Icon, XMark } from 'svelte-hero-icons';
+	import { Icon, Language, XMark } from 'svelte-hero-icons';
 	import { _ } from '$lib/services/i18n';
+	import config from '$lib/config';
 
 	export let session: Session;
 
 	export let onClose: () => void;
+
+	let selectedLanguage: string;
+	$: currentLanguage = session.language;
 
 	let sessionUsers = session.users;
 
@@ -47,6 +51,12 @@
 		selected = null;
 		calculateDropDownUsers();
 	}
+
+	async function changeLanguage() {
+		if (session.language === selectedLanguage) return;
+		await session.changeLanguage(selectedLanguage);
+		currentLanguage = session.language;
+	}
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -55,22 +65,39 @@
 	on:click|preventDefault|stopPropagation={onClose}
 	class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center"
 >
-	<div class="bg-white w-full min-w-fit max-w-md rounded p-4" on:click|stopPropagation>
+	<div class="bg-white w-full min-w-fit max-w-lg rounded p-4" on:click|stopPropagation>
 		<div class="float-right w-8 hover:text-red-500 hover:cursor-pointer" on:click={onClose}>
 			<Icon src={XMark} />
 		</div>
-		<h1 class="text-xl font-bold pb-4">{$_('home.participants')}</h1>
+		<h1 class="text-xl font-bold pb-4">{$_('home.learningLanguage')}</h1>
+		<div class="flex">
+			<select bind:value={selectedLanguage} class="min-w-fit w-full h-12 p-2">
+				{#each config.LEARNING_LANGUAGES as language}
+					<option selected={session.language == language} value={language}
+						>{$_(`utils.language.${language}`)}</option
+					>
+				{/each}
+			</select>
+			<button
+				class="button w-1/4 ml-4"
+				disabled={currentLanguage === selectedLanguage}
+				on:click={changeLanguage}>{$_('home.confirm')}</button
+			>
+		</div>
+		<h1 class="text-xl font-bold py-4">{$_('home.participants')}</h1>
 		<table class="w-full shadow-md">
 			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
+					<th class="py-2 px-6">{$_('home.nickname')}</th>
 					<th class="py-2 px-6">{$_('home.email')}</th>
 					<th class="py-2 px-6">{$_('home.actions')}</th>
 				</tr>
 			</thead>
 			{#each sessionUsers as user (user.id)}
 				<tr class="even:bg-white odd:bg-gray-100 text-center">
-					<td class="py-3 px-6 w-2/3">{user.email}</td>
-					<td class="py-3 px-6 w-1/3">
+					<td class="py-3 px-6 w-1/4">{user.nickname}</td>
+					<td class="py-3 px-6 w-2/4">{user.email}</td>
+					<td class="py-3 px-6 w-1/4">
 						<button on:click={() => removeParticipant(user)}>
 							<Icon src={XMark} class="w-6" />
 						</button>
@@ -78,14 +105,18 @@
 				</tr>
 			{/each}
 			<tr class="text-center">
-				<td
+				<td colspan="2"
 					><Select
 						items={dropDownUsers}
 						bind:value={selected}
 						placeholder={$_('home.participantPlaceholder')}
 					></Select></td
 				>
-				<td><button on:click={addParticipant} class="button">{$_('home.add')}</button></td>
+				<td
+					><button on:click={addParticipant} class="button" disabled={selected === null}
+						>{$_('home.add')}</button
+					></td
+				>
 			</tr>
 		</table>
 	</div>

@@ -1,9 +1,10 @@
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import User from './user';
-import { WS_URL, axiosInstance } from '$lib/api/apiInstance';
-import { createMessageAPI, getMessagesAPI } from '$lib/api/sessions';
+import { axiosInstance } from '$lib/api/apiInstance';
+import { createMessageAPI, getMessagesAPI, patchLanguageAPI } from '$lib/api/sessions';
 import Message from './message';
+import config from '$lib/config';
 
 const { subscribe, set, update } = writable<Session[]>([]);
 
@@ -24,6 +25,7 @@ export default class Session {
 	private _created_at: Date;
 	private _start_time: Date;
 	private _end_time: Date;
+	private _language: string;
 	private _ws: WebSocket | null = null;
 	private _ws_connected = writable(false);
 
@@ -34,7 +36,8 @@ export default class Session {
 		users: User[],
 		created_at: Date,
 		start_time: Date,
-		end_time: Date
+		end_time: Date,
+		language: string
 	) {
 		this._id = id;
 		this._token = token;
@@ -44,6 +47,7 @@ export default class Session {
 		this._created_at = created_at;
 		this._start_time = start_time;
 		this._end_time = end_time;
+		this._language = language;
 	}
 
 	get id(): number {
@@ -72,6 +76,10 @@ export default class Session {
 
 	get end_time(): Date {
 		return this._end_time;
+	}
+
+	get language(): string {
+		return this._language;
 	}
 
 	get messages(): Writable<Message[]> {
@@ -159,12 +167,19 @@ export default class Session {
 		return message;
 	}
 
+	async changeLanguage(language: string): Promise<boolean> {
+		const res = await patchLanguageAPI(this.id, language);
+		if (!res) return false;
+		this._language = language;
+		return true;
+	}
+
 	public wsConnect() {
 		if (get(this._ws_connected)) return;
 
 		const token = localStorage.getItem('accessToken');
 
-		this._ws = new WebSocket(`${WS_URL}/${token}/${this.id}`);
+		this._ws = new WebSocket(`${config.WS_URL}/${token}/${this.id}`);
 
 		this._ws.onopen = () => {
 			this._ws_connected.set(true);
@@ -237,7 +252,8 @@ export default class Session {
 			[],
 			new Date(json.created_at),
 			new Date(json.start_time),
-			new Date(json.end_time)
+			new Date(json.end_time),
+			json.language
 		);
 
 		session._users = User.parseAll(json.users);

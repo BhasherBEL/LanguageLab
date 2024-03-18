@@ -41,13 +41,14 @@ class Session(BaseModel):
     users: list[User]
     start_time: datetime.datetime
     end_time: datetime.datetime
+    language: str
 
     class Config:
         from_attributes = True
         
 class SessionUpdate(BaseModel):
-    token: str | None = None
     is_active: bool | None = None
+    language: str | None = None
 
     class Config:
         from_attributes = True

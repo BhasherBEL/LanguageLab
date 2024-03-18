@@ -50,3 +50,14 @@ export async function createMessageAPI(id: number, content: string): Promise<num
 
 	return response.data;
 }
+
+export async function patchLanguageAPI(id: number, language: string) {
+	const response = await axiosInstance.patch(`/sessions/${id}`, { language });
+
+	if (response.status !== 204) {
+		toastAlert('Failed to change language');
+		return false;
+	}
+
+	return true;
+}

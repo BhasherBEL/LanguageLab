@@ -8,13 +8,11 @@ import {
 import session from '$lib/stores/JWTSession';
 import { jwtDecode } from 'jwt-decode';
 import type { JWTContent } from '$lib/utils/login';
-
-export const API_URL = 'http://localhost:8000/api/v1';
-export const WS_URL = 'ws://localhost:8000/api/v1/ws';
+import config from '$lib/config';
 
 export const axiosPublicInstance = axios.create({
 	...axios.defaults,
-	baseURL: API_URL,
+	baseURL: config.API_URL,
 	validateStatus: () => true,
 	headers: {
 		'Content-Type': 'application/json'
@@ -23,7 +21,7 @@ export const axiosPublicInstance = axios.create({
 
 export const axiosInstance = axios.create({
 	...axios.defaults,
-	baseURL: API_URL,
+	baseURL: config.API_URL,
 	validateStatus: () => true,
 	headers: {
 		'Content-Type': 'application/json'
