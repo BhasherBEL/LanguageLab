@@ -16,7 +16,8 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+    nickname = Column(String, index=True)
     password = Column(String)
     type = Column(Integer, default=UserType.STUDENT.value)
     is_active = Column(Boolean, default=True)
@@ -28,9 +29,10 @@ class Session(Base):
     __tablename__ = 'sessions'
 
     id = Column(Integer, primary_key=True, index=True)
-    token = Column(String, unique=True, index=True)
+    created_at = Column(DateTime, default=datetime.datetime.now)
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    start_time = Column(DateTime, default=datetime.datetime.now)
+    end_time = Column(DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(hours=12))
 
     users = relationship("User", secondary="user_sessions", back_populates="sessions")
 

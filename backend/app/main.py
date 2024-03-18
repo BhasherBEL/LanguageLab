@@ -20,8 +20,8 @@ websocket_users = defaultdict(lambda: defaultdict(set))
 async def lifespan(app: FastAPI):
     db = SessionLocal()
     try:
-        if crud.get_user_by_username(db, config.ADMIN_USERNAME) is None:
-            crud.create_user(db, schemas.UserCreate(username=config.ADMIN_USERNAME, password=config.ADMIN_PASSWORD, type=models.UserType.ADMIN.value))
+        if crud.get_user_by_email(db, config.ADMIN_EMAIL) is None:
+            crud.create_user(db, schemas.UserCreate(email=config.ADMIN_EMAIL, nickname=config.ADMIN_NICKNAME, password=config.ADMIN_PASSWORD, type=models.UserType.ADMIN.value))
     finally:
         db.close()
     yield
@@ -52,9 +52,9 @@ def health():
 
 @authRouter.post("/login", response_model=schemas.Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_username_and_password(db, form_data.username, form_data.password)
+    db_user = crud.get_user_by_email_and_password(db, form_data.email, form_data.password)
     if db_user is None:
-        raise HTTPException(status_code=401, detail="Incorrect username or password")
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
 
     return {
         "access_token": hashing.create_access_token(db_user),
@@ -73,7 +73,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(status_code=401, detail="You do not have permission to create a user")
 
-    db_user = crud.get_user_by_username(db, username=user.username)
+    db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
         

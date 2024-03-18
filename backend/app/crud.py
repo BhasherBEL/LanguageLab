@@ -9,12 +9,12 @@ def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
-def get_user_by_username(db: Session, username: str):
-    return db.query(models.User).filter(models.User.username == username.lower()).first()
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email.lower()).first()
 
 
-def get_user_by_username_and_password(db: Session, username: str, password: str):
-    user_db = get_user_by_username(db, username)
+def get_user_by_email_and_password(db: Session, email: str, password: str):
+    user_db = get_user_by_email(db, email)
     if user_db is None:
         return None
     if not Hasher.verify_password(password, user_db.password):
@@ -28,7 +28,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: schemas.UserCreate):
     password = Hasher.get_password_hash(user.password)
-    db_user = models.User(username=user.username.lower(), password=password, type=user.type, is_active=user.is_active)
+    db_user = models.User(email=user.email.lower(), password=password, type=user.type, is_active=user.is_active)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

@@ -5,7 +5,8 @@ import datetime
 
 class User(BaseModel):
     id: int
-    username: str
+    email: str
+    nickname: str
     type: int
     is_active: bool
 
@@ -13,13 +14,14 @@ class User(BaseModel):
         from_attributes = True
 
 class UserCreate(BaseModel):
-    username: str
+    email: str
+    nickname: str | None = None
     password: str
     type: int = UserType.STUDENT.value
     is_active: bool = True
 
 class UserLogin(BaseModel):
-    username: str
+    email: str
     password: str
 
 class Token(BaseModel):
@@ -38,10 +40,11 @@ class TokenPayload(BaseModel):
 
 class Session(BaseModel):
     id: int
-    token: str
+    created_at: datetime.datetime
     is_active: bool
     users: list[User]
-    created_at: datetime.datetime
+    start_time: datetime.datetime
+    end_time: datetime.datetime
 
     class Config:
         from_attributes = True
