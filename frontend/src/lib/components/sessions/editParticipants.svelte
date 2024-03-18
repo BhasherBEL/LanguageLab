@@ -2,11 +2,11 @@
 	import type Session from '$lib/types/session';
 	import type User from '$lib/types/user';
 	import { users } from '$lib/types/user';
-	import TrashIcon from '$lib/components/icons/trashIcon.svelte';
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import { Icon, XMark } from 'svelte-hero-icons';
+	import { _ } from '$lib/services/i18n';
 
 	export let session: Session;
 
@@ -59,12 +59,12 @@
 		<div class="float-right w-8 hover:text-red-500 hover:cursor-pointer" on:click={onClose}>
 			<Icon src={XMark} />
 		</div>
-		<h1 class="text-xl font-bold pb-4">Participants</h1>
+		<h1 class="text-xl font-bold pb-4">{$_('home.participants')}</h1>
 		<table class="w-full shadow-md">
 			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
-					<th class="py-2 px-6">Username</th>
-					<th class="py-2 px-6">Actions</th>
+					<th class="py-2 px-6">{$_('home.username')}</th>
+					<th class="py-2 px-6">{$_('home.actions')}</th>
 				</tr>
 			</thead>
 			{#each sessionUsers as user (user.id)}
@@ -78,9 +78,14 @@
 				</tr>
 			{/each}
 			<tr class="text-center">
-				<!-- <td><input bind:value={newParticipant} placeholder="Add new participant" /></td> -->
-				<td><Select items={dropDownUsers} bind:value={selected}></Select></td>
-				<td><button on:click={addParticipant} class="button">Ajouter</button></td>
+				<td
+					><Select
+						items={dropDownUsers}
+						bind:value={selected}
+						placeholder={$_('home.participantPlaceholder')}
+					></Select></td
+				>
+				<td><button on:click={addParticipant} class="button">{$_('home.add')}</button></td>
 			</tr>
 		</table>
 	</div>

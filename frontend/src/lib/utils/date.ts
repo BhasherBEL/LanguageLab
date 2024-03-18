@@ -1,29 +1,32 @@
+import { _ } from '$lib/services/i18n';
+import { get } from 'svelte/store';
+
 export function getFullMonth(id: number): string {
 	switch (id) {
 		case 0:
-			return 'janvier';
+			return get(_)('utils.month.january');
 		case 1:
-			return 'février';
+			return get(_)('utils.month.february');
 		case 2:
-			return 'mars';
+			return get(_)('utils.month.march');
 		case 3:
-			return 'avril';
+			return get(_)('utils.month.april');
 		case 4:
-			return 'mai';
+			return get(_)('utils.month.may');
 		case 5:
-			return 'juin';
+			return get(_)('utils.month.june');
 		case 6:
-			return 'juillet';
+			return get(_)('utils.month.july');
 		case 7:
-			return 'août';
+			return get(_)('utils.month.august');
 		case 8:
-			return 'septembre';
+			return get(_)('utils.month.september');
 		case 9:
-			return 'octobre';
+			return get(_)('utils.month.october');
 		case 10:
-			return 'novembre';
+			return get(_)('utils.month.november');
 		case 11:
-			return 'décembre';
+			return get(_)('utils.month.december');
 		default:
 			return '??';
 	}

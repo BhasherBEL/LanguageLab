@@ -2,5 +2,35 @@
 	"header": {
 		"appName": "LanguageLab",
 		"connectedAs": "Connecté en tant que"
+	},
+	"chatbox": {
+		"placeholder": "Entrez votre message ici...",
+		"sendError": "Erreur lors de l'envoi du message"
+	},
+	"home": {
+		"date": "Date",
+		"participants": "Participants",
+		"username": "Nom d'utilisateur",
+		"actions": "Actions",
+		"add": "Ajouter",
+		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
+		"createSession": "Créer une nouvelle session",
+		"participantPlaceholder": "Selectionnez"
+	},
+	"utils": {
+		"month": {
+			"january": "janvier",
+			"february": "février",
+			"march": "mars",
+			"april": "avril",
+			"may": "mai",
+			"june": "juin",
+			"july": "juillet",
+			"august": "août",
+			"september": "septembre",
+			"october": "octobre",
+			"november": "novembre",
+			"december": "décembre"
+		}
 	}
 }

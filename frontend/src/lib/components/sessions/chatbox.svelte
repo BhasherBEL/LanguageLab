@@ -6,7 +6,7 @@
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { get } from 'svelte/store';
-	import Message from '$lib/types/message';
+	import { _ } from '$lib/services/i18n';
 
 	let message = '';
 	export let session: Session;
@@ -36,7 +36,7 @@
 		const m = await session.sendMessage(user, message);
 
 		if (m === null) {
-			toastAlert('Failed to send message');
+			toastAlert($_('chatbox.sendError'));
 			return;
 		}
 
@@ -63,7 +63,7 @@
 	<div class="flex flex-row h-20">
 		<textarea
 			class="flex-grow border-2 border-gray-300 rounded-md p-2 resize-none overflow-y-hidden"
-			placeholder="Send a message..."
+			placeholder={$_('chatbox.placeholder')}
 			bind:value={message}
 			on:keypress={async (e) => {
 				if (e.key === 'Enter' && !e.shiftKey) {

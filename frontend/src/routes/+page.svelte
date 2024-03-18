@@ -8,6 +8,7 @@
 	import { displayDate } from '$lib/utils/date';
 	import JWTSession from '$lib/stores/JWTSession';
 	import { Eye, EyeSlash, Icon, Trash, User } from 'svelte-hero-icons';
+	import { _ } from '$lib/services/i18n';
 
 	let editParticipantsSession: Session | null;
 	let ready = false;
@@ -25,8 +26,7 @@
 	}
 
 	async function deleteSession(session: Session) {
-		window.confirm('Are you sure you want to delete this session? All data will be lost!') &&
-			(await session.delete());
+		window.confirm($_('home.deleteSessionConirm')) && (await session.delete());
 	}
 
 	async function disableSession(session: Session) {
@@ -44,17 +44,17 @@
 	<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
 		{#if JWTSession.user()?.is_tutor}
 			<button on:click|preventDefault={createSession} class="button float-end mb-4">
-				Créer une nouvelle session
+				{$_('home.createSession')}
 			</button>
 		{/if}
 		<table class="w-full shadow-md">
 			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
 					<th class="py-2 px-6">#</th>
-					<th class="py-2 px-6">Date</th>
-					<th class="py-2 px-6">participants</th>
+					<th class="py-2 px-6">{$_('home.date')}</th>
+					<th class="py-2 px-6">{$_('home.participants')}</th>
 					{#if JWTSession.user()?.is_tutor}
-						<th class="py-2 px-6">Actions</th>
+						<th class="py-2 px-6">{$_('home.actions')}</th>
 					{/if}
 				</tr>
 			</thead>
