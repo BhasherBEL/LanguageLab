@@ -217,8 +217,13 @@ async def send_websoket_message(session_id: int, message: schemas.Message):
         for user_websocket in user_websockets:
             await user_websocket.send_text(content)
 
+def store_metadata(db, message_id, metadata: list[schemas.MessageMetadataCreate]):
+    for m in metadata:
+        crud.create_message_metadata(db, message_id, m)
+    pass
+
 @sessionsRouter.post("/{session_id}/messages", status_code=status.HTTP_201_CREATED)
-def create_message(session_id: int, message: schemas.MessageCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+def create_message(session_id: int, entryMessage: schemas.MessageCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     db_session = crud.get_session(db, session_id)
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -226,8 +231,9 @@ def create_message(session_id: int, message: schemas.MessageCreate, background_t
     if not check_user_level(current_user, models.UserType.ADMIN) and current_user not in db_session.users:
         raise HTTPException(status_code=401, detail="You do not have permission to create a message in this session")
 
-    message = crud.create_message(db, message, current_user, db_session)
+    message = crud.create_message(db, entryMessage, current_user, db_session)
 
+    background_tasks.add_task(store_metadata, db, message.id, entryMessage.metadata)
     background_tasks.add_task(send_websoket_message, session_id, schemas.Message.model_validate(message))
 
     return message.id

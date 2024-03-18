@@ -53,3 +53,11 @@ class Message(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     session_id = Column(Integer, ForeignKey('sessions.id'))
     created_at = Column(DateTime, default=datetime.datetime.now)
+
+class MessageMetadata(Base):
+    __tablename__ = 'message_metadata'
+
+    id = Column(Integer, primary_key=True, index=True)
+    message_id = Column(Integer, ForeignKey('messages.id'))
+    message = Column(String)
+    date = Column(Integer)

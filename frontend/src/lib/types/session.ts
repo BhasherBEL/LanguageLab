@@ -151,8 +151,12 @@ export default class Session {
 		return true;
 	}
 
-	async sendMessage(sender: User, content: string): Promise<Message | null> {
-		const id = await createMessageAPI(this.id, content);
+	async sendMessage(
+		sender: User,
+		content: string,
+		metadata: { message: string; date: number }[]
+	): Promise<Message | null> {
+		const id = await createMessageAPI(this.id, content, metadata);
 		if (id == null) return null;
 
 		const message = new Message(id, content, new Date(), sender, this);

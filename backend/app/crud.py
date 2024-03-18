@@ -80,3 +80,10 @@ def create_message(db: Session, message: schemas.MessageCreate, user: schemas.Us
     db.commit()
     db.refresh(db_message)
     return db_message
+
+def create_message_metadata(db: Session, message_id: int, metadata: schemas.MessageMetadataCreate):
+    db_message_metadata = models.MessageMetadata(message_id=message_id, **metadata.dict())
+    db.add(db_message_metadata)
+    db.commit()
+    db.refresh(db_message_metadata)
+    return db_message_metadata

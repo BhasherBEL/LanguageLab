@@ -40,8 +40,12 @@ export async function getMessagesAPI(id: number) {
 	return response.data;
 }
 
-export async function createMessageAPI(id: number, content: string): Promise<number | null> {
-	const response = await axiosInstance.post(`/sessions/${id}/messages`, { content });
+export async function createMessageAPI(
+	id: number,
+	content: string,
+	metadata: { message: string; date: number }[]
+): Promise<number | null> {
+	const response = await axiosInstance.post(`/sessions/${id}/messages`, { content, metadata });
 
 	if (response.status !== 201) {
 		toastAlert('Failed to send message');

@@ -72,8 +72,16 @@ class Message(BaseModel):
             "created_at": self.created_at.isoformat(),
         }
 
+class MessageMetadataCreate(BaseModel):
+    message: str
+    date: int
+
+    class Config:
+        from_attributes = True
+
 class MessageCreate(BaseModel):
     content: str
+    metadata: list[MessageMetadataCreate]
 
     class Config:
         from_attributes = True
