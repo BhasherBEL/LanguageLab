@@ -5,6 +5,7 @@
 
 	function onChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
+		localStorage.setItem('locale', target.value);
 		setupI18n({
 			withLocale: target.value
 		});

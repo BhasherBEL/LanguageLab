@@ -3,7 +3,12 @@
 	import '../app.css';
 	import { setupI18n, isLocaleLoaded, dir, _ } from '$lib/services/i18n';
 
-	setupI18n();
+	const locale = localStorage.getItem('locale');
+	if (locale !== null) {
+		setupI18n({ withLocale: locale });
+	} else {
+		setupI18n();
+	}
 
 	$: if (document.dir !== $dir) {
 		document.dir = $dir;
