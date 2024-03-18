@@ -23,7 +23,7 @@
 			.map((user) => {
 				return {
 					value: user,
-					label: user.username
+					label: user.email
 				};
 			});
 	}
@@ -63,13 +63,13 @@
 		<table class="w-full shadow-md">
 			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
-					<th class="py-2 px-6">{$_('home.username')}</th>
+					<th class="py-2 px-6">{$_('home.email')}</th>
 					<th class="py-2 px-6">{$_('home.actions')}</th>
 				</tr>
 			</thead>
 			{#each sessionUsers as user (user.id)}
 				<tr class="even:bg-white odd:bg-gray-100 text-center">
-					<td class="py-3 px-6 w-2/3">{user.username}</td>
+					<td class="py-3 px-6 w-2/3">{user.email}</td>
 					<td class="py-3 px-6 w-1/3">
 						<button on:click={() => removeParticipant(user)}>
 							<Icon src={XMark} class="w-6" />

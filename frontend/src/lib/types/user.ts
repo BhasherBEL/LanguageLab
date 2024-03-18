@@ -11,19 +11,27 @@ export const users = {
 	reload: () => update((users) => users),
 	add: (user: User) => update((users) => [...users, user]),
 	delete: (id: number) => update((users) => users.filter((user) => user.id !== id)),
-	search: (username: string) => get(users).find((user) => user.username.includes(username)),
+	search: (email: string) => get(users).find((user) => user.email.includes(email)),
 	fetch: async () => User.parseAll(await getUsersAPI())
 };
 
 export default class User {
 	private _id: number;
-	private _username: string;
+	private _email: string;
+	private _nickname: string;
 	private _type: number;
 	private _is_active: boolean;
 
-	private constructor(id: number, username: string, type: number, is_active: boolean) {
+	private constructor(
+		id: number,
+		email: string,
+		nickname: string,
+		type: number,
+		is_active: boolean
+	) {
 		this._id = id;
-		this._username = username;
+		this._email = email;
+		this._nickname = nickname;
 		this._type = type;
 		this._is_active = is_active;
 	}
@@ -32,8 +40,12 @@ export default class User {
 		return this._id;
 	}
 
-	get username(): string {
-		return this._username;
+	get email(): string {
+		return this._email;
+	}
+
+	get nickname(): string {
+		return this._nickname;
 	}
 
 	get type(): number {
@@ -71,7 +83,7 @@ export default class User {
 			return json;
 		}
 
-		const user = new User(json.id, json.username, json.type, json.is_active);
+		const user = new User(json.id, json.email, json.nickname, json.type, json.is_active);
 
 		users.update((us) => {
 			if (!us.find((u) => u.id === user.id)) {

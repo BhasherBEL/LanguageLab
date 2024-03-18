@@ -12,6 +12,7 @@ export interface JWTContent {
 	sub: string;
 	type: number;
 	exp: number;
-	username: string;
+	email: string;
+	nickname: string;
 	is_active: boolean;
 }

@@ -11,7 +11,7 @@
 	<h1 class="font-bold text-2xl"><a href="/">{$_('header.appName')}</a></h1>
 	<div class="flex align-middle">
 		{#if session.isLoggedIn()}
-			<span class="pr-2">{$_('header.connectedAs')} <strong>{get(session.username)}</strong></span>
+			<span class="pr-2">{$_('header.connectedAs')} <strong>{get(session.nickname)}</strong></span>
 			<a href="/logout"><Logout class="h-4/5" /></a>
 		{:else}
 			<a

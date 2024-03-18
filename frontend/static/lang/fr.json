@@ -10,7 +10,7 @@
 	"home": {
 		"date": "Date",
 		"participants": "Participants",
-		"username": "Nom d'utilisateur",
+		"email": "Email",
 		"actions": "Actions",
 		"add": "Ajouter",
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
@@ -32,5 +32,10 @@
 			"november": "novembre",
 			"december": "décembre"
 		}
+	},
+	"login": {
+		"email": "Email",
+		"password": "Mot de passe",
+		"login": "Se connecter"
 	}
 }

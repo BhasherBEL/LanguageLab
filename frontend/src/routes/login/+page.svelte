@@ -3,8 +3,9 @@
 	import Header from '$lib/components/header.svelte';
 	import session from '$lib/stores/JWTSession';
 	import { onMount } from 'svelte';
+	import { _ } from '$lib/services/i18n';
 
-	let username = '';
+	let email = '';
 	let password = '';
 	$: message = '';
 
@@ -17,7 +18,7 @@
 
 	async function login() {
 		message = '';
-		const result = await loginAPI(username, password);
+		const result = await loginAPI(email, password);
 		if (result !== 'OK') {
 			message = result;
 			return;
@@ -40,14 +41,15 @@
 			</div>
 		{/if}
 		<div class="flex w-full mb-4">
-			<label for="username">Nom d'utilisateur</label>
-			<input type="text" id="username" name="username" bind:value={username} required />
+			<label for="email">{$_('login.email')}</label>
+			<input type="text" id="email" name="email" bind:value={email} required />
 		</div>
 		<div class="flex w-full mb-4">
-			<label for="password">Mot de passe</label>
+			<label for="password">{$_('login.password')}</label>
 			<input type="password" id="password" name="password" bind:value={password} required />
 		</div>
-		<button type="submit" on:click|preventDefault={login} class="button">Login</button>
+		<button type="submit" on:click|preventDefault={login} class="button">{$_('login.login')}</button
+		>
 	</form>
 </div>
 

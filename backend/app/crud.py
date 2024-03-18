@@ -28,7 +28,8 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: schemas.UserCreate):
     password = Hasher.get_password_hash(user.password)
-    db_user = models.User(email=user.email.lower(), password=password, type=user.type, is_active=user.is_active)
+    nickname = user.nickname if user.nickname else user.email.split("@")[0]
+    db_user = models.User(email=user.email.lower(), nickname=nickname, password=password, type=user.type, is_active=user.is_active)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

@@ -26,7 +26,7 @@
 		class:rounded-tr-xl={!isSender}
 	>
 		<div class="font-bold mb-1 capitalize">
-			{message.user.username}
+			{message.user.email}
 		</div>
 		<div class="max-w-3xl">{message.content}</div>
 		<div class="text-right text-gray-500">

@@ -20,10 +20,6 @@ class UserCreate(BaseModel):
     type: int = UserType.STUDENT.value
     is_active: bool = True
 
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
 class Token(BaseModel):
     access_token: str
     refresh_token: str

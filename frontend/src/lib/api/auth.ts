@@ -4,12 +4,13 @@ import { axiosPublicInstance } from './apiInstance';
 import { jwtDecode } from 'jwt-decode';
 import { type JWTContent } from '$lib/utils/login';
 
-export async function loginAPI(username: string, password: string): Promise<string> {
+export async function loginAPI(email: string, password: string): Promise<string> {
 	return axiosPublicInstance
 		.post(
 			`/auth/login`,
 			{
-				username,
+				email,
+				username: email,
 				password
 			},
 			{
@@ -34,7 +35,8 @@ export async function loginAPI(username: string, password: string): Promise<stri
 
 				const decoded = jwtDecode<JWTContent>(response.data.access_token);
 
-				session.username.set(decoded.username);
+				session.email.set(decoded.email);
+				session.nickname.set(decoded.nickname);
 				session.type.set(decoded.type.toFixed(0));
 				session.id.set(decoded.sub);
 				session.exp.set(decoded.exp.toFixed(0));

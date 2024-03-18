@@ -11,7 +11,8 @@ function localWritable(name: string, start: string) {
 
 const accessToken = localWritable('accessToken', '');
 const refreshToken = localWritable('refreshToken', '');
-const username = localWritable('username', '');
+const email = localWritable('email', '');
+const nickname = localWritable('nickname', '');
 const type = localWritable('type', '');
 const id = localWritable('id', '');
 const exp = localWritable('exp', '');
@@ -19,7 +20,8 @@ const exp = localWritable('exp', '');
 export default {
 	accessToken,
 	refreshToken,
-	username,
+	email,
+	nickname,
 	type,
 	id,
 	exp,
