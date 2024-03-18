@@ -3,6 +3,7 @@ import { setAuthTokens } from 'axios-jwt';
 import { axiosPublicInstance } from './apiInstance';
 import { jwtDecode } from 'jwt-decode';
 import { type JWTContent } from '$lib/utils/login';
+import User from '$lib/types/user';
 
 export async function loginAPI(email: string, password: string): Promise<string> {
 	return axiosPublicInstance

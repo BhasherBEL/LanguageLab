@@ -2,6 +2,8 @@
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import '../app.css';
 	import { setupI18n, isLocaleLoaded, dir, _ } from '$lib/services/i18n';
+	import { onMount } from 'svelte';
+	import JWTSession from '$lib/stores/JWTSession';
 
 	const locale = localStorage.getItem('locale');
 	if (locale !== null) {
@@ -17,6 +19,10 @@
 	$: if ($isLocaleLoaded) {
 		document.title = $_('header.appName');
 	}
+
+	onMount(() => {
+		JWTSession.loadUser();
+	});
 </script>
 
 {#if $isLocaleLoaded}

@@ -22,6 +22,8 @@ export default class Session {
 	private _users: User[];
 	private _messages: Writable<Message[]>;
 	private _created_at: Date;
+	private _start_time: Date;
+	private _end_time: Date;
 	private _ws: WebSocket | null = null;
 	private _ws_connected = writable(false);
 
@@ -30,7 +32,9 @@ export default class Session {
 		token: string,
 		is_active: boolean,
 		users: User[],
-		created_at: Date
+		created_at: Date,
+		start_time: Date,
+		end_time: Date
 	) {
 		this._id = id;
 		this._token = token;
@@ -38,6 +42,8 @@ export default class Session {
 		this._users = users;
 		this._messages = writable<Message[]>([]);
 		this._created_at = created_at;
+		this._start_time = start_time;
+		this._end_time = end_time;
 	}
 
 	get id(): number {
@@ -60,6 +66,14 @@ export default class Session {
 		return this._created_at;
 	}
 
+	get start_time(): Date {
+		return this._start_time;
+	}
+
+	get end_time(): Date {
+		return this._end_time;
+	}
+
 	get messages(): Writable<Message[]> {
 		return this._messages;
 	}
@@ -69,7 +83,7 @@ export default class Session {
 	}
 
 	usersList(maxLength = 30): string {
-		const users = this._users.map((user) => user.email).join(', ');
+		const users = this._users.map((user) => user.nickname).join(', ');
 		if (users.length < maxLength) {
 			return users;
 		}
@@ -211,7 +225,15 @@ export default class Session {
 			return null;
 		}
 
-		const session = new Session(json.id, json.token, json.is_active, [], new Date(json.created_at));
+		const session = new Session(
+			json.id,
+			json.token,
+			json.is_active,
+			[],
+			new Date(json.created_at),
+			new Date(json.start_time),
+			new Date(json.end_time)
+		);
 
 		session._users = User.parseAll(json.users);
 

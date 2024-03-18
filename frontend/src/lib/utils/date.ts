@@ -37,18 +37,13 @@ export function displayDate(date: Date): string {
 
 	const now = new Date();
 
+	const hours = date.getHours().toString().padStart(2, '0');
+	const minutes = date.getMinutes().toString().padStart(2, '0');
+
 	if (now.getDate() === date.getDate()) {
-		return date.getHours() + ':' + date.getMinutes();
+		return hours + ':' + minutes;
 	} else if (now.getFullYear() === date.getFullYear()) {
-		return (
-			date.getDate() +
-			' ' +
-			getFullMonth(date.getMonth()) +
-			' ' +
-			date.getHours() +
-			':' +
-			date.getMinutes()
-		);
+		return date.getDate() + ' ' + getFullMonth(date.getMonth()) + ' ' + hours + ':' + minutes;
 	} else {
 		return (
 			date.getDate() +
@@ -57,9 +52,9 @@ export function displayDate(date: Date): string {
 			' ' +
 			date.getFullYear() +
 			' ' +
-			date.getHours() +
+			hours +
 			':' +
-			date.getMinutes()
+			minutes
 		);
 	}
 }

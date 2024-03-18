@@ -68,7 +68,7 @@
 					>
 						<td class="py-3 px-6" class:line-through={!session.is_active}>{session.id}</td>
 						<td class="py-3 px-6" class:line-through={!session.is_active}
-							>{displayDate(session.created_at)}</td
+							>{displayDate(session.start_time)} → {displayDate(session.end_time)}</td
 						>
 						<td class="py-3 px-6" class:line-through={!session.is_active}>{session.usersList()}</td>
 

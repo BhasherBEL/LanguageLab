@@ -41,8 +41,7 @@ def delete_user(db: Session, user_id: int):
     return None
 
 def create_session(db: Session, user: schemas.User):
-    token = secrets.token_urlsafe(32)
-    db_session = models.Session(token=token, is_active=True, users=[user])
+    db_session = models.Session(is_active=True, users=[user])
     db.add(db_session)
     db.commit()
     db.refresh(db_session)
