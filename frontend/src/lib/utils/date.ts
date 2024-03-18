@@ -83,3 +83,13 @@ export function displayTime(date: Date): string {
 
 	return hours + ':' + minutes;
 }
+
+export function displayDuration(start: Date, end: Date): string {
+	const duration = end.getTime() - start.getTime();
+
+	const hours = Math.floor(duration / (1000 * 60 * 60));
+	const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+
+	if (hours === 0) return minutes + 'm';
+	else return hours + 'h ' + minutes + 'm';
+}

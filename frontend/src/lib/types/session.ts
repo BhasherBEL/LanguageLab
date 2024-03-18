@@ -218,6 +218,11 @@ export default class Session {
 		return true;
 	}
 
+	remainTime(): number {
+		const now = new Date();
+		return this._end_time.getTime() - now.getTime();
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static parse(json: any): Session | null {
 		if (json === null || json === undefined) {

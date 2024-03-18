@@ -15,7 +15,8 @@
 		"add": "Ajouter",
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
 		"createSession": "Créer une nouvelle session",
-		"participantPlaceholder": "Selectionnez"
+		"participantPlaceholder": "Selectionnez",
+		"remainingDuration": "Durée restante"
 	},
 	"utils": {
 		"month": {

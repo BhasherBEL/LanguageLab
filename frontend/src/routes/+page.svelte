@@ -5,7 +5,7 @@
 	import Session, { sessions } from '$lib/types/session';
 	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { displayDate } from '$lib/utils/date';
+	import { displayDate, displayDuration } from '$lib/utils/date';
 	import JWTSession from '$lib/stores/JWTSession';
 	import { Eye, EyeSlash, Icon, Trash, User } from 'svelte-hero-icons';
 	import { _ } from '$lib/services/i18n';
@@ -51,7 +51,7 @@
 			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
 					<th class="py-2 px-6">#</th>
-					<th class="py-2 px-6">{$_('home.date')}</th>
+					<th class="py-2 px-6">{$_('home.remainingDuration')}</th>
 					<th class="py-2 px-6">{$_('home.participants')}</th>
 					{#if JWTSession.user()?.is_tutor}
 						<th class="py-2 px-6">{$_('home.actions')}</th>
@@ -68,7 +68,7 @@
 					>
 						<td class="py-3 px-6" class:line-through={!session.is_active}>{session.id}</td>
 						<td class="py-3 px-6" class:line-through={!session.is_active}
-							>{displayDate(session.start_time)} → {displayDate(session.end_time)}</td
+							>{displayDuration(new Date(), session.end_time)}</td
 						>
 						<td class="py-3 px-6" class:line-through={!session.is_active}>{session.usersList()}</td>
 
