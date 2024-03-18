@@ -26,6 +26,25 @@
 		"password": "Mot de passe",
 		"login": "Se connecter"
 	},
+	"admin": {
+		"actions": "Actions",
+		"passwordPrompt": "Veuillez entrer le mot de passe. Attention, celui ci ne sera plus récupérable."
+	},
+	"users": {
+		"nickname": "Pseudo",
+		"email": "Email",
+		"category": "Catégorie",
+		"isActive": "Actif",
+		"actions": "Actions",
+		"type": {
+			"admin": "Admin",
+			"tutor": "Tuteur",
+			"student": "Étudiant"
+		}
+	},
+	"button": {
+		"create": "Créer"
+	},
 	"utils": {
 		"month": {
 			"january": "janvier",
@@ -44,6 +63,10 @@
 		"language": {
 			"fr": "Français",
 			"en": "Anglais"
+		},
+		"bool": {
+			"true": "Oui",
+			"false": "Non"
 		}
 	}
 }

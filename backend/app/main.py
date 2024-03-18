@@ -77,7 +77,9 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
         
-    crud.create_user(db=db, user=user)
+    user = crud.create_user(db=db, user=user)
+
+    return user.id
 
 @usersRouter.get("/{user_id}", response_model=schemas.User)
 def read_user(user_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):

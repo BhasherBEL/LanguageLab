@@ -1,4 +1,4 @@
-import { getUsersAPI } from '$lib/api/users';
+import { createUserAPI, getUsersAPI } from '$lib/api/users';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
 
@@ -74,6 +74,21 @@ export default class User {
 
 	static find(user_id: number): User | undefined {
 		return get(users).find((user) => user.id === user_id);
+	}
+
+	static async create(
+		nickname: string,
+		email: string,
+		password: string,
+		type: number,
+		is_active: boolean
+	): Promise<User | null> {
+		const id = await createUserAPI(nickname, email, password, type, is_active);
+		if (id == null) return null;
+
+		const user = new User(id, email, nickname, type, is_active);
+		users.add(user);
+		return user;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
