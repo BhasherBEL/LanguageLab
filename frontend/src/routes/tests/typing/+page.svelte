@@ -53,8 +53,17 @@
 		</div>
 	</div>
 	<div class="relative border-2 rounded text-xl select-none">
-		<div class="text-gray-400 font-mono p-4">
-			{text}
+		<div class="font-mono p-4">
+			<span class="text-inherit p-0 m-0 whitespace-pre-wrap"
+				><!--
+			-->{#each text.slice(0, input.length) as char, i}<!--
+			--><span
+						class="text-gray-800 p-0 m-0"
+						class:text-red-500={char !== input[i]}>{input[i]}</span
+					><!--
+					-->{/each}<!--
+					--></span
+			><span class="text-gray-400 p-0 m-0">{text.slice(input.length)}</span>
 		</div>
 		<textarea
 			bind:value={input}
@@ -64,13 +73,14 @@
 				if (!inProgress && duration > 0) {
 					start();
 				}
-				if (inProgress && text.toLowerCase().startsWith(input.toLowerCase())) {
+				if (inProgress) {
+					// && text.toLowerCase().startsWith(input.toLowerCase())) {
 					lastInput = input;
 				} else {
 					input = lastInput;
 				}
 			}}
-			class="absolute top-0 resize-none font-mono p-4 w-full h-full bg-transparent select-none"
+			class="absolute top-0 resize-none font-mono p-4 w-full h-full bg-transparent select-none text-transparent"
 		/>
 	</div>
 
