@@ -44,6 +44,7 @@ authRouter = APIRouter(prefix="/auth", tags=["auth"])
 usersRouter = APIRouter(prefix="/users", tags=["users"])
 sessionsRouter = APIRouter(prefix="/sessions", tags=["sessions"])
 websocketRouter = APIRouter(prefix="/ws", tags=["websocket"])
+stats = APIRouter(prefix="/stats", tags=["stats"])
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
