@@ -7,7 +7,7 @@
 	import JWTSession from '$lib/stores/JWTSession';
 	import { toastAlert } from '$lib/utils/toasts';
 
-	const initialDuration = 5;
+	const initialDuration = 60;
 
 	let text =
 		"Bonjour, je suis un long texte en français, pour tester la vitesse de frappe. Napoleon Bonaparte, né le 15 aout 1769 à Ajaccio et mort le 5 mai 1821 sur l'ile Sainte-Hélène, est un militaire et homme d'État français, premier empereur des Français, du 18 mai 1804 au 6 avril 1814 et du 20 mars 1815 au 22 juin 1815. Il est l'une des figures les plus célèbres de l'histoire de France et une des plus étudiées au monde. Il est considéré comme lun des plus grands chefs militaires de l'histoire, avec une carrière longue et brillante, mais aussi comme lun des plus grands stratèges militaires de l'histoire. Charles de Gaulle, né le 22 novembre 1890 à Lille et mort le 9 novembre 1970 à Colombey-les-Deux-Églises, est un militaire, écrivain et homme dÉtat français. Il est le chef de la France libre pendant la Seconde Guerre mondiale, le président du Gouvernement provisoire de la République française de 1944 à 1946, puis le président de la République française du 8 janvier 1959 au 28 avril 1969. Il est le fondateur de la Cinquième République française en 1958 et le seul président de la République française à avoir démissionné de ses fonctions. Il est considéré comme lun des plus grands chefs militaires de l'histoire, avec une carrière longue et brillante, mais aussi comme lun des plus grands stratèges militaires de l'histoire.";
@@ -39,6 +39,16 @@
 		return Math.round(n_words / n_minutes);
 	}
 
+	function getErrors() {
+		let errors = 0;
+		for (let i = 0; i < input.length; i++) {
+			if (input[i] !== text[i]) {
+				errors++;
+			}
+		}
+		return errors;
+	}
+
 	async function sendResults() {
 		const user = JWTSession.user();
 		if (!user) {
@@ -46,7 +56,7 @@
 			return;
 		}
 
-		const id = await createTestTypingAPI(user.id, input.length, initialDuration, 0);
+		const id = await createTestTypingAPI(user.id, input.length, initialDuration, getErrors());
 		if (!id) return;
 
 		sent = true;

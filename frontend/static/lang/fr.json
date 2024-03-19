@@ -34,7 +34,7 @@
 	},
 	"tests": {
 		"sendResults": "Envoyer les résultats",
-		"sendResultsDone": "Envoyés"
+		"sendResultsDone": "Envoyé"
 	},
 	"users": {
 		"nickname": "Pseudo",
