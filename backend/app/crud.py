@@ -1,3 +1,4 @@
+import datetime
 from sqlalchemy.orm import Session
 import secrets
 
@@ -55,6 +56,8 @@ def get_sessions(db: Session, user: schemas.User, skip: int = 0, limit: int = 10
         db.query(models.Session)
         .filter(models.Session.users.any(models.User.id == user.id))
         .filter(models.Session.is_active or user.type < 2)
+        .filter(models.Session.end_time <= datetime.datetime.now())
+        .filter(models.Session.start_time >= datetime.datetime.now())
         .offset(skip)
         .limit(limit)
         .all()

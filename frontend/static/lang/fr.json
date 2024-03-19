@@ -19,7 +19,8 @@
 		"remainingDuration": "Durée restante",
 		"nickname": "Pseudo",
 		"learningLanguage": "Langue d'apprentissage",
-		"confirm": "Confirmer"
+		"confirm": "Confirmer",
+		"sessionEnded": "Terminée"
 	},
 	"login": {
 		"email": "Email",

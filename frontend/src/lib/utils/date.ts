@@ -64,31 +64,39 @@ export function displayTime(date: Date): string {
 
 	const now = new Date();
 
-	if (now.getTime() - date.getTime() < 1000 * 60 * 60) {
-		if (now.getTime() - date.getTime() < 1000 * 60) {
-			const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+	if (now.getDate() - date.getDate() < 1000 * 60 * 60 * 24) {
+		if (now.getTime() - date.getTime() < 1000 * 60 * 60) {
+			if (now.getTime() - date.getTime() < 1000 * 60) {
+				const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-			if (seconds === 0) return 'now';
+				if (seconds === 0) return 'now';
 
-			return seconds + 's';
+				return seconds + 's';
+			}
+
+			const minutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+
+			return minutes + 'm';
 		}
 
-		const minutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+		const hours = date.getHours().toString().padStart(2, '0');
+		const minutes = date.getMinutes().toString().padStart(2, '0');
 
-		return minutes + 'm';
+		return hours + ':' + minutes;
 	}
 
-	const hours = date.getHours().toString().padStart(2, '0');
-	const minutes = date.getMinutes().toString().padStart(2, '0');
+	const days = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
-	return hours + ':' + minutes;
+	return days + 'd';
 }
 
-export function displayDuration(start: Date, end: Date): string {
+export function displayDuration(start: Date, end: Date): string | null {
 	const duration = end.getTime() - start.getTime();
 
 	const hours = Math.floor(duration / (1000 * 60 * 60));
 	const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+
+	if (hours < 0 || minutes < 0) return null;
 
 	if (hours === 0) return minutes + 'm';
 	else return hours + 'h ' + minutes + 'm';
