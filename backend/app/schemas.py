@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from sqlalchemy.engine import create
 
 from models import UserType
 import datetime
@@ -85,3 +86,9 @@ class MessageCreate(BaseModel):
 
     class Config:
         from_attributes = True
+
+class TestTypingCreate(BaseModel):
+    characters: int
+    duration: int
+    errors: int
+    created_at: datetime.datetime = datetime.datetime.now()

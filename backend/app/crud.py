@@ -90,3 +90,10 @@ def create_message_metadata(db: Session, message_id: int, metadata: schemas.Mess
     db.commit()
     db.refresh(db_message_metadata)
     return db_message_metadata
+
+def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):
+    db_test = models.TestTyping(user_id=user.id, **test.model_dump())
+    db.add(db_test)
+    db.commit()
+    db.refresh(db_test)
+    return db_test

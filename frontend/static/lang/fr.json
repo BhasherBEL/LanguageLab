@@ -32,6 +32,10 @@
 		"actions": "Actions",
 		"passwordPrompt": "Veuillez entrer le mot de passe. Attention, celui ci ne sera plus récupérable."
 	},
+	"tests": {
+		"sendResults": "Envoyer les résultats",
+		"sendResultsDone": "Envoyés"
+	},
 	"users": {
 		"nickname": "Pseudo",
 		"email": "Email",

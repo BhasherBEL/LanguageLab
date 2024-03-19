@@ -6,6 +6,9 @@ export default {
 			colors: {
 				secondary: '#032f5d',
 				secondaryHover: '#004E9C'
+			},
+			textUnderlineOffset: {
+				6: '6px'
 			}
 		}
 	},

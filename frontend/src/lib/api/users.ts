@@ -34,3 +34,23 @@ export async function createUserAPI(
 
 	return response.data;
 }
+
+export async function createTestTypingAPI(
+	user_id: number,
+	characters: number,
+	duration: number,
+	errors: number
+): Promise<number | null> {
+	const response = await axiosInstance.post(`/users/${user_id}/tests/typing`, {
+		characters,
+		duration,
+		errors
+	});
+
+	if (response.status !== 201) {
+		toastAlert('Failed to create test');
+		return null;
+	}
+
+	return response.data;
+}

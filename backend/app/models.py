@@ -61,3 +61,14 @@ class MessageMetadata(Base):
     message_id = Column(Integer, ForeignKey('messages.id'))
     message = Column(String)
     date = Column(Integer)
+
+class TestTyping(Base):
+    __tablename__ = 'test_typing'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    characters = Column(Integer)
+    duration = Column(Integer)
+    errors = Column(Integer)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+
