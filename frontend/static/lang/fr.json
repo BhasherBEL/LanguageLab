@@ -20,7 +20,8 @@
 		"nickname": "Pseudo",
 		"learningLanguage": "Langue d'apprentissage",
 		"confirm": "Confirmer",
-		"sessionEnded": "Terminée"
+		"sessionEnded": "Terminée",
+		"noSessions": "Aucune session en cours"
 	},
 	"login": {
 		"email": "Email",

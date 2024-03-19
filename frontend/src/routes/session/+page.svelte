@@ -13,7 +13,10 @@
 		requireLogin();
 
 		const param = $page.url.searchParams.get('id');
-		if (!param) return;
+		if (!param) {
+			window.location.href = '/';
+			return;
+		}
 
 		const id = parseInt(param);
 

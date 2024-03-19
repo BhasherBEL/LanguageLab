@@ -5,7 +5,7 @@
 	import Session, { sessions } from '$lib/types/session';
 	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { displayDate, displayDuration } from '$lib/utils/date';
+	import { displayDuration } from '$lib/utils/date';
 	import JWTSession from '$lib/stores/JWTSession';
 	import { Eye, EyeSlash, Icon, Trash, User } from 'svelte-hero-icons';
 	import { _ } from '$lib/services/i18n';
@@ -108,5 +108,8 @@
 				{/each}
 			</tbody>
 		</table>
+		{#if !$sessions.length}
+			<div class="text-center mt-8 text-gray-500 text-lg italic">{$_('home.noSessions')}</div>
+		{/if}
 	</div>
 {/if}
