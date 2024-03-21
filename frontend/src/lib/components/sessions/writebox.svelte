@@ -64,7 +64,7 @@
 				}
 			}}
 		/>
-		<button class="valid w-12 button rounded-md" on:click={sendMessage}>
+		<button class="valid w-12 button !rounded-none !rounded-br-lg" on:click={sendMessage}>
 			<Icon src={PaperAirplane} />
 		</button>
 	</div>

@@ -84,7 +84,7 @@
 			{duration}s
 		</div>
 	</div>
-	<ul class="h-10 flex justify-around border-t-2 border-x-2 divide-x-2 text-center">
+	<ul class="h-10 flex justify-around border-t-2 rounded-t-lg border-x-2 divide-x-2 text-center">
 		{#each config.SPECIAL_CHARS as char (char)}
 			<button
 				class="flex-grow"
@@ -97,7 +97,7 @@
 			</button>
 		{/each}
 	</ul>
-	<div class="relative border-2 rounded text-xl select-none">
+	<div class="relative border-2 rounded-b-lg text-xl select-none">
 		<div class="font-mono p-4">
 			<span class="text-inherit p-0 m-0 whitespace-pre-wrap"
 				><!--
