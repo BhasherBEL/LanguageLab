@@ -6,6 +6,7 @@
 	import { createTestTypingAPI } from '$lib/api/users';
 	import JWTSession from '$lib/stores/JWTSession';
 	import { toastAlert } from '$lib/utils/toasts';
+	import config from '$lib/config';
 
 	const initialDuration = 60;
 
@@ -17,9 +18,12 @@
 	let lastInput = '';
 	let input = '';
 	let sent = false;
+	let textArea: HTMLTextAreaElement;
 
 	onMount(async () => {
 		if (!requireLogin()) return;
+
+		textArea.focus();
 	});
 
 	function start() {
@@ -80,6 +84,19 @@
 			{duration}s
 		</div>
 	</div>
+	<ul class="h-10 flex justify-around border-t-2 border-x-2 divide-x-2 text-center">
+		{#each config.SPECIAL_CHARS as char (char)}
+			<button
+				class="flex-grow"
+				on:click={() => {
+					input += char;
+				}}
+				on:mousedown={(e) => e.preventDefault()}
+			>
+				{char}
+			</button>
+		{/each}
+	</ul>
 	<div class="relative border-2 rounded text-xl select-none">
 		<div class="font-mono p-4">
 			<span class="text-inherit p-0 m-0 whitespace-pre-wrap"
@@ -99,6 +116,7 @@
 		</div>
 		<textarea
 			bind:value={input}
+			bind:this={textArea}
 			spellcheck="false"
 			disabled={!inProgress && duration <= 0}
 			on:input={(e) => {

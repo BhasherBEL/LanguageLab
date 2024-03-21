@@ -1,4 +1,5 @@
 <script lang="ts">
+	import config from '$lib/config';
 	import { _ } from '$lib/services/i18n';
 	import JWTSession from '$lib/stores/JWTSession';
 	import type Session from '$lib/types/session';
@@ -38,19 +39,33 @@
 	}
 </script>
 
-<textarea
-	class="flex-grow border-2 border-gray-300 rounded-md p-2 resize-none overflow-y-hidden"
-	placeholder={$_('chatbox.placeholder')}
-	bind:value={message}
-	on:keypress={(e) => keyPress(e)}
-	on:keypress={async (e) => {
-		if (e.key === 'Enter' && !e.shiftKey) {
-			await sendMessage();
-		} else {
-			keyPress(e);
-		}
-	}}
-/>
-<button class="w-12 button rounded-md" on:click={sendMessage}>
-	<Icon src={PaperAirplane} />
-</button>
+<div class="w-full">
+	<ul class="h-10 flex justify-around border-y-2 divide-x-2">
+		{#each config.SPECIAL_CHARS as char (char)}
+			<button
+				class="flex-grow hover:bg-gray-100"
+				on:click={() => {
+					message += char;
+				}}>{char}</button
+			>
+		{/each}
+	</ul>
+	<div class="w-full flex">
+		<textarea
+			class="flex-grow rounded-md p-2 resize-none overflow-y-hidden"
+			placeholder={$_('chatbox.placeholder')}
+			bind:value={message}
+			on:keypress={(e) => keyPress(e)}
+			on:keypress={async (e) => {
+				if (e.key === 'Enter' && !e.shiftKey) {
+					await sendMessage();
+				} else {
+					keyPress(e);
+				}
+			}}
+		/>
+		<button class="valid w-12 button rounded-md" on:click={sendMessage}>
+			<Icon src={PaperAirplane} />
+		</button>
+	</div>
+</div>
