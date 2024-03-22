@@ -34,7 +34,7 @@
 		const password = prompt($_('admin.passwordPrompt'));
 		if (!password) return;
 
-		const user = await User.create(nickname, email, password, type_id, is_active);
+		const user = await User.create(nickname.trim(), email.trim(), password, type_id, is_active);
 		if (!user) return;
 
 		nickname = '';
