@@ -59,24 +59,24 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each $sessions.sort((a, b) => a.created_at.getTime() - b.created_at.getTime()) as session (session.id)}
+				{#each $sessions.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as session (session.id)}
 					{@const isHidden =
 						!session.is_active || session.end_time < new Date() || session.start_time > new Date()}
 					<tr
 						on:click={() => (window.location.href = '/session?id=' + session.id)}
 						tabindex="0"
 						class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
-						class:text-gray-500={isHidden}
+						class:text-gray-400={isHidden}
 					>
-						<td class="py-3 px-6" class:line-through={isHidden}>{session.id}</td>
-						<td class="py-3 px-6" class:line-through={isHidden}>
+						<td class="py-3 px-6">{session.id}</td>
+						<td class="py-3 px-6">
 							{#if session.end_time < new Date()}
 								{$_('home.sessionEnded')}
 							{:else}
 								{displayDuration(new Date(), session.end_time)}
 							{/if}
 						</td>
-						<td class="py-3 px-6" class:line-through={isHidden}>{session.usersList()}</td>
+						<td class="py-3 px-6">{session.usersList()}</td>
 
 						{#if JWTSession.user()?.is_tutor}
 							<td class="py-3 px-6">
