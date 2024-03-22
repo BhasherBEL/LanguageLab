@@ -34,8 +34,6 @@
 
 		metadata.push({ message: message, date: new Date().getTime() });
 		lastMessage = message;
-
-		console.log('metadata', metadata);
 	}
 </script>
 

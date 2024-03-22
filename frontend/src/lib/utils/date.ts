@@ -67,11 +67,7 @@ export function displayTime(date: Date): string {
 	if (now.getDate() - date.getDate() < 1000 * 60 * 60 * 24) {
 		if (now.getTime() - date.getTime() < 1000 * 60 * 60) {
 			if (now.getTime() - date.getTime() < 1000 * 60) {
-				const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-				if (seconds === 0) return 'now';
-
-				return seconds + 's';
+				return 'now';
 			}
 
 			const minutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));

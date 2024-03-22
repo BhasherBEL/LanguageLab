@@ -45,7 +45,10 @@
 		"type": {
 			"admin": "Admin",
 			"tutor": "Tuteur",
-			"student": "Étudiant"
+			"student": "Étudiant",
+			"0": "Admin",
+			"1": "Tuteur",
+			"2": "Étudiant"
 		}
 	},
 	"button": {
