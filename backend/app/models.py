@@ -24,6 +24,15 @@ class User(Base):
 
     sessions = relationship("Session", secondary="user_sessions", back_populates="users")
 
+class UserMetadata(Base):
+    __tablename__ = 'user_metadata'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    ui_language = Column(String, default="fr")
+    home_language = Column(String, default="en")
+    target_language = Column(String, default="fr")
+    birthdate = Column(DateTime)
 
 class Session(Base):
     __tablename__ = 'sessions'
