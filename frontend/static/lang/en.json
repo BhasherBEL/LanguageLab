@@ -18,6 +18,15 @@
 		"participantPlaceholder": "Please select",
 		"remainingDuration": "Remaining duration"
 	},
+	"signup": {
+		"title": "Register",
+		"language": "Language",
+		"nickname": "Nickname",
+		"email": "Email",
+		"password": "Password",
+		"confirmPassword": "Confirm password",
+		"signup": "Sign up"
+	},
 	"utils": {
 		"month": {
 			"january": "january",

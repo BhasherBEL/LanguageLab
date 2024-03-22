@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { _, _activeLocale, locales, setupI18n } from '../../services/i18n';
 
-	let value: string = _activeLocale;
+	let classes = '';
+	export { classes as class };
+
+	$: value = $_activeLocale;
+
+	_activeLocale.subscribe((locale) => {
+		value = locale;
+	});
 
 	function onChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
@@ -12,8 +19,8 @@
 	}
 </script>
 
-<div class="ml-2">
-	<select {value} on:change={onChange} class="bg-transparent">
+<div class=" flex-1">
+	<select {value} on:change={onChange} class="bg-transparent {classes}">
 		{#each Object.entries(locales) as [locale, name] (locale)}
 			<option value={locale}>{name}</option>
 		{/each}

@@ -1,5 +1,6 @@
 from collections import defaultdict
-from fastapi import APIRouter, FastAPI, status, Depends, HTTPException, BackgroundTasks
+from typing import Annotated
+from fastapi import APIRouter, FastAPI, Form, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -61,6 +62,18 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         "access_token": hashing.create_access_token(db_user),
         "refresh_token": hashing.create_refresh_token(db_user),
     }   
+
+@authRouter.post("/register", status_code=status.HTTP_201_CREATED)
+def register(email: Annotated[str, Form()], password: Annotated[str, Form()], nickname: Annotated[str, Form()], db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="User already registered")
+
+    user_data = schemas.UserCreate(email=email, password=password, nickname=nickname)
+        
+    user = crud.create_user(db=db, user=user_data)
+
+    return user.id
 
 @authRouter.post("/refresh", response_model=schemas.Token)
 def refresh_token(current_user: models.User = Depends(hashing.get_jwt_user_from_refresh_token)):

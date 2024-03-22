@@ -26,6 +26,6 @@
 				)}"><Login /></a
 			>
 		{/if}
-		<LocalSelector />
+		<LocalSelector class="ml-2" />
 	</div>
 </header>

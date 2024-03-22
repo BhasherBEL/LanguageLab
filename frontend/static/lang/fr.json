@@ -32,6 +32,20 @@
 		"actions": "Actions",
 		"passwordPrompt": "Veuillez entrer le mot de passe. Attention, celui ci ne sera plus récupérable."
 	},
+	"signup": {
+		"title": "Inscription",
+		"language": "Langue / Language",
+		"nickname": "Pseudo",
+		"email": "Email",
+		"password": "Mot de passe",
+		"confirmPassword": "Confirmer le mot de passe",
+		"signup": "S'inscrire",
+		"passwordRules": "Le mot de passe doit contenir au moins 8 caractères",
+		"differentPasswords": "Les mots de passe ne correspondent pas",
+		"emptyFields": "Veuillez remplir tous les champs",
+		"humans": "Je ne suis pas un robot",
+		"humanity": "Veuillez confirmer que vous n'êtes pas un robot"
+	},
 	"tests": {
 		"sendResults": "Envoyer les résultats",
 		"sendResultsDone": "Envoyé"

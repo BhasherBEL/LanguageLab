@@ -23,7 +23,7 @@ const fallbackLocale = 'fr';
 
 const MESSAGE_FILE_URL_TEMPLATE = '/lang/{locale}.json';
 
-export let _activeLocale: string;
+export let _activeLocale = writable(fallbackLocale);
 
 const isDownloading = writable(false);
 
@@ -32,13 +32,15 @@ function setupI18n(options = { withLocale: fallbackLocale }) {
 
 	init({ initialLocale: locale_, fallbackLocale: fallbackLocale });
 
+	_activeLocale.set(locale_);
+
 	if (!hasLoadedLocale(locale_)) {
 		isDownloading.set(true);
 
 		const messagesFileUrl = MESSAGE_FILE_URL_TEMPLATE.replace('{locale}', locale_);
 
 		return loadJson(messagesFileUrl).then((messages) => {
-			_activeLocale = locale_;
+			_activeLocale.set(locale_);
 
 			addMessages(locale_, messages);
 
@@ -53,8 +55,8 @@ const isLocaleLoaded = derived(
 	[isDownloading, dictionary],
 	([$isDownloading, $dictionary]) =>
 		!$isDownloading &&
-		$dictionary[_activeLocale] &&
-		Object.keys($dictionary[_activeLocale]).length > 0
+		$dictionary[get(_activeLocale)] &&
+		Object.keys($dictionary[get(_activeLocale)]).length > 0
 );
 
 const dir = derived(locale, ($locale) => ($locale === 'ar' ? 'rtl' : 'ltr'));
