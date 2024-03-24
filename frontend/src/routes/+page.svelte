@@ -59,7 +59,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each $sessions.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as session (session.id)}
+				{#each $sessions.sort((a, b) => b.end_time.getTime() - a.end_time.getTime()) as session (session.id)}
 					{@const isHidden =
 						!session.is_active || session.end_time < new Date() || session.start_time > new Date()}
 					<tr
@@ -72,6 +72,11 @@
 						<td class="py-3 px-6">
 							{#if session.end_time < new Date()}
 								{$_('home.sessionEnded')}
+							{:else if session.start_time > new Date()}
+								({displayDuration(new Date(), session.start_time)}) - {displayDuration(
+									new Date(),
+									session.end_time
+								)}
 							{:else}
 								{displayDuration(new Date(), session.end_time)}
 							{/if}
