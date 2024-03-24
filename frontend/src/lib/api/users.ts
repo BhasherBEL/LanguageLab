@@ -35,6 +35,28 @@ export async function createUserAPI(
 	return response.data;
 }
 
+export async function createUserMetadataAPI(
+	user_id: number,
+	ui_language: string,
+	home_language: string,
+	target_language: string,
+	birthdate: string
+): Promise<number | null> {
+	const response = await axiosInstance.post(`/users/${user_id}/metadata`, {
+		ui_language,
+		home_language,
+		target_language,
+		birthdate
+	});
+
+	if (response.status !== 201) {
+		toastAlert('Failed to create user metadata');
+		return null;
+	}
+
+	return response.data;
+}
+
 export async function createTestTypingAPI(
 	user_id: number,
 	characters: number,

@@ -48,7 +48,11 @@
 	},
 	"firstLogin": {
 		"welcome": "Similique tempora incidunt blanditiis nostrum illum omnis architecto. Doloremque illum repellat sequi voluptatem accusantium tenetur distinctio. Dolor qui ut libero pariatur eos fugiat nam et. Temporibus consequatur eum nisi ab aperiam. Officiis inventore voluptate ab explicabo rerum. Nemo incidunt sequi consequatur illum eius ipsum veritatis dolores.",
-		"informedConsent": "Tempora deleniti incidunt quis voluptatem accusantium. Et ad dolore ipsa. Hic sint sint assumenda. Porro officia atque et est quam. Delectus maxime accusamus vero. Ullam voluptatem et vitae sequi. Aut autem quos illo. Tenetur voluptas illo voluptas similique saepe velit aspernatur error. Quae consectetur ut voluptas reiciendis natus ratione eum eum. Consequatur odit est repellat doloribus consequatur. Voluptatem omnis officia dolores ea ea laboriosam. Voluptatem earum ut et. Veniam quasi est eius. Quibusdam tempore aspernatur voluptatem animi quasi et ut. Ab aut quia illum. Repellendus rerum cupiditate illo nihil eum qui quia eius. Suscipit sapiente in odit doloribus soluta repudiandae exercitationem vel. Quam quia omnis autem et aspernatur quod. Corrupti architecto aut adipisci sed error necessitatibus quod quasi. Nihil sunt optio delectus consequatur culpa non. Illum laudantium beatae sunt deleniti et officia. Perspiciatis a laudantium maiores vero. Doloribus qui et numquam ipsam consequatur id. Nemo reprehenderit eum enim id delectus illo veritatis id. Aspernatur occaecati et laboriosam commodi expedita sequi maiores. Voluptatum labore officiis voluptas ratione ut quam ducimus. Molestias aut doloribus aspernatur ipsum."
+		"informedConsent": "Tempora deleniti incidunt quis voluptatem accusantium. Et ad dolore ipsa. Hic sint sint assumenda. Porro officia atque et est quam. Delectus maxime accusamus vero. Ullam voluptatem et vitae sequi. Aut autem quos illo. Tenetur voluptas illo voluptas similique saepe velit aspernatur error. Quae consectetur ut voluptas reiciendis natus ratione eum eum. Consequatur odit est repellat doloribus consequatur. Voluptatem omnis officia dolores ea ea laboriosam. Voluptatem earum ut et. Veniam quasi est eius. Quibusdam tempore aspernatur voluptatem animi quasi et ut. Ab aut quia illum. Repellendus rerum cupiditate illo nihil eum qui quia eius. Suscipit sapiente in odit doloribus soluta repudiandae exercitationem vel. Quam quia omnis autem et aspernatur quod. Corrupti architecto aut adipisci sed error necessitatibus quod quasi. Nihil sunt optio delectus consequatur culpa non. Illum laudantium beatae sunt deleniti et officia. Perspiciatis a laudantium maiores vero. Doloribus qui et numquam ipsam consequatur id. Nemo reprehenderit eum enim id delectus illo veritatis id. Aspernatur occaecati et laboriosam commodi expedita sequi maiores. Voluptatum labore officiis voluptas ratione ut quam ducimus. Molestias aut doloribus aspernatur ipsum.",
+		"homeLanguage": "Langue maternelle",
+		"targetLanguage": "Langue cible",
+		"birthdate": "Date de naissance",
+		"consent": "Je consens à participer à cette étude"
 	},
 	"tests": {
 		"sendResults": "Envoyer les résultats",
@@ -70,7 +74,8 @@
 		}
 	},
 	"button": {
-		"create": "Créer"
+		"create": "Créer",
+		"submit": "Envoyer"
 	},
 	"utils": {
 		"month": {
