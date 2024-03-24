@@ -4,6 +4,7 @@
 	import session from '$lib/stores/JWTSession';
 	import { onMount } from 'svelte';
 	import { _ } from '$lib/services/i18n';
+	import { getBaseURL } from '$lib/utils/login';
 
 	let email = '';
 	let password = '';
@@ -11,7 +12,7 @@
 
 	onMount(() => {
 		if (session.isLoggedIn()) {
-			const redirect = new URLSearchParams(window.location.search).get('redirect') ?? '/';
+			const redirect = new URLSearchParams(window.location.search).get('redirect') ?? getBaseURL();
 			window.location.href = redirect;
 		}
 	});
@@ -25,7 +26,7 @@
 		}
 
 		const redirect = decodeURIComponent(
-			new URLSearchParams(window.location.search).get('redirect') ?? '/'
+			new URLSearchParams(window.location.search).get('redirect') ?? getBaseURL()
 		);
 		window.location.href = redirect;
 	}

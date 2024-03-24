@@ -5,7 +5,7 @@
 	import Chatbox from '$lib/components/sessions/chatbox.svelte';
 	import JWTSession from '$lib/stores/JWTSession';
 	import Session from '$lib/types/session';
-	import { requireLogin } from '$lib/utils/login';
+	import { getBaseURL, requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 	import { _ } from '$lib/services/i18n';
 
@@ -16,7 +16,7 @@
 
 		const param = $page.url.searchParams.get('id');
 		if (!param) {
-			window.location.href = '/';
+			window.location.href = getBaseURL();
 			return;
 		}
 

@@ -7,12 +7,13 @@
 	import { CheckCircle, ExclamationTriangle, Icon } from 'svelte-hero-icons';
 	import { loginAPI, registerAPI } from '$lib/api/auth';
 	import { toastAlert } from '$lib/utils/toasts';
+	import { getBaseURL } from '$lib/utils/login';
 
 	let checker: HTMLDivElement;
 
 	onMount(() => {
 		if (JWTSession.isLoggedIn()) {
-			const redirect = new URLSearchParams(window.location.search).get('redirect') ?? '/';
+			const redirect = new URLSearchParams(window.location.search).get('redirect') ?? getBaseURL();
 			window.location.href = redirect;
 		}
 

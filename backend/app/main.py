@@ -53,8 +53,8 @@ def health():
     return {}
 
 @authRouter.post("/login", response_model=schemas.Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email_and_password(db, form_data.email, form_data.password)
+def login(email: Annotated[str, Form()], password: Annotated[str, Form()], db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email_and_password(db, email, password)
     if db_user is None:
         raise HTTPException(status_code=401, detail="Incorrect email or password")
 

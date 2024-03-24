@@ -3,7 +3,7 @@
 	import Header from '$lib/components/header.svelte';
 	import EditParticipants from '$lib/components/sessions/editParticipants.svelte';
 	import Session, { sessions } from '$lib/types/session';
-	import { requireLogin } from '$lib/utils/login';
+	import { getBaseURL, requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 	import { displayDuration } from '$lib/utils/date';
 	import JWTSession from '$lib/stores/JWTSession';
@@ -63,7 +63,7 @@
 					{@const isHidden =
 						!session.is_active || session.end_time < new Date() || session.start_time > new Date()}
 					<tr
-						on:click={() => (window.location.href = '/session?id=' + session.id)}
+						on:click={() => (window.location.href = getBaseURL() + '/session/?id=' + session.id)}
 						tabindex="0"
 						class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
 						class:text-gray-400={isHidden}
