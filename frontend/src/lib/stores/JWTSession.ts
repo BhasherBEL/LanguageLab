@@ -1,3 +1,4 @@
+import { getUserAPI } from '$lib/api/users';
 import User from '$lib/types/user';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
@@ -34,17 +35,21 @@ const user = () => {
 	return user;
 };
 
-const loadUser = () => {
-	const user = User.parse({
-		id: parseInt(get(id)),
-		email: get(email),
-		nickname: get(nickname),
-		type: parseInt(get(type)),
-		is_active: true
-	});
+const userOrLoad = async () => {
+	const user = User.find(parseInt(get(id)));
+
+	if (user !== undefined) {
+		return user;
+	}
+	return await loadUser();
+};
+
+const loadUser = async () => {
+	const user = User.parse(await getUserAPI(parseInt(get(id))));
 	if (user === undefined && isLoggedIn()) {
 		toastAlert('Failed to load user data');
 	}
+	return user;
 };
 
 export default {
@@ -57,5 +62,6 @@ export default {
 	exp,
 	isLoggedIn,
 	user,
-	loadUser
+	loadUser,
+	userOrLoad
 };

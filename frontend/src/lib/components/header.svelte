@@ -5,7 +5,7 @@
 	import Login from 'svelte-material-icons/Login.svelte';
 	import LocalSelector from './header/localSelector.svelte';
 	import { _ } from '$lib/services/i18n';
-	import { Cog6Tooth, ExclamationTriangle, Icon } from 'svelte-hero-icons';
+	import { Clock, Cog6Tooth, ExclamationTriangle, Icon } from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import { getUserMetadataAPI } from '$lib/api/users';
 
@@ -32,6 +32,16 @@
 		{#if session.user()?.type === 0}
 			<a href="/admin/" class="mr-4 mt-0.5">
 				<Icon src={Cog6Tooth} class="size-6" />
+			</a>
+		{/if}
+		{#if session.user()?.type === 1 || session.user()?.type === 0}
+			<a href="/timeslots/set/" class="mr-4 mt-0.5">
+				<Icon src={Clock} class="size-6" />
+			</a>
+		{/if}
+		{#if session.user()?.type === 2}
+			<a href="/timeslots/" class="mr-4 mt-0.5">
+				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
 		{#if session.isLoggedIn()}

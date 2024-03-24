@@ -1,4 +1,4 @@
-import { createUserAPI, getUsersAPI } from '$lib/api/users';
+import { createUserAPI, getUsersAPI, patchUserAPI } from '$lib/api/users';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
 
@@ -77,6 +77,10 @@ export default class User {
 		const user = obj as User;
 
 		return this.id === user.id;
+	}
+
+	async setAvailability(availability: number): Promise<boolean> {
+		return await patchUserAPI(this.id, { availability: availability });
 	}
 
 	static find(user_id: number): User | undefined {

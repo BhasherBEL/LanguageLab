@@ -59,7 +59,8 @@
 		"cesttime": "Heure belge",
 		"availabilities": "Selectionnez vos disponibilités pour filtrer les tuteurs disponibles",
 		"availableTutors": "Tuteurs disponibles",
-		"noTutors": "Aucun tuteur disponible. Veuillez selectionner d'autres disponibilités."
+		"noTutors": "Aucun tuteur disponible. Veuillez selectionner d'autres disponibilités.",
+		"setAvailabilities": "Sélectionnez vos disponibilités"
 	},
 	"tests": {
 		"sendResults": "Envoyer les résultats",
@@ -79,11 +80,12 @@
 			"1": "Tuteur",
 			"2": "Étudiant"
 		},
-		"availability": "disponibilités"
+		"availability": "Disponibilités"
 	},
 	"button": {
 		"create": "Créer",
-		"submit": "Envoyer"
+		"submit": "Envoyer",
+		"sent": "Envoyé !"
 	},
 	"utils": {
 		"month": {

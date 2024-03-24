@@ -58,9 +58,10 @@ def delete_user(db: Session, user_id: int):
 
 
 def update_user(db: Session, user: schemas.UserUpdate, user_id: int):
-    db.query(models.User).filter(models.User.id ==
-                                 user_id).update(user.dict(exclude_unset=True))
+    cnt = db.query(models.User).filter(models.User.id ==
+                                       user_id).update(user.dict(exclude_unset=True))
     db.commit()
+    return cnt > 0
 
 
 def create_session(db: Session, user: schemas.User):

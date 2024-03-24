@@ -12,6 +12,17 @@ export async function getUsersAPI() {
 	return response.data;
 }
 
+export async function getUserAPI(user_id: number) {
+	const response = await axiosInstance.get(`/users/${user_id}`);
+
+	if (response.status !== 200) {
+		toastAlert('Failed to get user');
+		return null;
+	}
+
+	return response.data;
+}
+
 export async function createUserAPI(
 	nickname: string,
 	email: string,
@@ -33,6 +44,17 @@ export async function createUserAPI(
 	}
 
 	return response.data;
+}
+
+export async function patchUserAPI(user_id: number, data: any): Promise<boolean> {
+	const response = await axiosInstance.patch(`/users/${user_id}`, data);
+
+	if (response.status !== 204) {
+		toastAlert('Failed to update user');
+		return false;
+	}
+
+	return true;
 }
 
 export async function createUserMetadataAPI(

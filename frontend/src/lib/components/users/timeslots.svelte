@@ -1,12 +1,13 @@
 <script lang="ts">
-	import type { FormEventHandler } from 'svelte/elements';
 	import { _ } from '$lib/services/i18n';
 
-	export let timeslots = 0;
+	export let timeslots: number;
+
+	console.log(timeslots);
 
 	function compute(event: InputEvent & { target: HTMLInputElement }) {
 		const element = event.target as HTMLInputElement;
-		timeslots ^= 1 << (parseInt(element.name) - 1);
+		timeslots ^= 1 << parseInt(element.name);
 	}
 </script>
 
@@ -26,6 +27,7 @@
 				<td class="h-12 border-2">
 					<input
 						type="checkbox"
+						checked={(1 << (i * 5 + j + 1)) & timeslots ? true : false}
 						name={(i * 5 + j + 1).toString()}
 						class="w-full h-full"
 						on:input={compute}
