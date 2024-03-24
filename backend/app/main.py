@@ -3,7 +3,6 @@ import datetime
 from typing import Annotated
 from fastapi import APIRouter, FastAPI, Form, status, Depends, HTTPException, BackgroundTasks, Header
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocket
 from contextlib import asynccontextmanager
@@ -123,10 +122,6 @@ def read_user(user_id: int, db: Session = Depends(get_db), current_user: schemas
 
 @usersRouter.get("", response_model=list[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
-    if not check_user_level(current_user, models.UserType.ADMIN):
-        raise HTTPException(
-            status_code=401, detail="You do not have permission to view users")
-
     return crud.get_users(db, skip=skip, limit=limit)
 
 
@@ -137,6 +132,16 @@ def delete_user(user_id: int, db: Session = Depends(get_db), current_user: schem
             status_code=401, detail="You do not have permission to delete a user")
 
     if not crud.delete_user(db, user_id):
+        raise HTTPException(status_code=404, detail="User not found")
+
+
+@usersRouter.patch("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+    if not check_user_level(current_user, models.UserType.ADMIN) and current_user.id != user_id:
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to update this user")
+
+    if not crud.update_user(db, user, user_id):
         raise HTTPException(status_code=404, detail="User not found")
 
 

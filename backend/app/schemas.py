@@ -9,6 +9,7 @@ class User(BaseModel):
     email: str
     nickname: str
     type: int
+    availability: int
     is_active: bool
 
     class Config:
@@ -20,7 +21,20 @@ class UserCreate(BaseModel):
     nickname: str | None = None
     password: str
     type: int = UserType.STUDENT.value
+    availability: int = 0
     is_active: bool = True
+
+
+class UserUpdate(BaseModel):
+    email: str | None = None
+    nickname: str | None = None
+    password: str | None = None
+    type: int | None = None
+    availability: int | None = None
+    is_active: bool | None = None
+
+    class Config:
+        from_attributes = True
 
 
 class UserMetadataCreate(BaseModel):

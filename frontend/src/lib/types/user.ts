@@ -20,6 +20,7 @@ export default class User {
 	private _email: string;
 	private _nickname: string;
 	private _type: number;
+	private _availability: number;
 	private _is_active: boolean;
 
 	private constructor(
@@ -27,12 +28,14 @@ export default class User {
 		email: string,
 		nickname: string,
 		type: number,
+		availability: number,
 		is_active: boolean
 	) {
 		this._id = id;
 		this._email = email;
 		this._nickname = nickname;
 		this._type = type;
+		this._availability = availability;
 		this._is_active = is_active;
 	}
 
@@ -64,6 +67,10 @@ export default class User {
 		return this._type <= 1;
 	}
 
+	get availability(): number {
+		return this._availability;
+	}
+
 	equals<T>(obj: T): boolean {
 		if (obj === null || obj === undefined) return false;
 		if (!(obj instanceof User)) return false;
@@ -86,7 +93,7 @@ export default class User {
 		const id = await createUserAPI(nickname, email, password, type, is_active);
 		if (id == null) return null;
 
-		const user = new User(id, email, nickname, type, is_active);
+		const user = new User(id, email, nickname, type, 0, is_active);
 		users.add(user);
 		return user;
 	}
@@ -98,7 +105,14 @@ export default class User {
 			return json;
 		}
 
-		const user = new User(json.id, json.email, json.nickname, json.type, json.is_active);
+		const user = new User(
+			json.id,
+			json.email,
+			json.nickname,
+			json.type,
+			json.availability,
+			json.is_active
+		);
 
 		users.update((us) => {
 			if (!us.find((u) => u.id === user.id)) {

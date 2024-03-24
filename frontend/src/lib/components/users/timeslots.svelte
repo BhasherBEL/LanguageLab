@@ -1,0 +1,37 @@
+<script lang="ts">
+	import type { FormEventHandler } from 'svelte/elements';
+	import { _ } from '$lib/services/i18n';
+
+	export let timeslots = 0;
+
+	function compute(event: InputEvent & { target: HTMLInputElement }) {
+		const element = event.target as HTMLInputElement;
+		timeslots ^= 1 << (parseInt(element.name) - 1);
+	}
+</script>
+
+<table class="w-full table-fixed text-center border-collapse">
+	<tr class="h-12 bg-gray-100 font-bold">
+		<td class="border-2">{$_('timeslots.cesttime')}</td>
+		<td class="border-2">{$_('utils.days.monday')}</td>
+		<td class="border-2">{$_('utils.days.tuesday')}</td>
+		<td class="border-2">{$_('utils.days.wednesday')}</td>
+		<td class="border-2">{$_('utils.days.thursday')}</td>
+		<td class="border-2">{$_('utils.days.friday')}</td>
+	</tr>
+	{#each Array.from({ length: 5 }, (_, i) => i) as i}
+		<tr>
+			<td class="h-12 border-2 bg-gray-100 font-bold">{i * 2 + 8}:30 - {i * 2 + 10}:30</td>
+			{#each Array.from({ length: 5 }, (_, j) => j) as j}
+				<td class="h-12 border-2">
+					<input
+						type="checkbox"
+						name={(i * 5 + j + 1).toString()}
+						class="w-full h-full"
+						on:input={compute}
+					/>
+				</td>
+			{/each}
+		</tr>
+	{/each}
+</table>

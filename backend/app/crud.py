@@ -57,6 +57,12 @@ def delete_user(db: Session, user_id: int):
     return None
 
 
+def update_user(db: Session, user: schemas.UserUpdate, user_id: int):
+    db.query(models.User).filter(models.User.id ==
+                                 user_id).update(user.dict(exclude_unset=True))
+    db.commit()
+
+
 def create_session(db: Session, user: schemas.User):
     db_session = models.Session(is_active=True, users=[user])
     db.add(db_session)
