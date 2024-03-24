@@ -5,7 +5,25 @@
 	import Login from 'svelte-material-icons/Login.svelte';
 	import LocalSelector from './header/localSelector.svelte';
 	import { _ } from '$lib/services/i18n';
-	import { Cog6Tooth, Icon } from 'svelte-hero-icons';
+	import { Cog6Tooth, ExclamationTriangle, Icon } from 'svelte-hero-icons';
+	import { onMount } from 'svelte';
+	import { getUserMetadataAPI } from '$lib/api/users';
+
+	$: displayMetadataWarning = false;
+
+	onMount(async () => {
+		if (session.isLoggedIn()) {
+			const user_id = session.user()?.id;
+
+			if (!user_id) return;
+
+			const res = await getUserMetadataAPI(user_id);
+
+			if (!res) {
+				displayMetadataWarning = true;
+			}
+		}
+	});
 </script>
 
 <header class="bg-secondary text-white flex align-middle justify-between px-4 py-2">
@@ -29,3 +47,13 @@
 		<LocalSelector class="ml-2" />
 	</div>
 </header>
+
+{#if displayMetadataWarning}
+	<a href="/first-login" class="bg-orange-500 block text-white text-center p-4 flex justify-center">
+		<Icon src={ExclamationTriangle} size="24" />
+		&nbsp;
+		{$_('header.metadataWarning')}
+		&nbsp;
+		<Icon src={ExclamationTriangle} size="24" />
+	</a>
+{/if}

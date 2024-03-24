@@ -166,6 +166,24 @@ def create_user_metadata(user_id: int, metadata: schemas.UserMetadataCreate, db:
     return crud.create_user_metadata(db, db_user.id, metadata).id
 
 
+@usersRouter.get("/{user_id}/metadata", response_model=schemas.UserMetadata)
+def read_user_metadata(user_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
+    if not check_user_level(current_user, models.UserType.ADMIN) and current_user.id != user_id:
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to view this user's metadata")
+
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    metadata = crud.get_user_metadata(db, db_user.id)
+
+    if metadata is None:
+        raise HTTPException(status_code=404, detail="Metadata not found")
+
+    return metadata
+
+
 @usersRouter.post("/{user_id}/tests/typing", status_code=status.HTTP_201_CREATED)
 def create_test_typing(user_id: int, test: schemas.TestTypingCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(hashing.get_jwt_user)):
     if not check_user_level(current_user, models.UserType.ADMIN) and current_user.id != user_id:

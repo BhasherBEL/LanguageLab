@@ -57,6 +57,16 @@ export async function createUserMetadataAPI(
 	return response.data;
 }
 
+export async function getUserMetadataAPI(user_id: number): Promise<any | null> {
+	const response = await axiosInstance.get(`/users/${user_id}/metadata`);
+
+	if (response.status !== 200) {
+		return null;
+	}
+
+	return response.data;
+}
+
 export async function createTestTypingAPI(
 	user_id: number,
 	characters: number,

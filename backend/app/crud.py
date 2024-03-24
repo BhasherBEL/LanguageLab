@@ -47,6 +47,10 @@ def create_user_metadata(db: Session, user_id: int, metadata: schemas.UserMetada
     return db_user_metadata
 
 
+def get_user_metadata(db: Session, user_id: int):
+    return db.query(models.UserMetadata).filter(models.UserMetadata.user_id == user_id).first()
+
+
 def delete_user(db: Session, user_id: int):
     db.query(models.User).filter(models.User.id == user_id).delete()
     db.commit()

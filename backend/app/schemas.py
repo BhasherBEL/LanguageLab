@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from sqlalchemy.engine import create
 
 from models import UserType
 import datetime
@@ -29,6 +28,21 @@ class UserMetadataCreate(BaseModel):
     home_language: str
     target_language: str
     birthdate: datetime.datetime
+
+    class Config:
+        from_attributes = True
+
+
+class UserMetadata(BaseModel):
+    id: int
+    user_id: int
+    ui_language: str
+    home_language: str
+    target_language: str
+    birthdate: datetime.datetime
+
+    class Config:
+        from_attributes = True
 
 
 class Token(BaseModel):

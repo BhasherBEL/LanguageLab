@@ -1,7 +1,8 @@
 {
 	"header": {
 		"appName": "LanguageLab",
-		"connectedAs": "Connecté en tant que"
+		"connectedAs": "Connecté en tant que",
+		"metadataWarning": "Veuillez completer le formulaire post inscription avant de pouvoir utiliser l'application"
 	},
 	"chatbox": {
 		"placeholder": "Entrez votre message ici...",
