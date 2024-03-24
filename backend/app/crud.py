@@ -48,6 +48,13 @@ def create_session(db: Session, user: schemas.User):
     db.refresh(db_session)
     return db_session
 
+def create_session_with_users(db: Session, users: list[schemas.User], start_time: datetime.datetime | None = None, end_time: datetime.datetime | None = None):
+    db_session = models.Session(is_active=True, users=users, start_time=start_time, end_time=end_time)
+    db.add(db_session)
+    db.commit()
+    db.refresh(db_session)
+    return db_session
+
 def get_session(db: Session, session_id: int):
     return db.query(models.Session).filter(models.Session.id == session_id).first()
 

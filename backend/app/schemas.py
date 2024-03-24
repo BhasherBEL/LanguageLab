@@ -92,3 +92,8 @@ class TestTypingCreate(BaseModel):
     duration: int
     errors: int
     created_at: datetime.datetime = datetime.datetime.now()
+
+class CalComWebhook(BaseModel):
+    triggerEvent: str
+    createdAt: datetime.datetime
+    payload: dict

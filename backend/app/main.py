@@ -1,6 +1,7 @@
 from collections import defaultdict
+import datetime
 from typing import Annotated
-from fastapi import APIRouter, FastAPI, Form, status, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, FastAPI, Form, status, Depends, HTTPException, BackgroundTasks, Header
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -45,6 +46,7 @@ authRouter = APIRouter(prefix="/auth", tags=["auth"])
 usersRouter = APIRouter(prefix="/users", tags=["users"])
 sessionsRouter = APIRouter(prefix="/sessions", tags=["sessions"])
 websocketRouter = APIRouter(prefix="/ws", tags=["websocket"])
+webhookRouter = APIRouter(prefix="/webhook", tags=["webhook"])
 stats = APIRouter(prefix="/stats", tags=["stats"])
 
 
@@ -298,10 +300,30 @@ async def websocket_session(token: str, session_id: int, websocket: WebSocket, d
         except:
             pass
 
+@webhookRouter.post("/session", status_code=status.HTTP_202_ACCEPTED)
+async def webhook_session(webhook: schemas.CalComWebhook, x_cal_signature_256: Annotated[str | None, Header()] = None, db: Session = Depends(get_db)):
+    if x_cal_signature_256 != config.CALCOM_SECRET:
+        raise HTTPException(status_code=401, detail="Invalid secret")
+
+    if webhook.triggerEvent == "BOOKING_CREATED":
+        start_time = datetime.datetime.fromisoformat(webhook.payload["start"])
+        start_time -= datetime.timedelta(hours=1)
+        end_time = datetime.datetime.fromisoformat(webhook.payload["end"])
+        end_time += datetime.timedelta(hours=1)
+        attendes = webhook.payload["attendees"]
+        emails = [attendee["email"] for attendee in attendes]
+        db_users = [crud.get_user_by_email(db, email) for email in emails]
+
+        if db_users:
+            db_session = crud.create_session_with_users(db, db_users)
+
+    raise HTTPException(status_code=400, detail="Invalid trigger event")
+        
 
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
 v1Router.include_router(sessionsRouter)
 v1Router.include_router(websocketRouter)
+v1Router.include_router(webhookRouter)
 apiRouter.include_router(v1Router)
 app.include_router(apiRouter)
