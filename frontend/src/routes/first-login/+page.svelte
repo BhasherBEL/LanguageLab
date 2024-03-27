@@ -8,6 +8,7 @@
 	import { createUserMetadataAPI } from '$lib/api/users';
 	import JWTSession from '$lib/stores/JWTSession';
 	import { toastAlert } from '$lib/utils/toasts';
+	import { Language } from 'svelte-hero-icons';
 
 	let uiLanguage: string = $_activeLocale;
 	let homeLanguage: string;
@@ -58,14 +59,17 @@
 		</div>
 		<div class="mt-4">
 			<label for="homeLanguage">{$_('firstLogin.homeLanguage')}</label>
-			<input
-				class="input mt-2 w-full"
-				type="text"
+			<select
+				class="input mt-2 w-full bg-transparent"
 				id="homeLanguage"
 				name="homeLanguage"
 				required
 				bind:value={homeLanguage}
-			/>
+			>
+				{#each Object.entries(config.PRIMARY_LANGUAGE) as [code, name]}
+					<option value={code}>{name}</option>
+				{/each}
+			</select>
 		</div>
 		<div class="mt-4">
 			<label for="targetLanguage">{$_('firstLogin.targetLanguage')}</label>
