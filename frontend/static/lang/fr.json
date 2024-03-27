@@ -85,7 +85,9 @@
 	"button": {
 		"create": "Créer",
 		"submit": "Envoyer",
-		"sent": "Envoyé !"
+		"sent": "Envoyé !",
+		"next": "Suivant",
+		"start": "Commencer"
 	},
 	"utils": {
 		"month": {
