@@ -3,7 +3,7 @@ services:
     container_name: languagelab-frontend
     image: registry.forge.uclouvain.be/sbibauw/languagelab:frontend
     ports:
-      - 8080:80
+      - 80:80
     depends_on:
       - languagelab-backend
 
@@ -11,7 +11,7 @@ services:
     container_name: languagelab-backend
     image: registry.forge.uclouvain.be/sbibauw/languagelab:backend
     environment:
-      - DATABASE_URL=/data/db.sqlite3
+      - DATABASE_URL=sqlite:////data/db.sqlite3
       - JWT_SECRET_KEY=${LANGUAGELAB_JWT_SECRET_KEY}
       - JWT_REFRESH_SECRET_KEY=${LANGUAGELAB_JWT_REFRESH_SECRET_KEY}
       - ADMIN_EMAIL=${LANGUAGELAB_ADMIN_EMAIL}
