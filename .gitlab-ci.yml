@@ -16,5 +16,5 @@ build:
     matrix:
       - COMPONENT: [frontend, backend]
   script:
-    - docker build -t $CI_REGISTRY/sbibauw/languagelab-$COMPONENT:latest $COMPONENT
-    - docker push $CI_REGISTRY/sbibauw/languagelab-$COMPONENT:latest $COMPONENT
+    - docker build -t $CI_REGISTRY/sbibauw/languagelab:$COMPONENT $COMPONENT
+    - docker push $CI_REGISTRY/sbibauw/languagelab:$COMPONENT
