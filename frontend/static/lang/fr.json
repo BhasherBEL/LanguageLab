@@ -1,11 +1,11 @@
 {
 	"header": {
 		"appName": "LanguageLab",
-		"connectedAs": "Connecté en tant que",
-		"metadataWarning": "Veuillez completer le formulaire post inscription avant de pouvoir utiliser l'application"
+		"connectedAs": "Connecté comme",
+		"metadataWarning": "Veuillez compléter le formulaire post inscription avant d'utiliser l'application."
 	},
 	"chatbox": {
-		"placeholder": "Entrez votre message ici...",
+		"placeholder": "Écrivez votre message ici...",
 		"sendError": "Erreur lors de l'envoi du message"
 	},
 	"home": {
@@ -15,11 +15,11 @@
 		"actions": "Actions",
 		"add": "Ajouter",
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
-		"createSession": "Créer une nouvelle session",
-		"participantPlaceholder": "Selectionnez",
-		"remainingDuration": "Durée restante",
-		"nickname": "Pseudo",
-		"learningLanguage": "Langue d'apprentissage",
+		"createSession": "Nouvelle session",
+		"participantPlaceholder": "Choisir",
+		"remainingDuration": "Temps restant",
+		"nickname": "Prénom",
+		"learningLanguage": "Langue cible",
 		"confirm": "Confirmer",
 		"sessionEnded": "Terminée",
 		"noSessions": "Aucune session en cours"
@@ -31,7 +31,7 @@
 	},
 	"admin": {
 		"actions": "Actions",
-		"passwordPrompt": "Veuillez entrer le mot de passe. Attention, celui ci ne sera plus récupérable."
+		"passwordPrompt": "Entrez le mot de passe. Attention, celui ci ne sera plus récupérable."
 	},
 	"signup": {
 		"title": "Inscription",
@@ -56,18 +56,18 @@
 		"consent": "Je consens à participer à cette étude"
 	},
 	"timeslots": {
-		"cesttime": "Heure belge",
+		"cesttime": "Heure CET (Bruxelles)",
 		"availabilities": "Selectionnez vos disponibilités pour filtrer les tuteurs disponibles",
 		"availableTutors": "Tuteurs disponibles",
-		"noTutors": "Aucun tuteur disponible. Veuillez selectionner d'autres disponibilités.",
+		"noTutors": "Aucun tuteur disponible. Veuillez sélectionner d'autres disponibilités.",
 		"setAvailabilities": "Sélectionnez vos disponibilités"
 	},
 	"tests": {
-		"sendResults": "Envoyer les résultats",
+		"sendResults": "Envoyer",
 		"sendResultsDone": "Envoyé"
 	},
 	"users": {
-		"nickname": "Pseudo",
+		"nickname": "Nom",
 		"email": "Email",
 		"category": "Catégorie",
 		"isActive": "Actif",
