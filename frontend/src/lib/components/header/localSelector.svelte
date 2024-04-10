@@ -1,26 +1,21 @@
 <script lang="ts">
-	import { _, _activeLocale, locales, setupI18n } from '../../services/i18n';
+	import { locale, locales } from '$lib/services/i18n';
+	import { get } from 'svelte/store';
 
 	let classes = '';
 	export { classes as class };
 
-	$: value = $_activeLocale;
+	$: value = locale;
 
-	_activeLocale.subscribe((locale) => {
-		value = locale;
-	});
-
-	function onChange(event: Event) {
-		const target = event.target as HTMLSelectElement;
-		localStorage.setItem('locale', target.value);
-		setupI18n({
-			withLocale: target.value
-		});
-	}
+	//value.subscribe((newLocale) => {
+	//	if (newLocale !== get(locale)) {
+	//		locale.set(newLocale);
+	//	}
+	//});
 </script>
 
 <div class=" flex-1">
-	<select {value} on:change={onChange} class="bg-transparent {classes}">
+	<select {value} class="bg-transparent {classes}">
 		{#each Object.entries(locales) as [locale, name] (locale)}
 			<option value={locale}>{name}</option>
 		{/each}

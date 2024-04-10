@@ -6,9 +6,12 @@
 	import { getBaseURL, requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 	import { displayDuration } from '$lib/utils/date';
-	import JWTSession from '$lib/stores/JWTSession';
 	import { Eye, EyeSlash, Icon, Trash, User } from 'svelte-hero-icons';
-	import { _ } from '$lib/services/i18n';
+	import { t } from '$lib/services/i18n';
+	import { user } from '$lib/stores/auth';
+	export let data;
+
+	$: user.set(data.user);
 
 	let editParticipantsSession: Session | null;
 	let ready = false;
@@ -26,7 +29,7 @@
 	}
 
 	async function deleteSession(session: Session) {
-		window.confirm($_('home.deleteSessionConirm')) && (await session.delete());
+		window.confirm($t('home.deleteSessionConirm')) && (await session.delete());
 	}
 
 	async function disableSession(session: Session) {
@@ -44,17 +47,17 @@
 	<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
 		{#if JWTSession.user()?.is_tutor}
 			<button on:click|preventDefault={createSession} class="button float-end mb-4">
-				{$_('home.createSession')}
+				{$t('home.createSession')}
 			</button>
 		{/if}
 		<table class="w-full shadow-md">
 			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
 					<th class="py-2 px-6">#</th>
-					<th class="py-2 px-6">{$_('home.remainingDuration')}</th>
-					<th class="py-2 px-6">{$_('home.participants')}</th>
+					<th class="py-2 px-6">{$t('home.remainingDuration')}</th>
+					<th class="py-2 px-6">{$t('home.participants')}</th>
 					{#if JWTSession.user()?.is_tutor}
-						<th class="py-2 px-6">{$_('home.actions')}</th>
+						<th class="py-2 px-6">{$t('home.actions')}</th>
 					{/if}
 				</tr>
 			</thead>
@@ -71,7 +74,7 @@
 						<td class="py-3 px-6">{session.id}</td>
 						<td class="py-3 px-6">
 							{#if session.end_time < new Date()}
-								{$_('home.sessionEnded')}
+								{$t('home.sessionEnded')}
 							{:else if session.start_time > new Date()}
 								({displayDuration(new Date(), session.start_time)}) - {displayDuration(
 									new Date(),
@@ -114,7 +117,7 @@
 			</tbody>
 		</table>
 		{#if !$sessions.length}
-			<div class="text-center mt-8 text-gray-500 text-lg italic">{$_('home.noSessions')}</div>
+			<div class="text-center mt-8 text-gray-500 text-lg italic">{$t('home.noSessions')}</div>
 		{/if}
 	</div>
 {/if}

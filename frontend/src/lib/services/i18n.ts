@@ -1,84 +1,18 @@
-/**
- * Inspired by https://github.com/PhraseApp-Blog/svelte-i18n-2020-06/tree/master
- */
+import i18n, { type Config } from 'sveltekit-i18n';
 
-import { get, derived, writable } from 'svelte/store';
-import {
-	_,
-	date,
-	init,
-	locale,
-	number,
-	dictionary,
-	addMessages,
-	getLocaleFromNavigator
-} from 'svelte-i18n';
-
-export const locales = {
-	en: 'En',
-	fr: 'Fr'
+const config: Config = {
+	loaders: [
+		{
+			locale: 'en',
+			key: '',
+			loader: async () => (await import('../../lang/en.json')).default
+		},
+		{
+			locale: 'fr',
+			key: '',
+			loader: async () => (await import('../../lang/fr.json')).default
+		}
+	]
 };
 
-const fallbackLocale = 'fr';
-
-const MESSAGE_FILE_URL_TEMPLATE = '/lang/{locale}.json';
-
-export let _activeLocale = writable(fallbackLocale);
-
-const isDownloading = writable(false);
-
-function setupI18n(options = { withLocale: fallbackLocale }) {
-	const locale_ = supported(options.withLocale || language(getLocaleFromNavigator() ?? ''));
-
-	init({ initialLocale: locale_, fallbackLocale: fallbackLocale });
-
-	_activeLocale.set(locale_);
-
-	if (!hasLoadedLocale(locale_)) {
-		isDownloading.set(true);
-
-		const messagesFileUrl = MESSAGE_FILE_URL_TEMPLATE.replace('{locale}', locale_);
-
-		return loadJson(messagesFileUrl).then((messages) => {
-			_activeLocale.set(locale_);
-
-			addMessages(locale_, messages);
-
-			locale.set(locale_);
-
-			isDownloading.set(false);
-		});
-	}
-}
-
-const isLocaleLoaded = derived(
-	[isDownloading, dictionary],
-	([$isDownloading, $dictionary]) =>
-		!$isDownloading &&
-		$dictionary[get(_activeLocale)] &&
-		Object.keys($dictionary[get(_activeLocale)]).length > 0
-);
-
-const dir = derived(locale, ($locale) => ($locale === 'ar' ? 'rtl' : 'ltr'));
-
-function loadJson(url: string) {
-	return fetch(url).then((response) => response.json());
-}
-
-function hasLoadedLocale(locale: string) {
-	return get(dictionary)[locale];
-}
-
-function language(locale: string): string {
-	return locale.replace('_', '-').split('-')[0];
-}
-
-function supported(locale: string): string {
-	if (Object.keys(locales).includes(locale)) {
-		return locale;
-	} else {
-		return fallbackLocale;
-	}
-}
-
-export { _, setupI18n, isLocaleLoaded, locale, dir, date, number };
+export const { t, locale, locales, loading, loadTranslations } = new i18n(config);

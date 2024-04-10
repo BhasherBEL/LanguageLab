@@ -1,21 +1,12 @@
 <script lang="ts">
 	import { loginAPI } from '$lib/api/auth';
 	import Header from '$lib/components/header.svelte';
-	import session from '$lib/stores/JWTSession';
-	import { onMount } from 'svelte';
-	import { _ } from '$lib/services/i18n';
 	import { getBaseURL } from '$lib/utils/login';
+	import { t } from '$lib/services/i18n';
 
 	let email = '';
 	let password = '';
 	$: message = '';
-
-	onMount(() => {
-		if (session.isLoggedIn()) {
-			const redirect = new URLSearchParams(window.location.search).get('redirect') ?? getBaseURL();
-			window.location.href = redirect;
-		}
-	});
 
 	async function login() {
 		message = '';
@@ -32,7 +23,7 @@
 	}
 </script>
 
-<Header />
+<Header data />
 
 <div class="flex items-center justify-center h-screen">
 	<form action="#" class="shadow-md max-w-md mb-7 flex items-center flex-col p-5">
@@ -42,14 +33,14 @@
 			</div>
 		{/if}
 		<div class="flex w-full mb-4">
-			<label for="email">{$_('login.email')}</label>
+			<label for="email">{$t('login.email')}</label>
 			<input type="text" id="email" name="email" bind:value={email} required />
 		</div>
 		<div class="flex w-full mb-4">
-			<label for="password">{$_('login.password')}</label>
+			<label for="password">{$t('login.password')}</label>
 			<input type="password" id="password" name="password" bind:value={password} required />
 		</div>
-		<button type="submit" on:click|preventDefault={login} class="button">{$_('login.login')}</button
+		<button type="submit" on:click|preventDefault={login} class="button">{$t('login.login')}</button
 		>
 	</form>
 </div>
