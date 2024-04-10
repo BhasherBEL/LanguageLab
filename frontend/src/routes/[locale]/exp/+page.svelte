@@ -2,10 +2,7 @@
 	import User from '$lib/types/user.js';
 
 	export let data;
-
-	console.log(data.user);
-	const user = User.parse(data.user);
-	console.log(user);
+	const user = User.parseFromServer(data);
 </script>
 
-<div>Hello world {user.toJson()}</div>
+<div>Hello world {user?.nickname}</div>

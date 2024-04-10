@@ -4,6 +4,8 @@ import { get, writable } from 'svelte/store';
 
 const { subscribe, set, update } = writable<User[]>([]);
 
+export const user = writable<User | null>(null);
+
 export const users = {
 	subscribe,
 	set,
@@ -110,6 +112,19 @@ export default class User {
 
 		const user = new User(id, email, nickname, type, 0, is_active);
 		users.add(user);
+		return user;
+	}
+
+	static parseFromServer(data: any): User | null {
+		const userStr = data.user;
+		if (userStr == null) return null;
+
+		const userObject = JSON.parse(userStr);
+		if (userObject == null) return null;
+
+		const user = User.parse(userObject);
+		if (user == null || user.id == null || user.id == undefined) return null;
+
 		return user;
 	}
 

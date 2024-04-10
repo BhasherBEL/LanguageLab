@@ -6,17 +6,13 @@
 	import { Clock, Cog6Tooth, ExclamationTriangle, Icon } from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import { getUserMetadataAPI } from '$lib/api/users';
-	import type User from '$lib/types/user';
-
-	export let data: any;
-
-	const user: User | null = data?.user;
+	import { user } from '$lib/types/user';
 
 	$: displayMetadataWarning = false;
 
 	onMount(async () => {
-		if (user) {
-			const res = await getUserMetadataAPI(user.id);
+		if ($user) {
+			const res = await getUserMetadataAPI($user.id);
 
 			if (!res) {
 				displayMetadataWarning = true;
@@ -28,23 +24,23 @@
 <header class="bg-secondary text-white flex align-middle justify-between px-4 py-2">
 	<h1 class="font-bold text-2xl"><a href="/">{$t('header.appName')}</a></h1>
 	<div class="flex align-middle">
-		{#if user?.type === 0}
+		{#if $user?.type === 0}
 			<a href="/admin/" class="mr-4 mt-0.5">
 				<Icon src={Cog6Tooth} class="size-6" />
 			</a>
 		{/if}
-		{#if user?.type === 0 || user?.type === 1}
+		{#if $user?.type === 0 || $user?.type === 1}
 			<a href="/timeslots/set/" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
-		{#if user?.type === 2}
+		{#if $user?.type === 2}
 			<a href="/timeslots/" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
-		{#if user}
-			<span class="pr-2">{$t('header.connectedAs')} <strong>{user.nickname}</strong></span>
+		{#if $user}
+			<span class="pr-2">{$t('header.connectedAs')} <strong>{$user.nickname}</strong></span>
 			<a href="/logout/"><Logout class="h-4/5" /></a>
 		{:else}
 			<!--<a href="/login/?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}"

@@ -1,24 +1,18 @@
 <script lang="ts">
 	import { getSessionsAPI } from '$lib/api/sessions';
-	import Header from '$lib/components/header.svelte';
 	import EditParticipants from '$lib/components/sessions/editParticipants.svelte';
 	import Session, { sessions } from '$lib/types/session';
-	import { getBaseURL, requireLogin } from '$lib/utils/login';
+	import { getBaseURL } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 	import { displayDuration } from '$lib/utils/date';
-	import { Eye, EyeSlash, Icon, Trash, User } from 'svelte-hero-icons';
+	import { Eye, EyeSlash, Icon, Trash } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
-	import { user } from '$lib/stores/auth';
-	export let data;
-
-	$: user.set(data.user);
+	import User, { user } from '$lib/types/user.js';
 
 	let editParticipantsSession: Session | null;
 	let ready = false;
 
 	onMount(async () => {
-		if (!requireLogin()) return;
-
 		Session.parseAll(await getSessionsAPI());
 
 		ready = true;
@@ -42,10 +36,8 @@
 </script>
 
 {#if ready}
-	<Header />
-
 	<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
-		{#if JWTSession.user()?.is_tutor}
+		{#if $user?.is_tutor}
 			<button on:click|preventDefault={createSession} class="button float-end mb-4">
 				{$t('home.createSession')}
 			</button>
@@ -56,7 +48,7 @@
 					<th class="py-2 px-6">#</th>
 					<th class="py-2 px-6">{$t('home.remainingDuration')}</th>
 					<th class="py-2 px-6">{$t('home.participants')}</th>
-					{#if JWTSession.user()?.is_tutor}
+					{#if $user?.is_tutor}
 						<th class="py-2 px-6">{$t('home.actions')}</th>
 					{/if}
 				</tr>
@@ -86,7 +78,7 @@
 						</td>
 						<td class="py-3 px-6">{session.usersList()}</td>
 
-						{#if JWTSession.user()?.is_tutor}
+						{#if $user?.is_tutor}
 							<td class="py-3 px-6">
 								<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
 									<Icon src={User} class="w-5 hover:text-secondaryHover" />
@@ -98,7 +90,7 @@
 										<Icon src={Eye} class="w-5  hover:text-secondaryHover" />
 									{/if}
 								</button>
-								{#if JWTSession.user()?.is_admin}
+								{#if $user?.is_admin}
 									<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
 										<Icon src={Trash} class="w-5  hover:text-secondaryHover" />
 									</button>

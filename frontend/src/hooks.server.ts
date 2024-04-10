@@ -14,7 +14,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	const decoded = jwtDecode<JWTContent>(session);
-	console.log(decoded);
 	if (!decoded) {
 		event.locals.user = null;
 		event.locals.session = null;

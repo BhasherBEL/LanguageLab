@@ -20,13 +20,9 @@
 			new URLSearchParams(window.location.search).get('redirect') ?? getBaseURL()
 		);
 
-		console.log('redirect', redirect);
-
-		//window.location.href = redirect;
+		window.location.href = redirect;
 	}
 </script>
-
-<Header data />
 
 <div class="flex items-center justify-center h-screen">
 	<form action="#" class="shadow-md max-w-md mb-7 flex items-center flex-col p-5">

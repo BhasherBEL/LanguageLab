@@ -6,7 +6,7 @@
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import { Icon, Language, XMark } from 'svelte-hero-icons';
-	import { _ } from '$lib/services/i18n';
+	import { t } from '$lib/services/i18n';
 	import config from '$lib/config';
 
 	export let session: Session;
@@ -69,28 +69,28 @@
 		<div class="float-right w-8 hover:text-red-500 hover:cursor-pointer" on:click={onClose}>
 			<Icon src={XMark} />
 		</div>
-		<h1 class="text-xl font-bold pb-4">{$_('home.learningLanguage')}</h1>
+		<h1 class="text-xl font-bold pb-4">{$t('home.learningLanguage')}</h1>
 		<div class="flex">
 			<select bind:value={selectedLanguage} class="min-w-fit w-full h-12 p-2">
 				{#each config.LEARNING_LANGUAGES as language}
 					<option selected={session.language == language} value={language}
-						>{$_(`utils.language.${language}`)}</option
+						>{$t(`utils.language.${language}`)}</option
 					>
 				{/each}
 			</select>
 			<button
 				class="button w-1/4 ml-4"
 				disabled={currentLanguage === selectedLanguage}
-				on:click={changeLanguage}>{$_('home.confirm')}</button
+				on:click={changeLanguage}>{$t('home.confirm')}</button
 			>
 		</div>
-		<h1 class="text-xl font-bold py-4">{$_('home.participants')}</h1>
+		<h1 class="text-xl font-bold py-4">{$t('home.participants')}</h1>
 		<table class="w-full shadow-md">
 			<thead class="bg-gray-200 uppercase text-sm">
 				<tr>
-					<th class="py-2 px-6">{$_('home.nickname')}</th>
-					<th class="py-2 px-6">{$_('home.email')}</th>
-					<th class="py-2 px-6">{$_('home.actions')}</th>
+					<th class="py-2 px-6">{$t('home.nickname')}</th>
+					<th class="py-2 px-6">{$t('home.email')}</th>
+					<th class="py-2 px-6">{$t('home.actions')}</th>
 				</tr>
 			</thead>
 			{#each sessionUsers as user (user.id)}
@@ -109,12 +109,12 @@
 					><Select
 						items={dropDownUsers}
 						bind:value={selected}
-						placeholder={$_('home.participantPlaceholder')}
+						placeholder={$t('home.participantPlaceholder')}
 					></Select></td
 				>
 				<td
 					><button on:click={addParticipant} class="button" disabled={selected === null}
-						>{$_('home.add')}</button
+						>{$t('home.add')}</button
 					></td
 				>
 			</tr>

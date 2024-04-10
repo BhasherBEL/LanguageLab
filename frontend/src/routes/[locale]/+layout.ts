@@ -13,10 +13,7 @@ export const load: Load = async ({ params, url, parent }) => {
 	await loadTranslations(initLocale, pathname);
 
 	const { user } = await parent();
-
-	console.log('user', user);
-
 	return {
-		user: User.parse(user)
+		user: user
 	};
 };
