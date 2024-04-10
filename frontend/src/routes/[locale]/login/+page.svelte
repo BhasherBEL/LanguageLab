@@ -19,7 +19,10 @@
 		const redirect = decodeURIComponent(
 			new URLSearchParams(window.location.search).get('redirect') ?? getBaseURL()
 		);
-		window.location.href = redirect;
+
+		console.log('redirect', redirect);
+
+		//window.location.href = redirect;
 	}
 </script>
 
