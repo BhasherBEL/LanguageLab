@@ -9,10 +9,7 @@ export const requireLogin: ServerLoad = async ({ params, url, cookies }) => {
 
 	const session = cookies.get('token');
 
-	console.log(session);
-
 	if (!session) {
-		console.log('Nop');
 		redirect(302, `/${initLocale}/login`);
 	}
 };

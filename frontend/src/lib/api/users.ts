@@ -1,5 +1,6 @@
 import { toastAlert } from '$lib/utils/toasts';
-import { axiosInstance } from './apiInstance';
+import { axiosInstance, access_cookie } from './apiInstance';
+import { get } from 'svelte/store';
 
 export async function getUsersAPI() {
 	const response = await axiosInstance.get(`/users`);
@@ -13,7 +14,11 @@ export async function getUsersAPI() {
 }
 
 export async function getUserAPI(user_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}`);
+	const response = await axiosInstance.get(`/users/${user_id}`, {
+		headers: {
+			Authorization: `Bearer ${get(access_cookie)}`
+		}
+	});
 
 	if (response.status !== 200) {
 		toastAlert('Failed to get user');

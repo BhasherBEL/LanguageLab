@@ -83,6 +83,17 @@ export default class User {
 		return await patchUserAPI(this.id, { availability: availability });
 	}
 
+	toJson(): string {
+		return JSON.stringify({
+			id: this.id,
+			email: this.email,
+			nickname: this.nickname,
+			type: this.type,
+			availability: this.availability,
+			is_active: this.is_active
+		});
+	}
+
 	static find(user_id: number): User | undefined {
 		return get(users).find((user) => user.id === user_id);
 	}

@@ -3,10 +3,8 @@ export function getBaseURL(): string {
 }
 
 export interface JWTContent {
-	sub: string;
+	subject: any;
 	type: number;
 	exp: number;
-	email: string;
-	nickname: string;
-	is_active: boolean;
+	iat: number;
 }

@@ -22,9 +22,9 @@ import schemas
 import crud
 import models
 from database import Base, engine, get_db, SessionLocal
-import hashing
 from utils import check_user_level
 import config
+from security import jwt_cookie, get_jwt_user
 
 websocket_users = defaultdict(lambda: defaultdict(set))
 
@@ -86,18 +86,19 @@ def login(
     if db_user is None:
         raise HTTPException(status_code=401, detail="Incorrect email or password")
 
-    response.set_cookie(
-        key="token",
-        value=hashing.create_access_token(db_user),
-        httponly=False,
-        max_age=60 * 60 * 24,
+    subject = {"uid": db_user.id, "email": db_user.email, "nickname": db_user.nickname}
+    access_token = jwt_cookie.create_access_token(subject)
+
+    jwt_cookie.set_access_cookie(
+        response=response,
+        access_token=access_token,
     )
 
-    response.set_cookie(
-        key="refresh_token",
-        value=hashing.create_refresh_token(db_user),
-        httponly=False,
-        max_age=60 * 60 * 24 * 7,
+    refresh_token = jwt_cookie.create_refresh_token(subject)
+
+    jwt_cookie.set_refresh_cookie(
+        response=response,
+        refresh_token=refresh_token,
     )
 
 
@@ -121,19 +122,16 @@ def register(
 
 @authRouter.post("/refresh", response_model=schemas.Token)
 def refresh_token(
-    current_user: models.User = Depends(hashing.get_jwt_user_from_refresh_token),
+    current_user: models.User = Depends(get_jwt_user),
 ):
-    return {
-        "access_token": hashing.create_access_token(current_user),
-        "refresh_token": hashing.create_refresh_token(current_user),
-    }
+    pass
 
 
 @usersRouter.post("", status_code=status.HTTP_201_CREATED)
 def create_user(
     user: schemas.UserCreate,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(
@@ -153,7 +151,7 @@ def create_user(
 def read_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if (
         not check_user_level(current_user, models.UserType.ADMIN)
@@ -175,7 +173,7 @@ def read_users(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     return crud.get_users(db, skip=skip, limit=limit)
 
@@ -184,7 +182,7 @@ def read_users(
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(
@@ -200,7 +198,7 @@ def update_user(
     user_id: int,
     user: schemas.UserUpdate,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if (
         not check_user_level(current_user, models.UserType.ADMIN)
@@ -218,7 +216,7 @@ def update_user(
 def read_user_sessions(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if (
         not check_user_level(current_user, models.UserType.ADMIN)
@@ -241,7 +239,7 @@ def create_user_metadata(
     user_id: int,
     metadata: schemas.UserMetadataCreate,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if (
         not check_user_level(current_user, models.UserType.ADMIN)
@@ -263,7 +261,7 @@ def create_user_metadata(
 def read_user_metadata(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if (
         not check_user_level(current_user, models.UserType.ADMIN)
@@ -291,7 +289,7 @@ def create_test_typing(
     user_id: int,
     test: schemas.TestTypingCreate,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if (
         not check_user_level(current_user, models.UserType.ADMIN)
@@ -312,7 +310,7 @@ def create_test_typing(
 @sessionsRouter.post("", response_model=schemas.Session)
 def create_session(
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if not check_user_level(current_user, models.UserType.TUTOR):
         raise HTTPException(
@@ -326,7 +324,7 @@ def create_session(
 def read_session(
     session_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     db_session = crud.get_session(db, session_id)
     if db_session is None:
@@ -347,7 +345,7 @@ def read_session(
 def delete_session(
     session_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(
@@ -362,7 +360,7 @@ def update_session(
     session_id: int,
     session: schemas.SessionUpdate,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     db_session = crud.get_session(db, session_id)
     if db_session is None:
@@ -386,7 +384,7 @@ def add_user_to_session(
     session_id: int,
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if not check_user_level(current_user, models.UserType.ADMIN) and (
         current_user.id != user_id or current_user.type != models.UserType.TUTOR
@@ -416,7 +414,7 @@ def remove_user_from_session(
     session_id: int,
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if not check_user_level(current_user, models.UserType.ADMIN) and (
         current_user.id != user_id or current_user.type != models.UserType.TUTOR
@@ -443,7 +441,7 @@ def read_sessions(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     if check_user_level(current_user, models.UserType.ADMIN):
         return crud.get_all_sessions(db, skip=skip, limit=limit)
@@ -457,7 +455,7 @@ def read_messages(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     db_session = crud.get_session(db, session_id)
     if db_session is None:
@@ -498,7 +496,7 @@ def create_message(
     entryMessage: schemas.MessageCreate,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(hashing.get_jwt_user),
+    current_user: schemas.User = Depends(get_jwt_user),
 ):
     db_session = crud.get_session(db, session_id)
     if db_session is None:
@@ -525,13 +523,11 @@ def create_message(
 
 @websocketRouter.websocket("/{token}/{session_id}")
 async def websocket_session(
-    token: str, session_id: int, websocket: WebSocket, db: Session = Depends(get_db)
+    session_id: int,
+    websocket: WebSocket,
+    current_user: schemas.User = Depends(get_jwt_user),
+    db: Session = Depends(get_db),
 ):
-    current_user = hashing.get_jwt_user(token=token, db=db)
-
-    if current_user is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
     db_session = crud.get_session(db, session_id)
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")

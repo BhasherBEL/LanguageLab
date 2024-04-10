@@ -1,7 +1,11 @@
 <script lang="ts">
+	import User from '$lib/types/user.js';
+
 	export let data;
 
-	const user = data.user;
+	console.log(data.user);
+	const user = User.parse(data.user);
+	console.log(user);
 </script>
 
-<div>Hello world {user}</div>
+<div>Hello world {user.toJson()}</div>
