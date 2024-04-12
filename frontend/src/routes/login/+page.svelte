@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { loginAPI } from '$lib/api/auth';
 	import { getBaseURL } from '$lib/utils/login';
-	import { locale, t } from '$lib/services/i18n';
+	import { t } from '$lib/services/i18n';
 
 	let email = '';
 	let password = '';
@@ -43,7 +43,7 @@
 		</button>
 		<p class="mt-4">
 			{$t('login.noAccountText')}
-			<a href="/{$locale}/register" class="text-blue-500 underline">
+			<a href="/register" class="text-blue-500 underline">
 				{$t('login.noAccountLink')}
 			</a>
 		</p>

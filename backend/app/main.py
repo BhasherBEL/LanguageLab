@@ -92,6 +92,7 @@ def login(
     jwt_cookie.set_access_cookie(
         response=response,
         access_token=access_token,
+        expires_delta=jwt_cookie.access_expires_delta,
     )
 
     refresh_token = jwt_cookie.create_refresh_token(subject)
@@ -99,6 +100,7 @@ def login(
     jwt_cookie.set_refresh_cookie(
         response=response,
         refresh_token=refresh_token,
+        expires_delta=jwt_cookie.refresh_expires_delta,
     )
 
 

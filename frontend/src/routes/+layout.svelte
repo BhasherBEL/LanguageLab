@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import Header from '$lib/components/header.svelte';
-	import '../../app.css';
+	import '../app.css';
 	import { t } from '$lib/services/i18n';
 	import User from '$lib/types/user.js';
 

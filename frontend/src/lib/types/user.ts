@@ -117,7 +117,6 @@ export default class User {
 
 	static parseFromServer(data: any): User | null {
 		const userStr = data.user;
-		console.log('userStr', userStr);
 		if (userStr == null) return null;
 
 		const userObject = JSON.parse(userStr);
@@ -127,7 +126,6 @@ export default class User {
 		if (userFinal == null || userFinal.id == null || userFinal.id == undefined) return null;
 
 		user.set(userFinal);
-		console.log('userFinal', userFinal);
 
 		return userFinal;
 	}
