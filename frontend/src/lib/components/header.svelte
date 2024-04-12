@@ -7,6 +7,8 @@
 	import { onMount } from 'svelte';
 	import { getUserMetadataAPI } from '$lib/api/users';
 	import { user } from '$lib/types/user';
+	import { page } from '$app/stores';
+	import { locale } from '$lib/services/i18n';
 
 	$: displayMetadataWarning = false;
 
@@ -22,32 +24,33 @@
 </script>
 
 <header class="bg-secondary text-white flex align-middle justify-between px-4 py-2">
-	<h1 class="font-bold text-2xl"><a href="/">{$t('header.appName')}</a></h1>
+	<h1 class="font-bold text-2xl"><a href="/{$locale}">{$t('header.appName')}</a></h1>
 	<div class="flex align-middle">
 		{#if $user?.type === 0}
-			<a href="/admin/" class="mr-4 mt-0.5">
+			<a href="/{$locale}/admin/" class="mr-4 mt-0.5">
 				<Icon src={Cog6Tooth} class="size-6" />
 			</a>
 		{/if}
 		{#if $user?.type === 0 || $user?.type === 1}
-			<a href="/timeslots/set/" class="mr-4 mt-0.5">
+			<a href="/{$locale}/timeslots/set/" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
 		{#if $user?.type === 2}
-			<a href="/timeslots/" class="mr-4 mt-0.5">
+			<a href="/{$locale}/timeslots/" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
 		{#if $user}
 			<span class="pr-2">{$t('header.connectedAs')} <strong>{$user.nickname}</strong></span>
-			<a href="/logout/"><Logout class="h-4/5" /></a>
+			<a href="/{$locale}/logout/"><Logout class="h-4/5" size={24} /></a>
 		{:else}
-			<!--<a href="/login/?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}"
-				><Login /></a
-			>-->
-			<a href="/login">
-				<Login />
+			<a
+				href="/{$locale}/login/?redirect={encodeURIComponent(
+					$page.url.pathname + $page.url.search
+				)}"
+			>
+				<Login size={24} />
 			</a>
 		{/if}
 		<LocalSelector class="ml-2" />
@@ -55,7 +58,7 @@
 </header>
 
 {#if displayMetadataWarning}
-	<a href="/first-login" class="bg-orange-500 block text-white text-center p-4 flex justify-center">
+	<a href="/first-login" class="bg-orange-500 text-white text-center p-4 flex justify-center">
 		<Icon src={ExclamationTriangle} size="24" />
 		&nbsp;
 		{$t('header.metadataWarning')}

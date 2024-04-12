@@ -6,6 +6,7 @@
 	import User from '$lib/types/user.js';
 
 	export let data;
+
 	User.parseFromServer(data);
 </script>
 

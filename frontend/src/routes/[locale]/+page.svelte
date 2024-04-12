@@ -13,7 +13,9 @@
 	let ready = false;
 
 	onMount(async () => {
-		Session.parseAll(await getSessionsAPI());
+		if ($user != null) {
+			Session.parseAll(await getSessionsAPI());
+		}
 
 		ready = true;
 	});
@@ -37,7 +39,7 @@
 
 {#if ready}
 	<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
-		{#if $user?.is_tutor}
+		{#if $user?.is_tutor || $user?.is_admin}
 			<button on:click|preventDefault={createSession} class="button float-end mb-4">
 				{$t('home.createSession')}
 			</button>

@@ -29,6 +29,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	access_cookie.set(session);
 	const user = User.parse(await getUserAPI(id));
+	if (!user) {
+		event.locals.user = null;
+		event.locals.session = null;
+		return resolve(event);
+	}
 
 	event.locals.user = user.toJson();
 	event.locals.session = session;

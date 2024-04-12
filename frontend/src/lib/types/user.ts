@@ -117,15 +117,19 @@ export default class User {
 
 	static parseFromServer(data: any): User | null {
 		const userStr = data.user;
+		console.log('userStr', userStr);
 		if (userStr == null) return null;
 
 		const userObject = JSON.parse(userStr);
 		if (userObject == null) return null;
 
-		const user = User.parse(userObject);
-		if (user == null || user.id == null || user.id == undefined) return null;
+		const userFinal = User.parse(userObject);
+		if (userFinal == null || userFinal.id == null || userFinal.id == undefined) return null;
 
-		return user;
+		user.set(userFinal);
+		console.log('userFinal', userFinal);
+
+		return userFinal;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

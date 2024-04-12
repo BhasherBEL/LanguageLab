@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { loginAPI } from '$lib/api/auth';
-	import Header from '$lib/components/header.svelte';
 	import { getBaseURL } from '$lib/utils/login';
-	import { t } from '$lib/services/i18n';
+	import { locale, t } from '$lib/services/i18n';
 
 	let email = '';
 	let password = '';
@@ -39,8 +38,15 @@
 			<label for="password">{$t('login.password')}</label>
 			<input type="password" id="password" name="password" bind:value={password} required />
 		</div>
-		<button type="submit" on:click|preventDefault={login} class="button">{$t('login.login')}</button
-		>
+		<button type="submit" on:click|preventDefault={login} class="button">
+			{$t('login.login')}
+		</button>
+		<p class="mt-4">
+			{$t('login.noAccountText')}
+			<a href="/{$locale}/register" class="text-blue-500 underline">
+				{$t('login.noAccountLink')}
+			</a>
+		</p>
 	</form>
 </div>
 
