@@ -181,9 +181,7 @@ export default class Session {
 	public wsConnect() {
 		if (get(this._ws_connected)) return;
 
-		const token = localStorage.getItem('accessToken');
-
-		this._ws = new WebSocket(`${config.WS_URL}/${token}/${this.id}`);
+		this._ws = new WebSocket(`${config.WS_URL}/sessions/${this.id}`);
 
 		this._ws.onopen = () => {
 			this._ws_connected.set(true);

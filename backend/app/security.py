@@ -27,6 +27,8 @@ def get_jwt_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
+    print("AYAY")
+
     if not credentials:
         raise credentials_exception
 

@@ -523,7 +523,7 @@ def create_message(
     return message.id
 
 
-@websocketRouter.websocket("/{token}/{session_id}")
+@websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
     session_id: int,
     websocket: WebSocket,

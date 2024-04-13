@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 	import MessageC from './message.svelte';
 	import { get } from 'svelte/store';
-	import { _ } from '$lib/services/i18n';
 	import Writebox from './writebox.svelte';
 
 	export let session: Session;

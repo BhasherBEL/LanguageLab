@@ -1,10 +1,10 @@
 <script lang="ts">
 	import config from '$lib/config';
-	import { _ } from '$lib/services/i18n';
-	import JWTSession from '$lib/stores/JWTSession';
+	import { t } from '$lib/services/i18n';
 	import type Session from '$lib/types/session';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
+	import { user } from '$lib/types/user';
 
 	export let session: Session;
 
@@ -15,13 +15,12 @@
 	async function sendMessage() {
 		if (message.length == 0) return;
 
-		const user = JWTSession.user();
-		if (user === null || user == undefined) return;
+		if ($user === null) return;
 
-		const m = await session.sendMessage(user, message, metadata);
+		const m = await session.sendMessage($user, message, metadata);
 
 		if (m === null) {
-			toastAlert($_('chatbox.sendError'));
+			toastAlert($t('chatbox.sendError'));
 			return;
 		}
 
@@ -51,7 +50,7 @@
 	<div class="w-full flex">
 		<textarea
 			class="flex-grow rounded-md p-2 resize-none overflow-y-hidden"
-			placeholder={$_('chatbox.placeholder')}
+			placeholder={$t('chatbox.placeholder')}
 			bind:value={message}
 			on:keypress={(e) => keyPress(e)}
 			on:keypress={async (e) => {

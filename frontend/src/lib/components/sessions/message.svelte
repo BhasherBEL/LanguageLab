@@ -1,8 +1,8 @@
 <script lang="ts">
-	import JWTSession from '$lib/stores/JWTSession';
 	import type Message from '$lib/types/message';
 	import { displayTime } from '$lib/utils/date';
 	import { AcademicCap, Icon, Sparkles, User } from 'svelte-hero-icons';
+	import { user } from '$lib/types/user';
 
 	export let message: Message;
 
@@ -15,7 +15,7 @@
 		}, 1000);
 	}
 
-	const isSender = message.user == JWTSession.user();
+	const isSender = message.user.id == $user?.id;
 </script>
 
 <div class="w-full flex my-2" class:flex-row-reverse={isSender}>
