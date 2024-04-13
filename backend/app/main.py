@@ -17,6 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocket
 from contextlib import asynccontextmanager
 import json
+from jose import jwt
 
 import schemas
 import crud
@@ -526,10 +527,16 @@ def create_message(
 @websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
     session_id: int,
+    token: str,
     websocket: WebSocket,
-    current_user: schemas.User = Depends(get_jwt_user),
     db: Session = Depends(get_db),
 ):
+    payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"])
+
+    current_user = crud.get_user(db, user_id=payload["subject"]["uid"])
+    if current_user is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
     db_session = crud.get_session(db, session_id)
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")

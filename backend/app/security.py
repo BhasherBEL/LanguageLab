@@ -1,5 +1,8 @@
 from fastapi import Security, HTTPException, status, Depends
-from fastapi_jwt import JwtAccessBearerCookie, JwtAuthorizationCredentials
+from fastapi_jwt import (
+    JwtAccessBearerCookie,
+    JwtAuthorizationCredentials,
+)
 from datetime import timedelta
 from sqlalchemy.orm import Session
 
@@ -10,7 +13,7 @@ from models import User
 
 jwt_cookie = JwtAccessBearerCookie(
     secret_key=config.JWT_SECRET_KEY,
-    auto_error=False,
+    auto_error=True,
     access_expires_delta=timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES),
     refresh_expires_delta=timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES),
 )
@@ -27,8 +30,6 @@ def get_jwt_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    print("AYAY")
-
     if not credentials:
         raise credentials_exception
 
@@ -38,3 +39,7 @@ def get_jwt_user(
         raise credentials_exception
 
     return user
+
+
+def get_jwt_from_str(token: str):
+    return jwt_cookie

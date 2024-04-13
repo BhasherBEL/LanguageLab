@@ -5,6 +5,8 @@
 	import { get } from 'svelte/store';
 	import Writebox from './writebox.svelte';
 
+	export let token: string;
+
 	export let session: Session;
 	let messages = get(session.messages);
 
@@ -19,7 +21,7 @@
 
 	onMount(async () => {
 		await session.loadMessages();
-		session.wsConnect();
+		session.wsConnect(token);
 	});
 </script>
 

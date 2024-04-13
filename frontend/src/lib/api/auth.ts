@@ -21,7 +21,6 @@ export async function loginAPI(email: string, password: string): Promise<string>
 			} else if (response.status === 422) {
 				return 'Invalid request';
 			} else if (response.status === 200) {
-				console.log(response);
 				return 'OK';
 			}
 

@@ -178,10 +178,10 @@ export default class Session {
 		return true;
 	}
 
-	public wsConnect() {
+	public wsConnect(jwt: string) {
 		if (get(this._ws_connected)) return;
 
-		this._ws = new WebSocket(`${config.WS_URL}/sessions/${this.id}`);
+		this._ws = new WebSocket(`${config.WS_URL}/sessions/${this.id}?token=${jwt}`);
 
 		this._ws.onopen = () => {
 			this._ws_connected.set(true);
@@ -213,7 +213,7 @@ export default class Session {
 			this._ws = null;
 			this._ws_connected.set(false);
 			console.log('WS closed, reconnecting in 1s');
-			setTimeout(() => this.wsConnect(), 1000);
+			setTimeout(() => this.wsConnect(jwt), 1000);
 		};
 	}
 

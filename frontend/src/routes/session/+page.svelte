@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import { t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
+	export let data;
 
 	let session: Session | null = null;
 
@@ -46,7 +47,7 @@
 			{/each}
 		</div>
 		<div class="flex flex-row flex-grow justify-evenly">
-			<Chatbox {session} />
+			<Chatbox {session} token={data.token} />
 		</div>
 	{/if}
 </div>
