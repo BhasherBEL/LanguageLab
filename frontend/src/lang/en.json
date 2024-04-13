@@ -33,11 +33,7 @@
 		"confirmPassword": "Confirm password",
 		"signup": "Sign up"
 	},
-	"login": {
-		"email": "Email",
-		"password": "Password",
-		"login": "Login"
-	},
+	"login": { "email": "Email", "password": "Password", "login": "Login" },
 	"admin": {
 		"actions": "Actions",
 		"passwordPrompt": "Enter the password. Please note: it will no longer be recoverable."

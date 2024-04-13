@@ -3,14 +3,25 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		extend: {
-			colors: {
-				secondary: '#032f5d',
-				secondaryHover: '#004E9C'
-			},
 			textUnderlineOffset: {
 				6: '6px'
 			}
 		}
 	},
-	plugins: []
+	plugins: [require('daisyui')],
+	daisyui: {
+		themes: [
+			'light',
+			{
+				ucl: {
+					primary: '#032f5d',
+					info: '#0000ff',
+					success: '#00ff00',
+					warning: '#ffcc00',
+					error: '#ff0000'
+				}
+			}
+		],
+		logs: false
+	}
 };

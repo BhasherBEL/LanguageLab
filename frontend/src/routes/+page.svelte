@@ -5,7 +5,7 @@
 	import { getBaseURL } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 	import { displayDuration } from '$lib/utils/date';
-	import { Eye, EyeSlash, Icon, Trash } from 'svelte-hero-icons';
+	import { Eye, EyeSlash, Icon, Trash, User as UserIcon } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
 	import User, { user } from '$lib/types/user';
 
@@ -42,14 +42,14 @@
 				{$t('home.createSession')}
 			</button>
 		{/if}
-		<table class="w-full shadow-md">
-			<thead class="bg-gray-200 uppercase text-sm">
+		<table class="w-full table-md table-zebra">
+			<thead class=" uppercase text-sm bg-base-200">
 				<tr>
-					<th class="py-2 px-6">#</th>
-					<th class="py-2 px-6">{$t('home.remainingDuration')}</th>
-					<th class="py-2 px-6">{$t('home.participants')}</th>
+					<th>#</th>
+					<th>{$t('home.remainingDuration')}</th>
+					<th>{$t('home.participants')}</th>
 					{#if $user?.is_tutor}
-						<th class="py-2 px-6">{$t('home.actions')}</th>
+						<th>{$t('home.actions')}</th>
 					{/if}
 				</tr>
 			</thead>
@@ -60,11 +60,11 @@
 					<tr
 						on:click={() => (window.location.href = getBaseURL() + '/session/?id=' + session.id)}
 						tabindex="0"
-						class="odd:bg-white even:bg-gray-100 text-center hover:cursor-pointer"
+						class="text-center hover:cursor-pointer"
 						class:text-gray-400={isHidden}
 					>
-						<td class="py-3 px-6">{session.id}</td>
-						<td class="py-3 px-6">
+						<td>{session.id}</td>
+						<td>
 							{#if session.end_time < new Date()}
 								{$t('home.sessionEnded')}
 							{:else if session.start_time > new Date()}
@@ -76,23 +76,23 @@
 								{displayDuration(new Date(), session.end_time)}
 							{/if}
 						</td>
-						<td class="py-3 px-6">{session.usersList()}</td>
+						<td>{session.usersList()}</td>
 
 						{#if $user?.is_tutor}
-							<td class="py-3 px-6">
+							<td>
 								<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
-									<Icon src={User} class="w-5 hover:text-secondaryHover" />
+									<Icon src={UserIcon} class="w-5 hover:text-secondaryHover" />
 								</button>
 								<button on:click|preventDefault|stopPropagation={() => disableSession(session)}>
 									{#if session.is_active}
-										<Icon src={EyeSlash} class="w-5  hover:text-secondaryHover" />
+										<Icon src={EyeSlash} class="w-5 hover:text-secondaryHover" />
 									{:else}
-										<Icon src={Eye} class="w-5  hover:text-secondaryHover" />
+										<Icon src={Eye} class="w-5 hover:text-secondaryHover" />
 									{/if}
 								</button>
 								{#if $user?.is_admin}
 									<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
-										<Icon src={Trash} class="w-5  hover:text-secondaryHover" />
+										<Icon src={Trash} class="w-5 hover:text-secondaryHover" />
 									</button>
 								{/if}
 							</td>
