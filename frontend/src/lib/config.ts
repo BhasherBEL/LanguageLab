@@ -2,9 +2,9 @@ export default {
 	//API_URL: 'http://languagelab.sipr.ucl.ac.be:8000/api/v1',
 	//APP_URL: 'http://languagelab.sipr.ucl.ac.be',
 	//WS_URL: 'ws://languagelab.sipr.ucl.ac.be:8000/api/v1/ws',
-	API_URL: 'http://127.0.0.1:8000/api/v1',
-	APP_URL: 'http://127.0.0.1:5173',
-	WS_URL: 'ws://127.0.0.1:8000/api/v1/ws',
+	API_URL: 'http://localhost:8000/api/v1',
+	APP_URL: 'http://localhost:5173',
+	WS_URL: 'ws://localhost:8000/api/v1/ws',
 	LEARNING_LANGUAGES: ['fr'], // future: ['fr', 'en']
 	SPECIAL_CHARS: [
 		'é',

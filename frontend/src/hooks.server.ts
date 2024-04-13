@@ -10,8 +10,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.session = null;
 	event.locals.locale = 'fr';
 
-	console.log('LOCALE', event.locals.locale);
-
 	const session = event.cookies.get('access_token_cookie');
 	if (!session) {
 		return resolve(event);

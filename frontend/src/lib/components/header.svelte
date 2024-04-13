@@ -26,25 +26,25 @@
 	<h1 class="font-bold text-2xl"><a href="/">{$t('header.appName')}</a></h1>
 	<div class="flex align-middle">
 		{#if $user?.type === 0}
-			<a href="/admin/" class="mr-4 mt-0.5">
+			<a href="/admin" class="mr-4 mt-0.5">
 				<Icon src={Cog6Tooth} class="size-6" />
 			</a>
 		{/if}
 		{#if $user?.type === 0 || $user?.type === 1}
-			<a href="/timeslots/set/" class="mr-4 mt-0.5">
+			<a href="/tutor/timeslots" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
 		{#if $user?.type === 2}
-			<a href="/timeslots/" class="mr-4 mt-0.5">
+			<a href="/timeslots" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
 		{#if $user}
 			<span class="pr-2">{$t('header.connectedAs')} <strong>{$user.nickname}</strong></span>
-			<a href="/logout/"><Logout class="h-4/5" size={24} /></a>
+			<a href="/logout"><Logout class="h-4/5" size={24} /></a>
 		{:else}
-			<a href="/login/?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}">
+			<a href="/login?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}">
 				<Login size={24} />
 			</a>
 		{/if}

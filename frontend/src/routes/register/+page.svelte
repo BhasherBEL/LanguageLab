@@ -1,22 +1,14 @@
 <script lang="ts">
-	import Header from '$lib/components/header.svelte';
 	import { onMount } from 'svelte';
 	import { t } from '$lib/services/i18n';
 	import LocalSelector from '$lib/components/header/localSelector.svelte';
 	import { CheckCircle, ExclamationTriangle, Icon } from 'svelte-hero-icons';
 	import { loginAPI, registerAPI } from '$lib/api/auth';
 	import { toastAlert } from '$lib/utils/toasts';
-	import { getBaseURL } from '$lib/utils/login';
-	import { user } from '$lib/stores/auth';
 
 	let checker: HTMLDivElement;
 
 	onMount(() => {
-		if ($user != null) {
-			const redirect = new URLSearchParams(window.location.search).get('redirect') ?? getBaseURL();
-			window.location.href = redirect;
-		}
-
 		checker.innerHTML =
 			'<input type="checkbox" id="humanCheck" required><label for="humanCheck">' +
 			$t('signup.humans') +
@@ -67,8 +59,6 @@
 		document.location.href = '/first-login';
 	};
 </script>
-
-<Header />
 
 <div class="flex items-center justify-center h-screen">
 	<form action="#" class="shadow-md w-1/2 min-w-fit max-w-2xl mb-7 flex items-center flex-col p-5">

@@ -7,15 +7,13 @@
 	import { displayDuration } from '$lib/utils/date';
 	import { Eye, EyeSlash, Icon, Trash } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
-	import User, { user } from '$lib/types/user.js';
+	import User, { user } from '$lib/types/user';
 
 	let editParticipantsSession: Session | null;
 	let ready = false;
 
 	onMount(async () => {
-		if ($user != null) {
-			Session.parseAll(await getSessionsAPI());
-		}
+		Session.parseAll(await getSessionsAPI());
 
 		ready = true;
 	});

@@ -1,12 +1,9 @@
 import { type ServerLoad, redirect } from '@sveltejs/kit';
 
-const publicly_allowed = ['/login', '/register'];
-
 export const load: ServerLoad = async ({ locals, url }) => {
-	if (locals.user == null || locals.user == undefined) {
-		if (!publicly_allowed.includes(url.pathname)) {
-			redirect(307, `/login`);
-		}
+	if (locals.user != null && locals.user != undefined) {
+		const path = url.searchParams.get('redirect') || '/';
+		redirect(307, path);
 	}
 
 	return {

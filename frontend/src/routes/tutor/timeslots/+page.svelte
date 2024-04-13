@@ -1,11 +1,9 @@
 <script lang="ts">
 	import Header from '$lib/components/header.svelte';
-	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { _ } from '$lib/services/i18n';
+	import { t } from '$lib/services/i18n';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
-	import JWTSession from '$lib/stores/JWTSession';
-	import { toastAlert } from '$lib/utils/toasts';
+	import { user } from '$lib/types/user';
 
 	$: lastTimeslots = 0;
 	$: timeslots = 0;
@@ -13,21 +11,15 @@
 	let sent = false;
 
 	onMount(async () => {
-		if (!requireLogin()) return;
-
-		const user = await JWTSession.userOrLoad();
-
-		if (!user) {
-			toastAlert('Failed to load user data');
-			return;
+		if ($user != null) {
+			timeslots = $user.availability;
+			lastTimeslots = timeslots;
+			ready = true;
 		}
-		timeslots = user.availability;
-		lastTimeslots = timeslots;
-		ready = true;
 	});
 
 	async function send() {
-		const res = JWTSession.user()?.setAvailability(timeslots);
+		const res = $user?.setAvailability(timeslots);
 
 		if (!res) return;
 
@@ -37,16 +29,14 @@
 	}
 </script>
 
-<Header />
-
 <div class="w-4/5 max-w-4xl m-auto mt-4">
-	<h2 class="my-4 text-xl">{$_('timeslots.setAvailabilities')}</h2>
+	<h2 class="my-4 text-xl">{$t('timeslots.setAvailabilities')}</h2>
 	{#if ready}
 		<Timeslots bind:timeslots />
 
 		<div class="mt-4 w-full flex justify-center">
 			<button class="button" disabled={sent || lastTimeslots === timeslots} on:click={send}
-				>{$_(sent ? 'button.sent' : 'button.submit')}</button
+				>{$t(sent ? 'button.sent' : 'button.submit')}</button
 			>
 		</div>
 	{/if}

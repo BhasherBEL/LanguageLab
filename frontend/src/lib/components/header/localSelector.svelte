@@ -10,6 +10,7 @@
 	function onChange() {
 		if (value !== get(locale)) {
 			// TODO: Should be in place
+			document.cookie = `locale=${value}; path=/; max-age=31536000`;
 			const path = window.location.pathname.split('/').slice(2).join('/') + window.location.search;
 			window.location.href = `/${path}`;
 		}
