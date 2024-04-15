@@ -37,14 +37,18 @@
 </script>
 
 <div class="w-full">
-	<ul class="h-10 flex justify-around border-y-2 divide-x-2">
+	<ul class="flex justify-around divide-x-2 border-y-2 py-1">
 		{#each config.SPECIAL_CHARS as char (char)}
 			<button
-				class="flex-grow hover:bg-gray-100"
+				class="border-none"
 				on:click={() => {
 					message += char;
-				}}>{char}</button
+				}}
 			>
+				<kbd class="kbd">
+					{char}
+				</kbd>
+			</button>
 		{/each}
 	</ul>
 	<div class="w-full flex">
@@ -61,7 +65,7 @@
 				}
 			}}
 		/>
-		<button class="valid w-12 button !rounded-none !rounded-br-lg" on:click={sendMessage}>
+		<button class="btn btn-primary size-16" on:click={sendMessage}>
 			<Icon src={PaperAirplane} />
 		</button>
 	</div>

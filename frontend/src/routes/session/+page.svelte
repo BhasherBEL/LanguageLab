@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import { t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
+	import { AcademicCap, Icon, Sparkles, User } from 'svelte-hero-icons';
 	export let data;
 
 	let session: Session | null = null;
@@ -27,27 +28,34 @@
 	});
 </script>
 
-<div class="h-screen flex flex-col">
-	{#if session}
-		<div class="mx-6 mt-4 text-lg text-center">
-			#{session.id}:
-			{#each session.users as sessionUser, i (sessionUser.id)}
-				{#if sessionUser === $user}
-					<span class="font-bold">{sessionUser.nickname}</span> ({$t(
-						'users.type.' + sessionUser.type
-					).toLowerCase()})<!--
-				-->{:else}
-					{sessionUser.nickname} ({$t(
-						'users.type.' + sessionUser.type
-					).toLowerCase()})<!--
-				-->{/if}<!--
-				-->{#if i < session.users.length - 1}
-					,&nbsp;
-				{/if}
-			{/each}
-		</div>
-		<div class="flex flex-row flex-grow justify-evenly">
+{#if session}
+	<div class="h-full grid lg:grid-cols-4">
+		<div class=""></div>
+		<div class="flex flex-row flex-grow col-span-2">
 			<Chatbox {session} token={data.token} />
 		</div>
-	{/if}
-</div>
+		<div class="flex flex-col justify-evenly m-8">
+			<div class="border-2 rounded-lg p-2">
+				<h2 class="text-center font-bold text-xl">#{session.id}</h2>
+				<div class="mb-2">{$t('session.participants')}:</div>
+				<ul>
+					{#each session.users as sessionUser (sessionUser.id)}
+						<li class="list-disc list-inside">
+							<div class="inline-flex space-x-2">
+								{#if sessionUser.type == 0}
+									<Icon src={Sparkles} class="w-5" />
+								{:else if sessionUser.type == 1}
+									<Icon src={AcademicCap} class="w-5" />
+								{:else}
+									<Icon src={User} class="w-5" />
+								{/if}
+
+								<span class:font-bold={sessionUser === $user}>{sessionUser.nickname}</span>
+							</div>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		</div>
+	</div>
+{/if}

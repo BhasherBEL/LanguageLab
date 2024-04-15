@@ -14,9 +14,18 @@
 		messages = newMessages;
 	});
 
-	let wsConnected = get(session.wsConnected);
+	let wsConnected = true;
+	let timeout: number;
 	session.wsConnected.subscribe((newConnected) => {
-		wsConnected = newConnected;
+		clearTimeout(timeout);
+
+		if (newConnected === wsConnected) return;
+		else if (newConnected) wsConnected = newConnected;
+		else {
+			timeout = setTimeout(() => {
+				wsConnected = newConnected;
+			}, 1000);
+		}
 	});
 
 	onMount(async () => {
@@ -25,7 +34,7 @@
 	});
 </script>
 
-<div class="flex flex-col md:my-4 min-w-fit w-full max-w-4xl border-2 rounded-lg">
+<div class="flex flex-col my-4 min-w-fit w-full max-w-4xl border-2 rounded-lg">
 	<div class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex mb-2">
 		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.id)}
 			<MessageC {message} />
