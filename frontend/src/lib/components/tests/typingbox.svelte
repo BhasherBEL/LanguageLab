@@ -1,13 +1,7 @@
 <script lang="ts">
-	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { _ } from '$lib/services/i18n';
-	import { createTestTypingAPI } from '$lib/api/users';
-	import JWTSession from '$lib/stores/JWTSession';
-	import { toastAlert } from '$lib/utils/toasts';
+	import { t } from '$lib/services/i18n';
 	import config from '$lib/config';
-	import { init, t } from 'svelte-i18n';
-	import { split } from 'postcss/lib/list';
 
 	export let initialDuration: number;
 	export let exerciceId: number;
@@ -57,7 +51,7 @@
 			}}
 			disabled={inProgress}
 		>
-			{$_('button.start')}
+			{$t('button.start')}
 		</button>
 		<div class="text-2xl font-bold">
 			{duration}s

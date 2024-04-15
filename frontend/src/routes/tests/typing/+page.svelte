@@ -1,8 +1,7 @@
 <script lang="ts">
 	import Header from '$lib/components/header.svelte';
-	import { requireLogin } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { _ } from '$lib/services/i18n';
+	import { t } from '$lib/services/i18n';
 	import Typingbox from '$lib/components/tests/typingbox.svelte';
 	import { get } from 'svelte/store';
 
@@ -22,7 +21,7 @@
 	let exercices = [
 		{
 			duration: 15,
-			explications: `Repetez les lettres "dk" autant de fois que possible en 15 secondes. Le chronomètre démarre dès que vous appuyez sur une touche ou sur le boutton ${get(_)('button.start')}. Une vois que vous aurez terminé, appuyez sur le bouton ${get(_)('button.next')} pour passer à l'exercice suivant.`,
+			explications: `Repetez les lettres "dk" autant de fois que possible en 15 secondes. Le chronomètre démarre dès que vous appuyez sur une touche ou sur le boutton ${get(t)('button.start')}. Une vois que vous aurez terminé, appuyez sur le bouton ${get(t)('button.next')} pour passer à l'exercice suivant.`,
 			text: 'dk'.repeat(150) + '...'
 		},
 		{
@@ -36,15 +35,11 @@
 			text: 'Six animaux mangent\n'.repeat(6) + 'Six animaux mangent'
 		}
 	];
-
-	onMount(async () => {
-		if (!requireLogin()) return;
-	});
 </script>
 
 <Header />
 
-{#each exercices as exercice, i (i)}
+{#each exercices as _, i (i)}
 	{#if i === currentExercice}
 		<Typingbox
 			exerciceId={i}
@@ -68,9 +63,9 @@
 			}}
 			disabled={inProgress}
 		>
-			{$_('button.next')}
+			{$t('button.next')}
 		</button>
 	{:else}
-		<button class="button m-auto" disabled={inProgress}>{$_('button.submit')}</button>
+		<button class="button m-auto" disabled={inProgress}>{$t('button.submit')}</button>
 	{/if}
 </div>
