@@ -18,28 +18,20 @@
 	const isSender = message.user.id == $user?.id;
 </script>
 
-<div class="w-full flex my-2" class:flex-row-reverse={isSender}>
-	<div class="flex flex-col">
-		<div class="rounded-full size-14 mx-2 bg-gray-200" title={message.user.nickname}>
-			{#if message.user.type == 0}
-				<Icon src={Sparkles} class="w-6 m-auto" />
-			{:else if message.user.type == 1}
-				<Icon src={AcademicCap} class="w-8 m-auto" />
-			{:else}
-				<Icon src={User} class="w-8 m-auto" />
-			{/if}
-		</div>
-		<div class="text-center text-gray-400 text-sm">
-			{displayedTime}
-		</div>
+<div class="chat" class:chat-start={!isSender} class:chat-end={isSender}>
+	<div class="rounded-full p-3 mx-2 bg-gray-200 chat-image" title={message.user.nickname}>
+		{#if message.user.type == 0}
+			<Icon src={Sparkles} class="w-6 m-auto" />
+		{:else if message.user.type == 1}
+			<Icon src={AcademicCap} class="w-6 m-auto" />
+		{:else}
+			<Icon src={User} class="w-6 m-auto" />
+		{/if}
 	</div>
-	<div
-		class="rounded-b-xl p-4 w-fit h-fit"
-		class:bg-blue-200={isSender}
-		class:bg-gray-200={!isSender}
-		class:rounded-tl-xl={isSender}
-		class:rounded-tr-xl={!isSender}
-	>
-		<div class="max-w-3xl">{message.content}</div>
+	<div class="chat-bubble" class:chat-bubble-secondary={isSender}>
+		{message.content}
+	</div>
+	<div class="chat-footer opacity-50">
+		{displayedTime}
 	</div>
 </div>
