@@ -4,8 +4,9 @@
 	import type Session from '$lib/types/session';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
-	import { user } from '$lib/types/user';
+	import { user, users } from '$lib/types/user';
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	onMount(async () => {
 		await import('emoji-picker-element');
@@ -34,11 +35,13 @@
 		metadata = [];
 	}
 
-	function keyPress(e: KeyboardEvent) {
+	function keyPress() {
 		if (message === lastMessage) return;
 
 		metadata.push({ message: message, date: new Date().getTime() });
 		lastMessage = message;
+
+		session.sendTyping(get(users));
 	}
 </script>
 
