@@ -5,6 +5,7 @@
 	import { toastAlert } from '$lib/utils/toasts';
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
+	import EmojiPicker from './emojiPicker.svelte';
 
 	export let session: Session;
 
@@ -50,6 +51,12 @@
 				</kbd>
 			</button>
 		{/each}
+		<EmojiPicker
+			class="border-none"
+			on:change={(event) => {
+				message += event.detail.emoji;
+			}}
+		/>
 	</ul>
 	<div class="w-full flex">
 		<textarea
