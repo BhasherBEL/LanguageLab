@@ -1,6 +1,6 @@
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
-import User from './user';
+import User, { user } from './user';
 import { axiosInstance } from '$lib/api/apiInstance';
 import { createMessageAPI, getMessagesAPI, patchLanguageAPI } from '$lib/api/sessions';
 import Message from './message';
@@ -91,7 +91,10 @@ export default class Session {
 	}
 
 	usersList(maxLength = 30): string {
-		const users = this._users.map((user) => user.nickname).join(', ');
+		const users = this._users
+			.filter((u) => u.id != get(user)?.id)
+			.map((user) => user.nickname)
+			.join(', ');
 		if (users.length < maxLength) {
 			return users;
 		}

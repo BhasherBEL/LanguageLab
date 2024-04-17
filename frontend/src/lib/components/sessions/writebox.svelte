@@ -5,12 +5,18 @@
 	import { toastAlert } from '$lib/utils/toasts';
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		await import('emoji-picker-element');
+	});
 
 	export let session: Session;
 
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
 	let message = '';
+	let showPicker = false;
 
 	async function sendMessage() {
 		if (message.length == 0) return;
@@ -50,6 +56,30 @@
 				</kbd>
 			</button>
 		{/each}
+		<kbd
+			class="kbd"
+			on:click={() => (showPicker = !showPicker)}
+			data-tooltip-target="tooltip-emoji"
+			data-tooltip-placement="right"
+			data-riple-light="true"
+			aria-hidden={false}
+			role="button"
+			tabindex="0"
+		>
+			😀
+		</kbd>
+		<div class="relative">
+			<div
+				id="tooltip-emoji"
+				data-tooltip="tooltip-emoji"
+				role="tooltip"
+				class:hidden={!showPicker}
+				class="absolute z-10 tooltip bottom-0 left-0"
+			>
+				<emoji-picker class="light" on:emoji-click={(event) => (message += event.detail.unicode)}>
+				</emoji-picker>
+			</div>
+		</div>
 	</ul>
 	<div class="w-full flex">
 		<textarea

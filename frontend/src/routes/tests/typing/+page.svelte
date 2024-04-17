@@ -37,8 +37,6 @@
 	];
 </script>
 
-<Header />
-
 {#each exercices as _, i (i)}
 	{#if i === currentExercice}
 		<Typingbox

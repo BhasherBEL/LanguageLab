@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type Message from '$lib/types/message';
 	import { displayTime } from '$lib/utils/date';
-	import { AcademicCap, Icon, Sparkles, User } from 'svelte-hero-icons';
+	import { AcademicCap, Check, Icon, Sparkles, User } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
 
 	export let message: Message;
@@ -28,10 +28,11 @@
 			<Icon src={User} class="w-6 m-auto" />
 		{/if}
 	</div>
-	<div class="chat-bubble" class:chat-bubble-secondary={isSender}>
+	<div class="chat-bubble whitespace-pre" class:chat-bubble-secondary={isSender}>
 		{message.content}
 	</div>
 	<div class="chat-footer opacity-50">
+		<Icon src={Check} class="w-4 inline" />
 		{displayedTime}
 	</div>
 </div>

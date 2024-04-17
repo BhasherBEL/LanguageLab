@@ -11,7 +11,7 @@ export default {
 	plugins: [require('daisyui')],
 	daisyui: {
 		themes: [
-			'light',
+			'bumblebee',
 			{
 				ucl: {
 					primary: '#032f5d',

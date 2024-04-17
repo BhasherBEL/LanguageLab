@@ -64,26 +64,23 @@ export function displayTime(date: Date): string {
 
 	const now = new Date();
 
+	const hours = date.getHours().toString().padStart(2, '0');
+	const minutes = date.getMinutes().toString().padStart(2, '0');
+
 	if (now.getDate() - date.getDate() < 1000 * 60 * 60 * 24) {
-		if (now.getTime() - date.getTime() < 1000 * 60 * 60) {
-			if (now.getTime() - date.getTime() < 1000 * 60) {
-				return 'now';
-			}
-
-			const minutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-
-			return minutes + 'm';
-		}
-
-		const hours = date.getHours().toString().padStart(2, '0');
-		const minutes = date.getMinutes().toString().padStart(2, '0');
-
 		return hours + ':' + minutes;
 	}
 
-	const days = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+	const day = date.getDate().toString().padStart(2, '0');
+	const month = (date.getMonth() + 1).toString().padStart(2, '0');
 
-	return days + 'd';
+	if (now.getFullYear() === date.getFullYear()) {
+		return day + '/' + month + ' ' + hours + ':' + minutes;
+	}
+
+	const year = date.getFullYear().toString();
+
+	return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes;
 }
 
 export function displayDuration(start: Date, end: Date): string | null {
