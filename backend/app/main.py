@@ -85,9 +85,11 @@ def login(
 ):
     db_user = crud.get_user_by_email_and_password(db, email, password)
     if db_user is None:
-        raise HTTPException(status_code=401, detail="Incorrect email or password")
+        raise HTTPException(
+            status_code=401, detail="Incorrect email or password")
 
-    subject = {"uid": db_user.id, "email": db_user.email, "nickname": db_user.nickname}
+    subject = {"uid": db_user.id, "email": db_user.email,
+               "nickname": db_user.nickname}
     access_token = jwt_cookie.create_access_token(subject)
 
     jwt_cookie.set_access_cookie(
@@ -116,7 +118,8 @@ def register(
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
 
-    user_data = schemas.UserCreate(email=email, password=password, nickname=nickname)
+    user_data = schemas.UserCreate(
+        email=email, password=password, nickname=nickname)
 
     user = crud.create_user(db=db, user=user_data)
 
@@ -369,10 +372,7 @@ def update_session(
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    if not check_user_level(current_user, models.UserType.ADMIN) and (
-        current_user.type != models.UserType.TUTOR
-        or current_user not in db_session.users
-    ):
+    if not check_user_level(current_user, models.UserType.TUTOR):
         raise HTTPException(
             status_code=401, detail="You do not have permission to update this session"
         )
@@ -389,9 +389,7 @@ def add_user_to_session(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    if not check_user_level(current_user, models.UserType.ADMIN) and (
-        current_user.id != user_id or current_user.type != models.UserType.TUTOR
-    ):
+    if not check_user_level(current_user, models.UserType.TUTOR):
         raise HTTPException(
             status_code=401,
             detail="You do not have permission to add a user to a session",
@@ -419,9 +417,7 @@ def remove_user_from_session(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    if not check_user_level(current_user, models.UserType.ADMIN) and (
-        current_user.id != user_id or current_user.type != models.UserType.TUTOR
-    ):
+    if not check_user_level(current_user, models.UserType.TUTOR):
         raise HTTPException(
             status_code=401,
             detail="You do not have permission to remove a user from a session",
@@ -516,9 +512,11 @@ def create_message(
 
     message = crud.create_message(db, entryMessage, current_user, db_session)
 
-    background_tasks.add_task(store_metadata, db, message.id, entryMessage.metadata)
     background_tasks.add_task(
-        send_websoket_message, session_id, schemas.Message.model_validate(message)
+        store_metadata, db, message.id, entryMessage.metadata)
+    background_tasks.add_task(
+        send_websoket_message, session_id, schemas.Message.model_validate(
+            message)
     )
 
     return message.id
@@ -580,19 +578,22 @@ async def webhook_session(
         raise HTTPException(status_code=401, detail="Invalid secret")
 
     if webhook.triggerEvent == "BOOKING_CREATED":
-        start_time = datetime.datetime.fromisoformat(webhook.payload["startTime"])
+        start_time = datetime.datetime.fromisoformat(
+            webhook.payload["startTime"])
         start_time -= datetime.timedelta(hours=1)
         end_time = datetime.datetime.fromisoformat(webhook.payload["endTime"])
         end_time += datetime.timedelta(hours=1)
         attendes = webhook.payload["attendees"]
-        emails = [attendee["email"] for attendee in attendes if attendee != None]
+        emails = [attendee["email"]
+                  for attendee in attendes if attendee != None]
         db_users = [
             crud.get_user_by_email(db, email) for email in emails if email != None
         ]
         users = [user for user in db_users if user != None]
 
         if users:
-            db_session = crud.create_session_with_users(db, users, start_time, end_time)
+            db_session = crud.create_session_with_users(
+                db, users, start_time, end_time)
         else:
             raise HTTPException(status_code=404, detail="Users not found")
 

@@ -4,7 +4,7 @@
 	import Session, { sessions } from '$lib/types/session';
 	import { getBaseURL } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { displayDuration } from '$lib/utils/date';
+	import { displayDuration, displayTime } from '$lib/utils/date';
 	import { Eye, EyeSlash, Icon, Trash, User as UserIcon } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
@@ -45,7 +45,6 @@
 		<table class="w-full table-md table-zebra">
 			<thead class=" uppercase text-sm bg-base-200">
 				<tr>
-					<th>#</th>
 					<th>{$t('home.remainingDuration')}</th>
 					<th>{$t('home.participants')}</th>
 					{#if $user?.is_tutor}
@@ -63,17 +62,11 @@
 						class="text-center hover:cursor-pointer"
 						class:text-gray-400={isHidden}
 					>
-						<td>{session.id}</td>
 						<td>
 							{#if session.end_time < new Date()}
 								{$t('home.sessionEnded')}
-							{:else if session.start_time > new Date()}
-								({displayDuration(new Date(), session.start_time)}) - {displayDuration(
-									new Date(),
-									session.end_time
-								)}
 							{:else}
-								{displayDuration(new Date(), session.end_time)}
+								{displayTime(session.start_time)}
 							{/if}
 						</td>
 						<td>{session.usersList()}</td>

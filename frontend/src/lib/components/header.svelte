@@ -22,7 +22,7 @@
 	});
 </script>
 
-<header class="bg-primary text-white flex align-middle justify-between px-4 py-2">
+<header class="bg-gray-500 text-white flex align-middle justify-between p-4">
 	<h1 class="font-bold text-2xl"><a href="/">{$t('header.appName')}</a></h1>
 	<div class="flex align-middle">
 		{#if $user?.type === 0}

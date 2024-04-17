@@ -85,6 +85,10 @@ export default class User {
 		return await patchUserAPI(this.id, { availability: availability });
 	}
 
+	notEquals<T>(obj: T): boolean {
+		return !this.equals(obj);
+	}
+
 	toJson(): string {
 		return JSON.stringify({
 			id: this.id,
