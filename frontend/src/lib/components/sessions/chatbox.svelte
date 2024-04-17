@@ -28,6 +28,28 @@
 		}
 	});
 
+	$: isTyping = false;
+	let timeoutTyping: number;
+
+	session.lastTyping.subscribe((lastTyping) => {
+		clearTimeout(timeoutTyping);
+		if (!lastTyping) {
+			isTyping = false;
+			return;
+		}
+
+		const diff = new Date().getTime() - lastTyping.getTime();
+
+		if (diff > 5000) {
+			isTyping = false;
+		}
+
+		isTyping = true;
+		timeoutTyping = setTimeout(() => {
+			isTyping = false;
+		}, 5000 - diff);
+	});
+
 	onMount(async () => {
 		await session.loadMessages();
 		session.wsConnect(token);
@@ -36,6 +58,9 @@
 
 <div class="flex flex-col my-4 min-w-fit w-full max-w-4xl border-2 rounded-lg">
 	<div class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex mb-2">
+		<div class:hidden={!isTyping}>
+			<span class="loading loading-dots loading-md"></span>
+		</div>
 		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.id)}
 			<MessageC {message} />
 		{/each}

@@ -28,6 +28,7 @@ export default class Session {
 	private _language: string;
 	private _ws: WebSocket | null = null;
 	private _ws_connected = writable(false);
+	private _lastTyping: Writable<Date | null> = writable(null);
 
 	private constructor(
 		id: number,
@@ -88,6 +89,10 @@ export default class Session {
 
 	get wsConnected(): Writable<boolean> {
 		return this._ws_connected;
+	}
+
+	get lastTyping(): Writable<Date | null> {
+		return this._lastTyping;
 	}
 
 	usersList(maxLength = 30): string {
@@ -174,6 +179,16 @@ export default class Session {
 		return message;
 	}
 
+	async sendTyping(): Promise<boolean> {
+		const response = await axiosInstance.post(`/sessions/${this.id}/typing`);
+		if (response.status !== 204) {
+			console.log('Failed to send typing data', response);
+			return false;
+		}
+
+		return true;
+	}
+
 	async changeLanguage(language: string): Promise<boolean> {
 		const res = await patchLanguageAPI(this.id, language);
 		if (!res) return false;
@@ -207,6 +222,9 @@ export default class Session {
 
 						return;
 					}
+				} else if (data['action'] == 'typing') {
+					this._lastTyping.set(new Date());
+					return;
 				}
 			}
 			console.error('Failed to parse ws:', data);
