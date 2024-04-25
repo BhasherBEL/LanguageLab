@@ -4,6 +4,9 @@ services:
     image: registry.forge.uclouvain.be/sbibauw/languagelab:frontend
     ports:
       - 80:8080
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - languagelab-backend
 
@@ -17,7 +20,10 @@ services:
       - ADMIN_EMAIL=${LANGUAGELAB_ADMIN_EMAIL}
       - ADMIN_PASSWORD=${LANGUAGELAB_ADMIN_PASSWORD}
       - CALCOM_SECRET=${LANGUAGELAB_CALCOM_SECRET}
+      - ALLOWED_ORIGINS=http://languagelab.sipr.ucl.ac.be
     volumes:
       - /mnt/data/languagelab/backend:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - 8000:8000
