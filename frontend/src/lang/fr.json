@@ -6,7 +6,8 @@
 	},
 	"chatbox": {
 		"placeholder": "Écrivez votre message ici...",
-		"sendError": "Erreur lors de l'envoi du message"
+		"sendError": "Erreur lors de l'envoi du message",
+		"disabled": "Cette session est accessible uniquement en lecture"
 	},
 	"home": {
 		"date": "Date",
