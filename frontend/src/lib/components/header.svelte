@@ -23,28 +23,31 @@
 </script>
 
 <header class="bg-gray-500 text-white flex align-middle justify-between p-4">
-	<h1 class="font-bold text-2xl"><a href="/">{$t('header.appName')}</a></h1>
+	<h1 class="font-bold text-2xl"><a data-sveltekit-reload href="/">{$t('header.appName')}</a></h1>
 	<div class="flex align-middle">
 		{#if $user?.type === 0}
-			<a href="/admin" class="mr-4 mt-0.5">
+			<a data-sveltekit-reload href="/admin" class="mr-4 mt-0.5">
 				<Icon src={Cog6Tooth} class="size-6" />
 			</a>
 		{/if}
 		{#if $user?.type === 0 || $user?.type === 1}
-			<a href="/tutor/timeslots" class="mr-4 mt-0.5">
+			<a data-sveltekit-reload href="/tutor/timeslots" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
 		{#if $user?.type === 2}
-			<a href="/timeslots" class="mr-4 mt-0.5">
+			<a data-sveltekit-reload href="/timeslots" class="mr-4 mt-0.5">
 				<Icon src={Clock} class="size-6" />
 			</a>
 		{/if}
 		{#if $user}
 			<span class="pr-2">{$t('header.connectedAs')} <strong>{$user.nickname}</strong></span>
-			<a href="/logout"><Logout class="h-4/5" size={24} /></a>
+			<a data-sveltekit-reload href="/logout"><Logout class="h-4/5" size={24} /></a>
 		{:else}
-			<a href="/login?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}">
+			<a
+				data-sveltekit-reload
+				href="/login?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}"
+			>
 				<Login size={24} />
 			</a>
 		{/if}
@@ -53,7 +56,11 @@
 </header>
 
 {#if displayMetadataWarning}
-	<a href="/first-login" class="bg-orange-500 text-white text-center p-4 flex justify-center">
+	<a
+		data-sveltekit-reload
+		href="/register"
+		class="bg-orange-500 text-white text-center p-4 flex justify-center"
+	>
 		<Icon src={ExclamationTriangle} size="24" />
 		&nbsp;
 		{$t('header.metadataWarning')}
