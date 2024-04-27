@@ -1,12 +1,19 @@
 <script lang="ts">
 	import { loginAPI, registerAPI } from '$lib/api/auth';
-	import { createUserMetadataAPI, getUserMetadataAPI } from '$lib/api/users';
+	import { createUserMetadataAPI, getUserMetadataAPI, patchUserMetadataAPI } from '$lib/api/users';
 	import config from '$lib/config';
 	import { locale, t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	import Timeslots from '$lib/components/users/timeslots.svelte';
+	import User, { users } from '$lib/types/user';
+	import { getUsersAPI } from '$lib/api/users';
+	import { ArrowRight, Icon } from 'svelte-hero-icons';
+	import { patchLanguageAPI } from '$lib/api/sessions';
+	import Typingbox from '$lib/components/tests/typingbox.svelte';
+	import Typingtest from '$lib/components/tests/typingtest.svelte';
 
 	let current_step = 0;
 
@@ -15,6 +22,7 @@
 	//let checker: HTMLDivElement;
 
 	onMount(async () => {
+		User.parseAll(await getUsersAPI());
 		/*checker.innerHTML =
 			'<label for="humanCheck" class="cursor-pointer label">' +
 			$t('register.humans') +
@@ -33,7 +41,12 @@
 			return;
 		}
 
-		current_step = 4;
+		if (!res.tutor_id) {
+			current_step = 4;
+			return;
+		}
+
+		current_step = 5;
 	});
 
 	let nickname = '';
@@ -45,6 +58,14 @@
 	let homeLanguage: string;
 	let targetLanguage: string;
 	let birthdate: string;
+
+	let timeslots = 0;
+	$: filteredUsers = $users.filter((user) => {
+		if (user.availability === 0) return false;
+		if (timeslots === 0) return true;
+
+		return user.availability & timeslots;
+	});
 
 	async function onRegister() {
 		if (nickname == '' || email == '' || password == '' || confirmPassword == '') {
@@ -103,8 +124,6 @@
 			return;
 		}
 
-		console.log('birthdate: ', birthdate);
-
 		const res = await createUserMetadataAPI(
 			user_id,
 			uiLanguage,
@@ -114,10 +133,33 @@
 		);
 
 		if (!res) {
-			message = 'Failed to create user metadata';
+			message = $t('register.error.metadata');
 			return;
 		}
 
+		current_step++;
+	}
+
+	async function onTutor(tutor: User) {
+		const user_id = get(user)?.id;
+
+		if (!user_id) {
+			toastAlert('Failed to get current user ID');
+			return;
+		}
+
+		if (confirm($t('register.confirmTutor').replaceAll('{NAME}', tutor.nickname)) === false) return;
+
+		const res = await patchUserMetadataAPI(user_id, null, null, null, null, tutor.id);
+
+		if (!res) {
+			message = $t('register.error.tutor');
+			return;
+		}
+		current_step++;
+	}
+
+	async function onTyping() {
 		current_step++;
 	}
 </script>
@@ -134,12 +176,23 @@
 			{$t('register.tab.information')}
 		</li>
 		<li class="step cursor-pointer" class:step-primary={current_step >= 4}>
+			{$t('register.tab.timeslots')}
+		</li>
+		<li class="step cursor-pointer" class:step-primary={current_step >= 5}>
 			{$t('register.tab.test')}
+		</li>
+		<li class="step cursor-pointer" class:step-primary={current_step >= 6}>
+			{$t('register.tab.start')}
 		</li>
 	</ul>
 </div>
 
 <div class="mt-5 w-[700px] max-w-full mx-auto">
+	{#if message}
+		<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
+			{message}
+		</div>
+	{/if}
 	{#if current_step == 1}
 		<div class="text-center">
 			<div>{@html $t('register.consentText')}</div>
@@ -148,11 +201,6 @@
 			</button>
 		</div>
 	{:else if current_step == 2}
-		{#if message}
-			<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
-				{message}
-			</div>
-		{/if}
 		<div class="space-y-5">
 			<label class="input input-bordered flex items-center gap-2">
 				<svg
@@ -234,11 +282,6 @@
 		<div class="text-center pb-2">
 			{@html $t('register.welcome')}
 		</div>
-		{#if message}
-			<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
-				{message}
-			</div>
-		{/if}
 		<div class="mt-4">
 			<label for="homeLanguage">
 				{$t('register.homeLanguage')}
@@ -282,6 +325,64 @@
 		</div>
 		<div class="mt-4 text-center">
 			<button class="button" on:click={onData}>{$t('button.submit')}</button>
+		</div>
+	{:else if current_step == 4}
+		<h2 class="my-4 text-xl">{$t('timeslots.availabilities')}</h2>
+		<Timeslots bind:timeslots />
+		<h2 class="my-8 text-xl">{$t('timeslots.availableTutors')}</h2>
+
+		{#if filteredUsers.length > 0}
+			<table class="table-fixed w-full border-collapse text-center">
+				<thead>
+					<tr class="bg-gray-100">
+						<th class="border-2 h-10">{$t('users.nickname')}</th>
+						<th class="border-2">{$t('users.email')}</th>
+						<th class="border-2">{$t('users.availability')}</th>
+						<th class="border-2"></th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each filteredUsers as user}
+						<tr>
+							<td class="border-2">{user.nickname}</td>
+							<td class="border-2">{user.email}</td>
+							<td class="border-2">
+								{#each Array.from({ length: 5 }, (_, i) => i) as i}
+									{@const time = i * 2 + 8}
+									{#each Array.from({ length: 5 }, (_, day) => day) as day}
+										{@const bin = 1 << (i * 5 + day)}
+										{#if user.availability & bin}
+											<span class:font-bold={timeslots & bin}>
+												{$t('utils.days.' + day)}
+												{time}:30 - {time + 2}:30
+												<br />
+											</span>
+										{/if}
+									{/each}
+								{/each}
+							</td>
+							<td class="border-2 text-center">
+								<button class="button m-auto" on:click={() => onTutor(user)}>
+									<Icon src={ArrowRight} size="32" />
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		{:else}
+			<p>{$t('timeslots.noTutors')}</p>
+		{/if}
+	{:else if current_step == 5}
+		<Typingtest onFinish={onTyping} />
+	{:else if current_step == 6}
+		<div class="text-center">
+			<p class="text-center">
+				{@html $t('register.start')}
+			</p>
+			<button class="button mt-4 m-auto" on:click={() => (document.location.href = '/')}>
+				{$t('register.startButton')}
+			</button>
 		</div>
 	{/if}
 </div>

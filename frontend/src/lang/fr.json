@@ -52,19 +52,26 @@
 			"consent": "Consentement",
 			"signup": "Inscription",
 			"information": "Informations",
-			"test": "Test"
+			"test": "Test",
+			"timeslots": "Tuteur",
+			"start": "Commencer"
 		},
 		"error": {
 			"emptyFields": "Veuillez remplir tous les champs",
 			"passwordRules": "Le mot de passe doit contenir au moins 8 caractères",
 			"differentPasswords": "Les mots de passe ne correspondent pas",
 			"emailRules": "Veuillez entrer une adresse email valide",
-			"humanity": "Veuillez confirmer que vous n'êtes pas un robot"
+			"humanity": "Veuillez confirmer que vous n'êtes pas un robot",
+			"metadata": "Veuillez vérifier que vous avez correctement rempli tous les champs",
+			"tutor": "Error lors de la séléction du tuteur. Veuillez réassayer."
 		},
 		"welcome": "Similique tempora incidunt blanditiis nostrum illum omnis architecto. Doloremque illum repellat sequi voluptatem accusantium tenetur distinctio. Dolor qui ut libero pariatur eos fugiat nam et. Temporibus consequatur eum nisi ab aperiam. Officiis inventore voluptate ab explicabo rerum. Nemo incidunt sequi consequatur illum eius ipsum veritatis dolores.",
 		"homeLanguage": "Langue première",
 		"targetLanguage": "Langue cible",
-		"birthdate": "Date de naissance"
+		"birthdate": "Date de naissance",
+		"confirmTutor": "Confirmez vous sélectionner \"{NAME}\" comme tuteur ?",
+		"start": "Aut sint sint et nihil aut. Quia nihil eos rerum neque exercitationem molestiae. Aut ab accusantium consequatur rerum architecto voluptas. Repudiandae minima nemo vitae tempore. Molestiae rerum aliquid ut fugit eligendi. Alias dolorum quia voluptatum veniam harum aut qui et. Voluptatibus adipisci illo velit assumenda. Asperiores accusamus deserunt eveniet adipisci reprehenderit. Ducimus placeat sit reprehenderit ea eos quam. Ut facilis quia suscipit officiis odit unde temporibus error. Neque sapiente ut similique. Eius ut sapiente maxime dolor est voluptatem eum. Veniam aut sit quo. Quibusdam sed numquam et rem. Tempore eum id nobis sunt deleniti et non ducimus. Maiores perferendis non consequuntur neque nostrum. Odio itaque fugiat non. Laboriosam sint voluptatem aut placeat et perferendis. Sed quam voluptatem necessitatibus quia dolorum. Eius est nihil natus modi natus quisquam ut impedit. Tempore enim autem laboriosam sequi ipsum quo. <bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
+		"startButton": "Commencer"
 	},
 	"timeslots": {
 		"cesttime": "Heure CET (Bruxelles)",

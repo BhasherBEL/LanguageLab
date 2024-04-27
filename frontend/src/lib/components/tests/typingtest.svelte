@@ -1,18 +1,14 @@
 <script lang="ts">
-	import Header from '$lib/components/header.svelte';
-	import { onMount } from 'svelte';
 	import { t } from '$lib/services/i18n';
 	import Typingbox from '$lib/components/tests/typingbox.svelte';
 	import { get } from 'svelte/store';
+	import { createTestTypingAPI } from '$lib/api/users';
+	import { user } from '$lib/types/user';
+	import { toastAlert } from '$lib/utils/toasts';
 
-	let data: {
-		exerciceId: number;
-		position: number;
-		downtime: number;
-		uptime: number;
-		keyCode: number;
-		keyValue: string;
-	}[] = [];
+	export let onFinish: Function;
+
+	let data: typingEntry[] = [];
 
 	$: currentExercice = 0;
 
@@ -35,6 +31,21 @@
 			text: 'Six animaux mangent\n'.repeat(6) + 'Six animaux mangent'
 		}
 	];
+
+	async function submit() {
+		const user_id = $user?.id;
+
+		if (!user_id) {
+			toastAlert('Failed to get user');
+			return;
+		}
+
+		const res = await createTestTypingAPI(user_id, data);
+
+		if (!res) return;
+
+		onFinish();
+	}
 </script>
 
 {#each exercices as _, i (i)}
@@ -64,6 +75,8 @@
 			{$t('button.next')}
 		</button>
 	{:else}
-		<button class="button m-auto" disabled={inProgress}>{$t('button.submit')}</button>
+		<button class="button m-auto" disabled={inProgress} on:click={submit}
+			>{$t('button.submit')}</button
+		>
 	{/if}
 </div>

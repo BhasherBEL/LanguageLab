@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "VITE_API_URL=http://127.0.0.1:8000/api/v1 VITE_APP_URL=http://127.0.0.1:5173 VITE_WS_URL=ws://127.0.0.1:8000/api/v1/ws vite dev --host 127.0.0.1",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

@@ -66,7 +66,7 @@
 							{#if session.end_time < new Date()}
 								{$t('home.sessionEnded')}
 							{:else}
-								{displayTime(session.end_time)}
+								{displayTime(session.start_time)}
 							{/if}
 						</td>
 						<td>{session.usersList()}</td>
