@@ -19,6 +19,11 @@
 	let message = '';
 	let showPicker = false;
 
+	let us = get(user);
+	let disabled = us == null || session.users.find((u) => us.id === u.id) === undefined;
+
+	console.log(session.users);
+
 	async function sendMessage() {
 		if (message.length == 0) return;
 
@@ -41,7 +46,7 @@
 		metadata.push({ message: message, date: new Date().getTime() });
 		lastMessage = message;
 
-		session.sendTyping(get(users));
+		session.sendTyping();
 	}
 </script>
 
@@ -87,7 +92,8 @@
 	<div class="w-full flex">
 		<textarea
 			class="flex-grow rounded-md p-2 resize-none overflow-y-hidden"
-			placeholder={$t('chatbox.placeholder')}
+			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+			{disabled}
 			bind:value={message}
 			on:keypress={(e) => keyPress(e)}
 			on:keypress={async (e) => {

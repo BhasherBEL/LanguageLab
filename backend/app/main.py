@@ -18,6 +18,7 @@ from fastapi.websockets import WebSocket
 from contextlib import asynccontextmanager
 import json
 from jose import jwt
+from sqlalchemy.sql.functions import current_user
 
 import schemas
 import crud
@@ -257,7 +258,31 @@ def create_user_metadata(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.create_user_metadata(db, db_user.id, metadata).id
+    return crud.create_user_metadata(db, user_id, metadata).id
+
+
+@usersRouter.patch("/{user_id}/metadata", status_code=status.HTTP_204_NO_CONTENT)
+def update_user_metadata(
+    user_id: int,
+    metadata: schemas.UserMetadataUpdate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to update metadata for this user",
+        )
+
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if crud.update_user_metadata(db, user_id, metadata) < 1:
+        raise HTTPException(status_code=404, detail="Metadata not found")
 
 
 @usersRouter.get("/{user_id}/metadata", response_model=schemas.UserMetadata)
@@ -279,7 +304,7 @@ def read_user_metadata(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    metadata = crud.get_user_metadata(db, db_user.id)
+    metadata = crud.get_user_metadata(db, user_id)
 
     if metadata is None:
         raise HTTPException(status_code=404, detail="Metadata not found")
@@ -287,10 +312,19 @@ def read_user_metadata(
     return metadata
 
 
+def store_typing_entries(
+    db, entries: list[schemas.TestTypingEntryCreate], typing_id: int
+):
+    for e in entries:
+        crud.create_test_typing_entry(db, e, typing_id)
+    pass
+
+
 @usersRouter.post("/{user_id}/tests/typing", status_code=status.HTTP_201_CREATED)
 def create_test_typing(
     user_id: int,
     test: schemas.TestTypingCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
@@ -307,7 +341,12 @@ def create_test_typing(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return crud.create_test_typing(db, test, db_user).id
+    typing_id = crud.create_test_typing(db, test, db_user).id
+
+    if test.entries:
+        background_tasks.add_task(store_typing_entries, db, test.entries, typing_id)
+
+    return typing_id
 
 
 @sessionsRouter.post("", response_model=schemas.Session)
@@ -542,6 +581,13 @@ def propagate_typing(
     background_tasks.add_task(send_websoket_typing, session_id, current_user.id)
 
     return
+
+
+@v1Router.post("/tests/vocabulary", status_code=status.HTTP_201_CREATED)
+def create_test_vocabulary(
+    content: schemas.TestVocabularyCreate, db: Session = Depends(get_db)
+):
+    return crud.create_test_vocabulary(db, content).id
 
 
 @websocketRouter.websocket("/sessions/{session_id}")

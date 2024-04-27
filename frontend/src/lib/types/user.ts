@@ -78,7 +78,7 @@ export default class User {
 		if (!(obj instanceof User)) return false;
 		const user = obj as User;
 
-		return this.id === user.id;
+		return this._id === user._id;
 	}
 
 	async setAvailability(availability: number): Promise<boolean> {

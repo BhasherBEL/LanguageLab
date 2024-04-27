@@ -13,7 +13,7 @@ class UserType(Enum):
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
@@ -24,69 +24,87 @@ class User(Base):
     availability = Column(Integer, default=0)
 
     sessions = relationship(
-        "Session", secondary="user_sessions", back_populates="users")
+        "Session", secondary="user_sessions", back_populates="users"
+    )
 
 
 class UserMetadata(Base):
-    __tablename__ = 'user_metadata'
+    __tablename__ = "user_metadata"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
     ui_language = Column(String, default="fr")
     home_language = Column(String, default="en")
     target_language = Column(String, default="fr")
     birthdate = Column(DateTime)
+    tutor_id = Column(Integer, ForeignKey("users.id"))
 
 
 class Session(Base):
-    __tablename__ = 'sessions'
+    __tablename__ = "sessions"
 
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.datetime.now)
     is_active = Column(Boolean, default=True)
     start_time = Column(DateTime, default=datetime.datetime.now)
-    end_time = Column(DateTime, default=lambda: datetime.datetime.now(
-    ) + datetime.timedelta(hours=12))
+    end_time = Column(
+        DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(hours=12)
+    )
     language = Column(String, default="fr")
 
-    users = relationship("User", secondary="user_sessions",
-                         back_populates="sessions")
+    users = relationship("User", secondary="user_sessions", back_populates="sessions")
 
 
 class UserSession(Base):
     __tablename__ = "user_sessions"
 
-    user_id = Column(Integer, ForeignKey('users.id'),
-                     primary_key=True, index=True)
-    session_id = Column(String, ForeignKey('sessions.id'),
-                        primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
+    session_id = Column(String, ForeignKey("sessions.id"), primary_key=True, index=True)
 
 
 class Message(Base):
-    __tablename__ = 'messages'
+    __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(String)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    session_id = Column(Integer, ForeignKey('sessions.id'))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    session_id = Column(Integer, ForeignKey("sessions.id"))
     created_at = Column(DateTime, default=datetime.datetime.now)
 
 
 class MessageMetadata(Base):
-    __tablename__ = 'message_metadata'
+    __tablename__ = "message_metadata"
 
     id = Column(Integer, primary_key=True, index=True)
-    message_id = Column(Integer, ForeignKey('messages.id'))
+    message_id = Column(Integer, ForeignKey("messages.id"))
     message = Column(String)
     date = Column(Integer)
 
 
 class TestTyping(Base):
-    __tablename__ = 'test_typing'
+    __tablename__ = "test_typing"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), index=True)
-    characters = Column(Integer)
-    duration = Column(Integer)
-    errors = Column(Integer)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
     created_at = Column(DateTime, default=datetime.datetime.now)
+    entries = relationship("TestTypingEntry", backref="typing")
+
+
+class TestTypingEntry(Base):
+    __tablename__ = "test_typing_entry"
+
+    id = Column(Integer, primary_key=True, index=True)
+    typing_id = Column(Integer, ForeignKey("test_typing.id"), index=True)
+    exerciceId = Column(Integer)
+    position = Column(Integer)
+    downtime = Column(Integer)
+    uptime = Column(Integer)
+    keyCode = Column(Integer)
+    keyValue = Column(String)
+
+
+class TestVocabulary(Base):
+    __tablename__ = "test_vocabulary"
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(String)

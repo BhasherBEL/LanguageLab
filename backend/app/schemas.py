@@ -47,6 +47,14 @@ class UserMetadataCreate(BaseModel):
         from_attributes = True
 
 
+class UserMetadataUpdate(BaseModel):
+    ui_language: str | None = None
+    home_language: str | None = None
+    target_language: str | None = None
+    birthdate: str | None = None
+    tutor_id: int | None = None
+
+
 class UserMetadata(BaseModel):
     id: int
     user_id: int
@@ -54,6 +62,7 @@ class UserMetadata(BaseModel):
     home_language: str
     target_language: str
     birthdate: datetime.datetime
+    tutor_id: int | None
 
     class Config:
         from_attributes = True
@@ -132,11 +141,21 @@ class MessageCreate(BaseModel):
         from_attributes = True
 
 
+class TestTypingEntryCreate(BaseModel):
+    exerciceId: int
+    position: int
+    downtime: int
+    uptime: int
+    keyCode: int
+    keyValue: str
+
+
 class TestTypingCreate(BaseModel):
-    characters: int
-    duration: int
-    errors: int
-    created_at: datetime.datetime = datetime.datetime.now()
+    entries: list[TestTypingEntryCreate]
+
+
+class TestVocabularyCreate(BaseModel):
+    content: str
 
 
 class CalComWebhook(BaseModel):

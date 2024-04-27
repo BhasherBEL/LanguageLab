@@ -43,7 +43,7 @@
 		</button>
 		<p class="mt-4">
 			{$t('login.noAccountText')}
-			<a href="/register" class="text-blue-500 underline">
+			<a data-sveltekit-reload href="/register" class="text-blue-500 underline">
 				{$t('login.noAccountLink')}
 			</a>
 		</p>
