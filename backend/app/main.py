@@ -583,6 +583,13 @@ def propagate_typing(
     return
 
 
+@v1Router.post("/tests/vocabulary", status_code=status.HTTP_201_CREATED)
+def create_test_vocabulary(
+    content: schemas.TestVocabularyCreate, db: Session = Depends(get_db)
+):
+    return crud.create_test_vocabulary(db, content).id
+
+
 @websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
     session_id: int,

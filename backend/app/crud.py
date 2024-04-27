@@ -199,3 +199,11 @@ def create_test_typing_entry(
     db.commit()
     db.refresh(db_entry)
     return db_entry
+
+
+def create_test_vocabulary(db: Session, test: schemas.TestVocabularyCreate):
+    db_test = models.TestVocabulary(**test.dict())
+    db.add(db_test)
+    db.commit()
+    db.refresh(db_test)
+    return db_test

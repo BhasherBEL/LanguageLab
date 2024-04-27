@@ -1,6 +1,6 @@
 import { type ServerLoad, redirect } from '@sveltejs/kit';
 
-const publicly_allowed = ['/login', '/register'];
+const publicly_allowed = ['/login', '/register', '/tests/vocabulary'];
 
 export const load: ServerLoad = async ({ locals, url }) => {
 	if (locals.user == null || locals.user == undefined) {

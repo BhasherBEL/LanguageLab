@@ -154,6 +154,10 @@ class TestTypingCreate(BaseModel):
     entries: list[TestTypingEntryCreate]
 
 
+class TestVocabularyCreate(BaseModel):
+    content: str
+
+
 class CalComWebhook(BaseModel):
     triggerEvent: str
     createdAt: datetime.datetime

@@ -101,3 +101,10 @@ class TestTypingEntry(Base):
     uptime = Column(Integer)
     keyCode = Column(Integer)
     keyValue = Column(String)
+
+
+class TestVocabulary(Base):
+    __tablename__ = "test_vocabulary"
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(String)
