@@ -3,9 +3,9 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "VITE_API_URL=http://127.0.0.1:5173/api/v1 VITE_APP_URL=http://127.0.0.1:5173 VITE_WS_URL=ws://127.0.0.1:5173/api/v1/ws vite dev --host 127.0.0.1",
+		"dev": "VITE_API_URL=http://127.0.0.1:5173/api/v1 VITE_API_PROXY=http://127.0.0.1:8000 VITE_APP_URL=http://127.0.0.1:5173 VITE_WS_URL=ws://127.0.0.1:5173/api/v1/ws vite dev --host 127.0.0.1",
 		"build": "vite build",
-		"preview": "vite preview",
+		"preview": "VITE_API_URL=http://127.0.0.1:4173/api/v1 VITE_APP_URL=http://127.0.0.1:4173 VITE_WS_URL=ws://127.0.0.1:4173/api/v1/ws vite preview --host 127.0.0.1",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
