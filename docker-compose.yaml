@@ -2,13 +2,17 @@ services:
   languagelab-frontend:
     container_name: languagelab-frontend
     image: registry.forge.uclouvain.be/sbibauw/languagelab:frontend
-    ports:
-      - 80:8080
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - languagelab-backend
+    networks:
+      - external
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`languagelab.sipr.ucl.ac.be`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
 
   languagelab-backend:
     container_name: languagelab-backend
@@ -25,5 +29,31 @@ services:
       - /mnt/data/languagelab/backend:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      - external
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`languagelab.sipr.ucl.ac.be`) && PathPrefix(`/api`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+
+  traefik:
+    container_name: traefik
+    image: traefik:v2.9
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=external"
+      - "--entrypoints.internal.address=:80"
+    environment:
+      - TZ=Europe/Paris
     ports:
-      - 8000:8000
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: always
+    networks:
+      - external
+
+networks:
+  external:
