@@ -327,6 +327,7 @@
 			<button class="button" on:click={onData}>{$t('button.submit')}</button>
 		</div>
 	{:else if current_step == 4}
+		<!--{#if get(user)}-->
 		<h2 class="my-4 text-xl">{$t('timeslots.availabilities')}</h2>
 		<Timeslots bind:timeslots />
 		<h2 class="my-8 text-xl">{$t('timeslots.availableTutors')}</h2>
