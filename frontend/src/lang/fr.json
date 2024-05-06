@@ -30,7 +30,8 @@
 		"password": "Mot de passe",
 		"login": "Se connecter",
 		"noAccountText": "Pas encore de compte ?",
-		"noAccountLink": "Inscrivez-vous ici"
+		"noAccountLink": "Inscrivez-vous ici",
+		"title": "Se connecter"
 	},
 	"session": {
 		"participants": "Participants"

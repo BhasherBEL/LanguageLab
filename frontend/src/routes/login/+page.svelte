@@ -23,7 +23,8 @@
 	}
 </script>
 
-<div class="flex items-center justify-center h-screen">
+<div class="flex flex-col items-center justify-center h-screen">
+	<h2 class="card-title pb-4">{$t('login.title')}</h2>
 	<form action="#" class="shadow-md max-w-md mb-7 flex items-center flex-col p-5">
 		{#if message}
 			<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
