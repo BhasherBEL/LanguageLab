@@ -22,7 +22,6 @@
 	//let checker: HTMLDivElement;
 
 	onMount(async () => {
-		User.parseAll(await getUsersAPI());
 		/*checker.innerHTML =
 			'<label for="humanCheck" class="cursor-pointer label">' +
 			$t('register.humans') +
@@ -33,6 +32,7 @@
 			current_step = 1;
 			return;
 		}
+		User.parseAll(await getUsersAPI());
 
 		const res = await getUserMetadataAPI(u.id);
 
@@ -313,15 +313,18 @@
 			</select>
 		</div>
 		<div class="mt-4">
-			<label for="birthdate">{$t('register.birthdate')}</label>
-			<input
-				class="input mt-2 w-full"
-				type="date"
-				id="birthdate"
-				name="birthdate"
+			<label for="birthyear">{$t('register.birthyear')}</label>
+			<select
+				class="input mt-2 w-full bg-transparent"
+				id="birthyear"
+				name="birthyear"
 				required
 				bind:value={birthdate}
-			/>
+			>
+				{#each Array.from({ length: 41 }, (_, i) => i + 1980).reverse() as year}
+					<option value={year}>{year}</option>
+				{/each}
+			</select>
 		</div>
 		<div class="mt-4 text-center">
 			<button class="button" on:click={onData}>{$t('button.submit')}</button>
