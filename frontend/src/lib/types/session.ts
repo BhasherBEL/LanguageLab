@@ -112,6 +112,17 @@ export default class Session {
 		return users.substring(0, maxLength) + '...';
 	}
 
+	otherUsersList(maxLength = 30): string {
+		const users = this._users
+			.filter((u) => u.id != get(user)?.id)
+			.map((user) => user.nickname)
+			.join(', ');
+		if (users.length < maxLength) {
+			return users;
+		}
+		return users.substring(0, maxLength) + '...';
+	}
+
 	async delete(): Promise<boolean> {
 		const response = await axiosInstance.delete(`/sessions/${this.id}`);
 

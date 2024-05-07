@@ -25,7 +25,7 @@
 
 <div class="flex flex-col items-center justify-center h-screen">
 	<h2 class="card-title pb-4">{$t('login.title')}</h2>
-	<form action="#" class="shadow-md max-w-md mb-7 flex items-center flex-col p-5">
+	<form action="#" class="shadow-md mb-7 flex items-center flex-col p-5">
 		{#if message}
 			<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
 				{message}
@@ -53,10 +53,10 @@
 
 <style lang="postcss">
 	label {
-		@apply font-bold pr-4 w-1/2 flex items-center justify-end;
+		@apply font-bold pr-4 w-1/3 flex items-center justify-end;
 	}
 
 	input {
-		@apply border-2 bg-gray-200 w-1/2 rounded py-2 px-4;
+		@apply border-2 bg-gray-200 w-[400px] rounded py-2 px-4;
 	}
 </style>

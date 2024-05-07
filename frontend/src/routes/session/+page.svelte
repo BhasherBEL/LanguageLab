@@ -31,33 +31,36 @@
 
 {#if session}
 	<div class="h-full grid lg:grid-cols-4">
-		<div class="flex flex-col justify-evenly m-8">
-			<div class="border-2 rounded-lg p-2">
-				<h2 class="text-center font-bold text-xl">#{session.id}</h2>
-				<div class="mb-2">{$t('session.participants')}:</div>
-				<ul>
-					{#each session.users as sessionUser (sessionUser.id)}
-						<li
-							class="list-disc list-inside {sessionUser.id == $user?.id ||
-							$onlineUsers?.has(sessionUser.id)
-								? 'marker:text-green-500'
-								: 'marker:text-red-500'} marker:text-3xl"
-						>
-							<div class="inline-flex space-x-2">
-								{#if sessionUser.type == 0}
-									<Icon src={Sparkles} class="w-5" />
-								{:else if sessionUser.type == 1}
-									<Icon src={AcademicCap} class="w-5" />
-								{:else}
-									<Icon src={User} class="w-5" />
-								{/if}
+		<div class="justify-evenly h-full p-2">
+			<h2 class="text-center font-bold text-xl mb-8">
+				{$t('session.title')}
+				<span class="italic">
+					{session.otherUsersList()}
+				</span>
+			</h2>
+			<div class="mb-2 ml-4">{$t('session.participants')}:</div>
+			<ul class="ml-4">
+				{#each session.users as sessionUser (sessionUser.id)}
+					<li
+						class="list-disc list-inside {sessionUser.id == $user?.id ||
+						$onlineUsers?.has(sessionUser.id)
+							? 'marker:text-green-500'
+							: 'marker:text-red-500'} marker:text-3xl"
+					>
+						<div class="inline-flex space-x-2">
+							{#if sessionUser.type == 0}
+								<Icon src={Sparkles} class="w-5" />
+							{:else if sessionUser.type == 1}
+								<Icon src={AcademicCap} class="w-5" />
+							{:else}
+								<Icon src={User} class="w-5" />
+							{/if}
 
-								<span class:font-bold={sessionUser === $user}>{sessionUser.nickname}</span>
-							</div>
-						</li>
-					{/each}
-				</ul>
-			</div>
+							<span class:font-bold={sessionUser === $user}>{sessionUser.nickname}</span>
+						</div>
+					</li>
+				{/each}
+			</ul>
 		</div>
 		<div class="flex flex-row flex-grow col-span-2">
 			<Chatbox {session} token={data.token} />

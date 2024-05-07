@@ -71,7 +71,7 @@
 	});
 </script>
 
-<div class="flex flex-col my-4 min-w-fit w-full max-w-4xl border-2 rounded-lg">
+<div class="flex flex-col w-full h-full border-x-2">
 	<div class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex mb-2">
 		<div class:hidden={!isTyping}>
 			<span class="loading loading-dots loading-md"></span>

@@ -42,7 +42,8 @@
 		"title": "Se connecter"
 	},
 	"session": {
-		"participants": "Participants"
+		"participants": "Participants",
+		"title": "Session avec "
 	},
 	"admin": {
 		"actions": "Actions",

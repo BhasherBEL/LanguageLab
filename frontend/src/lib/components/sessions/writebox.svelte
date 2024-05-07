@@ -72,7 +72,7 @@
 	{/if}
 	<div class="w-full flex relative">
 		<textarea
-			class="flex-grow rounded-md p-2 resize-none overflow-y-hidden"
+			class="flex-grow p-2 resize-none overflow-y-hidden"
 			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
 			{disabled}
 			bind:value={message}
@@ -118,7 +118,7 @@
 		>
 			É
 		</div>
-		<button class="btn btn-primary size-16" on:click={sendMessage}>
+		<button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
 			<Icon src={PaperAirplane} />
 		</button>
 	</div>
