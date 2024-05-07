@@ -2,7 +2,14 @@
 	"header": {
 		"appName": "LanguageLab",
 		"connectedAs": "Connecté comme",
-		"metadataWarning": "Veuillez compléter le formulaire d'inscription avant d'utiliser l'application."
+		"metadataWarning": "Veuillez compléter le formulaire d'inscription avant d'utiliser l'application.",
+		"signin": "Se connecter",
+		"register": "S'inscrire",
+		"signout": "Se déconnecter",
+		"tutorSelection": "Tuteur",
+		"language": "Langue",
+		"availability": "Disponibilités",
+		"admin": "Administration"
 	},
 	"chatbox": {
 		"placeholder": "Écrivez votre message ici...",

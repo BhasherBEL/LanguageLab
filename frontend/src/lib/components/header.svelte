@@ -19,36 +19,64 @@
 	});
 </script>
 
-<header class="bg-gray-500 text-white flex align-middle justify-between p-4">
-	<h1 class="font-bold text-2xl"><a data-sveltekit-reload href="/">{$t('header.appName')}</a></h1>
+<header class="bg-gray-500 text-white flex align-middle justify-between p-2 h-16">
+	<h1 class="font-bold text-3xl"><a data-sveltekit-reload href="/">{$t('header.appName')}</a></h1>
 	<div class="flex align-middle">
-		{#if $user?.type === 0}
-			<a data-sveltekit-reload href="/admin" class="mr-4 mt-0.5">
-				<Icon src={Cog6Tooth} class="size-6" />
-			</a>
-		{/if}
-		{#if $user?.type === 0 || $user?.type === 1}
-			<a data-sveltekit-reload href="/tutor/timeslots" class="mr-4 mt-0.5">
-				<Icon src={Clock} class="size-6" />
-			</a>
-		{/if}
-		{#if $user?.type === 2}
-			<a data-sveltekit-reload href="/timeslots" class="mr-4 mt-0.5">
-				<Icon src={Clock} class="size-6" />
-			</a>
-		{/if}
 		{#if $user}
-			<span class="pr-2">{$t('header.connectedAs')} <strong>{$user.nickname}</strong></span>
-			<a data-sveltekit-reload href="/logout"><Logout class="h-4/5" size={24} /></a>
+			<ul class="menu menu-horizontal px-1">
+				<li>
+					<details>
+						<summary> {$t('header.connectedAs')} <strong>{$user.nickname}</strong></summary>
+						<ul class="p-2 text-primary-content">
+							{#if $user?.type === 0}
+								<li>
+									<a data-sveltekit-reload href="/admin" class="mr-4 mt-0.5">
+										{$t('header.admin')}
+									</a>
+								</li>
+							{/if}
+							{#if $user?.type === 0 || $user?.type === 1}
+								<li>
+									<a data-sveltekit-reload href="/tutor/timeslots" class="mr-4 mt-0.5"
+										>{$t('header.availability')}</a
+									>
+								</li>
+							{/if}
+							{#if $user?.type === 2}
+								<li>
+									<a data-sveltekit-reload href="/timeslots" class="mr-4 mt-0.5">
+										{$t('header.tutorSelection')}
+									</a>
+								</li>
+							{/if}
+							<li>
+								<LocalSelector class="ml-4 mt-3" />
+							</li>
+							<li>
+								<a data-sveltekit-reload href="/logout">
+									{$t('header.signout')}
+								</a>
+							</li>
+						</ul>
+					</details>
+				</li>
+			</ul>
 		{:else}
 			<a
 				data-sveltekit-reload
 				href="/login?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}"
 			>
-				<Login size={24} />
+				<button class="btn mr-4 btn-primary btn-outline p-2">
+					{$t('header.signin')}
+				</button>
 			</a>
+			<a data-sveltekit-reload href="/register">
+				<button class="btn btn-primary btn-outline">
+					{$t('header.register')}
+				</button>
+			</a>
+			<LocalSelector class="ml-4" />
 		{/if}
-		<LocalSelector class="ml-2" />
 	</div>
 </header>
 
