@@ -11,6 +11,12 @@ class User(BaseModel):
     type: int
     availability: int
     is_active: bool
+    ui_language: str | None
+    home_language: str | None
+    target_language: str | None
+    birthdate: datetime.datetime | None
+    tutor_id: int | None
+    calcom_link: str | None
 
     class Config:
         from_attributes = True
@@ -23,6 +29,12 @@ class UserCreate(BaseModel):
     type: int = UserType.STUDENT.value
     availability: int = 0
     is_active: bool = True
+    ui_language: str | None = None
+    home_language: str | None = None
+    target_language: str | None = None
+    birthdate: datetime.datetime | None = None
+    tutor_id: int | None = None
+    calcom_link: str | None = None
 
 
 class UserUpdate(BaseModel):
@@ -32,53 +44,12 @@ class UserUpdate(BaseModel):
     type: int | None = None
     availability: int | None = None
     is_active: bool | None = None
-
-    class Config:
-        from_attributes = True
-
-
-class UserMetadataCreate(BaseModel):
-    ui_language: str
-    home_language: str
-    target_language: str
-    birthdate: datetime.datetime
-
-    class Config:
-        from_attributes = True
-
-
-class UserMetadataUpdate(BaseModel):
     ui_language: str | None = None
     home_language: str | None = None
     target_language: str | None = None
-    birthdate: str | None = None
+    birthdate: datetime.datetime | None = None
     tutor_id: int | None = None
-
-
-class UserMetadata(BaseModel):
-    id: int
-    user_id: int
-    ui_language: str
-    home_language: str
-    target_language: str
-    birthdate: datetime.datetime
-    tutor_id: int | None
-
-    class Config:
-        from_attributes = True
-
-
-class Token(BaseModel):
-    access_token: str
-    refresh_token: str
-
-    class Config:
-        from_attributes = True
-
-
-class TokenPayload(BaseModel):
-    sub: str | None = None
-    exp: int | None = None
+    calcom_link: str | None = None
 
     class Config:
         from_attributes = True

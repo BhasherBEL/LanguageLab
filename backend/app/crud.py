@@ -44,36 +44,6 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def create_user_metadata(
-    db: Session, user_id: int, metadata: schemas.UserMetadataCreate
-):
-    db_user_metadata = models.UserMetadata(user_id=user_id, **metadata.dict())
-    db.add(db_user_metadata)
-    db.commit()
-    db.refresh(db_user_metadata)
-    return db_user_metadata
-
-
-def update_user_metadata(
-    db: Session, user_id: int, metadata: schemas.UserMetadataUpdate
-):
-    cnt = (
-        db.query(models.UserMetadata)
-        .filter(models.UserMetadata.user_id == user_id)
-        .update(metadata.dict(exclude_unset=True, exclude_none=True))
-    )
-    db.commit()
-    return cnt > 0
-
-
-def get_user_metadata(db: Session, user_id: int):
-    return (
-        db.query(models.UserMetadata)
-        .filter(models.UserMetadata.user_id == user_id)
-        .first()
-    )
-
-
 def delete_user(db: Session, user_id: int):
     db.query(models.User).filter(models.User.id == user_id).delete()
     db.commit()

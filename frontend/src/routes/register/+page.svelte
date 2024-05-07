@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { loginAPI, registerAPI } from '$lib/api/auth';
-	import { createUserMetadataAPI, getUserMetadataAPI, patchUserMetadataAPI } from '$lib/api/users';
 	import config from '$lib/config';
 	import { locale, t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
@@ -9,10 +8,8 @@
 	import { get } from 'svelte/store';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import User, { users } from '$lib/types/user';
-	import { getUsersAPI } from '$lib/api/users';
+	import { getUsersAPI, patchUserAPI } from '$lib/api/users';
 	import { ArrowRight, Icon } from 'svelte-hero-icons';
-	import { patchLanguageAPI } from '$lib/api/sessions';
-	import Typingbox from '$lib/components/tests/typingbox.svelte';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 
 	let current_step = 0;
@@ -34,14 +31,12 @@
 		}
 		User.parseAll(await getUsersAPI());
 
-		const res = await getUserMetadataAPI(u.id);
-
-		if (!res) {
+		if (!u.home_language || !u.target_language || !u.birthdate) {
 			current_step = 3;
 			return;
 		}
 
-		if (!res.tutor_id) {
+		if (!u.tutor_id) {
 			current_step = 4;
 			return;
 		}
@@ -54,9 +49,9 @@
 	let password = '';
 	let confirmPassword = '';
 
-	let uiLanguage: string = $locale;
-	let homeLanguage: string;
-	let targetLanguage: string;
+	let ui_language: string = $locale;
+	let home_language: string;
+	let target_language: string;
 	let birthdate: string;
 
 	let timeslots = 0;
@@ -119,18 +114,17 @@
 			return;
 		}
 
-		if (!uiLanguage || !homeLanguage || !targetLanguage || !birthdate) {
+		if (!ui_language || !home_language || !target_language || !birthdate) {
 			message = $t('register.error.emptyFields');
 			return;
 		}
 
-		const res = await createUserMetadataAPI(
-			user_id,
-			uiLanguage,
-			homeLanguage,
-			targetLanguage,
+		const res = await patchUserAPI(user_id, {
+			ui_language,
+			home_language,
+			target_language,
 			birthdate
-		);
+		});
 
 		if (!res) {
 			message = $t('register.error.metadata');
@@ -150,7 +144,7 @@
 
 		if (confirm($t('register.confirmTutor').replaceAll('{NAME}', tutor.nickname)) === false) return;
 
-		const res = await patchUserMetadataAPI(user_id, null, null, null, null, tutor.id);
+		const res = await patchUserAPI(user_id, { tutor_id: tutor.id });
 
 		if (!res) {
 			message = $t('register.error.tutor');
@@ -283,15 +277,15 @@
 			{@html $t('register.welcome')}
 		</div>
 		<div class="mt-4">
-			<label for="homeLanguage">
-				{$t('register.homeLanguage')}
+			<label for="home_language">
+				{$t('register.home_language')}
 			</label>
 			<select
 				class="input mt-2 w-full bg-transparent"
-				id="homeLanguage"
-				name="homeLanguage"
+				id="home_language"
+				name="home_language"
 				required
-				bind:value={homeLanguage}
+				bind:value={home_language}
 			>
 				{#each Object.entries(config.PRIMARY_LANGUAGE) as [code, name]}
 					<option value={code}>{name}</option>
@@ -305,7 +299,7 @@
 				id="targetLanguage"
 				name="targetLanguage"
 				required
-				bind:value={targetLanguage}
+				bind:value={target_language}
 			>
 				{#each config.LEARNING_LANGUAGES as language}
 					<option value={language}>{language}</option>

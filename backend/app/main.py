@@ -124,13 +124,6 @@ def register(
     return user.id
 
 
-@authRouter.post("/refresh", response_model=schemas.Token)
-def refresh_token(
-    current_user: models.User = Depends(get_jwt_user),
-):
-    pass
-
-
 @usersRouter.post("", status_code=status.HTTP_201_CREATED)
 def create_user(
     user: schemas.UserCreate,
@@ -236,80 +229,6 @@ def read_user_sessions(
         raise HTTPException(status_code=404, detail="User not found")
 
     return db_user.sessions
-
-
-@usersRouter.post("/{user_id}/metadata", status_code=status.HTTP_201_CREATED)
-def create_user_metadata(
-    user_id: int,
-    metadata: schemas.UserMetadataCreate,
-    db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(get_jwt_user),
-):
-    if (
-        not check_user_level(current_user, models.UserType.ADMIN)
-        and current_user.id != user_id
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="You do not have permission to create metadata for this user",
-        )
-
-    db_user = crud.get_user(db, user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return crud.create_user_metadata(db, user_id, metadata).id
-
-
-@usersRouter.patch("/{user_id}/metadata", status_code=status.HTTP_204_NO_CONTENT)
-def update_user_metadata(
-    user_id: int,
-    metadata: schemas.UserMetadataUpdate,
-    db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(get_jwt_user),
-):
-    if (
-        not check_user_level(current_user, models.UserType.ADMIN)
-        and current_user.id != user_id
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="You do not have permission to update metadata for this user",
-        )
-
-    db_user = crud.get_user(db, user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    if crud.update_user_metadata(db, user_id, metadata) < 1:
-        raise HTTPException(status_code=404, detail="Metadata not found")
-
-
-@usersRouter.get("/{user_id}/metadata", response_model=schemas.UserMetadata)
-def read_user_metadata(
-    user_id: int,
-    db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(get_jwt_user),
-):
-    if (
-        not check_user_level(current_user, models.UserType.ADMIN)
-        and current_user.id != user_id
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="You do not have permission to view this user's metadata",
-        )
-
-    db_user = crud.get_user(db, user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    metadata = crud.get_user_metadata(db, user_id)
-
-    if metadata is None:
-        raise HTTPException(status_code=404, detail="Metadata not found")
-
-    return metadata
 
 
 def store_typing_entries(

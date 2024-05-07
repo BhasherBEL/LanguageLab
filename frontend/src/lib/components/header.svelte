@@ -5,7 +5,6 @@
 	import { t } from '$lib/services/i18n';
 	import { Clock, Cog6Tooth, ExclamationTriangle, Icon } from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
-	import { getUserMetadataAPI } from '$lib/api/users';
 	import { user } from '$lib/types/user';
 	import { page } from '$app/stores';
 
@@ -13,9 +12,7 @@
 
 	onMount(async () => {
 		if ($user) {
-			const res = await getUserMetadataAPI($user.id);
-
-			if (!res) {
+			if (!$user.home_language || !$user.target_language || !$user.birthdate) {
 				displayMetadataWarning = true;
 			}
 		}

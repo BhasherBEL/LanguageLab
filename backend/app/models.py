@@ -22,22 +22,16 @@ class User(Base):
     type = Column(Integer, default=UserType.STUDENT.value)
     is_active = Column(Boolean, default=True)
     availability = Column(Integer, default=0)
+    ui_language = Column(String, default="fr")
+    home_language = Column(String, default="en")
+    target_language = Column(String, default="fr")
+    birthdate = Column(Integer, default=None)
+    tutor_id = Column(Integer, ForeignKey("users.id"))
+    calcom_link = Column(String, default="")
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"
     )
-
-
-class UserMetadata(Base):
-    __tablename__ = "user_metadata"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), index=True)
-    ui_language = Column(String, default="fr")
-    home_language = Column(String, default="en")
-    target_language = Column(String, default="fr")
-    birthdate = Column(DateTime)
-    tutor_id = Column(Integer, ForeignKey("users.id"))
 
 
 class Session(Base):

@@ -4,16 +4,18 @@
 	import Session, { sessions } from '$lib/types/session';
 	import { getBaseURL } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { displayDuration, displayTime } from '$lib/utils/date';
+	import { displayTime } from '$lib/utils/date';
 	import { Eye, EyeSlash, Icon, Trash, User as UserIcon } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
-	import { user } from '$lib/types/user';
+	import User, { user } from '$lib/types/user';
+	import { getUsersAPI } from '$lib/api/users';
 
 	let editParticipantsSession: Session | null;
 	let ready = false;
 
 	onMount(async () => {
 		Session.parseAll(await getSessionsAPI());
+		User.parseAll(await getUsersAPI());
 
 		ready = true;
 	});
@@ -41,6 +43,15 @@
 			<button on:click|preventDefault={createSession} class="button float-end mb-4">
 				{$t('home.createSession')}
 			</button>
+		{:else}
+			<a
+				class="button float-end mb-4"
+				class:btn-disabled={!$user || !$user.tutor || !$user.tutor.calcom_link}
+				href={$user?.tutor?.calcom_link}
+				target="_blank"
+			>
+				{$t('home.bookSession')}
+			</a>
 		{/if}
 		<table class="w-full table-md table-zebra">
 			<thead class=" uppercase text-sm bg-base-200">

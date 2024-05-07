@@ -23,7 +23,8 @@
 		"learningLanguage": "Langue cible",
 		"confirm": "Confirmer",
 		"sessionEnded": "Terminée",
-		"noSessions": "Aucune session en cours"
+		"noSessions": "Aucune session en cours",
+		"bookSession": "Réserver une session"
 	},
 	"login": {
 		"email": "Email",
@@ -79,7 +80,9 @@
 		"availabilities": "Selectionnez vos disponibilités pour filtrer les tuteurs disponibles",
 		"availableTutors": "Tuteurs disponibles",
 		"noTutors": "Aucun tuteur disponible. Veuillez sélectionner d'autres disponibilités.",
-		"setAvailabilities": "Sélectionnez vos disponibilités"
+		"setAvailabilities": "Sélectionnez vos disponibilités",
+		"calcom": "Lien vers la réservation du calendrier",
+		"calcomWarning": "Lien cal.com invalide"
 	},
 	"tests": {
 		"sendResults": "Envoyer",

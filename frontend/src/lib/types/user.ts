@@ -24,6 +24,12 @@ export default class User {
 	private _type: number;
 	private _availability: number;
 	private _is_active: boolean;
+	private _ui_language: string | null;
+	private _home_language: string | null;
+	private _target_language: string | null;
+	private _birthdate: number | null;
+	private _tutor_id: number | null;
+	private _calcom_link: string | null;
 
 	private constructor(
 		id: number,
@@ -31,7 +37,13 @@ export default class User {
 		nickname: string,
 		type: number,
 		availability: number,
-		is_active: boolean
+		is_active: boolean,
+		ui_language: string | null,
+		home_language: string | null,
+		target_language: string | null,
+		birthdate: number | null,
+		tutor_id: number | null,
+		calcom_link: string | null
 	) {
 		this._id = id;
 		this._email = email;
@@ -39,6 +51,12 @@ export default class User {
 		this._type = type;
 		this._availability = availability;
 		this._is_active = is_active;
+		this._ui_language = ui_language;
+		this._home_language = home_language;
+		this._target_language = target_language;
+		this._birthdate = birthdate;
+		this._tutor_id = tutor_id;
+		this._calcom_link = calcom_link;
 	}
 
 	get id(): number {
@@ -73,6 +91,35 @@ export default class User {
 		return this._availability;
 	}
 
+	get ui_language(): string | null {
+		return this._ui_language;
+	}
+
+	get home_language(): string | null {
+		return this._home_language;
+	}
+
+	get target_language(): string | null {
+		return this._target_language;
+	}
+
+	get birthdate(): number | null {
+		return this._birthdate;
+	}
+
+	get tutor_id(): number | null {
+		return this._tutor_id;
+	}
+
+	get tutor(): User | undefined {
+		if (this._tutor_id == null) return undefined;
+		return User.find(this._tutor_id);
+	}
+
+	get calcom_link(): string | null {
+		return this._calcom_link;
+	}
+
 	equals<T>(obj: T): boolean {
 		if (obj === null || obj === undefined) return false;
 		if (!(obj instanceof User)) return false;
@@ -81,8 +128,8 @@ export default class User {
 		return this._id === user._id;
 	}
 
-	async setAvailability(availability: number): Promise<boolean> {
-		return await patchUserAPI(this.id, { availability: availability });
+	async setAvailability(availability: number, calcom_link: string): Promise<boolean> {
+		return await patchUserAPI(this.id, { availability: availability, calcom_link: calcom_link });
 	}
 
 	notEquals<T>(obj: T): boolean {
@@ -96,7 +143,13 @@ export default class User {
 			nickname: this.nickname,
 			type: this.type,
 			availability: this.availability,
-			is_active: this.is_active
+			is_active: this.is_active,
+			ui_language: this.ui_language,
+			home_language: this.home_language,
+			target_language: this.target_language,
+			birthdate: this.birthdate,
+			tutor_id: this.tutor_id,
+			calcom_link: this.calcom_link
 		});
 	}
 
@@ -114,7 +167,20 @@ export default class User {
 		const id = await createUserAPI(nickname, email, password, type, is_active);
 		if (id == null) return null;
 
-		const user = new User(id, email, nickname, type, 0, is_active);
+		const user = new User(
+			id,
+			email,
+			nickname,
+			type,
+			0,
+			is_active,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
 		users.add(user);
 		return user;
 	}
@@ -147,7 +213,13 @@ export default class User {
 			json.nickname,
 			json.type,
 			json.availability,
-			json.is_active
+			json.is_active,
+			json.ui_language,
+			json.home_language,
+			json.target_language,
+			json.birthdate,
+			json.tutor_id,
+			json.calcom_link
 		);
 
 		users.update((us) => {

@@ -6,7 +6,7 @@ export const load: ServerLoad = async ({ locals }) => {
 	}
 
 	const user = JSON.parse(locals.user);
-	if (user == null || user == undefined || user.type != 0) {
+	if (user == null || user == undefined || user.type > 1) {
 		error(403, 'Forbidden');
 	}
 };
