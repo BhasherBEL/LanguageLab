@@ -561,8 +561,11 @@ async def webhook_session(
     x_cal_signature_256: Annotated[str | None, Header()] = None,
     db: Session = Depends(get_db),
 ):
-    if x_cal_signature_256 != config.CALCOM_SECRET:
-        raise HTTPException(status_code=401, detail="Invalid secret")
+
+    # TODO: Fix. Signature is a hash, not the secret
+    # https://cal.com/docs/core-features/webhooks#adding-a-custom-payload-template
+    # if x_cal_signature_256 != config.CALCOM_SECRET:
+    #    raise HTTPException(status_code=401, detail="Invalid secret")
 
     if webhook.triggerEvent == "BOOKING_CREATED":
         start_time = datetime.datetime.fromisoformat(webhook.payload["startTime"])
