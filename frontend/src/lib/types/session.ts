@@ -29,6 +29,8 @@ export default class Session {
 	private _ws: WebSocket | null = null;
 	private _ws_connected = writable(false);
 	private _lastTyping: Writable<Date | null> = writable(null);
+	private _onlineUsers: Writable<Set<number>> = writable(new Set());
+	private _onlineTimers: Map<number, number> = new Map();
 
 	private constructor(
 		id: number,
@@ -93,6 +95,10 @@ export default class Session {
 
 	get lastTyping(): Writable<Date | null> {
 		return this._lastTyping;
+	}
+
+	get onlineUsers(): Writable<Set<number>> {
+		return this._onlineUsers;
 	}
 
 	usersList(maxLength = 30): string {
@@ -189,6 +195,16 @@ export default class Session {
 		return true;
 	}
 
+	async sendPresence(): Promise<boolean> {
+		const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
+		if (response.status !== 204) {
+			console.log('Failed to send presence data', response);
+			return false;
+		}
+
+		return true;
+	}
+
 	async changeLanguage(language: string): Promise<boolean> {
 		const res = await patchLanguageAPI(this.id, language);
 		if (!res) return false;
@@ -226,6 +242,34 @@ export default class Session {
 					this._lastTyping.set(new Date());
 					return;
 				}
+			} else if (data['type'] === 'presence') {
+				const user_id = data['data']['user'];
+				if (data['action'] === 'online') {
+					this._onlineUsers.update((users) => {
+						users.add(user_id);
+
+						return users;
+					});
+				} else if (data['action'] === 'offline') {
+					this._onlineUsers.update((users) => {
+						users.delete(user_id);
+						return users;
+					});
+				}
+				if (this._onlineTimers.has(user_id)) {
+					clearTimeout(this._onlineTimers.get(user_id));
+				}
+				this._onlineTimers.set(
+					user_id,
+					setTimeout(() => {
+						this._onlineUsers.update((users) => {
+							users.delete(user_id);
+							return users;
+						});
+					}, 30000)
+				);
+
+				return;
 			}
 			console.error('Failed to parse ws:', data);
 		};

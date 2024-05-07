@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type Session from '$lib/types/session';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import MessageC from './message.svelte';
 	import { get } from 'svelte/store';
 	import Writebox from './writebox.svelte';
@@ -40,19 +40,34 @@
 
 		const diff = new Date().getTime() - lastTyping.getTime();
 
-		if (diff > 5000) {
+		if (diff > 2000) {
 			isTyping = false;
 		}
 
 		isTyping = true;
 		timeoutTyping = setTimeout(() => {
 			isTyping = false;
-		}, 5000 - diff);
+		}, 2000 - diff);
 	});
+
+	let presenceTimeout: number;
+
+	function presenceIndicator() {
+		clearInterval(presenceTimeout);
+
+		presenceTimeout = setInterval(() => {
+			session.sendPresence();
+		}, 5000);
+	}
 
 	onMount(async () => {
 		await session.loadMessages();
 		session.wsConnect(token);
+		presenceIndicator();
+	});
+
+	onDestroy(() => {
+		clearInterval(presenceTimeout);
 	});
 </script>
 

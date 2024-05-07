@@ -27,8 +27,6 @@
 		new Date() > session.end_time ||
 		new Date() < session.start_time;
 
-	console.log(session.users);
-
 	async function sendMessage() {
 		if (message.length == 0) return;
 

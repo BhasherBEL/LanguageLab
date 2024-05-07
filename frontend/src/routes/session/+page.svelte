@@ -11,6 +11,7 @@
 	export let data;
 
 	let session: Session | null = null;
+	$: onlineUsers = session ? session.onlineUsers : null;
 
 	onMount(async () => {
 		const param = $page.url.searchParams.get('id');
@@ -36,7 +37,12 @@
 				<div class="mb-2">{$t('session.participants')}:</div>
 				<ul>
 					{#each session.users as sessionUser (sessionUser.id)}
-						<li class="list-disc list-inside">
+						<li
+							class="list-disc list-inside {sessionUser.id == $user?.id ||
+							$onlineUsers?.has(sessionUser.id)
+								? 'marker:text-green-500'
+								: 'marker:text-red-500'} marker:text-3xl"
+						>
 							<div class="inline-flex space-x-2">
 								{#if sessionUser.type == 0}
 									<Icon src={Sparkles} class="w-5" />
