@@ -1,0 +1,4 @@
+tls:
+  certificates:
+    - certFile: /etc/traefik/languagelab_sipr_ucl_ac_be.pem
+      keyFile: /etc/traefik/languagelab_sipr_ucl_ac_be.key

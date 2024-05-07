@@ -12,6 +12,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`languagelab.sipr.ucl.ac.be`)"
+      - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.services.frontend.loadbalancer.server.port=8080"
 
   languagelab-backend:
@@ -33,24 +34,41 @@ services:
       - external
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`languagelab.sipr.ucl.ac.be`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.tls=true"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.http.routers.backend.rule=Host(`languagelab.sipr.ucl.ac.be`) && (PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
 
   traefik:
     container_name: traefik
     image: traefik:v2.9
     command:
       - "--api.insecure=true"
+      - "--log.level=DEBUG"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=external"
-      - "--entrypoints.internal.address=:80"
+      - "--entrypoints.external.address=:80"
+      - "--entrypoints.externalsecure.address=:443"
+      - "--entrypoints.external.http.redirections.entryPoint.to=externalsecure"
+      - "--entrypoints.external.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.external.http.redirections.entryPoint.permanent=true"
+      - "--providers.file.filename=/etc/traefik/dynamic-config.yaml"
     environment:
       - TZ=Europe/Paris
     ports:
       - 80:80
+      - 443:443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - type: bind
+        source: /mnt/data/languagelab/repo/configs/traefik.yaml
+        target: /etc/traefik/dynamic-config.yaml
+      - type: bind
+        source: /mnt/data/languagelab/repo/configs/languagelab_sipr_ucl_ac_be.key
+        target: /etc/traefik/languagelab_sipr_ucl_ac_be.key
+      - type: bind
+        source: /mnt/data/languagelab/repo/configs/languagelab_sipr_ucl_ac_be.pem
+        target: /etc/traefik/languagelab_sipr_ucl_ac_be.pem
     restart: always
     networks:
       - external
