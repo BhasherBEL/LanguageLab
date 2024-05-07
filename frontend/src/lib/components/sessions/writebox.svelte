@@ -18,6 +18,7 @@
 	let lastMessage = '';
 	let message = '';
 	let showPicker = false;
+	let showSpecials = false;
 
 	let us = get(user);
 	let disabled =
@@ -54,46 +55,24 @@
 	}
 </script>
 
-<div class="w-full">
-	<ul class="flex justify-around divide-x-2 border-y-2 py-1">
-		{#each config.SPECIAL_CHARS as char (char)}
-			<button
-				class="border-none"
-				on:click={() => {
-					message += char;
-				}}
-			>
-				<kbd class="kbd">
-					{char}
-				</kbd>
-			</button>
-		{/each}
-		<kbd
-			class="kbd"
-			on:click={() => (showPicker = !showPicker)}
-			data-tooltip-target="tooltip-emoji"
-			data-tooltip-placement="right"
-			data-riple-light="true"
-			aria-hidden={false}
-			role="button"
-			tabindex="0"
-		>
-			😀
-		</kbd>
-		<div class="relative">
-			<div
-				id="tooltip-emoji"
-				data-tooltip="tooltip-emoji"
-				role="tooltip"
-				class:hidden={!showPicker}
-				class="absolute z-10 tooltip bottom-0 left-0"
-			>
-				<emoji-picker class="light" on:emoji-click={(event) => (message += event.detail.unicode)}>
-				</emoji-picker>
-			</div>
-		</div>
-	</ul>
-	<div class="w-full flex">
+<div class="w-full border-t-2">
+	{#if showSpecials}
+		<ul class="flex justify-around divide-x-2 border-b-2 py-1">
+			{#each config.SPECIAL_CHARS as char (char)}
+				<button
+					class="border-none"
+					on:click={() => {
+						message += char;
+					}}
+				>
+					<kbd class="kbd">
+						{char}
+					</kbd>
+				</button>
+			{/each}
+		</ul>
+	{/if}
+	<div class="w-full flex relative">
 		<textarea
 			class="flex-grow rounded-md p-2 resize-none overflow-y-hidden"
 			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
@@ -108,6 +87,39 @@
 				}
 			}}
 		/>
+		<div
+			class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
+			on:click={() => (showPicker = !showPicker)}
+			data-tooltip-target="tooltip-emoji"
+			data-tooltip-placement="right"
+			data-riple-light="true"
+			aria-hidden={false}
+			role="button"
+			tabindex="0"
+		>
+			😀
+		</div>
+		<div class="relative">
+			<div
+				id="tooltip-emoji"
+				data-tooltip="tooltip-emoji"
+				role="tooltip"
+				class:hidden={!showPicker}
+				class="absolute z-10 tooltip bottom-0 left-0"
+			>
+				<emoji-picker class="light" on:emoji-click={(event) => (message += event.detail.unicode)}>
+				</emoji-picker>
+			</div>
+		</div>
+		<div
+			class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
+			on:click={() => (showSpecials = !showSpecials)}
+			aria-hidden={false}
+			role="button"
+			tabindex="0"
+		>
+			É
+		</div>
 		<button class="btn btn-primary size-16" on:click={sendMessage}>
 			<Icon src={PaperAirplane} />
 		</button>

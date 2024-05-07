@@ -30,10 +30,6 @@
 
 {#if session}
 	<div class="h-full grid lg:grid-cols-4">
-		<div class=""></div>
-		<div class="flex flex-row flex-grow col-span-2">
-			<Chatbox {session} token={data.token} />
-		</div>
 		<div class="flex flex-col justify-evenly m-8">
 			<div class="border-2 rounded-lg p-2">
 				<h2 class="text-center font-bold text-xl">#{session.id}</h2>
@@ -57,5 +53,9 @@
 				</ul>
 			</div>
 		</div>
+		<div class="flex flex-row flex-grow col-span-2">
+			<Chatbox {session} token={data.token} />
+		</div>
+		<div class=""></div>
 	</div>
 {/if}
