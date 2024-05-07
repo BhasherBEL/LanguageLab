@@ -20,7 +20,11 @@
 	let showPicker = false;
 
 	let us = get(user);
-	let disabled = us == null || session.users.find((u) => us.id === u.id) === undefined;
+	let disabled =
+		us == null ||
+		session.users.find((u) => us.id === u.id) === undefined ||
+		new Date() > session.end_time ||
+		new Date() < session.start_time;
 
 	console.log(session.users);
 
@@ -95,12 +99,12 @@
 			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
 			{disabled}
 			bind:value={message}
-			on:keypress={(e) => keyPress(e)}
+			on:keypress={(e) => keyPress()}
 			on:keypress={async (e) => {
 				if (e.key === 'Enter' && !e.shiftKey) {
 					await sendMessage();
 				} else {
-					keyPress(e);
+					keyPress();
 				}
 			}}
 		/>
