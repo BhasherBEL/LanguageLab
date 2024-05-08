@@ -1,8 +1,8 @@
 export default {
-	API_URL: import.meta.env.VITE_API_URL || 'http://languagelab.sipr.ucl.ac.be/api/v1',
-	API_PROXY: import.meta.env.VITE_API_PROXY || 'http://languagelab.sipr.ucl.ac.be:8000',
-	APP_URL: import.meta.env.VITE_APP_URL || 'http://languagelab.sipr.ucl.ac.be',
-	WS_URL: import.meta.env.VITE_WS_URL || 'ws://languagelab.sipr.ucl.ac.be/api/v1/ws',
+	API_URL: import.meta.env.VITE_API_URL || 'https://languagelab.sipr.ucl.ac.be/api/v1',
+	API_PROXY: import.meta.env.VITE_API_PROXY || 'https://languagelab.sipr.ucl.ac.be:8000',
+	APP_URL: import.meta.env.VITE_APP_URL || 'https://languagelab.sipr.ucl.ac.be',
+	WS_URL: import.meta.env.VITE_WS_URL || 'wss://languagelab.sipr.ucl.ac.be/api/v1/ws',
 	LEARNING_LANGUAGES: ['fr'], // future: ['fr', 'en']
 	SPECIAL_CHARS: [
 		'à',

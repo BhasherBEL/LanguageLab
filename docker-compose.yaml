@@ -25,7 +25,7 @@ services:
       - ADMIN_EMAIL=${LANGUAGELAB_ADMIN_EMAIL}
       - ADMIN_PASSWORD=${LANGUAGELAB_ADMIN_PASSWORD}
       - CALCOM_SECRET=${LANGUAGELAB_CALCOM_SECRET}
-      - ALLOWED_ORIGINS=http://languagelab.sipr.ucl.ac.be
+      - ALLOWED_ORIGINS=https://languagelab.sipr.ucl.ac.be
     volumes:
       - /mnt/data/languagelab/backend:/data
       - /etc/timezone:/etc/timezone:ro
