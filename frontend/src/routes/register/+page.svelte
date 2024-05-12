@@ -8,7 +8,7 @@
 	import { get } from 'svelte/store';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import User, { users } from '$lib/types/user';
-	import { getUsersAPI, patchUserAPI } from '$lib/api/users';
+	import { getUsersAPI, patchUserAPI, createUserContactAPI } from '$lib/api/users';
 	import { ArrowRight, Icon } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 
@@ -144,7 +144,7 @@
 
 		if (confirm($t('register.confirmTutor').replaceAll('{NAME}', tutor.nickname)) === false) return;
 
-		const res = await patchUserAPI(user_id, { tutor_id: tutor.id });
+		const res = await createUserContactAPI(user_id, tutor.id);
 
 		if (!res) {
 			message = $t('register.error.tutor');

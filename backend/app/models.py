@@ -1,5 +1,13 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Boolean,
+    ForeignKey,
+    DateTime,
+    UniqueConstraint,
+)
+from sqlalchemy.orm import relationship
 from enum import Enum
 
 from database import Base
@@ -18,6 +26,8 @@ class Contact(Base):
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
     contact_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
     # last_message_id = Column(Integer, ForeignKey("messages.id"))
+
+    UniqueConstraint("user_id", "contact_id", name="unique_contact")
 
 
 class User(Base):

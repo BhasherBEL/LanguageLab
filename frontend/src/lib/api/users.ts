@@ -28,6 +28,17 @@ export async function getUserAPI(user_id: number) {
 	return response.data;
 }
 
+export async function createUserContactAPI(user_id: number, contact_id: number) {
+	const response = await axiosInstance.post(`/users/${user_id}/contacts/${contact_id}`);
+
+	if (response.status !== 201) {
+		toastAlert('Failed to create user contact');
+		return null;
+	}
+
+	return response.data;
+}
+
 export async function getUserContactsAPI(user_id: number) {
 	const response = await axiosInstance.get(`/users/${user_id}/contacts`, {
 		headers: {
