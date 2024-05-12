@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LocalSelector from './header/localSelector.svelte';
 	import { t } from '$lib/services/i18n';
-	import { ExclamationTriangle, Icon } from 'svelte-hero-icons';
+	import { ExclamationTriangle, Icon, Cog6Tooth } from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import { user } from '$lib/types/user';
 	import { page } from '$app/stores';
@@ -17,17 +17,20 @@
 	});
 </script>
 
-<header class="bg-gray-500 text-white flex align-middle justify-between p-2 h-16">
-	<h1 class="font-bold text-3xl py-2">
+<header class="bg-gray-500 text-white flex align-middle items-center justify-between p-2 h-16">
+	<h1 class="font-bold text-3xl">
 		<a data-sveltekit-reload href="/">{$t('header.appName')}</a>
 	</h1>
-	<div class="flex align-middle">
+	<div class="flex align-middle items-center">
 		{#if $user}
+			<p>{$t('header.connectedAs')} <strong>{$user.nickname}</strong></p>
 			<ul class="menu menu-horizontal px-1">
 				<li>
 					<details>
-						<summary> {$t('header.connectedAs')} <strong>{$user.nickname}</strong></summary>
-						<ul class="p-2 text-primary-content">
+						<summary>
+							<Icon src={Cog6Tooth} size="24" />
+						</summary>
+						<ul class="p-2 text-primary-content absolute right-0 whitespace-nowrap">
 							{#if $user?.type === 0}
 								<li>
 									<a data-sveltekit-reload href="/admin" class="mr-4 mt-0.5">
@@ -53,7 +56,7 @@
 								<LocalSelector class="ml-4 mt-3" />
 							</li>
 							<li>
-								<a data-sveltekit-reload href="/logout">
+								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
 									{$t('header.signout')}
 								</a>
 							</li>

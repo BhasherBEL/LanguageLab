@@ -28,7 +28,6 @@ export default class User {
 	private _home_language: string | null;
 	private _target_language: string | null;
 	private _birthdate: number | null;
-	private _tutor_id: number | null;
 	private _calcom_link: string | null;
 
 	private constructor(
@@ -42,7 +41,6 @@ export default class User {
 		home_language: string | null,
 		target_language: string | null,
 		birthdate: number | null,
-		tutor_id: number | null,
 		calcom_link: string | null
 	) {
 		this._id = id;
@@ -55,7 +53,6 @@ export default class User {
 		this._home_language = home_language;
 		this._target_language = target_language;
 		this._birthdate = birthdate;
-		this._tutor_id = tutor_id;
 		this._calcom_link = calcom_link;
 	}
 
@@ -83,10 +80,6 @@ export default class User {
 		return this._type === 0;
 	}
 
-	get is_tutor(): boolean {
-		return this._type <= 1;
-	}
-
 	get availability(): number {
 		return this._availability;
 	}
@@ -105,15 +98,6 @@ export default class User {
 
 	get birthdate(): number | null {
 		return this._birthdate;
-	}
-
-	get tutor_id(): number | null {
-		return this._tutor_id;
-	}
-
-	get tutor(): User | undefined {
-		if (this._tutor_id == null) return undefined;
-		return User.find(this._tutor_id);
 	}
 
 	get calcom_link(): string | null {
@@ -148,7 +132,6 @@ export default class User {
 			home_language: this.home_language,
 			target_language: this.target_language,
 			birthdate: this.birthdate,
-			tutor_id: this.tutor_id,
 			calcom_link: this.calcom_link
 		});
 	}
@@ -218,7 +201,6 @@ export default class User {
 			json.home_language,
 			json.target_language,
 			json.birthdate,
-			json.tutor_id,
 			json.calcom_link
 		);
 

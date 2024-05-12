@@ -103,8 +103,8 @@
 					{:else}
 						<a
 							class="button float-end"
-							class:btn-disabled={!$user || !$user.tutor || !$user.tutor.calcom_link}
-							href={$user?.tutor?.calcom_link}
+							class:btn-disabled={!contact || !contact.calcom_link}
+							href={contact.calcom_link}
 							target="_blank"
 						>
 							{$t('home.bookSession')}
