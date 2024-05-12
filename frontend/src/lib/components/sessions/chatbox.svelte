@@ -11,7 +11,16 @@
 	let messages = get(session.messages);
 
 	session.messages.subscribe((newMessages) => {
+		let news = newMessages.filter((m) => !messages.find((m2) => m2.id === m.id)).at(-1);
 		messages = newMessages;
+		if (!news) return;
+
+		if (document.hidden) {
+			new Notification(news.user.nickname, {
+				body: news.content,
+				icon: '/favicon.ico'
+			});
+		}
 	});
 
 	let wsConnected = true;
@@ -64,6 +73,7 @@
 		await session.loadMessages();
 		session.wsConnect(token);
 		presenceIndicator();
+		Notification.requestPermission(); // Should do something with denial ?
 	});
 
 	onDestroy(() => {
