@@ -60,6 +60,22 @@ def update_user(db: Session, user: schemas.UserUpdate, user_id: int):
     return cnt > 0
 
 
+def create_contact(db: Session, user, contact):
+    user.contacts.append(contact)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def get_contact_sessions(db: Session, user_id: int, contact_id: int):
+    return (
+        db.query(models.Session)
+        .filter(models.Session.users.any(models.User.id == user_id))
+        .filter(models.Session.users.any(models.User.id == contact_id))
+        .all()
+    )
+
+
 def create_session(db: Session, user: schemas.User):
     db_session = models.Session(is_active=True, users=[user])
     db.add(db_session)

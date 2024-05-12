@@ -4,24 +4,52 @@
 	import Session, { sessions } from '$lib/types/session';
 	import { getBaseURL } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { displayTime } from '$lib/utils/date';
-	import { Eye, EyeSlash, Icon, Trash, User as UserIcon } from 'svelte-hero-icons';
+	import { displayDate, displayTime } from '$lib/utils/date';
+	import {
+		Eye,
+		EyeSlash,
+		AcademicCap,
+		Sparkles,
+		Icon,
+		Trash,
+		User as UserIcon
+	} from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
 	import User, { user } from '$lib/types/user';
-	import { getUsersAPI } from '$lib/api/users';
+	import { getUserContactsAPI, getUserContactSessionsAPI } from '$lib/api/users';
 
 	let editParticipantsSession: Session | null;
 	let ready = false;
+	let contacts: User[] = [];
+	$: contact = null as User | null;
+	$: contactSessions = [] as Session[];
+
+	async function selectContact(c: User | null) {
+		contact = c;
+		if (!contact) {
+			contactSessions = [];
+			return;
+		}
+
+		contactSessions = Session.parseAll(await getUserContactSessionsAPI($user!.id, contact.id));
+	}
 
 	onMount(async () => {
-		Session.parseAll(await getSessionsAPI());
-		User.parseAll(await getUsersAPI());
+		if (!$user) return;
+		contacts = User.parseAll(await getUserContactsAPI($user.id));
+		if (contacts.length > 0) {
+			selectContact(contacts[0]);
+		}
 
 		ready = true;
 	});
 
 	async function createSession() {
-		await Session.create();
+		if (!contact) return;
+		let session = await Session.create();
+		if (!session) return;
+		await session.addUser(contact);
+		contactSessions = [...contactSessions, session];
 	}
 
 	async function deleteSession(session: Session) {
@@ -38,82 +66,99 @@
 </script>
 
 {#if ready}
-	<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
-		{#if $user?.is_tutor || $user?.is_admin}
-			<button on:click|preventDefault={createSession} class="button float-end mb-4">
-				{$t('home.createSession')}
-			</button>
-		{:else}
-			<a
-				class="button float-end mb-4"
-				class:btn-disabled={!$user || !$user.tutor || !$user.tutor.calcom_link}
-				href={$user?.tutor?.calcom_link}
-				target="_blank"
-			>
-				{$t('home.bookSession')}
-			</a>
-		{/if}
-		<table class="w-full table-md table-zebra">
-			<thead class=" uppercase text-sm bg-base-200">
-				<tr>
-					<th>{$t('home.remainingDuration')}</th>
-					<th>{$t('home.participants')}</th>
-					{#if $user?.is_tutor}
-						<th>{$t('home.actions')}</th>
-					{/if}
-				</tr>
-			</thead>
-			<tbody>
-				{#each $sessions.sort((a, b) => b.end_time.getTime() - a.end_time.getTime()) as session (session.id)}
-					{@const isHidden =
-						!session.is_active || session.end_time < new Date() || session.start_time > new Date()}
-					<tr
-						on:click={() => (window.location.href = getBaseURL() + '/session/?id=' + session.id)}
-						tabindex="0"
-						class="text-center hover:cursor-pointer"
-						class:text-gray-400={isHidden}
-					>
-						<td>
-							{#if session.end_time < new Date()}
-								{$t('home.sessionEnded')}
-							{:else}
-								{displayTime(session.start_time)}
-							{/if}
-						</td>
-						<td>{session.usersList()}</td>
-
-						{#if $user?.is_tutor}
-							<td>
-								<button on:click|preventDefault|stopPropagation={() => editParticipants(session)}>
-									<Icon src={UserIcon} class="w-5 hover:text-secondaryHover" />
-								</button>
-								<button on:click|preventDefault|stopPropagation={() => disableSession(session)}>
-									{#if session.is_active}
-										<Icon src={EyeSlash} class="w-5 hover:text-secondaryHover" />
-									{:else}
-										<Icon src={Eye} class="w-5 hover:text-secondaryHover" />
-									{/if}
-								</button>
-								{#if $user?.is_admin}
-									<button on:click|preventDefault|stopPropagation={() => deleteSession(session)}>
-										<Icon src={Trash} class="w-5 hover:text-secondaryHover" />
-									</button>
-								{/if}
-							</td>
+	<div class="h-full w-full flex">
+		<ul class="h-full [width:_clamp(200px,25%,500px)] overflow-y-scroll border-r-2">
+			{#each contacts as c (c.id)}
+				<li
+					class="h-20 flex border-gray-300 border-b-2 hover:bg-gray-200 hover:cursor-pointer"
+					class:bg-gray-200={c.id === contact?.id}
+					on:click={() => selectContact(c)}
+					role="button"
+					aria-label={c.nickname}
+					tabindex="0"
+					on:keydown={(e) => e.key === 'Enter' && selectContact(c)}
+				>
+					<div class="w-16 ml-2 mr-4 p-4 avatar bg-gray-300 mask-squircle mask">
+						{#if c.type == 0}
+							<Icon src={Sparkles} class="mask mask-squircle" />
+						{:else if c.type == 1}
+							<Icon src={AcademicCap} />
+						{:else}
+							<Icon src={UserIcon} />
 						{/if}
-					</tr>
-
-					{#if editParticipantsSession === session}
-						<EditParticipants
-							bind:session={editParticipantsSession}
-							onClose={() => (editParticipantsSession = null)}
-						/>
+					</div>
+					<div class="flex items-center text-lg">
+						{c.nickname}
+					</div>
+				</li>
+			{/each}
+		</ul>
+		<div class="flex-grow flex-col flex">
+			{#if contact}
+				<div class="p-4 pr-8">
+					{#if $user?.is_tutor || $user?.is_admin}
+						<button on:click|preventDefault={createSession} class="button float-end">
+							{$t('home.createSession')}
+						</button>
+					{:else}
+						<a
+							class="button float-end"
+							class:btn-disabled={!$user || !$user.tutor || !$user.tutor.calcom_link}
+							href={$user?.tutor?.calcom_link}
+							target="_blank"
+						>
+							{$t('home.bookSession')}
+						</a>
 					{/if}
-				{/each}
-			</tbody>
-		</table>
-		{#if !$sessions.length}
-			<div class="text-center mt-8 text-gray-500 text-lg italic">{$t('home.noSessions')}</div>
-		{/if}
+				</div>
+				<div class="flex-grow p-2">
+					<h2 class="text-xl my-4 font-bold">{$t('home.currentSessions')}</h2>
+					<ul>
+						{#each contactSessions as s (s.id)}
+							{#if s.start_time <= new Date() && s.end_time >= new Date()}
+								<li>
+									<a
+										class="block p-4 m-1 mx-4 rounded-md w-[calc(100%-32px)] border-2 hover:bg-gray-200 text-center"
+										href={`/session?id=${s.id}`}
+									>
+										{displayTime(s.start_time)} - {displayTime(s.end_time)}
+									</a>
+								</li>
+							{/if}
+						{/each}
+					</ul>
+					<h2 class="text-xl my-4 font-bold">{$t('home.plannedSessions')}</h2>
+					<ul>
+						{#each contactSessions as s (s.id)}
+							{#if s.start_time > new Date()}
+								<li>
+									<a
+										class="block p-4 m-1 mx-4 rounded-md w-[calc(100%-32px)] border-2 hover:bg-gray-200 text-center"
+										href={`/session?id=${s.id}`}
+									>
+										{displayTime(s.start_time)} - {displayTime(s.end_time)}
+									</a>
+								</li>
+							{/if}
+						{/each}
+					</ul>
+					<h2 class="text-xl my-4 font-bold">{$t('home.pastSessions')}</h2>
+					<ul>
+						{#each contactSessions as s (s.id)}
+							{#if s.end_time < new Date()}
+								<li>
+									<a
+										class="block p-4 m-1 mx-4 rounded-md w-[calc(100%-32px)] border-2 hover:bg-gray-200 text-center"
+										href={`/session?id=${s.id}`}
+									>
+										{displayTime(s.start_time)} - {displayTime(s.end_time)}
+									</a>
+								</li>
+							{/if}
+						{/each}
+					</ul>
+				</div>
+			{/if}
+		</div>
 	</div>
 {/if}

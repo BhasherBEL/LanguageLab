@@ -15,7 +15,6 @@ class User(BaseModel):
     home_language: str | None
     target_language: str | None
     birthdate: datetime.datetime | None
-    tutor_id: int | None
     calcom_link: str | None
 
     class Config:
@@ -33,7 +32,6 @@ class UserCreate(BaseModel):
     home_language: str | None = None
     target_language: str | None = None
     birthdate: datetime.datetime | None = None
-    tutor_id: int | None = None
     calcom_link: str | None = None
 
 
@@ -48,8 +46,14 @@ class UserUpdate(BaseModel):
     home_language: str | None = None
     target_language: str | None = None
     birthdate: datetime.datetime | None = None
-    tutor_id: int | None = None
     calcom_link: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class ContactCreate(BaseModel):
+    user_id: int
 
     class Config:
         from_attributes = True

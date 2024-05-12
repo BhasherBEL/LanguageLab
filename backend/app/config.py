@@ -19,4 +19,3 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin")
 DEBUG = os.getenv("DEBUG", "false").lower() in ("true", "1")
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 CALCOM_SECRET = os.getenv("CALCOM_SECRET", "calcom_secret")
-

@@ -31,7 +31,10 @@
 		"confirm": "Confirmer",
 		"sessionEnded": "Terminée",
 		"noSessions": "Aucune session en cours",
-		"bookSession": "Réserver une session"
+		"bookSession": "Réserver une session",
+		"currentSessions": "Sessions en cours",
+		"plannedSessions": "Sessions planifiées",
+		"pastSessions": "Sessions terminées"
 	},
 	"login": {
 		"email": "Email",

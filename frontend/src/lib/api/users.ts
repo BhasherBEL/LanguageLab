@@ -28,6 +28,36 @@ export async function getUserAPI(user_id: number) {
 	return response.data;
 }
 
+export async function getUserContactsAPI(user_id: number) {
+	const response = await axiosInstance.get(`/users/${user_id}/contacts`, {
+		headers: {
+			Authorization: `Bearer ${get(access_cookie)}`
+		}
+	});
+
+	if (response.status !== 200) {
+		toastAlert('Failed to get user contacts');
+		return [];
+	}
+
+	return response.data;
+}
+
+export async function getUserContactSessionsAPI(user_id: number, contact_id: number) {
+	const response = await axiosInstance.get(`/users/${user_id}/contacts/${contact_id}/sessions`, {
+		headers: {
+			Authorization: `Bearer ${get(access_cookie)}`
+		}
+	});
+
+	if (response.status !== 200) {
+		toastAlert('Failed to get user contact sessions');
+		return [];
+	}
+
+	return response.data;
+}
+
 export async function createUserAPI(
 	nickname: string,
 	email: string,

@@ -72,7 +72,7 @@ webhookRouter = APIRouter(prefix="/webhooks", tags=["webhook"])
 stats = APIRouter(prefix="/stats", tags=["stats"])
 
 
-@app.get("/health", status_code=status.HTTP_204_NO_CONTENT)
+@v1Router.get("/health", status_code=status.HTTP_204_NO_CONTENT)
 def health():
     return
 
@@ -86,11 +86,9 @@ def login(
 ):
     db_user = crud.get_user_by_email_and_password(db, email, password)
     if db_user is None:
-        raise HTTPException(
-            status_code=401, detail="Incorrect email or password")
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
 
-    subject = {"uid": db_user.id, "email": db_user.email,
-               "nickname": db_user.nickname}
+    subject = {"uid": db_user.id, "email": db_user.email, "nickname": db_user.nickname}
     access_token = jwt_cookie.create_access_token(subject)
 
     jwt_cookie.set_access_cookie(
@@ -119,8 +117,7 @@ def register(
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
 
-    user_data = schemas.UserCreate(
-        email=email, password=password, nickname=nickname)
+    user_data = schemas.UserCreate(email=email, password=password, nickname=nickname)
 
     user = crud.create_user(db=db, user=user_data)
 
@@ -234,6 +231,31 @@ def read_user_sessions(
     return db_user.sessions
 
 
+@usersRouter.get(
+    "/{user_id}/contacts/{contact_id}/sessions", response_model=list[schemas.Session]
+)
+def read_user_contact_sessions(
+    user_id: int,
+    contact_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to view this user's sessions",
+        )
+
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return crud.get_contact_sessions(db, user_id, contact_id)
+
+
 def store_typing_entries(
     db, entries: list[schemas.TestTypingEntryCreate], typing_id: int
 ):
@@ -266,10 +288,60 @@ def create_test_typing(
     typing_id = crud.create_test_typing(db, test, db_user).id
 
     if test.entries:
-        background_tasks.add_task(
-            store_typing_entries, db, test.entries, typing_id)
+        background_tasks.add_task(store_typing_entries, db, test.entries, typing_id)
 
     return typing_id
+
+
+@usersRouter.post(
+    "/{user_id}/contacts/{contact_id}", status_code=status.HTTP_201_CREATED
+)
+def create_contact(
+    user_id: int,
+    contact_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create a contact for this user",
+        )
+
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db_contact = crud.get_user(db, contact_id)
+    if db_contact is None:
+        raise HTTPException(status_code=404, detail="Contact not found")
+
+    return crud.create_contact(db, db_user, db_contact)
+
+
+@usersRouter.get("/{user_id}/contacts", response_model=list[schemas.User])
+def get_contacts(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to view this user's contacts",
+        )
+
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return db_user.contacts + db_user.contact_of
 
 
 @sessionsRouter.post("", response_model=schemas.Session)
@@ -471,11 +543,9 @@ def create_message(
 
     message = crud.create_message(db, entryMessage, current_user, db_session)
 
+    background_tasks.add_task(store_metadata, db, message.id, entryMessage.metadata)
     background_tasks.add_task(
-        store_metadata, db, message.id, entryMessage.metadata)
-    background_tasks.add_task(
-        send_websoket_message, session_id, schemas.Message.model_validate(
-            message)
+        send_websoket_message, session_id, schemas.Message.model_validate(message)
     )
 
     return message.id
@@ -503,8 +573,7 @@ def propagate_typing(
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    background_tasks.add_task(send_websoket_typing,
-                              session_id, current_user.id)
+    background_tasks.add_task(send_websoket_typing, session_id, current_user.id)
 
     return
 
@@ -531,8 +600,7 @@ def propagate_presence(
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    background_tasks.add_task(send_websoket_presence,
-                              session_id, current_user.id)
+    background_tasks.add_task(send_websoket_presence, session_id, current_user.id)
 
     return
 
@@ -603,22 +671,19 @@ async def webhook_session(
     #    raise HTTPException(status_code=401, detail="Invalid secret")
 
     if webhook.triggerEvent == "BOOKING_CREATED":
-        start_time = datetime.datetime.fromisoformat(
-            webhook.payload["startTime"])
+        start_time = datetime.datetime.fromisoformat(webhook.payload["startTime"])
         start_time -= datetime.timedelta(hours=1)
         end_time = datetime.datetime.fromisoformat(webhook.payload["endTime"])
         end_time += datetime.timedelta(hours=1)
         attendes = webhook.payload["attendees"]
-        emails = [attendee["email"]
-                  for attendee in attendes if attendee != None]
+        emails = [attendee["email"] for attendee in attendes if attendee != None]
         db_users = [
             crud.get_user_by_email(db, email) for email in emails if email != None
         ]
         users = [user for user in db_users if user != None]
 
         if users:
-            db_session = crud.create_session_with_users(
-                db, users, start_time, end_time)
+            db_session = crud.create_session_with_users(db, users, start_time, end_time)
         else:
             raise HTTPException(status_code=404, detail="Users not found")
 

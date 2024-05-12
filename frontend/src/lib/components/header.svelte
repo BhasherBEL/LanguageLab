@@ -1,9 +1,7 @@
 <script lang="ts">
-	import Logout from 'svelte-material-icons/Logout.svelte';
-	import Login from 'svelte-material-icons/Login.svelte';
 	import LocalSelector from './header/localSelector.svelte';
 	import { t } from '$lib/services/i18n';
-	import { Clock, Cog6Tooth, ExclamationTriangle, Icon } from 'svelte-hero-icons';
+	import { ExclamationTriangle, Icon } from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import { user } from '$lib/types/user';
 	import { page } from '$app/stores';
@@ -20,7 +18,9 @@
 </script>
 
 <header class="bg-gray-500 text-white flex align-middle justify-between p-2 h-16">
-	<h1 class="font-bold text-3xl"><a data-sveltekit-reload href="/">{$t('header.appName')}</a></h1>
+	<h1 class="font-bold text-3xl py-2">
+		<a data-sveltekit-reload href="/">{$t('header.appName')}</a>
+	</h1>
 	<div class="flex align-middle">
 		{#if $user}
 			<ul class="menu menu-horizontal px-1">

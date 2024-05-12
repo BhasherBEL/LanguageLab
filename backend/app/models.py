@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from enum import Enum
 
 from database import Base
@@ -10,6 +10,14 @@ class UserType(Enum):
     ADMIN = 0
     TUTOR = 1
     STUDENT = 2
+
+
+class Contact(Base):
+    __tablename__ = "contacts"
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
+    contact_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
+    # last_message_id = Column(Integer, ForeignKey("messages.id"))
 
 
 class User(Base):
@@ -26,11 +34,26 @@ class User(Base):
     home_language = Column(String, default="en")
     target_language = Column(String, default="fr")
     birthdate = Column(Integer, default=None)
-    tutor_id = Column(Integer, ForeignKey("users.id"))
     calcom_link = Column(String, default="")
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"
+    )
+
+    contacts = relationship(
+        "User",
+        secondary="contacts",
+        primaryjoin=(id == Contact.user_id),
+        secondaryjoin=(id == Contact.contact_id),
+        back_populates="contacts",
+    )
+
+    contact_of = relationship(
+        "User",
+        secondary="contacts",
+        primaryjoin=(id == Contact.contact_id),
+        secondaryjoin=(id == Contact.user_id),
+        back_populates="contacts",
     )
 
 
