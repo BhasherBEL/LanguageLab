@@ -188,12 +188,62 @@
 		</div>
 	{/if}
 	{#if current_step == 1}
-		<div class="text-center">
-			<div>{@html $t('register.consentText')}</div>
-			<button class="button mt-4" on:click={() => current_step++}>
-				{$t('register.consentOK')}
-			</button>
+		<div class="join join-vertical w-full">
+			<div class="join-item">
+				<h2 class="text-xl text-center">{$t('register.consentTitle')}</h2>
+				<p class="m-5">{@html $t('register.consentText')}</p>
+			</div>
+			<div class="collapse collapse-arrow join-item border border-base-300">
+				<input type="radio" name="consent-accordion" checked="checked" /> 
+				<div class="collapse-title font-medium">{$t('register.consentTitle1')}</div>
+				<div class="collapse-content"><p>{@html $t('register.consentText1')}</p></div> 
+			</div>
+			<div class="collapse collapse-arrow join-item border border-base-300">
+				<input type="radio" name="consent-accordion" /> 
+				<div class="collapse-title font-medium">{$t('register.consentTitle2')}</div>
+				<div class="collapse-content"><p>{@html $t('register.consentText2')}</p></div>
+			</div>
+			<div class="collapse collapse-arrow join-item border border-base-300">
+				<input type="radio" name="consent-accordion" /> 
+				<div class="collapse-title font-medium">{$t('register.consentTitle3')}</div>
+				<div class="collapse-content"><p>{@html $t('register.consentText3')}</p></div>
+			</div>
+			<div class="collapse collapse-arrow join-item border border-base-300">
+				<input type="radio" name="consent-accordion" /> 
+				<div class="collapse-title font-medium">{$t('register.studyData.title')}</div>
+				<div class="collapse-content">
+					<dl class="text-sm">
+						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+							<dt class="font-medium">{$t('register.studyData.study')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.studyD')}</dd>
+						</div>
+						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+							<dt class="font-medium">{$t('register.studyData.project')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.projectD')}</dd>
+						</div>
+						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+							<dt class="font-medium">{$t('register.studyData.university')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.universityD')}</dd>
+						</div>
+						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+							<dt class="font-medium">{$t('register.studyData.address')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.addressD')}</dd>
+						</div>
+						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+							<dt class="font-medium">{$t('register.studyData.person')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.personD')}</dd>
+						</div>
+						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+							<dt class="font-medium">{$t('register.studyData.email')}</dt>
+							<dd class="text-gray-700 sm:col-span-2"><a href="mailto:{$t('register.studyData.emailD')}">{$t('register.studyData.emailD')}</a></dd>
+						</div>
+					</dl>
+				</div>
+			</div>
 		</div>
+		<button class="button mt-4" on:click={() => current_step++}>
+			{$t('register.consentOK')}
+		</button>
 	{:else if current_step == 2}
 		<div class="space-y-5">
 			<label class="input input-bordered flex items-center gap-2">
@@ -277,13 +327,13 @@
 			{@html $t('register.welcome')}
 		</div>
 		<div class="mt-4">
-			<label for="home_language">
-				{$t('register.home_language')}
+			<label for="homeLanguage">
+				{$t('register.homeLanguage')}
 			</label>
 			<select
 				class="input mt-2 w-full bg-transparent"
-				id="home_language"
-				name="home_language"
+				id="homeLanguage"
+				name="homeLanguage"
 				required
 				bind:value={home_language}
 			>
