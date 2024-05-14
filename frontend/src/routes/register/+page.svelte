@@ -199,54 +199,53 @@
 	{#if current_step == 1}
 		<div class="join join-vertical w-full">
 			<div class="join-item">
-				<h2 class="text-xl text-center">{$t('register.consentTitle')}</h2>
-				<p class="m-5">{@html $t('register.consentText')}</p>
+				<h2 class="text-xl text-center">{$t('register.consent.title')}</h2>
+				<p class="m-5">{@html $t('register.consent.intro')}</p>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" checked="checked" />
-				<div class="collapse-title font-medium">{$t('register.consentTitle1')}</div>
-				<div class="collapse-content"><p>{@html $t('register.consentText1')}</p></div>
+				<div class="collapse-title font-medium">{$t('register.consent.participation')}</div>
+				<div class="collapse-content"><p>{@html $t('register.consent.participationD')}</p></div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" />
-				<div class="collapse-title font-medium">{$t('register.consentTitle2')}</div>
-				<div class="collapse-content"><p>{@html $t('register.consentText2')}</p></div>
+				<div class="collapse-title font-medium">{$t('register.consent.privacy')}</div>
+				<div class="collapse-content"><p>{@html $t('register.consent.privacyD')}</p></div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" />
-				<div class="collapse-title font-medium">{$t('register.consentTitle3')}</div>
-				<div class="collapse-content"><p>{@html $t('register.consentText3')}</p></div>
+				<div class="collapse-title font-medium">{$t('register.consent.rights')}</div>
+				<div class="collapse-content"><p>{@html $t('register.consent.rightsD')}</p></div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" />
-				<div class="collapse-title font-medium">{$t('register.studyData.title')}</div>
+				<div class="collapse-title font-medium">{$t('register.consent.studyData.title')}</div>
 				<div class="collapse-content">
 					<dl class="text-sm">
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
-							<dt class="font-medium">{$t('register.studyData.study')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.studyD')}</dd>
+							<dt class="font-medium">{$t('register.consent.studyData.study')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.studyD')}</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
-							<dt class="font-medium">{$t('register.studyData.project')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.projectD')}</dd>
+							<dt class="font-medium">{$t('register.consent.studyData.project')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.projectD')}</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
-							<dt class="font-medium">{$t('register.studyData.university')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.universityD')}</dd>
+							<dt class="font-medium">{$t('register.consent.studyData.university')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.universityD')}</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
-							<dt class="font-medium">{$t('register.studyData.address')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.addressD')}</dd>
+							<dt class="font-medium">{$t('register.consent.studyData.address')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.addressD')}</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
-							<dt class="font-medium">{$t('register.studyData.person')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.studyData.personD')}</dd>
+							<dt class="font-medium">{$t('register.consent.studyData.person')}</dt>
+							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.personD')}</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
-							<dt class="font-medium">{$t('register.studyData.email')}</dt>
+							<dt class="font-medium">{$t('register.consent.studyData.email')}</dt>
 							<dd class="text-gray-700 sm:col-span-2">
-								<a href="mailto:{$t('register.studyData.emailD')}"
-									>{$t('register.studyData.emailD')}</a
+								<a href="mailto:{$t('register.consent.studyData.emailD')}">{$t('register.consent.studyData.emailD')}</a
 								>
 							</dd>
 						</div>
@@ -255,7 +254,7 @@
 			</div>
 		</div>
 		<button class="button mt-4" on:click={() => current_step++}>
-			{$t('register.consentOK')}
+			{$t('register.consent.ok')}
 		</button>
 	{:else if current_step == 2}
 		<div class="space-y-5">
