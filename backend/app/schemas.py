@@ -15,6 +15,7 @@ class User(BaseModel):
     home_language: str | None
     target_language: str | None
     birthdate: datetime.datetime | None
+    gender: str | None = None
     calcom_link: str | None
 
     class Config:
@@ -32,6 +33,7 @@ class UserCreate(BaseModel):
     home_language: str | None = None
     target_language: str | None = None
     birthdate: datetime.datetime | None = None
+    gender: str | None = None
     calcom_link: str | None = None
 
 
@@ -46,6 +48,7 @@ class UserUpdate(BaseModel):
     home_language: str | None = None
     target_language: str | None = None
     birthdate: datetime.datetime | None = None
+    gender: str | None = None
     calcom_link: str | None = None
 
     class Config:

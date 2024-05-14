@@ -8,7 +8,12 @@
 	import { get } from 'svelte/store';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import User, { users } from '$lib/types/user';
-	import { getUsersAPI, patchUserAPI, createUserContactAPI } from '$lib/api/users';
+	import {
+		getUsersAPI,
+		patchUserAPI,
+		createUserContactAPI,
+		getUserContactsAPI
+	} from '$lib/api/users';
 	import { ArrowRight, Icon } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 
@@ -31,12 +36,14 @@
 		}
 		User.parseAll(await getUsersAPI());
 
-		if (!u.home_language || !u.target_language || !u.birthdate) {
+		if (!u.home_language || !u.target_language || !u.birthdate || !u.gender) {
 			current_step = 3;
 			return;
 		}
 
-		if (!u.tutor_id) {
+		const contacts = User.parseAll(await getUserContactsAPI(u.id));
+
+		if (contacts.length == 0) {
 			current_step = 4;
 			return;
 		}
@@ -53,6 +60,7 @@
 	let home_language: string;
 	let target_language: string;
 	let birthdate: string;
+	let gender: string;
 
 	let timeslots = 0;
 	$: filteredUsers = $users.filter((user) => {
@@ -114,7 +122,7 @@
 			return;
 		}
 
-		if (!ui_language || !home_language || !target_language || !birthdate) {
+		if (!ui_language || !home_language || !target_language || !birthdate || !gender) {
 			message = $t('register.error.emptyFields');
 			return;
 		}
@@ -123,7 +131,8 @@
 			ui_language,
 			home_language,
 			target_language,
-			birthdate
+			birthdate,
+			gender
 		});
 
 		if (!res) {
@@ -194,22 +203,22 @@
 				<p class="m-5">{@html $t('register.consentText')}</p>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
-				<input type="radio" name="consent-accordion" checked="checked" /> 
+				<input type="radio" name="consent-accordion" checked="checked" />
 				<div class="collapse-title font-medium">{$t('register.consentTitle1')}</div>
-				<div class="collapse-content"><p>{@html $t('register.consentText1')}</p></div> 
+				<div class="collapse-content"><p>{@html $t('register.consentText1')}</p></div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
-				<input type="radio" name="consent-accordion" /> 
+				<input type="radio" name="consent-accordion" />
 				<div class="collapse-title font-medium">{$t('register.consentTitle2')}</div>
 				<div class="collapse-content"><p>{@html $t('register.consentText2')}</p></div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
-				<input type="radio" name="consent-accordion" /> 
+				<input type="radio" name="consent-accordion" />
 				<div class="collapse-title font-medium">{$t('register.consentTitle3')}</div>
 				<div class="collapse-content"><p>{@html $t('register.consentText3')}</p></div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
-				<input type="radio" name="consent-accordion" /> 
+				<input type="radio" name="consent-accordion" />
 				<div class="collapse-title font-medium">{$t('register.studyData.title')}</div>
 				<div class="collapse-content">
 					<dl class="text-sm">
@@ -235,7 +244,11 @@
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
 							<dt class="font-medium">{$t('register.studyData.email')}</dt>
-							<dd class="text-gray-700 sm:col-span-2"><a href="mailto:{$t('register.studyData.emailD')}">{$t('register.studyData.emailD')}</a></dd>
+							<dd class="text-gray-700 sm:col-span-2">
+								<a href="mailto:{$t('register.studyData.emailD')}"
+									>{$t('register.studyData.emailD')}</a
+								>
+							</dd>
 						</div>
 					</dl>
 				</div>
@@ -370,6 +383,43 @@
 				{/each}
 			</select>
 		</div>
+		<div class="mt-4">
+			<label for="gender">{$t('register.gender')}</label>
+			<div class="ml-2">
+				<input
+					type="radio"
+					id="male"
+					name="gender"
+					value="male"
+					on:change={() => (gender = 'male')}
+				/>
+				<label for="male">{$t('register.genders.male')}</label>
+			</div>
+			<div class="ml-2">
+				<input
+					type="radio"
+					id="female"
+					name="gender"
+					value="female"
+					on:change={() => (gender = 'female')}
+				/>
+				<label for="female">{$t('register.genders.female')}</label>
+			</div>
+			<div class="ml-2">
+				<input
+					type="radio"
+					id="other"
+					name="gender"
+					value="other"
+					on:change={() => (gender = 'other')}
+				/>
+				<label for="other">{$t('register.genders.other')}</label>
+			</div>
+			<div class="ml-2">
+				<input type="radio" id="na" name="gender" value="na" on:change={() => (gender = 'na')} />
+				<label for="na">{$t('register.genders.na')}</label>
+			</div>
+		</div>
 		<div class="mt-4 text-center">
 			<button class="button" on:click={onData}>{$t('button.submit')}</button>
 		</div>
@@ -436,7 +486,7 @@
 </div>
 
 <style lang="postcss">
-	input {
+	input:not([type='radio']) {
 		@apply w-full;
 	}
 </style>

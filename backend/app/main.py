@@ -18,7 +18,6 @@ from fastapi.websockets import WebSocket
 from contextlib import asynccontextmanager
 import json
 from jose import jwt
-from sqlalchemy.sql.functions import current_user
 
 import schemas
 import crud

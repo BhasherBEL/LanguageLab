@@ -10,7 +10,7 @@
 
 	onMount(async () => {
 		if ($user) {
-			if (!$user.home_language || !$user.target_language || !$user.birthdate) {
+			if (!$user.home_language || !$user.target_language || !$user.birthdate || !$user.gender) {
 				displayMetadataWarning = true;
 			}
 		}

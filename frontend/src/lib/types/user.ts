@@ -28,6 +28,7 @@ export default class User {
 	private _home_language: string | null;
 	private _target_language: string | null;
 	private _birthdate: number | null;
+	private _gender: string | null;
 	private _calcom_link: string | null;
 
 	private constructor(
@@ -41,6 +42,7 @@ export default class User {
 		home_language: string | null,
 		target_language: string | null,
 		birthdate: number | null,
+		gender: string | null,
 		calcom_link: string | null
 	) {
 		this._id = id;
@@ -53,6 +55,7 @@ export default class User {
 		this._home_language = home_language;
 		this._target_language = target_language;
 		this._birthdate = birthdate;
+		this._gender = gender;
 		this._calcom_link = calcom_link;
 	}
 
@@ -100,6 +103,10 @@ export default class User {
 		return this._birthdate;
 	}
 
+	get gender(): string | null {
+		return this._gender;
+	}
+
 	get calcom_link(): string | null {
 		return this._calcom_link;
 	}
@@ -132,6 +139,7 @@ export default class User {
 			home_language: this.home_language,
 			target_language: this.target_language,
 			birthdate: this.birthdate,
+			gender: this.gender,
 			calcom_link: this.calcom_link
 		});
 	}
@@ -201,6 +209,7 @@ export default class User {
 			json.home_language,
 			json.target_language,
 			json.birthdate,
+			json.gender,
 			json.calcom_link
 		);
 

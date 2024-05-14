@@ -44,6 +44,7 @@ class User(Base):
     home_language = Column(String, default="en")
     target_language = Column(String, default="fr")
     birthdate = Column(Integer, default=None)
+    gender = Column(String, default=None)
     calcom_link = Column(String, default="")
 
     sessions = relationship(
