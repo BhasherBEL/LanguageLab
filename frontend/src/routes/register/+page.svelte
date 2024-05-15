@@ -215,7 +215,7 @@
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" />
 				<div class="collapse-title font-medium">{$t('register.consent.rights')}</div>
-				<div class="collapse-content"><p>{@html $t('register.consent.rightsD')}</p></div>
+				<div class="collapse-content"><p>{$t('register.consent.rightsD')} <a class="link link-info" href="mailto:{$t('register.consent.studyData.emailD')}">{$t('register.consent.studyData.emailD')}</a>.</p></div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" />
@@ -343,7 +343,7 @@
 				{$t('register.homeLanguage')}
 			</label>
 			<select
-				class="input mt-2 w-full bg-transparent"
+				class="input w-full bg-transparent"
 				id="homeLanguage"
 				name="homeLanguage"
 				required
@@ -357,7 +357,7 @@
 		<div class="mt-4">
 			<label for="targetLanguage">{$t('register.targetLanguage')}</label>
 			<select
-				class="input mt-2 w-full bg-transparent"
+				class="input w-full bg-transparent"
 				id="targetLanguage"
 				name="targetLanguage"
 				required
@@ -371,7 +371,7 @@
 		<div class="mt-4">
 			<label for="birthyear">{$t('register.birthyear')}</label>
 			<select
-				class="input mt-2 w-full bg-transparent"
+				class="input w-full bg-transparent "
 				id="birthyear"
 				name="birthyear"
 				required
