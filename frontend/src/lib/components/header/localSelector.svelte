@@ -14,10 +14,10 @@
 	}
 </script>
 
-<ul class="bg-transparent {classes} menu menu-horizontal z-10">
+<ul class="{classes} menu">
 	<li>
 		<details>
-			<summary> {$t('header.language')}</summary>
+			<summary>{$t('header.language')}</summary>
 			<ul class="text-primary-content">
 				{#each $locales as name (name)}
 					<li><button on:click={() => onChange(name)}>{name}</button></li>

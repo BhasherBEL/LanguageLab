@@ -17,14 +17,16 @@
 	});
 </script>
 
-<header class="bg-gray-500 text-white flex align-middle items-center justify-between p-2 h-16">
-	<h1 class="font-bold text-3xl">
-		<a data-sveltekit-reload href="/">{$t('header.appName')}</a>
-	</h1>
-	<div class="flex align-middle items-center">
+<header class="navbar shadow">
+	<div class="flex-1">
+		<h1 class="btn btn-ghost text-xl text-gray-600">
+			<a data-sveltekit-reload href="/">{$t('header.appName')}</a>
+		</h1>
+	</div>
+	<div class="flex-none">
 		{#if $user}
 			<p>{$t('header.connectedAs')} <strong>{$user.nickname}</strong></p>
-			<ul class="menu menu-horizontal px-1">
+			<ul class="menu menu-horizontal pr-0">
 				<li>
 					<details>
 						<summary>
@@ -53,7 +55,7 @@
 								</li>
 							{/if}
 							<li>
-								<LocalSelector class="ml-4 mt-3" />
+								<LocalSelector />
 							</li>
 							<li>
 								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
@@ -69,12 +71,12 @@
 				data-sveltekit-reload
 				href="/login?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}"
 			>
-				<button class="btn mr-4 btn-primary btn-outline p-2">
+				<button class="btn btn-sm btn-primary mr-4">
 					{$t('header.signin')}
 				</button>
 			</a>
 			<a data-sveltekit-reload href="/register">
-				<button class="btn btn-primary btn-outline">
+				<button class="btn btn-sm btn-primary">
 					{$t('header.register')}
 				</button>
 			</a>
@@ -87,7 +89,7 @@
 	<a
 		data-sveltekit-reload
 		href="/register"
-		class="bg-orange-500 text-white text-center p-4 flex justify-center"
+		class="bg-warning text-white text-center p-2 flex justify-center"
 	>
 		<Icon src={ExclamationTriangle} size="24" />
 		&nbsp;

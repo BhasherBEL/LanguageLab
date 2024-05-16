@@ -168,23 +168,23 @@
 </script>
 
 <div class="header mx-auto my-5">
-	<ul class="steps">
-		<li class="step cursor-pointer" class:step-primary={current_step >= 1}>
+	<ul class="steps text-sm text-neutral-content	">
+		<li class="step" class:step-primary={current_step >= 1}>
 			{$t('register.tab.consent')}
 		</li>
-		<li class="step cursor-pointer" class:step-primary={current_step >= 2}>
+		<li class="step" class:step-primary={current_step >= 2}>
 			{$t('register.tab.signup')}
 		</li>
-		<li class="step cursor-pointer" class:step-primary={current_step >= 3}>
+		<li class="step" class:step-primary={current_step >= 3}>
 			{$t('register.tab.information')}
 		</li>
-		<li class="step cursor-pointer" class:step-primary={current_step >= 4}>
+		<li class="step" class:step-primary={current_step >= 4}>
 			{$t('register.tab.timeslots')}
 		</li>
-		<li class="step cursor-pointer" class:step-primary={current_step >= 5}>
+		<li class="step" class:step-primary={current_step >= 5}>
 			{$t('register.tab.test')}
 		</li>
-		<li class="step cursor-pointer" class:step-primary={current_step >= 6}>
+		<li class="step" class:step-primary={current_step >= 6}>
 			{$t('register.tab.start')}
 		</li>
 	</ul>

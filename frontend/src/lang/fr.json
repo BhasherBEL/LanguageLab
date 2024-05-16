@@ -83,7 +83,7 @@
 			"title": "Document d’information et consentement éclairé",
 			"intro": "Vous êtes invité·e à participer à une étude scientifique. L'objectif de cette étude est de comprendre comment les tuteurs et les apprenants de langue étrangère interagissent lors de sessions de tutorat en ligne. Les données collectées seront utilisées pour améliorer les outils de tutorat en ligne et pour mieux comprendre les processus cognitifs de part et d'autre.",
 			"participation": "Qu'implique votre participation ?",
-			"participationD": "Si vous acceptez de participer, vous serez invité·e à participer à des sessions de tutorat en ligne avec un tuteur de langue étrangère. Vous serez également invité à remplir des questionnaires avant et après les sessions de tutorat. Les sessions de tutorat seront enregistrées pour analyse ultérieure.</p><p>Nous vous demandons de prévoir de réaliser un minimum de <em>8 sessions d'une heure</em> de tutorat (donc 8 heures au total), au cours d'une période de 1 à 3 mois. Vous pouvez bien sûr en réaliser plus si vous le souhaitez. Vous pouvez cependant arrêter de participer à l'étude à tout moment.",
+			"participationD": "Si vous acceptez de participer, vous serez invité·e à participer à des sessions de tutorat en ligne avec un tuteur de langue étrangère. Vous serez également invité à remplir des questionnaires avant et après les sessions de tutorat. Les sessions de tutorat seront enregistrées pour analyse ultérieure.</p><p>Nous vous demandons de prévoir de réaliser un minimum de <strong>8 sessions d'une heure</strong> de tutorat (donc 8 heures au total), au cours d'une période de 1 à 3 mois. Vous pouvez bien sûr en réaliser plus si vous le souhaitez. Vous pouvez cependant arrêter de participer à l'étude à tout moment.",
 			"privacy": "Comment seront traitées et conservées vos données ?",
 			"privacyD": "Les données collectées (par exemple, les transcriptions des conversations, les résultats de tests, les mesures de frappe, les informations sur les participants comme l'age ou le genre) seront traitées de manière confidentielle et anonyme. Elles seront conservées après leur anonymisation intégrale et ne pourront être utilisées qu'à des fins scientifiques ou pédagogiques. Elles pourront éventuellement être partagées avec d'autres chercheurs ou enseignants, mais toujours dans ce cadre strictement de recherche ou d'enseignement.",
 			"rights": "Quels sont vos droits ? Participation volontaire et retrait éventuel",
@@ -105,10 +105,11 @@
 			},
 			"ok": "J'accepte de participer à l'étude telle que décrite ci-dessus."
 		},
-		"welcome": "Bienvenue sur LanguageLab ! Avant de commencer, veuillez remplir les informations suivantes, afin de mieux vous connaître et de vous proposer un tuteur adapté à vos besoins.",
+		"welcome": "Bienvenue sur LanguageLab ! Avant de commencer, veuillez remplir les informations suivantes. Cela nous permettra de mieux vous connaitre et d'adapter l'expérience à vos besoins.",
 		"homeLanguage": "Langue première",
 		"homeLanguage.note": "Langue maternelle ou langue principale parlée avec vos parents (si plusieurs, celle parlée le plus souvent)",
 		"targetLanguage": "Langue cible",
+		"targetLanguage.note": "Langue que vous souhaitez apprendre",
 		"gender": "Êtes-vous...",
 		"genders": {
 			"male": "Un homme",
