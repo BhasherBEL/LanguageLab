@@ -14,15 +14,8 @@
 	}
 </script>
 
-<ul class="{classes} menu">
-	<li>
-		<details>
-			<summary>{$t('header.language')}</summary>
-			<ul class="text-primary-content">
-				{#each $locales as name (name)}
-					<li><button on:click={() => onChange(name)}>{name}</button></li>
-				{/each}
-			</ul>
-		</details>
-	</li>
-</ul>
+<!-- <ul class="{classes}"> -->
+{#each $locales as name (name)}
+	<li><button on:click={() => onChange(name)}>{name}</button></li>
+{/each}
+<!-- </ul> -->
