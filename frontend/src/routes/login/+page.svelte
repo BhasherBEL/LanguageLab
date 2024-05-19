@@ -23,42 +23,72 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-screen">
-	<div class="card shadow-xl">
-		<h2 class="card-title p-6 pb-0">{$t('login.title')}</h2>
-		<form action="#" class="flex items-center flex-col p-6">
+<div class="flex justify-center items-center h-screen"> 
+	<div class="flex flex-col w-full max-w-md rounded-box shadow-xl bg-base-200 gap-4 p-6">
+		<h1 class="text-3xl font-bold self-center">{$t('login.title')}</h1>
+
+		<p class="self-center text-sm">
+			{$t('login.noAccountText')}
+			<a data-sveltekit-reload href="/register" class="link link-secondary">
+				{$t('login.noAccountLink')}
+			</a>
+		</p>
+
+		<!-- <a class="btn btn-neutral">
+				<i class="fa-brands fa-google text-primary"></i>
+				Log in with Google
+		</a>
+		
+		<div class="divider">OR</div>  -->
+
+		<form action="#">
 			{#if message}
-				<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
+				<div class="alert alert-error">
 					{message}
 				</div>
 			{/if}
-			<div class="flex w-full mb-4">
-				<label for="email">{$t('login.email')}</label>
-				<input type="text" id="email" name="email" bind:value={email} required />
+
+			<label class="form-control">
+				<div class="label">
+					<span class="label-text">{$t('login.email')}</span>
+				</div>
+
+				<input type="text" id="email" name="email" class="input input-bordered" bind:value={email} required />
+			</label>
+
+			<label class="form-control">
+				<div class="label">
+					<span class="label-text">{$t('login.password')}</span>
+					<!-- TODO: forgot password
+					<a class="label-text link link-secondary">{$t('login.forgotPassword')}</a> -->
+				</div>
+
+				<input type="password" id="password" name="password" class="input input-bordered" bind:value={password} required />
+			</label>
+
+			<!-- <div class="form-control">
+				<label class="cursor-pointer label self-start gap-2">
+					TODO: remember me
+					<input type="checkbox" class="checkbox" />
+					<span class="label-text">{$t('login.rememberMe')}</span> 
+				</label>
+			</div> -->
+
+			<div class="form-control mt-4">
+				<button type="submit" on:click|preventDefault={login} class="btn btn-primary">
+					{$t('login.login')}
+				</button>
 			</div>
-			<div class="flex w-full mb-4">
-				<label for="password">{$t('login.password')}</label>
-				<input type="password" id="password" name="password" bind:value={password} required />
-			</div>
-			<button type="submit" on:click|preventDefault={login} class="btn btn-primary">
-				{$t('login.login')}
-			</button>
-			<p class="mt-4 text-sm">
-				{$t('login.noAccountText')}
-				<a data-sveltekit-reload href="/register" class="link">
-					{$t('login.noAccountLink')}
-				</a>
-			</p>
 		</form>
 	</div>
 </div>
 
 <style lang="postcss">
-	label {
+	/* label {
 		@apply font-bold pr-4 w-1/3 flex items-center justify-end;
 	}
 
 	input {
 		@apply input bg-base-200 w-[400px] py-2 px-4;
-	}
+	} */
 </style>
