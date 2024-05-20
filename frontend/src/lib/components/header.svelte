@@ -53,7 +53,7 @@
 				</li>
 			</ul>
 		</div>
-		<h1 class="btn btn-ghost text-xl p-2 text-gray-600">
+		<h1 class="btn btn-ghost text-xl text-gray-600">
 			<a data-sveltekit-reload href="/">{$t('header.appName')}</a>
 		</h1>
 	</div>
@@ -109,7 +109,7 @@
 			{:else}
 				<li>
 					<a
-						class="button btn-sm"
+						class="btn btn-sm my-auto"
 						data-sveltekit-reload
 						href="/login?redirect={encodeURIComponent($page.url.pathname + $page.url.search)}"
 					>
@@ -117,7 +117,7 @@
 					</a>
 				</li>
 				<!-- <li>
-					<a class="button" data-sveltekit-reload href="/register">
+					<a class="btn btn-primary" data-sveltekit-reload href="/register">
 						{$t('header.register')}
 					</a>
 				</li> -->

@@ -7,6 +7,10 @@
 	@apply btn btn-primary;
 }
 
+.text-prose {
+	@apply text-gray-700;
+}
+
 .test1 {
 	@apply border-2 border-red-700;
 }

@@ -4,6 +4,7 @@
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import { user } from '$lib/types/user';
 	import { toastWarning } from '$lib/utils/toasts';
+	import { Icon, Calendar } from 'svelte-hero-icons';
 
 	$: lastTimeslots = 0;
 	$: timeslots = 0;
@@ -39,19 +40,30 @@
 	}
 </script>
 
-<div class="w-4/5 max-w-4xl m-auto mt-4">
+<div class="max-w-screen-md mx-auto p-2">
 	<h2 class="my-4 text-xl">{$t('timeslots.setAvailabilities')}</h2>
 	{#if ready}
 		<Timeslots bind:timeslots />
 
-		<input
-			type="text "
-			class="input w-full mt-4"
-			placeholder={$t('timeslots.calcom')}
-			bind:value={calcom_link}
-		/>
+		<div class="form-control mt-4">
+			<label class="label" for="calcom">
+				<span class="label-text">
+					{$t('timeslots.calcom')}
+				</span>
+			</label>
+			<div class="input flex items-center">
+				<Icon src={Calendar} class="w-5 h-5 mr-2 opacity-70" solid />
+				<input
+					type="text"
+					id="calcom"
+					class="grow"
+					placeholder="https://cal.com/username/tutoring"
+					bind:value={calcom_link}
+				/>
+			</div>
+		</div>
 
-		<div class="mt-4 w-full flex justify-center">
+		<div class="form-control mt-4">
 			<button
 				class="button"
 				disabled={sent || (lastTimeslots === timeslots && calcom_link === last_calcom_link)}

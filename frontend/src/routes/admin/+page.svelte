@@ -42,26 +42,26 @@
 </script>
 
 {#if ready}
-	<div class="min-w-fit max-w-3xl m-auto p-0 mt-8">
-		<h1 class="text-2xl font-bold mb-8 text-center">Users</h1>
-		<table class="w-full shadow-md">
-			<thead class="bg-gray-200 uppercase text-sm">
+	<div class="min-w-fit max-w-3xl mx-auto">
+		<h1 class="text-xl font-bold m-5 text-center">Users</h1>
+		<table class="table">
+			<thead>
 				<tr>
-					<th class="py-2 px-6">#</th>
-					<th class="py-2 px-6">{$t('users.nickname')}</th>
-					<th class="py-2 px-6">{$t('users.email')}</th>
-					<th class="py-2 px-6">{$t('users.category')}</th>
-					<th class="py-2 px-6">{$t('users.isActive')}</th>
-					<th class="py-2 px-6">{$t('admin.actions')}</th>
+					<th>#</th>
+					<th>{$t('users.nickname')}</th>
+					<th>{$t('users.email')}</th>
+					<th>{$t('users.category')}</th>
+					<th>{$t('users.isActive')}</th>
+					<th>{$t('admin.actions')}</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each $users as user (user.id)}
-					<tr class="odd:bg-white even:bg-gray-100 text-center">
-						<td class="py-3 px-6">{user.id}</td>
-						<td class="py-3 px-6">{user.nickname}</td>
-						<td class="py-3 px-6">{user.email}</td>
-						<td class="py-3 px-6">
+					<tr>
+						<td>{user.id}</td>
+						<td>{user.nickname}</td>
+						<td>{user.email}</td>
+						<td>
 							{#if user.type === 0}
 								{$t('users.type.admin')}
 							{:else if user.type === 1}
@@ -70,7 +70,7 @@
 								{$t('users.type.student')}
 							{/if}
 						</td>
-						<td class="py-3 px-6">{$t('utils.bool.' + user.is_active)}</td>
+						<td>{$t('utils.bool.' + user.is_active)}</td>
 						<td class="py-3 px-6 flex justify-center">
 							<Icon
 								src={Trash}
@@ -79,32 +79,36 @@
 						</td></tr
 					>
 				{/each}
-				<tr class="odd:bg-white even:bg-gray-100 text-center">
-					<td class="py-3 px-6"></td>
-					<td class="py-3 px-6"><input type="text" bind:value={nickname} /></td>
-					<td class="py-3 px-6"><input type="text" bind:value={email} /></td>
-					<td class="py-3 px-6">
-						<select bind:value={type}>
+			</tbody>
+			<tfoot class="">
+				<tr class="">
+					<td>+</td>
+					<td><input type="text" class="input input-sm" bind:value={nickname} /></td>
+					<td><input type="text" class="input input-sm" bind:value={email} /></td>
+					<td>
+						<select class="select select-sm select-bordered" bind:value={type}>
 							<option value="2">{$t('users.type.student')}</option>
 							<option value="1">{$t('users.type.tutor')}</option>
 							<option value="0">{$t('users.type.admin')}</option>
 						</select>
 					</td>
-					<td class="py-3 px-6"><input type="checkbox" bind:value={is_active} checked /></td>
-					<td class="flex justify-center py-2 px-4"
-						><button class="button" disabled={!canCreate} on:click={createUser}
-							>{$t('button.create')}</button
-						></td
-					>
+					<td>
+						<input type="checkbox" class="checkbox" bind:value={is_active} checked />
+					</td>
+					<td>
+						<button class="btn btn-sm" disabled={!canCreate} on:click={createUser}>
+							{$t('button.create')}
+						</button>
+					</td>
 				</tr>
-			</tbody>
+			</tfoot>
 		</table>
 	</div>
 {/if}
 
 <style lang="postcss">
-	input,
+	/* input,
 	select {
 		@apply w-full border-2 h-8 text-center border-gray-400 rounded bg-transparent;
-	}
+	} */
 </style>

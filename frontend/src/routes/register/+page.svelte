@@ -14,7 +14,7 @@
 		createUserContactAPI,
 		getUserContactsAPI
 	} from '$lib/api/users';
-	import { ArrowRight, Icon } from 'svelte-hero-icons';
+	import { ArrowRight, Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 
 	let current_step = 0;
@@ -168,7 +168,7 @@
 </script>
 
 <div class="header mx-auto my-5">
-	<ul class="steps text-sm text-neutral-content	">
+	<ul class="steps text-xs">
 		<li class="step" class:step-primary={current_step >= 1}>
 			{$t('register.tab.consent')}
 		</li>
@@ -190,16 +190,16 @@
 	</ul>
 </div>
 
-<div class="mt-5 w-[700px] max-w-full mx-auto">
+<div class="max-w-screen-md mx-auto p-5">
 	{#if message}
-		<div class="w-full py-1 bg-red-600 text-white text-center font-bold rounded mb-4">
+		<div class="alert alert-error text-content text-base-100 py-2 mb-4">
 			{message}
 		</div>
 	{/if}
 	{#if current_step == 1}
 		<div class="join join-vertical w-full">
 			<div class="join-item">
-				<h2 class="text-xl text-center">{$t('register.consent.title')}</h2>
+				<h2 class="text-xl font-bold text-center">{$t('register.consent.title')}</h2>
 				<p class="m-5">{@html $t('register.consent.intro')}</p>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
@@ -215,7 +215,14 @@
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" />
 				<div class="collapse-title font-medium">{$t('register.consent.rights')}</div>
-				<div class="collapse-content"><p>{$t('register.consent.rightsD')} <a class="link link-info" href="mailto:{$t('register.consent.studyData.emailD')}">{$t('register.consent.studyData.emailD')}</a>.</p></div>
+				<div class="collapse-content">
+					<p>
+						{$t('register.consent.rightsD')}
+						<a class="link link-primary" href="mailto:{$t('register.consent.studyData.emailD')}"
+							>{$t('register.consent.studyData.emailD')}</a
+						>.
+					</p>
+				</div>
 			</div>
 			<div class="collapse collapse-arrow join-item border border-base-300">
 				<input type="radio" name="consent-accordion" />
@@ -228,24 +235,33 @@
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
 							<dt class="font-medium">{$t('register.consent.studyData.project')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.projectD')}</dd>
+							<dd class="text-gray-700 sm:col-span-2">
+								{$t('register.consent.studyData.projectD')}
+							</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
 							<dt class="font-medium">{$t('register.consent.studyData.university')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.universityD')}</dd>
+							<dd class="text-gray-700 sm:col-span-2">
+								{$t('register.consent.studyData.universityD')}
+							</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
 							<dt class="font-medium">{$t('register.consent.studyData.address')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.addressD')}</dd>
+							<dd class="text-gray-700 sm:col-span-2">
+								{$t('register.consent.studyData.addressD')}
+							</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
 							<dt class="font-medium">{$t('register.consent.studyData.person')}</dt>
-							<dd class="text-gray-700 sm:col-span-2">{$t('register.consent.studyData.personD')}</dd>
+							<dd class="text-gray-700 sm:col-span-2">
+								{$t('register.consent.studyData.personD')}
+							</dd>
 						</div>
 						<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
 							<dt class="font-medium">{$t('register.consent.studyData.email')}</dt>
 							<dd class="text-gray-700 sm:col-span-2">
-								<a href="mailto:{$t('register.consent.studyData.emailD')}">{$t('register.consent.studyData.emailD')}</a
+								<a href="mailto:{$t('register.consent.studyData.emailD')}" class="link"
+									>{$t('register.consent.studyData.emailD')}</a
 								>
 							</dd>
 						</div>
@@ -253,174 +269,191 @@
 				</div>
 			</div>
 		</div>
-		<button class="button mt-4" on:click={() => current_step++}>
-			{$t('register.consent.ok')}
-		</button>
+		<div class="form-control">
+			<button class="button mt-4" on:click={() => current_step++}>
+				{$t('register.consent.ok')}
+			</button>
+		</div>
 	{:else if current_step == 2}
-		<div class="space-y-5">
-			<label class="input input-bordered flex items-center gap-2">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 16 16"
-					fill="currentColor"
-					class="w-4 h-4 opacity-70"
-					><path
-						d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"
-					/><path
-						d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z"
-					/></svg
-				>
-				<input type="text" class="grow" bind:value={email} placeholder={$t('register.email')} />
+		<div class="space-y-2">
+			<label for="email" class="form-control">
+				<div class="label">
+					<span class="label-text">{$t('register.email')}</span>
+					<span class="label-text-alt">{$t('register.email.note')}</span>
+				</div>
+				<div class="input flex items-center">
+					<Icon src={Envelope} class="w-4 mr-2 opacity-70" solid />
+					<input
+						type="text"
+						class="grow"
+						bind:value={email}
+						placeholder={$t('register.email.ph')}
+					/>
+				</div>
 			</label>
-			<label class="input input-bordered flex items-center gap-2">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 16 16"
-					fill="currentColor"
-					class="w-4 h-4 opacity-70"
-					><path
-						d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"
-					/></svg
-				>
-				<input
-					type="text"
-					class="grow"
-					bind:value={nickname}
-					placeholder={$t('register.nickname')}
-				/>
+			<label for="nickname" class="form-control">
+				<div class="label">
+					<span class="label-text">{$t('register.nickname')}</span>
+					<span class="label-text-alt">{$t('register.nickname.note')}</span>
+				</div>
+				<div class="input flex items-center">
+					<Icon src={UserCircle} class="w-4 mr-2 opacity-70" solid />
+					<input
+						type="text"
+						class="grow"
+						bind:value={nickname}
+						placeholder={$t('register.nickname.ph')}
+					/>
+				</div>
 			</label>
-			<label class="input input-bordered flex items-center gap-2">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 16 16"
-					fill="currentColor"
-					class="w-4 h-4 opacity-70"
-					><path
-						fill-rule="evenodd"
-						d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
-						clip-rule="evenodd"
-					/></svg
-				>
-				<input
-					type="password"
-					class="grow"
-					bind:value={password}
-					placeholder={$t('register.password')}
-					required
-				/>
+			<label for="password" class="form-control">
+				<div class="label">
+					<span class="label-text">{$t('register.password')}</span>
+					<span class="label-text-alt">{$t('register.password.note')}</span>
+				</div>
+				<div class="input flex items-center">
+					<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
+					<input
+						type="password"
+						class="grow"
+						bind:value={password}
+						placeholder={$t('register.password')}
+					/>
+				</div>
 			</label>
-			<label class="input input-bordered flex items-center gap-2">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 16 16"
-					fill="currentColor"
-					class="w-4 h-4 opacity-70"
-					><path
-						fill-rule="evenodd"
-						d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
-						clip-rule="evenodd"
-					/></svg
-				>
-				<input
-					type="password"
-					class="grow"
-					bind:value={confirmPassword}
-					placeholder={$t('register.confirmPassword')}
-					required
-				/>
+			<label for="confirmPassword" class="form-control">
+				<div class="input flex items-center">
+					<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
+					<input
+						type="password"
+						class="grow"
+						bind:value={confirmPassword}
+						placeholder={$t('register.confirmPassword')}
+					/>
+				</div>
 			</label>
-			<!--<div bind:this={checker} class="text-center"></div>-->
-			<div class="text-center">
-				<button class="button" on:click={onRegister}>{$t('register.signup')}</button>
+			<div class="form-control">
+				<button class="button mt-2" on:click={onRegister}>{$t('register.signup')}</button>
 			</div>
 		</div>
 	{:else if current_step == 3}
-		<div class="text-center pb-2">
-			{@html $t('register.welcome')}
-		</div>
-		<div class="mt-4">
-			<label for="homeLanguage">
-				{$t('register.homeLanguage')}
-			</label>
-			<select
-				class="input w-full bg-transparent"
-				id="homeLanguage"
-				name="homeLanguage"
-				required
-				bind:value={home_language}
-			>
-				{#each Object.entries(config.PRIMARY_LANGUAGE) as [code, name]}
-					<option value={code}>{name}</option>
-				{/each}
-			</select>
-		</div>
-		<div class="mt-4">
-			<label for="targetLanguage">{$t('register.targetLanguage')}</label>
-			<select
-				class="input w-full bg-transparent"
-				id="targetLanguage"
-				name="targetLanguage"
-				required
-				bind:value={target_language}
-			>
-				{#each config.LEARNING_LANGUAGES as language}
-					<option value={language}>{language}</option>
-				{/each}
-			</select>
-		</div>
-		<div class="mt-4">
-			<label for="birthyear">{$t('register.birthyear')}</label>
-			<select
-				class="input w-full bg-transparent "
-				id="birthyear"
-				name="birthyear"
-				required
-				bind:value={birthdate}
-			>
-				{#each Array.from({ length: 41 }, (_, i) => i + 1980).reverse() as year}
-					<option value={year}>{year}</option>
-				{/each}
-			</select>
-		</div>
-		<div class="mt-4">
-			<label for="gender">{$t('register.gender')}</label>
-			<div class="ml-2">
-				<input
-					type="radio"
-					id="male"
-					name="gender"
-					value="male"
-					on:change={() => (gender = 'male')}
-				/>
-				<label for="male">{$t('register.genders.male')}</label>
+		<div class="space-y-2">
+			<div class="p-5 text-sm text-prose">
+				{@html $t('register.welcome')}
 			</div>
-			<div class="ml-2">
-				<input
-					type="radio"
-					id="female"
-					name="gender"
-					value="female"
-					on:change={() => (gender = 'female')}
-				/>
-				<label for="female">{$t('register.genders.female')}</label>
+			<div class="form-control">
+				<label for="homeLanguage" class="label">
+					<span class="label-text">{$t('register.homeLanguage')}</span>
+					<span class="label-text-alt">{$t('register.homeLanguage.note')}</span>
+				</label>
+				<select
+					class="select select-bordered"
+					id="homeLanguage"
+					name="homeLanguage"
+					required
+					bind:value={home_language}
+				>
+					<option disabled selected value="">{$t('register.homeLanguage')}</option>
+					{#each Object.entries(config.PRIMARY_LANGUAGE) as [code, name]}
+						<option value={code}>{name}</option>
+					{/each}
+				</select>
 			</div>
-			<div class="ml-2">
-				<input
-					type="radio"
-					id="other"
-					name="gender"
-					value="other"
-					on:change={() => (gender = 'other')}
-				/>
-				<label for="other">{$t('register.genders.other')}</label>
+			<div class="form-control">
+				<label for="targetLanguage" class="label">
+					<span class="label-text">{$t('register.targetLanguage')}</span>
+					<span class="label-text-alt">{$t('register.targetLanguage.note')}</span>
+				</label>
+				<select
+					class="select select-bordered"
+					id="targetLanguage"
+					name="targetLanguage"
+					required
+					bind:value={target_language}
+				>
+					{#each config.LEARNING_LANGUAGES as language}
+						<option value={language}>{language}</option>
+					{/each}
+				</select>
 			</div>
-			<div class="ml-2">
-				<input type="radio" id="na" name="gender" value="na" on:change={() => (gender = 'na')} />
-				<label for="na">{$t('register.genders.na')}</label>
+			<div class="form-control">
+				<label for="birthyear" class="label">
+					<span class="label-text">{$t('register.birthyear')}</span>
+				</label>
+				<select
+					class="select select-bordered"
+					id="birthyear"
+					name="birthyear"
+					required
+					bind:value={birthdate}
+				>
+					<option disabled selected value="">{$t('register.birthyear')}</option>
+					{#each Array.from({ length: 82 }, (_, i) => i + 1931).reverse() as year}
+						<option value={year}>{year}</option>
+					{/each}
+				</select>
 			</div>
-		</div>
-		<div class="mt-4 text-center">
-			<button class="button" on:click={onData}>{$t('button.submit')}</button>
+			<div class="form-control space-y-1">
+				<label for="gender" class="label">
+					<span class="label-text">{$t('register.gender')}</span>
+					<span class="label-text-alt">{$t('register.gender.note')}</span>
+				</label>
+				<div class="label justify-normal gap-2 py-0">
+					<input
+						type="radio"
+						class="radio"
+						id="male"
+						name="gender"
+						value="male"
+						on:change={() => (gender = 'male')}
+					/>
+					<label for="male" class="label-text cursor-pointer">
+						{$t('register.genders.male')}
+					</label>
+				</div>
+				<div class="label justify-normal gap-2 py-0">
+					<input
+						type="radio"
+						class="radio"
+						id="female"
+						name="gender"
+						value="female"
+						on:change={() => (gender = 'female')}
+					/>
+					<label for="female" class="label-text cursor-pointer">
+						{$t('register.genders.female')}
+					</label>
+				</div>
+				<div class="label justify-normal gap-2 py-0">
+					<input
+						type="radio"
+						class="radio"
+						id="other"
+						name="gender"
+						value="other"
+						on:change={() => (gender = 'other')}
+					/>
+					<label for="other" class="label-text cursor-pointer">
+						{$t('register.genders.other')}
+					</label>
+				</div>
+				<div class="label justify-normal gap-2 py-0">
+					<input
+						type="radio"
+						class="radio"
+						id="na"
+						name="gender"
+						value="na"
+						on:change={() => (gender = 'na')}
+					/>
+					<label for="na" class="label-text cursor-pointer">
+						{$t('register.genders.na')}
+					</label>
+				</div>
+			</div>
+			<div class="form-control">
+				<button class="button mt-4" on:click={onData}>{$t('button.submit')}</button>
+			</div>
 		</div>
 	{:else if current_step == 4}
 		<!--{#if get(user)}-->
@@ -429,21 +462,21 @@
 		<h2 class="my-8 text-xl">{$t('timeslots.availableTutors')}</h2>
 
 		{#if filteredUsers.length > 0}
-			<table class="table-fixed w-full border-collapse text-center">
+			<table class="table table-fixed">
 				<thead>
-					<tr class="bg-gray-100">
-						<th class="border-2 h-10">{$t('users.nickname')}</th>
-						<th class="border-2">{$t('users.email')}</th>
-						<th class="border-2">{$t('users.availability')}</th>
-						<th class="border-2"></th>
+					<tr>
+						<th>{$t('users.nickname')}</th>
+						<th>{$t('users.email')}</th>
+						<th>{$t('users.availability')}</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each filteredUsers as user}
 						<tr>
-							<td class="border-2">{user.nickname}</td>
-							<td class="border-2">{user.email}</td>
-							<td class="border-2">
+							<td>{user.nickname}</td>
+							<td>{user.email}</td>
+							<td>
 								{#each Array.from({ length: 5 }, (_, i) => i) as i}
 									{@const time = i * 2 + 8}
 									{#each Array.from({ length: 5 }, (_, day) => day) as day}
@@ -485,7 +518,15 @@
 </div>
 
 <style lang="postcss">
-	input:not([type='radio']) {
+	/* input:not([type='radio']) {
 		@apply w-full;
+	} */
+
+	.label-text-alt {
+		@apply opacity-50 ml-8;
+	}
+
+	.steps {
+		@apply text-base-300;
 	}
 </style>
