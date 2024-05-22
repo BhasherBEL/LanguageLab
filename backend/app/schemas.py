@@ -188,4 +188,5 @@ class SurveyCreate(BaseModel):
 
 class Survey(BaseModel):
     id: int
+    title: str
     groups: list[SurveyGroup]
