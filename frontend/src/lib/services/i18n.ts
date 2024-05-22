@@ -12,7 +12,8 @@ const config: Config = {
 			key: '',
 			loader: async () => (await import('../../lang/fr.json')).default
 		}
-	]
+	],
+	fallbackLocale: 'fr'
 };
 
 export const { t, locale, locales, loading, loadTranslations } = new i18n(config);
