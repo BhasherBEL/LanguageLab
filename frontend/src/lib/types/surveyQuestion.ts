@@ -7,7 +7,7 @@ export default class SurveyQuestion {
 	private _title: string;
 	private _question_type: string;
 	private _question_value: string;
-	private options: SurveyOption[];
+	private _options: SurveyOption[];
 
 	constructor(
 		id: number,
@@ -22,7 +22,7 @@ export default class SurveyQuestion {
 		this._title = title;
 		this._question_type = question_type;
 		this._question_value = question_value;
-		this.options = options;
+		this._options = options;
 	}
 
 	get id(): number {
@@ -43,6 +43,10 @@ export default class SurveyQuestion {
 
 	get question_value(): string {
 		return this._question_value;
+	}
+
+	get options(): SurveyOption[] {
+		return this._options;
 	}
 
 	static parse(data: any): SurveyQuestion | null {

@@ -1,5 +1,6 @@
 from sqlalchemy import (
     Column,
+    Float,
     Integer,
     String,
     Boolean,
@@ -167,3 +168,15 @@ class Survey(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     groups = relationship("SurveyGroup", backref="survey")
+
+
+class SurveyResponse(Base):
+    __tablename__ = "survey_responses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    survey_id = Column(Integer, ForeignKey("surveys.id"))
+    uuid = Column(String)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    question_id = Column(Integer, ForeignKey("survey_questions.id"))
+    option_id = Column(Integer, ForeignKey("survey_options.id"))
+    response_time = Column(Float)

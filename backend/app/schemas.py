@@ -190,3 +190,10 @@ class Survey(BaseModel):
     id: int
     title: str
     groups: list[SurveyGroup]
+
+
+class SurveyResponseCreate(BaseModel):
+    uuid: str
+    question_id: int
+    option_id: int
+    response_time: float

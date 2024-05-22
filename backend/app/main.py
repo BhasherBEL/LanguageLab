@@ -981,6 +981,18 @@ def delete_survey_option(
     crud.delete_survey_option(db, option_id)
 
 
+@surveyRouter.post("/{survey_id}/responses", status_code=status.HTTP_201_CREATED)
+def create_survey_response(
+    survey_id: int,
+    response: schemas.SurveyResponseCreate,
+    db: Session = Depends(get_db),
+):
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    return crud.create_survey_response(db, survey_id, response).id
+
+
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
 v1Router.include_router(sessionsRouter)

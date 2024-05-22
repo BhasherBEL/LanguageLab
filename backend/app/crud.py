@@ -315,3 +315,15 @@ def delete_survey_option(db: Session, survey_option_id: int):
         models.SurveyOption.id == survey_option_id
     ).delete()
     db.commit()
+
+
+def create_survey_response(
+    db: Session, survey_id: int, survey_response: schemas.SurveyResponseCreate
+):
+    db_survey_response = models.SurveyResponse(
+        survey_id=survey_id, **survey_response.dict()
+    )
+    db.add(db_survey_response)
+    db.commit()
+    db.refresh(db_survey_response)
+    return db_survey_response
