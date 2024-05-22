@@ -131,8 +131,39 @@ class TestTypingEntry(Base):
     keyValue = Column(String)
 
 
-class TestVocabulary(Base):
-    __tablename__ = "test_vocabulary"
+class SurveyOption(Base):
+    __tablename__ = "survey_options"
 
     id = Column(Integer, primary_key=True, index=True)
-    content = Column(String)
+    question_id = Column(Integer, ForeignKey("survey_questions.id"))
+    correct = Column(Boolean)
+    type = Column(String)
+    value = Column(String)
+
+
+class SurveyQuestion(Base):
+    __tablename__ = "survey_questions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    group_id = Column(Integer, ForeignKey("survey_groups.id"))
+    title = Column(String)
+    question_type = Column(String)
+    question_value = Column(String)
+    options = relationship("SurveyOption", backref="question")
+
+
+class SurveyGroup(Base):
+    __tablename__ = "survey_groups"
+
+    id = Column(Integer, primary_key=True, index=True)
+    survey_id = Column(Integer, ForeignKey("surveys.id"))
+    title = Column(String)
+    questions = relationship("SurveyQuestion", backref="group")
+
+
+class Survey(Base):
+    __tablename__ = "surveys"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    groups = relationship("SurveyGroup", backref="survey")

@@ -140,3 +140,52 @@ class CalComWebhook(BaseModel):
     triggerEvent: str
     createdAt: datetime.datetime
     payload: dict
+
+
+class SurveyOption(BaseModel):
+    id: int
+    question_id: int
+    correct: bool
+    type: str
+    value: str
+
+
+class SurveyOptionCreate(BaseModel):
+    correct: bool
+    type: str
+    value: str
+
+
+class SurveyQuestionCreate(BaseModel):
+    title: str
+    question_type: str
+    question_value: str
+
+
+class SurveyQuestion(BaseModel):
+    id: int
+    group_id: int
+    title: str
+    question_type: str
+    question_value: str
+    options: list[SurveyOption]
+
+
+class SurveyGroupCreate(BaseModel):
+    title: str
+
+
+class SurveyGroup(BaseModel):
+    id: int
+    survey_id: int
+    title: str
+    questions: list[SurveyQuestion]
+
+
+class SurveyCreate(BaseModel):
+    title: str
+
+
+class Survey(BaseModel):
+    id: int
+    groups: list[SurveyGroup]

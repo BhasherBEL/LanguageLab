@@ -68,7 +68,7 @@ usersRouter = APIRouter(prefix="/users", tags=["users"])
 sessionsRouter = APIRouter(prefix="/sessions", tags=["sessions"])
 websocketRouter = APIRouter(prefix="/ws", tags=["websocket"])
 webhookRouter = APIRouter(prefix="/webhooks", tags=["webhook"])
-stats = APIRouter(prefix="/stats", tags=["stats"])
+surveyRouter = APIRouter(prefix="/surveys", tags=["surveys"])
 
 
 @v1Router.get("/health", status_code=status.HTTP_204_NO_CONTENT)
@@ -604,13 +604,6 @@ def propagate_presence(
     return
 
 
-@v1Router.post("/tests/vocabulary", status_code=status.HTTP_201_CREATED)
-def create_test_vocabulary(
-    content: schemas.TestVocabularyCreate, db: Session = Depends(get_db)
-):
-    return crud.create_test_vocabulary(db, content).id
-
-
 @websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
     session_id: int,
@@ -691,10 +684,308 @@ async def webhook_session(
     raise HTTPException(status_code=400, detail="Invalid trigger event")
 
 
+@surveyRouter.post("", status_code=status.HTTP_201_CREATED)
+def create_survey(
+    survey: schemas.SurveyCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to create a survey"
+        )
+
+    return crud.create_survey(db, survey).id
+
+
+@surveyRouter.get("", response_model=list[schemas.Survey])
+def get_surveys(
+    db: Session = Depends(get_db),
+):
+    return crud.get_surveys(db)
+
+
+@surveyRouter.get("/{survey_id}", response_model=schemas.Survey)
+def get_survey(
+    survey_id: int,
+    db: Session = Depends(get_db),
+):
+    survey = crud.get_survey(db, survey_id)
+    if survey is None:
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    return survey
+
+
+@surveyRouter.delete("/{survey_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_survey(
+    survey_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to delete a survey"
+        )
+
+    crud.delete_survey(db, survey_id)
+
+
+@surveyRouter.post("/{survey_id}/groups", status_code=status.HTTP_201_CREATED)
+def create_survey_group(
+    survey_id: int,
+    group: schemas.SurveyGroupCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create a survey group",
+        )
+
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    return crud.create_survey_group(db, survey_id, group).id
+
+
+@surveyRouter.get("/{survey_id}/groups", response_model=list[schemas.SurveyGroup])
+def get_survey_groups(
+    survey_id: int,
+    db: Session = Depends(get_db),
+):
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    return crud.get_survey_groups(db, survey_id)
+
+
+@surveyRouter.get("/{survey_id}/groups/{group_id}", response_model=schemas.SurveyGroup)
+def get_survey_group(
+    survey_id: int,
+    group_id: int,
+    db: Session = Depends(get_db),
+):
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    group = crud.get_survey_group(db, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    return group
+
+
+@surveyRouter.delete(
+    "/{survey_id}/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+def delete_survey_group(
+    survey_id: int,
+    group_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to delete a survey group",
+        )
+
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    crud.delete_survey_group(db, group_id)
+
+
+@surveyRouter.post(
+    "/{survey_id}/groups/{group_id}/questions", status_code=status.HTTP_201_CREATED
+)
+def create_survey_question(
+    survey_id: int,
+    group_id: int,
+    question: schemas.SurveyQuestionCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create a survey question",
+        )
+
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    return crud.create_survey_question(db, group_id, question).id
+
+
+@surveyRouter.get(
+    "/{survey_id}/groups/{group_id}/questions",
+    response_model=list[schemas.SurveyQuestion],
+)
+def get_survey_questions(
+    survey_id: int,
+    group_id: int,
+    db: Session = Depends(get_db),
+):
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    return crud.get_survey_questions(db, group_id)
+
+
+@surveyRouter.get(
+    "/{survey_id}/groups/{group_id}/questions/{question_id}",
+    response_model=schemas.SurveyQuestion,
+)
+def get_survey_question(
+    survey_id: int,
+    group_id: int,
+    question_id: int,
+    db: Session = Depends(get_db),
+):
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    question = crud.get_survey_question(db, question_id)
+    if question is None:
+        raise HTTPException(status_code=404, detail="Survey question not found")
+
+    return question
+
+
+@surveyRouter.delete(
+    "/{survey_id}/groups/{group_id}/questions/{question_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_survey_question(
+    survey_id: int,
+    group_id: int,
+    question_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to delete a survey question",
+        )
+
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    if not crud.get_survey_question(db, question_id):
+        raise HTTPException(status_code=404, detail="Survey question not found")
+
+    crud.delete_survey_question(db, question_id)
+
+
+@surveyRouter.post(
+    "/{survey_id}/groups/{group_id}/questions/{question_id}/options",
+    status_code=status.HTTP_201_CREATED,
+)
+def create_survey_option(
+    survey_id: int,
+    group_id: int,
+    question_id: int,
+    option: schemas.SurveyOptionCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create a survey option",
+        )
+
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    if not crud.get_survey_question(db, question_id):
+        raise HTTPException(status_code=404, detail="Survey question not found")
+
+    return crud.create_survey_option(db, question_id, option).id
+
+
+@surveyRouter.get(
+    "/{survey_id}/groups/{group_id}/questions/{question_id}/options",
+    response_model=list[schemas.SurveyOption],
+)
+def get_survey_options(
+    survey_id: int,
+    group_id: int,
+    question_id: int,
+    db: Session = Depends(get_db),
+):
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    if not crud.get_survey_question(db, question_id):
+        raise HTTPException(status_code=404, detail="Survey question not found")
+
+    return crud.get_survey_options(db, question_id)
+
+
+@surveyRouter.delete(
+    "/{survey_id}/groups/{group_id}/questions/{question_id}/options/{option_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_survey_option(
+    survey_id: int,
+    group_id: int,
+    question_id: int,
+    option_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to delete a survey option",
+        )
+
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    if not crud.get_survey_group(db, group_id):
+        raise HTTPException(status_code=404, detail="Survey group not found")
+
+    if not crud.get_survey_question(db, question_id):
+        raise HTTPException(status_code=404, detail="Survey question not found")
+
+    if not crud.get_survey_option(db, option_id):
+        raise HTTPException(status_code=404, detail="Survey option not found")
+
+    crud.delete_survey_option(db, option_id)
+
+
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
 v1Router.include_router(sessionsRouter)
 v1Router.include_router(websocketRouter)
 v1Router.include_router(webhookRouter)
+v1Router.include_router(surveyRouter)
 apiRouter.include_router(v1Router)
 app.include_router(apiRouter)
