@@ -327,3 +327,13 @@ def create_survey_response(
     db.commit()
     db.refresh(db_survey_response)
     return db_survey_response
+
+
+def get_survey_responses(db: Session, survey_id: int, skip: int = 0, limit: int = 100):
+    return (
+        db.query(models.SurveyResponse)
+        .filter(models.SurveyResponse.survey_id == survey_id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
