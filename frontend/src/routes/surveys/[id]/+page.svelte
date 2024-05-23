@@ -4,17 +4,19 @@
 	import Survey from '$lib/types/survey.js';
 	import type SurveyOption from '$lib/types/surveyOption';
 	import { t } from '$lib/services/i18n';
-	import { toastAlert, toastWarning } from '$lib/utils/toasts.js';
+	import { toastWarning } from '$lib/utils/toasts.js';
 	import { get } from 'svelte/store';
+	import User from '$lib/types/user.js';
 
 	export let data;
 
 	const survey: Survey = data.survey!;
+	const user = data.user ? User.parse(data.user) : null;
 
-	let uuid = data.user?.email || '';
+	let uuid = user?.email || '';
 	let startTime = new Date().getTime();
 
-	$: step = data.user ? 1 : 0;
+	$: step = user ? 1 : 0;
 
 	$: currentGroupId = 0;
 	$: currentGroup = survey.groups[currentGroupId];
