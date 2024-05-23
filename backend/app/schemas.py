@@ -202,7 +202,7 @@ class SurveyResponseCreate(BaseModel):
 class SurveyResponse(BaseModel):
     id: int
     uuid: str
-    creaed_at: datetime.datetime
+    created_at: datetime.datetime
     question_id: int
     option_id: int
     response_time: float
