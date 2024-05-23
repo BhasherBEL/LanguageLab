@@ -197,3 +197,12 @@ class SurveyResponseCreate(BaseModel):
     question_id: int
     option_id: int
     response_time: float
+
+
+class SurveyResponse(BaseModel):
+    id: int
+    uuid: str
+    creaed_at: datetime.datetime
+    question_id: int
+    option_id: int
+    response_time: float

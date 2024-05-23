@@ -993,6 +993,24 @@ def create_survey_response(
     return crud.create_survey_response(db, survey_id, response).id
 
 
+@surveyRouter.get("/{survey_id}/responses", response_model=list[schemas.SurveyResponse])
+def get_survey_responses(
+    survey_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to view survey responses",
+        )
+
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    return crud.get_survey_responses(db, survey_id)
+
+
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
 v1Router.include_router(sessionsRouter)
