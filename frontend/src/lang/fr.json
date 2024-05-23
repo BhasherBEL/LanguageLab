@@ -138,6 +138,14 @@
 		"sendResults": "Envoyer",
 		"sendResultsDone": "Envoyé"
 	},
+	"surveys": {
+		"introduction": "Aut sint sint et nihil aut. Quia nihil eos rerum neque exercitationem molestiae. Aut ab accusantium consequatur rerum architecto voluptas. Repudiandae minima nemo vitae tempore. Molestiae rerum aliquid ut fugit eligendi. Alias dolorum quia voluptatum veniam harum aut qui et. Voluptatibus adipisci illo velit assumenda. Asperiores accusamus deserunt eveniet adipisci reprehenderit. Ducimus placeat sit reprehenderit ea eos quam. Ut facilis quia suscipit officiis odit unde temporibus error. Neque sapiente ut similique. Eius ut sapiente maxime dolor est voluptatem eum. Veniam aut sit quo. Quibusdam sed numquam et rem. Tempore eum id nobis sunt deleniti et non ducimus. Maiores perferendis non consequuntur neque nostrum. Odio itaque fugiat non. Laboriosam sint voluptatem aut placeat et perferendis. Sed quam voluptatem necessitatibus quia dolorum. Eius est nihil natus modi natus quisquam ut impedit. Tempore enim autem laboriosam sequi ipsum quo. <bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
+		"loginWarning": "Afin d'évaluer votre progression, vous avez besoin d'être authentifié pour acceder à ce questionnaire. Si vous possedez un compte utilisateur, veuillez vous connecter. Sinon, vous pouvez soit vous <a class=\"link\" href=\"/register\">inscrire</a>, soit continuer avec une adresse e-mail.",
+		"loginUser": "Se connecter via un compte utilisateur",
+		"loginEmail": "Utiliser une adresse e-mail",
+		"invalidEmail": "Adresse e-mail invalide",
+		"complete": "Questionnaire complété. Merci pour votre participation !"
+	},
 	"users": {
 		"nickname": "Nom",
 		"email": "E-mail",
@@ -160,7 +168,8 @@
 		"sent": "Envoyé !",
 		"next": "Suivant",
 		"start": "Commencer",
-		"thank-you": "Merci !"
+		"thank-you": "Merci !",
+		"login": "Se connecter"
 	},
 	"utils": {
 		"month": {

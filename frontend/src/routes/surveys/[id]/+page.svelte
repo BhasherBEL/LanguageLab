@@ -3,20 +3,24 @@
 
 	import Survey from '$lib/types/survey.js';
 	import type SurveyOption from '$lib/types/surveyOption';
+	import { t } from '$lib/services/i18n';
+	import { toastAlert, toastWarning } from '$lib/utils/toasts.js';
+	import { get } from 'svelte/store';
 
 	export let data;
 
 	const survey: Survey = data.survey!;
 
-	const uuid = genUUID(16);
+	let uuid = data.user?.email || '';
 	let startTime = new Date().getTime();
+
+	$: step = data.user ? 1 : 0;
 
 	$: currentGroupId = 0;
 	$: currentGroup = survey.groups[currentGroupId];
 	$: questionsRandomized = currentGroup.questions.sort(() => Math.random() - 0.5);
 	$: currentQuestionId = 0;
 	$: currentQuestion = questionsRandomized[currentQuestionId];
-	$: finished = false;
 
 	async function selectOption(option: SurveyOption) {
 		if (
@@ -43,24 +47,51 @@
 			currentGroupId++;
 			currentQuestionId = 0;
 		} else {
-			finished = true;
+			step++;
 		}
 	}
 
-	function genUUID(length: number) {
-		let result = '';
-		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		const charactersLength = characters.length;
-		let counter = 0;
-		while (counter < length) {
-			result += characters.charAt(Math.floor(Math.random() * charactersLength));
-			counter += 1;
+	function checkUUID() {
+		if (!uuid) {
+			toastWarning(get(t)('surveys.invalidEmail'));
+			return;
 		}
-		return result;
+		if (!uuid.includes('@')) {
+			toastWarning(get(t)('surveys.invalidEmail'));
+			return;
+		}
+
+		step = 1;
 	}
 </script>
 
-{#if !finished}
+{#if step == 0}
+	<div class="max-w-screen-lg mx-auto text-center mt-8">
+		<div class="text-lg">{@html $t('surveys.loginWarning')}</div>
+		<div class="flex mt-8">
+			<div class="grow border-r-gray-300 border-r py-16">
+				<p class="mb-4">{$t('surveys.loginUser')}</p>
+				<a href="/login?redirect=/surveys/{survey.id}" class="button">{$t('button.login')}</a>
+			</div>
+			<div class="grow py-16">
+				<p class="mb-4">{$t('surveys.loginEmail')}</p>
+				<input
+					type="email"
+					placeholder="Email"
+					on:keydown={(e) => e.key === 'Enter' && checkUUID()}
+					class="input block mx-auto"
+					bind:value={uuid}
+				/>
+				<button class="button mt-4 block" on:click={checkUUID}>{$t('button.next')}</button>
+			</div>
+		</div>
+	</div>
+{:else if step == 1}
+	<div class="max-w-screen-lg mx-auto text-center">
+		<div class="my-16">{@html $t('surveys.introduction')}</div>
+		<button class="button" on:click={() => step++}>{$t('button.next')}</button>
+	</div>
+{:else if step == 2}
 	<h1>Survey: {survey.title}</h1>
 	<p>Group: {currentGroup?.title}</p>
 
@@ -112,16 +143,9 @@
 			{/each}
 		</div>
 	</div>
-{:else}
+{:else if step == 3}
 	<div class="mx-auto mt-16 text-center">
-		<h1>Survey completed!</h1>
-		<button
-			class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-			on:click={() => {
-				window.location.href = '/';
-			}}
-		>
-			Back to home
-		</button>
+		flex maximize width
+		<h1>{$t('surveys.complete')}</h1>
 	</div>
 {/if}
