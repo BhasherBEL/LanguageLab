@@ -83,6 +83,10 @@ export default class User {
 		return this._type === 0;
 	}
 
+	get is_tutor(): boolean {
+		return this._type === 1;
+	}
+
 	get availability(): number {
 		return this._availability;
 	}

@@ -321,6 +321,40 @@ def create_contact(
     return crud.create_contact(db, db_user, db_contact)
 
 
+@usersRouter.post(
+    "/{user_id}/contacts-email/{contact_email}", status_code=status.HTTP_201_CREATED
+)
+def create_contact_by_email(
+    user_id: int,
+    contact_email: str,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create a contact for this user",
+        )
+
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db_contact = crud.get_user_by_email(db, contact_email)
+    if db_contact is None:
+        raise HTTPException(status_code=404, detail="Contact not found")
+
+    if db_contact in db_user.contacts:
+        raise HTTPException(
+            status_code=400, detail="Contact already exists for this user"
+        )
+
+    return crud.create_contact(db, db_user, db_contact)
+
+
 @usersRouter.get("/{user_id}/contacts", response_model=list[schemas.User])
 def get_contacts(
     user_id: int,

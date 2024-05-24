@@ -39,6 +39,27 @@ export async function createUserContactAPI(user_id: number, contact_id: number) 
 	return response.data;
 }
 
+export async function createUserContactFromEmailAPI(user_id: number, email: string) {
+	const response = await axiosInstance.post(`/users/${user_id}/contacts-email/${email}`);
+
+	if (response.status === 404) {
+		toastAlert('User not found');
+		return null;
+	}
+
+	if (response.status === 400) {
+		toastAlert('User already has this contact');
+		return null;
+	}
+
+	if (response.status !== 201) {
+		toastAlert('Failed to create user contact');
+		return null;
+	}
+
+	return response.data;
+}
+
 export async function getUserContactsAPI(user_id: number) {
 	const response = await axiosInstance.get(`/users/${user_id}/contacts`, {
 		headers: {

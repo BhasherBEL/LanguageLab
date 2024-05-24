@@ -34,7 +34,8 @@
 		"bookSession": "Réserver une session",
 		"currentSessions": "Sessions en cours",
 		"plannedSessions": "Sessions planifiées",
-		"pastSessions": "Sessions terminées"
+		"pastSessions": "Sessions terminées",
+		"newContact": "Ajouter un contact"
 	},
 	"login": {
 		"email": "E-mail",
