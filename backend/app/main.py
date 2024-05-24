@@ -669,9 +669,11 @@ async def webhook_session(
         end_time += datetime.timedelta(hours=1)
         attendes = webhook.payload["attendees"]
         emails = [attendee["email"] for attendee in attendes if attendee != None]
+        print(emails)
         db_users = [
             crud.get_user_by_email(db, email) for email in emails if email != None
         ]
+        print(db_users)
         users = [user for user in db_users if user != None]
 
         if users:
