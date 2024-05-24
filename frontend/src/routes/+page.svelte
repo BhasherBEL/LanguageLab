@@ -106,20 +106,18 @@
 		<div class="flex-grow flex-col flex">
 			{#if contact}
 				<div class="p-4 pr-8">
-					{#if $user?.is_tutor || $user?.is_admin}
-						<button on:click|preventDefault={createSession} class="button float-end">
-							{$t('home.createSession')}
-						</button>
-					{:else}
-						<a
-							class="button float-end"
-							class:btn-disabled={!contact || !contact.calcom_link}
-							href={contact.calcom_link}
-							target="_blank"
-						>
-							{$t('home.bookSession')}
-						</a>
-					{/if}
+					<button on:click|preventDefault={createSession} class="button float-end">
+						{$t('home.createSession')}
+					</button>
+					<div class="size-4 float-end"></div>
+					<a
+						class="button float-end"
+						class:btn-disabled={!contact || !contact.calcom_link}
+						href={contact.calcom_link}
+						target="_blank"
+					>
+						{$t('home.bookSession')}
+					</a>
 				</div>
 				<div class="flex-grow p-2">
 					<h2 class="text-xl my-4 font-bold">{$t('home.currentSessions')}</h2>

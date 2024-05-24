@@ -382,10 +382,10 @@ def create_session(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    if not check_user_level(current_user, models.UserType.TUTOR):
-        raise HTTPException(
-            status_code=401, detail="You do not have permission to create a session"
-        )
+    # if not check_user_level(current_user, models.UserType.TUTOR):
+    #    raise HTTPException(
+    #        status_code=401, detail="You do not have permission to create a session"
+    #    )
 
     return crud.create_session(db, current_user)
 
@@ -453,11 +453,11 @@ def add_user_to_session(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    if not check_user_level(current_user, models.UserType.TUTOR):
-        raise HTTPException(
-            status_code=401,
-            detail="You do not have permission to add a user to a session",
-        )
+    # if not check_user_level(current_user, models.UserType.TUTOR):
+    #    raise HTTPException(
+    #        status_code=401,
+    #        detail="You do not have permission to add a user to a session",
+    #    )
 
     db_session = crud.get_session(db, session_id)
     if db_session is None:

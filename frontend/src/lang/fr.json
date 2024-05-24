@@ -23,7 +23,7 @@
 		"actions": "Actions",
 		"add": "Ajouter",
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
-		"createSession": "Nouvelle session",
+		"createSession": "Session immédiate",
 		"participantPlaceholder": "Choisir",
 		"remainingDuration": "Temps restant",
 		"nickname": "Nom",
