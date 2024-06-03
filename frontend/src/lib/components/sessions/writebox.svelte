@@ -4,7 +4,7 @@
 	import type Session from '$lib/types/session';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
-	import { user, users } from '$lib/types/user';
+	import { user } from '$lib/types/user';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 
@@ -19,6 +19,7 @@
 	let message = '';
 	let showPicker = false;
 	let showSpecials = false;
+	let textearea: HTMLTextAreaElement;
 
 	let us = get(user);
 	let disabled =
@@ -61,6 +62,7 @@
 					class="border-none"
 					on:click={() => {
 						message += char;
+						textearea.focus();
 					}}
 				>
 					<kbd class="kbd">
@@ -72,7 +74,8 @@
 	{/if}
 	<div class="w-full flex relative">
 		<textarea
-			class="flex-grow p-2 resize-none overflow-y-hidden"
+			bind:this={textearea}
+			class="flex-grow p-2 resize-none overflow-y-hidden pr-16"
 			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
 			{disabled}
 			bind:value={message}
