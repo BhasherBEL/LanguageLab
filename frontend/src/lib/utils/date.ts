@@ -37,7 +37,7 @@ export function displayDate(date: Date): string {
 
 	const now = new Date();
 
-	const hours = date.getHours().toString().padStart(2, '0');
+	const hours = date.getHours().toString();
 	const minutes = date.getMinutes().toString().padStart(2, '0');
 
 	if (now.getDate() === date.getDate()) {
@@ -64,7 +64,7 @@ export function displayTime(date: Date): string {
 
 	const now = new Date();
 
-	const hours = date.getHours().toString().padStart(2, '0');
+	const hours = date.getHours().toString();
 	const minutes = date.getMinutes().toString().padStart(2, '0');
 
 	if (
@@ -75,7 +75,7 @@ export function displayTime(date: Date): string {
 		return hours + ':' + minutes;
 	}
 
-	const day = date.getDate().toString().padStart(2, '0');
+	const day = date.getDate().toString();
 	const month = getFullMonth(date.getMonth());
 
 	if (now.getFullYear() === date.getFullYear()) {
