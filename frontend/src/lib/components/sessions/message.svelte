@@ -28,7 +28,7 @@
 			<Icon src={User} class="w-6 m-auto" />
 		{/if}
 	</div>
-	<div class="chat-bubble whitespace-pre-wrap" class:chat-bubble-secondary={isSender}>
+	<div class="chat-bubble whitespace-pre-wrap" class:chat-bubble-primary={!isSender}>
 		{message.content}
 	</div>
 	<div class="chat-footer opacity-50">

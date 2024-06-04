@@ -32,14 +32,9 @@
 {#if session}
 	<div class="h-full grid lg:grid-cols-4">
 		<div class="justify-evenly h-full p-2">
-			<h2 class="text-center font-bold text-xl mb-8">
-				{$t('session.title')}
-				<span class="italic">
-					{session.otherUsersList()}
-				</span>
-			</h2>
-			<div class="mb-2 ml-4">{$t('session.participants')}:</div>
-			<ul class="ml-4">
+			<!-- <p>{$t('session.title')} {session.otherUsersList()}</p> -->
+			<!-- <p>{$t('session.participants')}:</p> -->
+			<ul class="ml-2">
 				{#each session.users as sessionUser (sessionUser.id)}
 					<li
 						class="list-disc list-inside {sessionUser.id == $user?.id ||

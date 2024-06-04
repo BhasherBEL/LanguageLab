@@ -53,7 +53,7 @@
 				</li>
 			</ul>
 		</div>
-		<h1 class="btn btn-ghost text-xl text-gray-600">
+		<h1 class="btn btn-ghost text-lg text-gray-600">
 			<a data-sveltekit-reload href="/">{$t('header.appName')}</a>
 		</h1>
 	</div>
