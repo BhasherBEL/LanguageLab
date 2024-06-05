@@ -1,9 +1,9 @@
 import { toastAlert } from '$lib/utils/toasts';
-import { axiosInstance, access_cookie } from './apiInstance';
+import { getAxiosInstance } from './apiInstance';
 import { get } from 'svelte/store';
 
-export async function getUsersAPI() {
-	const response = await axiosInstance.get(`/users`);
+export async function getUsersAPI(session: string) {
+	const response = await getAxiosInstance(session).get(`/users`);
 
 	if (response.status !== 200) {
 		toastAlert('Failed to get users');
@@ -13,12 +13,8 @@ export async function getUsersAPI() {
 	return response.data;
 }
 
-export async function getUserAPI(user_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserAPI(session: string, user_id: number) {
+	const response = await getAxiosInstance(session).get(`/users/${user_id}`);
 
 	if (response.status !== 200) {
 		toastAlert('Failed to get user');
@@ -28,8 +24,8 @@ export async function getUserAPI(user_id: number) {
 	return response.data;
 }
 
-export async function createUserContactAPI(user_id: number, contact_id: number) {
-	const response = await axiosInstance.post(`/users/${user_id}/contacts/${contact_id}`);
+export async function createUserContactAPI(session: string, user_id: number, contact_id: number) {
+	const response = await getAxiosInstance(session).post(`/users/${user_id}/contacts/${contact_id}`);
 
 	if (response.status !== 201) {
 		toastAlert('Failed to create user contact');
@@ -39,8 +35,14 @@ export async function createUserContactAPI(user_id: number, contact_id: number) 
 	return response.data;
 }
 
-export async function createUserContactFromEmailAPI(user_id: number, email: string) {
-	const response = await axiosInstance.post(`/users/${user_id}/contacts-email/${email}`);
+export async function createUserContactFromEmailAPI(
+	session: string,
+	user_id: number,
+	email: string
+) {
+	const response = await getAxiosInstance(session).post(
+		`/users/${user_id}/contacts-email/${email}`
+	);
 
 	if (response.status === 404) {
 		toastAlert('User not found');
@@ -60,12 +62,8 @@ export async function createUserContactFromEmailAPI(user_id: number, email: stri
 	return response.data;
 }
 
-export async function getUserContactsAPI(user_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}/contacts`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserContactsAPI(session: string, user_id: number) {
+	const response = await getAxiosInstance(session).get(`/users/${user_id}/contacts`);
 
 	if (response.status !== 200) {
 		toastAlert('Failed to get user contacts');
@@ -75,12 +73,14 @@ export async function getUserContactsAPI(user_id: number) {
 	return response.data;
 }
 
-export async function getUserContactSessionsAPI(user_id: number, contact_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}/contacts/${contact_id}/sessions`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserContactSessionsAPI(
+	session: string,
+	user_id: number,
+	contact_id: number
+) {
+	const response = await getAxiosInstance(session).get(
+		`/users/${user_id}/contacts/${contact_id}/sessions`
+	);
 
 	if (response.status !== 200) {
 		toastAlert('Failed to get user contact sessions');
@@ -91,13 +91,14 @@ export async function getUserContactSessionsAPI(user_id: number, contact_id: num
 }
 
 export async function createUserAPI(
+	session: string,
 	nickname: string,
 	email: string,
 	password: string,
 	type: number,
 	is_active: boolean
 ): Promise<number | null> {
-	const response = await axiosInstance.post(`/users`, {
+	const response = await getAxiosInstance(session).post(`/users`, {
 		nickname,
 		email,
 		password,
@@ -113,8 +114,8 @@ export async function createUserAPI(
 	return response.data;
 }
 
-export async function patchUserAPI(user_id: number, data: any): Promise<boolean> {
-	const response = await axiosInstance.patch(`/users/${user_id}`, data);
+export async function patchUserAPI(session: string, user_id: number, data: any): Promise<boolean> {
+	const response = await getAxiosInstance(session).patch(`/users/${user_id}`, data);
 
 	if (response.status !== 204) {
 		toastAlert('Failed to update user');
@@ -125,10 +126,11 @@ export async function patchUserAPI(user_id: number, data: any): Promise<boolean>
 }
 
 export async function createTestTypingAPI(
+	session: string,
 	user_id: number,
 	entries: typingEntry[]
 ): Promise<number | null> {
-	const response = await axiosInstance.post(`/users/${user_id}/tests/typing`, {
+	const response = await getAxiosInstance(session).post(`/users/${user_id}/tests/typing`, {
 		entries
 	});
 

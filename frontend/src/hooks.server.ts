@@ -3,7 +3,6 @@ import { jwtDecode } from 'jwt-decode';
 import { type JWTContent } from '$lib/utils/login';
 import { getUserAPI } from '$lib/api/users';
 import User from '$lib/types/user';
-import { access_cookie } from '$lib/api/apiInstance';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;
@@ -25,8 +24,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	access_cookie.set(session);
-	const user = User.parse(await getUserAPI(id));
+	const user = User.parse(await getUserAPI(session, id));
 	if (!user) {
 		return resolve(event);
 	}

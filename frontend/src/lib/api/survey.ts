@@ -1,8 +1,8 @@
 import { toastAlert } from '$lib/utils/toasts';
-import { axiosInstance } from './apiInstance';
+import { axiosPublicInstance } from './apiInstance';
 
 export async function getSurveyAPI(survey_id: number) {
-	const response = await axiosInstance.get(`/surveys/${survey_id}`);
+	const response = await axiosPublicInstance.get(`/surveys/${survey_id}`);
 
 	if (response.status !== 200) {
 		toastAlert('Failed to get survey');
@@ -19,7 +19,7 @@ export async function sendSurveyResponseAPI(
 	option_id: number,
 	response_time: number
 ) {
-	const response = await axiosInstance.post(`/surveys/${survey_id}/responses`, {
+	const response = await axiosPublicInstance.post(`/surveys/${survey_id}/responses`, {
 		uuid,
 		question_id,
 		option_id,

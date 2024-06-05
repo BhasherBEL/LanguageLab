@@ -1,10 +1,10 @@
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import User, { user } from './user';
-import { axiosInstance } from '$lib/api/apiInstance';
 import { createMessageAPI, getMessagesAPI, patchLanguageAPI } from '$lib/api/sessions';
 import Message from './message';
 import config from '$lib/config';
+import { getAxiosInstance } from '$lib/api/apiInstance';
 
 const { subscribe, set, update } = writable<Session[]>([]);
 
@@ -123,8 +123,8 @@ export default class Session {
 		return users.substring(0, maxLength) + '...';
 	}
 
-	async delete(): Promise<boolean> {
-		const response = await axiosInstance.delete(`/sessions/${this.id}`);
+	async delete(session: string): Promise<boolean> {
+		const response = await getAxiosInstance(session).delete(`/sessions/${this.id}`);
 
 		if (response.status !== 204) {
 			toastAlert('Failed to delete session');
@@ -135,8 +135,8 @@ export default class Session {
 		return true;
 	}
 
-	async toggleDisable(): Promise<boolean> {
-		const response = await axiosInstance.patch(`/sessions/${this.id}`, {
+	async toggleDisable(session: string): Promise<boolean> {
+		const response = await getAxiosInstance(session).patch(`/sessions/${this.id}`, {
 			is_active: !this.is_active
 		});
 
@@ -150,8 +150,8 @@ export default class Session {
 		return true;
 	}
 
-	async addUser(user: User): Promise<boolean> {
-		const response = await axiosInstance.post(`/sessions/${this.id}/users/${user.id}`);
+	async addUser(session: string, user: User): Promise<boolean> {
+		const response = await getAxiosInstance(session).post(`/sessions/${this.id}/users/${user.id}`);
 
 		if (response.status !== 201) {
 			toastAlert('Failed to add user to session');
@@ -168,8 +168,8 @@ export default class Session {
 		return this._users.some((u) => u.equals(user));
 	}
 
-	async loadMessages(): Promise<boolean> {
-		const messagesStr = await getMessagesAPI(this.id);
+	async loadMessages(session: string): Promise<boolean> {
+		const messagesStr = await getMessagesAPI(session, this.id);
 
 		this._messages.set(Message.parseAll(messagesStr));
 
@@ -177,11 +177,12 @@ export default class Session {
 	}
 
 	async sendMessage(
+		session: string,
 		sender: User,
 		content: string,
 		metadata: { message: string; date: number }[]
 	): Promise<Message | null> {
-		const id = await createMessageAPI(this.id, content, metadata);
+		const id = await createMessageAPI(session, this.id, content, metadata);
 		if (id == null) return null;
 
 		const message = new Message(id, content, new Date(), sender, this);
@@ -196,8 +197,8 @@ export default class Session {
 		return message;
 	}
 
-	async sendTyping(): Promise<boolean> {
-		const response = await axiosInstance.post(`/sessions/${this.id}/typing`);
+	async sendTyping(session: string): Promise<boolean> {
+		const response = await getAxiosInstance(session).post(`/sessions/${this.id}/typing`);
 		if (response.status !== 204) {
 			console.log('Failed to send typing data', response);
 			return false;
@@ -206,8 +207,8 @@ export default class Session {
 		return true;
 	}
 
-	async sendPresence(): Promise<boolean> {
-		const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
+	async sendPresence(session: string): Promise<boolean> {
+		const response = await getAxiosInstance(session).post(`/sessions/${this.id}/presence`);
 		if (response.status !== 204) {
 			console.log('Failed to send presence data', response);
 			return false;
@@ -216,8 +217,8 @@ export default class Session {
 		return true;
 	}
 
-	async changeLanguage(language: string): Promise<boolean> {
-		const res = await patchLanguageAPI(this.id, language);
+	async changeLanguage(session: string, language: string): Promise<boolean> {
+		const res = await patchLanguageAPI(session, this.id, language);
 		if (!res) return false;
 		this._language = language;
 		return true;
