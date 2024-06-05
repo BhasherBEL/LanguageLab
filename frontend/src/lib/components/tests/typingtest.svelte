@@ -57,6 +57,12 @@
 			text={exercices[i].text}
 			bind:data
 			bind:inProgress
+			onFinish={() => {
+				inProgress = false;
+				setTimeout(() => {
+					currentExercice++;
+				}, 3000);
+			}}
 		/>
 	{/if}
 {/each}
