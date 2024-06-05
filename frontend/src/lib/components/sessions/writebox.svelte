@@ -56,7 +56,7 @@
 
 <div class="w-full border-t-2">
 	{#if showSpecials}
-		<ul class="flex justify-around divide-x-2 border-b-2 py-1">
+		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
 			{#each config.SPECIAL_CHARS as char (char)}
 				<button
 					class="border-none"
@@ -106,9 +106,15 @@
 				data-tooltip="tooltip-emoji"
 				role="tooltip"
 				class:hidden={!showPicker}
-				class="absolute z-10 tooltip bottom-0 left-0"
+				class="absolute z-10 tooltip bottom-16 right-0 lg:left-0 lg:right-auto"
 			>
-				<emoji-picker class="light" on:emoji-click={(event) => (message += event.detail.unicode)}>
+				<emoji-picker
+					class="light"
+					on:emoji-click={(event) => {
+						message += event.detail.unicode;
+						textearea.focus();
+					}}
+				>
 				</emoji-picker>
 			</div>
 		</div>

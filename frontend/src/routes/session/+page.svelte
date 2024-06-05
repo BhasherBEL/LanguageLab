@@ -5,7 +5,6 @@
 	import Session from '$lib/types/session';
 	import { getBaseURL } from '$lib/utils/login';
 	import { onMount } from 'svelte';
-	import { t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
 	import { AcademicCap, Icon, Sparkles, User } from 'svelte-hero-icons';
 	export let data;
@@ -30,10 +29,8 @@
 </script>
 
 {#if session}
-	<div class="h-full grid lg:grid-cols-4">
+	<div class="h-full grid lg:grid-cols-7">
 		<div class="justify-evenly h-full p-2">
-			<!-- <p>{$t('session.title')} {session.otherUsersList()}</p> -->
-			<!-- <p>{$t('session.participants')}:</p> -->
 			<ul class="ml-2">
 				{#each session.users as sessionUser (sessionUser.id)}
 					<li
@@ -57,7 +54,7 @@
 				{/each}
 			</ul>
 		</div>
-		<div class="flex flex-row flex-grow col-span-2">
+		<div class="flex flex-row flex-grow col-span-5">
 			<Chatbox {session} token={data.token} />
 		</div>
 		<div class=""></div>
