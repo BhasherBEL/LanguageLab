@@ -187,9 +187,10 @@ class SurveyResponse(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     uuid = Column(String)
+    sid = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.now)
     survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
     group_id = Column(Integer, ForeignKey("survey_groups.id"))
     question_id = Column(Integer, ForeignKey("survey_questions.id"))
-    option = Column(Integer)
+    selected_id = Column(Integer)
     response_time = Column(Float)

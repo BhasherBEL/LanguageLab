@@ -965,17 +965,13 @@ def delete_survey_question(
 
 @surveyRouter.post("/responses", status_code=status.HTTP_201_CREATED)
 def create_survey_response(
-    survey_id: int,
     response: schemas.SurveyResponseCreate,
     db: Session = Depends(get_db),
 ):
-    if not crud.get_survey(db, survey_id):
-        raise HTTPException(status_code=404, detail="Survey not found")
-
-    return crud.create_survey_response(db, survey_id, response).id
+    return crud.create_survey_response(db, response).id
 
 
-@surveyRouter.get("/responses", response_model=list[schemas.SurveyResponse])
+@surveyRouter.get("/responses/{survey_id}", response_model=list[schemas.SurveyResponse])
 def get_survey_responses(
     survey_id: int,
     db: Session = Depends(get_db),

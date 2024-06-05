@@ -1,27 +1,15 @@
 import { toastAlert } from '$lib/utils/toasts';
-import SurveyOption from './surveyOption';
 
 export default class SurveyQuestion {
 	private _id: number;
 	private _group_id: number;
-	private _title: string;
-	private _question_type: string;
-	private _question_value: string;
-	private _options: SurveyOption[];
+	private _question: string;
+	private _options: string[];
 
-	constructor(
-		id: number,
-		group_id: number,
-		title: string,
-		question_type: string,
-		question_value: string,
-		options: SurveyOption[]
-	) {
+	constructor(id: number, group_id: number, question: string, options: string[]) {
 		this._id = id;
 		this._group_id = group_id;
-		this._title = title;
-		this._question_type = question_type;
-		this._question_value = question_value;
+		this._question = question;
 		this._options = options;
 	}
 
@@ -33,19 +21,11 @@ export default class SurveyQuestion {
 		return this._group_id;
 	}
 
-	get title(): string {
-		return this._title;
+	get question(): string {
+		return this._question;
 	}
 
-	get question_type(): string {
-		return this._question_type;
-	}
-
-	get question_value(): string {
-		return this._question_value;
-	}
-
-	get options(): SurveyOption[] {
+	get options(): string[] {
 		return this._options;
 	}
 
@@ -55,16 +35,17 @@ export default class SurveyQuestion {
 			return null;
 		}
 
-		const options = SurveyOption.parseAll(data.options);
+		let options = [];
+		if (data.option1) options.push(data.option1);
+		if (data.option2) options.push(data.option2);
+		if (data.option3) options.push(data.option3);
+		if (data.option4) options.push(data.option4);
+		if (data.option5) options.push(data.option5);
+		if (data.option6) options.push(data.option6);
+		if (data.option7) options.push(data.option7);
+		if (data.option8) options.push(data.option8);
 
-		return new SurveyQuestion(
-			data.id,
-			data.group_id,
-			data.title,
-			data.question_type,
-			data.question_value,
-			options
-		);
+		return new SurveyQuestion(data.id, data.group_id, data.question, options);
 	}
 
 	static parseAll(data: any): SurveyQuestion[] {

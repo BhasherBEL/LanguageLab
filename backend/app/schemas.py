@@ -204,19 +204,21 @@ class SurveySurveyAddGroup(BaseModel):
 
 class SurveyResponseCreate(BaseModel):
     uuid: str
+    sid: str
     survey_id: int
     group_id: int
     question_id: int
-    option: int
+    selected_id: int
     response_time: float
 
 
 class SurveyResponse(BaseModel):
     id: int
     uuid: str
+    sid: str
     created_at: datetime.datetime
     survey_id: int
     group_id: int
     question_id: int
-    option: int
+    selected_id: int
     response_time: float

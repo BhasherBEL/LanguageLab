@@ -1,10 +1,13 @@
 import { getSurveyAPI } from '$lib/api/survey';
 import Survey from '$lib/types/survey';
+import type { Load } from '@sveltejs/kit';
 
 export const ssr = false;
 
-export const load = async ({ params }: { params: Record<string, string> }) => {
+export const load: Load = async ({ params, parent }) => {
+	const data = await parent();
 	const survey_id = parseInt(params.id);
+	const { user, token } = data;
 
 	if (isNaN(survey_id)) {
 		return {
@@ -27,7 +30,9 @@ export const load = async ({ params }: { params: Record<string, string> }) => {
 	}
 
 	return {
-		survey_id: survey_id,
-		survey: survey
+		survey_id,
+		survey,
+		user,
+		token
 	};
 };

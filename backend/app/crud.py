@@ -320,12 +320,8 @@ def delete_survey_question(db: Session, survey_question_id: int):
     db.commit()
 
 
-def create_survey_response(
-    db: Session, survey_id: int, survey_response: schemas.SurveyResponseCreate
-):
-    db_survey_response = models.SurveyResponse(
-        survey_id=survey_id, **survey_response.dict()
-    )
+def create_survey_response(db: Session, survey_response: schemas.SurveyResponseCreate):
+    db_survey_response = models.SurveyResponse(**survey_response.dict())
     db.add(db_survey_response)
     db.commit()
     db.refresh(db_survey_response)
