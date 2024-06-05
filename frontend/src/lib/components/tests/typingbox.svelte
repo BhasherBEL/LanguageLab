@@ -15,12 +15,14 @@
 		keyCode: number;
 		keyValue: string;
 	}[];
-	let duration = initialDuration >= 0 ? initialDuration : 0;
 	export let inProgress = false;
+	export let onFinish: Function;
+	let duration = initialDuration >= 0 ? initialDuration : 0;
 	let lastInput = '';
 	let input = '';
 	let textArea: HTMLTextAreaElement;
 	let startTime = new Date().getTime();
+	let isDone = false;
 
 	onMount(async () => {
 		textArea.focus();
@@ -34,6 +36,8 @@
 			if ((duration <= 0 && initialDuration > 0) || !inProgress) {
 				clearInterval(interval);
 				inProgress = false;
+				isDone = true;
+				onFinish();
 			}
 		}, 1000);
 	}
@@ -70,7 +74,11 @@
 			</button>
 		{/each}
 	</ul>
-	<div class="relative border-2 rounded-b-lg text-xl select-none">
+	<div
+		class="relative border-2 rounded-b-lg text-xl select-none"
+		class:border-green-500={isDone}
+		class:bg-green-100={isDone}
+	>
 		<div class="font-mono p-4 break-words">
 			<span class="text-inherit p-0 m-0 whitespace-pre-wrap break-words"
 				><!--
@@ -93,11 +101,7 @@
 			bind:value={input}
 			bind:this={textArea}
 			spellcheck="false"
-			disabled={!inProgress &&
-				duration <= 0 &&
-				initialDuration >= 0 &&
-				duration >= 0 &&
-				initialDuration < 0}
+			disabled={isDone}
 			on:keyup={(e) => {
 				if (inProgress) {
 					data[data.length - 1].uptime = new Date().getTime() - startTime;
