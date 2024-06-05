@@ -6,7 +6,7 @@
 	import { getBaseURL } from '$lib/utils/login';
 	import { onMount } from 'svelte';
 	import { user } from '$lib/types/user';
-	import { AcademicCap, Icon, Sparkles, User } from 'svelte-hero-icons';
+	import Gravatar from 'svelte-gravatar';
 	export let data;
 
 	let session: Session | null = null;
@@ -40,13 +40,14 @@
 							: 'marker:text-red-500'} marker:text-3xl"
 					>
 						<div class="inline-flex space-x-2">
-							{#if sessionUser.type == 0}
-								<Icon src={Sparkles} class="w-5" />
-							{:else if sessionUser.type == 1}
-								<Icon src={AcademicCap} class="w-5" />
-							{:else}
-								<Icon src={User} class="w-5" />
-							{/if}
+							<div class="rounded-full mx-2 chat-image size-6" title={sessionUser.nickname}>
+								<Gravatar
+									email={sessionUser.email}
+									size={64}
+									title={sessionUser.nickname}
+									class="rounded-full"
+								/>
+							</div>
 
 							<span class:font-bold={sessionUser === $user}>{sessionUser.nickname}</span>
 						</div>
