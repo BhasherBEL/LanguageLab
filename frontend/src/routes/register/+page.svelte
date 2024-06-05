@@ -483,7 +483,7 @@
 										{@const bin = 1 << (i * 5 + day)}
 										{#if user.availability & bin}
 											<span class:font-bold={timeslots & bin}>
-												{$t('utils.days.' + day)}
+												{$t('utils.days.' + (day - 1))}
 												{time}:30 - {time + 2}:30
 												<br />
 											</span>
