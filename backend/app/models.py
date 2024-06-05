@@ -132,51 +132,64 @@ class TestTypingEntry(Base):
     keyValue = Column(String)
 
 
-class SurveyOption(Base):
-    __tablename__ = "survey_options"
+class SurveyGroupQuestion(Base):
+    __tablename__ = "survey_group_questions"
 
-    id = Column(Integer, primary_key=True, index=True)
-    question_id = Column(Integer, ForeignKey("survey_questions.id"))
-    correct = Column(Boolean)
-    type = Column(String)
-    value = Column(String)
+    group_id = Column(Integer, ForeignKey("survey_groups.id"), primary_key=True)
+    question_id = Column(Integer, ForeignKey("survey_questions.id"), primary_key=True)
 
 
 class SurveyQuestion(Base):
     __tablename__ = "survey_questions"
 
     id = Column(Integer, primary_key=True, index=True)
-    group_id = Column(Integer, ForeignKey("survey_groups.id"))
-    title = Column(String)
-    question_type = Column(String)
-    question_value = Column(String)
-    options = relationship("SurveyOption", backref="question")
+    question = Column(String)
+    correct = Column(Integer)
+    option1 = Column(String)
+    option2 = Column(String)
+    option3 = Column(String)
+    option4 = Column(String)
+    option5 = Column(String)
+    option6 = Column(String)
+    option7 = Column(String)
+    option8 = Column(String)
 
 
 class SurveyGroup(Base):
     __tablename__ = "survey_groups"
 
     id = Column(Integer, primary_key=True, index=True)
-    survey_id = Column(Integer, ForeignKey("surveys.id"))
     title = Column(String)
-    questions = relationship("SurveyQuestion", backref="group")
+    questions = relationship(
+        "SurveyQuestion", secondary="survey_group_questions", backref="group"
+    )
 
 
-class Survey(Base):
-    __tablename__ = "surveys"
+class SurveySurvey(Base):
+    __tablename__ = "survey_surveys"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
-    groups = relationship("SurveyGroup", backref="survey")
+    groups = relationship(
+        "SurveyGroup", secondary="survey_survey_groups", backref="survey"
+    )
+
+
+class SurveySurveyGroup(Base):
+    __tablename__ = "survey_survey_groups"
+
+    survey_id = Column(Integer, ForeignKey("survey_surveys.id"), primary_key=True)
+    group_id = Column(Integer, ForeignKey("survey_groups.id"), primary_key=True)
 
 
 class SurveyResponse(Base):
     __tablename__ = "survey_responses"
 
     id = Column(Integer, primary_key=True, index=True)
-    survey_id = Column(Integer, ForeignKey("surveys.id"))
     uuid = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.now)
+    survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
+    group_id = Column(Integer, ForeignKey("survey_groups.id"))
     question_id = Column(Integer, ForeignKey("survey_questions.id"))
-    option_id = Column(Integer, ForeignKey("survey_options.id"))
+    option = Column(Integer)
     response_time = Column(Float)

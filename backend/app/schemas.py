@@ -142,48 +142,54 @@ class CalComWebhook(BaseModel):
     payload: dict
 
 
-class SurveyOption(BaseModel):
-    id: int
-    question_id: int
-    correct: bool
-    type: str
-    value: str
-
-
-class SurveyOptionCreate(BaseModel):
-    correct: bool
-    type: str
-    value: str
-
-
 class SurveyQuestionCreate(BaseModel):
-    title: str
-    question_type: str
-    question_value: str
+    id: int | None = None
+    question: str
+    correct: int
+    option1: str | None = None
+    option2: str | None = None
+    option3: str | None = None
+    option4: str | None = None
+    option5: str | None = None
+    option6: str | None = None
+    option7: str | None = None
+    option8: str | None = None
 
 
 class SurveyQuestion(BaseModel):
     id: int
-    group_id: int
-    title: str
-    question_type: str
-    question_value: str
-    options: list[SurveyOption]
+    question: str
+    correct: int
+    option1: str | None = None
+    option2: str | None = None
+    option3: str | None = None
+    option4: str | None = None
+    option5: str | None = None
+    option6: str | None = None
+    option7: str | None = None
+    option8: str | None = None
 
 
 class SurveyGroupCreate(BaseModel):
+    id: int | None = None
     title: str
+    questions: list[SurveyQuestionCreate] = []
 
 
 class SurveyGroup(BaseModel):
     id: int
-    survey_id: int
     title: str
     questions: list[SurveyQuestion]
 
 
+class SurveyGroupAddQuestion(BaseModel):
+    question_id: int
+
+
 class SurveyCreate(BaseModel):
+    id: int | None = None
     title: str
+    groups: list[SurveyGroupCreate] = []
 
 
 class Survey(BaseModel):
@@ -192,10 +198,16 @@ class Survey(BaseModel):
     groups: list[SurveyGroup]
 
 
+class SurveySurveyAddGroup(BaseModel):
+    group_id: int
+
+
 class SurveyResponseCreate(BaseModel):
     uuid: str
+    survey_id: int
+    group_id: int
     question_id: int
-    option_id: int
+    option: int
     response_time: float
 
 
@@ -203,6 +215,8 @@ class SurveyResponse(BaseModel):
     id: int
     uuid: str
     created_at: datetime.datetime
+    survey_id: int
+    group_id: int
     question_id: int
-    option_id: int
+    option: int
     response_time: float

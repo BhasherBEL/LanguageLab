@@ -188,7 +188,7 @@ def create_test_typing_entry(
 
 
 def create_survey(db: Session, survey: schemas.SurveyCreate):
-    db_survey = models.Survey(**survey.dict())
+    db_survey = models.SurveySurvey(**survey.dict())
     db.add(db_survey)
     db.commit()
     db.refresh(db_survey)
@@ -196,29 +196,59 @@ def create_survey(db: Session, survey: schemas.SurveyCreate):
 
 
 def get_survey(db: Session, survey_id: int):
-    return db.query(models.Survey).filter(models.Survey.id == survey_id).first()
+    return (
+        db.query(models.SurveySurvey)
+        .filter(models.SurveySurvey.id == survey_id)
+        .first()
+    )
 
 
 def get_surveys(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Survey).offset(skip).limit(limit).all()
+    return db.query(models.SurveySurvey).offset(skip).limit(limit).all()
 
 
 def delete_survey(db: Session, survey_id: int):
-    db.query(models.Survey).filter(models.Survey.id == survey_id).delete()
+    db.query(models.SurveySurvey).filter(models.SurveySurvey.id == survey_id).delete()
     db.commit()
 
 
-def create_survey_group(
-    db: Session, survey_id: int, survey_group: schemas.SurveyGroupCreate
-):
-    db_survey_group = models.SurveyGroup(survey_id=survey_id, **survey_group.dict())
+def add_group_to_survey(db: Session, survey_id: int, group: schemas.SurveyGroup):
+    db_survey = (
+        db.query(models.SurveySurvey)
+        .filter(models.SurveySurvey.id == survey_id)
+        .first()
+    )
+    db_survey.groups.append(group)
+    db.commit()
+    db.refresh(db_survey)
+    return db_survey
+
+
+def remove_group_from_survey(db: Session, survey_id: int, group_id: int):
+    survey = (
+        db.query(models.SurveySurvey)
+        .filter(models.SurveySurvey.id == survey_id)
+        .first()
+    )
+
+    survey_group = (
+        db.query(models.SurveyGroup).filter(models.SurveyGroup.id == group_id).first()
+    )
+
+    if survey_group in survey.groups:
+        survey.groups.remove(survey_group)
+        db.commit()
+
+
+def create_survey_group(db: Session, survey_group: schemas.SurveyGroupCreate):
+    db_survey_group = models.SurveyGroup(**survey_group.dict())
     db.add(db_survey_group)
     db.commit()
     db.refresh(db_survey_group)
     return db_survey_group
 
 
-def get_survey_group(db: Session, survey_group_id: int):
+def get_survey_group(db: Session, survey_group_id: int) -> schemas.SurveyGroup:
     return (
         db.query(models.SurveyGroup)
         .filter(models.SurveyGroup.id == survey_group_id)
@@ -226,14 +256,8 @@ def get_survey_group(db: Session, survey_group_id: int):
     )
 
 
-def get_survey_groups(db: Session, survey_id: int, skip: int = 0, limit: int = 100):
-    return (
-        db.query(models.SurveyGroup)
-        .filter(models.SurveyGroup.survey_id == survey_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+def get_survey_groups(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.SurveyGroup).offset(skip).limit(limit).all()
 
 
 def delete_survey_group(db: Session, survey_group_id: int):
@@ -243,12 +267,34 @@ def delete_survey_group(db: Session, survey_group_id: int):
     db.commit()
 
 
-def create_survey_question(
-    db: Session, survey_group_id: int, survey_question: schemas.SurveyQuestionCreate
-):
-    db_survey_question = models.SurveyQuestion(
-        group_id=survey_group_id, **survey_question.dict()
+def add_item_to_survey_group(db: Session, group_id: int, item: models.SurveyQuestion):
+    db_survey_group = (
+        db.query(models.SurveyGroup).filter(models.SurveyGroup.id == group_id).first()
     )
+    db_survey_group.questions.append(item)
+    db.commit()
+    db.refresh(db_survey_group)
+    return db_survey_group
+
+
+def remove_item_from_survey_group(db: Session, group_id: int, item_id: int):
+    survey_group = (
+        db.query(models.SurveyGroup).filter(models.SurveyGroup.id == group_id).first()
+    )
+
+    survey_question = (
+        db.query(models.SurveyQuestion)
+        .filter(models.SurveyQuestion.id == item_id)
+        .first()
+    )
+
+    if survey_question in survey_group.questions:
+        survey_group.questions.remove(survey_question)
+        db.commit()
+
+
+def create_survey_question(db: Session, survey_question: schemas.SurveyQuestionCreate):
+    db_survey_question = models.SurveyQuestion(**survey_question.dict())
     db.add(db_survey_question)
     db.commit()
     db.refresh(db_survey_question)
@@ -263,56 +309,13 @@ def get_survey_question(db: Session, survey_question_id: int):
     )
 
 
-def get_survey_questions(db: Session, group_id: int, skip: int = 0, limit: int = 100):
-    return (
-        db.query(models.SurveyQuestion)
-        .filter(models.SurveyQuestion.group_id == group_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+def get_survey_questions(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.SurveyQuestion).offset(skip).limit(limit).all()
 
 
 def delete_survey_question(db: Session, survey_question_id: int):
     db.query(models.SurveyQuestion).filter(
         models.SurveyQuestion.id == survey_question_id
-    ).delete()
-    db.commit()
-
-
-def create_survey_option(
-    db: Session, survey_question_id: int, survey_option: schemas.SurveyOptionCreate
-):
-    db_survey_option = models.SurveyOption(
-        question_id=survey_question_id, **survey_option.dict()
-    )
-    db.add(db_survey_option)
-    db.commit()
-    db.refresh(db_survey_option)
-    return db_survey_option
-
-
-def get_survey_option(db: Session, survey_option_id: int):
-    return (
-        db.query(models.SurveyOption)
-        .filter(models.SurveyOption.id == survey_option_id)
-        .first()
-    )
-
-
-def get_survey_options(db: Session, question_id: int, skip: int = 0, limit: int = 100):
-    return (
-        db.query(models.SurveyOption)
-        .filter(models.SurveyOption.question_id == question_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
-
-
-def delete_survey_option(db: Session, survey_option_id: int):
-    db.query(models.SurveyOption).filter(
-        models.SurveyOption.id == survey_option_id
     ).delete()
     db.commit()
 
