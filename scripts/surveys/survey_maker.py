@@ -1,6 +1,5 @@
 import pandas as pd
 import requests
-import numpy as np
 import os
 
 API_URL = "http://127.0.0.1:8000"
