@@ -11,7 +11,9 @@
 	let messages = get(session.messages);
 
 	session.messages.subscribe((newMessages) => {
-		let news = newMessages.filter((m) => !messages.find((m2) => m2.id === m.id)).at(-1);
+		let news = newMessages
+			.filter((m) => !messages.find((m2) => m2.message_id === m.message_id))
+			.at(-1);
 		messages = newMessages;
 		if (!news) return;
 
@@ -86,7 +88,7 @@
 		<div class:hidden={!isTyping}>
 			<span class="loading loading-dots loading-md"></span>
 		</div>
-		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.id)}
+		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.message_id)}
 			<MessageC {message} />
 		{/each}
 	</div>

@@ -85,6 +85,7 @@ class SessionUpdate(BaseModel):
 
 class Message(BaseModel):
     id: int
+    message_id: str
     content: str
     user_id: int
     session_id: int
@@ -96,6 +97,7 @@ class Message(BaseModel):
     def to_dict(self):
         return {
             "id": self.id,
+            "message_id": self.message_id,
             "content": self.content,
             "user_id": self.user_id,
             "session_id": self.session_id,
@@ -112,6 +114,7 @@ class MessageMetadataCreate(BaseModel):
 
 
 class MessageCreate(BaseModel):
+    message_id: str | None = None
     content: str
     metadata: list[MessageMetadataCreate]
 

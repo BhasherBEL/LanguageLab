@@ -14,7 +14,8 @@
 	"chatbox": {
 		"placeholder": "Écrivez votre message ici...",
 		"sendError": "Erreur lors de l'envoi du message",
-		"disabled": "Cette session est accessible uniquement en lecture"
+		"disabled": "Cette session est accessible uniquement en lecture",
+		"edited": "modifié"
 	},
 	"home": {
 		"date": "Date",
@@ -170,7 +171,9 @@
 		"next": "Suivant",
 		"start": "Commencer",
 		"thank-you": "Merci !",
-		"login": "Se connecter"
+		"login": "Se connecter",
+		"cancel": "Annuler",
+		"save": "Sauvegarder"
 	},
 	"utils": {
 		"month": {

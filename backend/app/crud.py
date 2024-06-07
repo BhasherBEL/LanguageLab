@@ -148,8 +148,15 @@ def create_message(
     user: schemas.User,
     session: schemas.Session,
 ):
+
+    if message.message_id is None:
+        message.message_id = secrets.token_urlsafe(24)
+
     db_message = models.Message(
-        content=message.content, user_id=user.id, session_id=session.id
+        content=message.content,
+        user_id=user.id,
+        session_id=session.id,
+        message_id=message.message_id,
     )
     db.add(db_message)
     db.commit()

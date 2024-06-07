@@ -536,10 +536,10 @@ def read_messages(
     return crud.get_messages(db, session_id, skip=skip, limit=limit)
 
 
-async def send_websoket_message(session_id: int, message: schemas.Message):
+async def send_websoket_message(session_id: int, message: schemas.Message, action: str):
 
     content = json.dumps(
-        {"type": "message", "action": "create", "data": message.to_dict()}
+        {"type": "message", "action": action, "data": message.to_dict()}
     )
 
     for _, user_websockets in websocket_users[session_id].items():
@@ -576,12 +576,17 @@ def create_message(
 
     message = crud.create_message(db, entryMessage, current_user, db_session)
 
+    action = "create" if entryMessage.message_id is None else "update"
+
     background_tasks.add_task(store_metadata, db, message.id, entryMessage.metadata)
     background_tasks.add_task(
-        send_websoket_message, session_id, schemas.Message.model_validate(message)
+        send_websoket_message,
+        session_id,
+        schemas.Message.model_validate(message),
+        action,
     )
 
-    return message.id
+    return {"id": message.id, "message_id": message.message_id}
 
 
 async def send_websoket_typing(session_id: int, user_id: int):

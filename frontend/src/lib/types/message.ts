@@ -1,16 +1,27 @@
 import Session from './session';
 import User from './user';
+import { updateMessageAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
 
 export default class Message {
 	private _id: number;
+	private _message_id: string;
 	private _content: string;
 	private _created_at: Date;
 	private _user: User;
 	private _session: Session;
+	private _edited: boolean = false;
 
-	public constructor(id: number, content: string, created_at: Date, user: User, session: Session) {
+	public constructor(
+		id: number,
+		message_id: string,
+		content: string,
+		created_at: Date,
+		user: User,
+		session: Session
+	) {
 		this._id = id;
+		this._message_id = message_id;
 		this._content = content;
 		this._created_at = created_at;
 		this._user = user;
@@ -19,6 +30,10 @@ export default class Message {
 
 	get id(): number {
 		return this._id;
+	}
+
+	get message_id(): string {
+		return this._message_id;
 	}
 
 	get content(): string {
@@ -35,6 +50,27 @@ export default class Message {
 
 	get session(): Session {
 		return this._session;
+	}
+
+	get edited(): boolean {
+		return this._edited;
+	}
+
+	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
+		const response = await updateMessageAPI(this._session.id, this._message_id, content, metadata);
+		if (response == null || response.id == null) return false;
+
+		this._content = content;
+		this._edited = true;
+
+		return true;
+	}
+
+	async localUpdate(content: string): Promise<boolean> {
+		this._content = content;
+		this._edited = true;
+
+		return true;
 	}
 
 	static parse(
@@ -64,7 +100,14 @@ export default class Message {
 			}
 		}
 
-		const message = new Message(json.id, json.content, new Date(json.created_at), user, session);
+		const message = new Message(
+			json.id,
+			json.message_id,
+			json.content,
+			new Date(json.created_at),
+			user,
+			session
+		);
 
 		return message;
 	}
@@ -84,7 +127,20 @@ export default class Message {
 
 		for (const message of json) {
 			const m = Message.parse(message, user, session);
-			if (m) messages.push(m);
+
+			if (!m) continue;
+
+			const prev = messages.find((msg) => msg.message_id == m?.message_id);
+
+			if (!prev) {
+				messages.push(m);
+				continue;
+			}
+
+			if (prev.created_at < m.created_at) {
+				prev._content = m.content;
+				prev._edited = true;
+			}
 		}
 
 		return messages;

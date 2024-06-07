@@ -44,11 +44,31 @@ export async function createMessageAPI(
 	id: number,
 	content: string,
 	metadata: { message: string; date: number }[]
-): Promise<number | null> {
+): Promise<any | null> {
 	const response = await axiosInstance.post(`/sessions/${id}/messages`, { content, metadata });
 
 	if (response.status !== 201) {
 		toastAlert('Failed to send message');
+		return null;
+	}
+
+	return response.data;
+}
+
+export async function updateMessageAPI(
+	id: number,
+	message_id: string,
+	content: string,
+	metadata: { message: string; date: number }[]
+): Promise<any | null> {
+	const response = await axiosInstance.post(`/sessions/${id}/messages`, {
+		message_id,
+		content,
+		metadata
+	});
+
+	if (response.status !== 201) {
+		toastAlert('Failed to update message');
 		return null;
 	}
 

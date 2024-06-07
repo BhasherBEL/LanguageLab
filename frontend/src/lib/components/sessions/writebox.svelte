@@ -29,6 +29,7 @@
 		new Date() < session.start_time;
 
 	async function sendMessage() {
+		message = message.trim();
 		if (message.length == 0) return;
 
 		if ($user === null) return;

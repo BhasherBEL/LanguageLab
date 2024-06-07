@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type Message from '$lib/types/message';
 	import { displayTime } from '$lib/utils/date';
-	import { Check, Icon } from 'svelte-hero-icons';
+	import { Check, Icon, Pencil } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
 	import Gravatar from 'svelte-gravatar';
+	import { t } from '$lib/services/i18n';
 
 	export let message: Message;
 
@@ -15,11 +16,40 @@
 			displayedTime = displayTime(message.created_at);
 		}, 1000);
 	}
+	let isEdit = false;
+	let contentDiv: HTMLDivElement;
+
+	function startEdit() {
+		isEdit = true;
+		setTimeout(() => {
+			if (!contentDiv) return;
+			contentDiv.focus();
+		}, 0);
+	}
+
+	async function endEdit(validate = true) {
+		if (!validate) {
+			contentDiv.innerText = message.content;
+			isEdit = false;
+			return;
+		}
+
+		if (contentDiv.innerText.trim() === message.content) {
+			isEdit = false;
+			return;
+		}
+
+		const res = await message.update(contentDiv.innerText.trim(), []);
+
+		if (res) {
+			isEdit = false;
+		}
+	}
 
 	const isSender = message.user.id == $user?.id;
 </script>
 
-<div class="chat" class:chat-start={!isSender} class:chat-end={isSender}>
+<div class="chat group" class:chat-start={!isSender} class:chat-end={isSender}>
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
 		<Gravatar
 			email={message.user.email}
@@ -28,11 +58,46 @@
 			class="rounded-full"
 		/>
 	</div>
-	<div class="chat-bubble whitespace-pre-wrap" class:chat-bubble-primary={!isSender}>
-		{message.content}
+	<div
+		class="chat-bubble whitespace-pre-wrap"
+		class:bg-blue-700={isSender}
+		class:bg-gray-300={!isSender}
+		class:text-black={!isSender}
+		class:text-white={isSender}
+	>
+		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
+			{message.content}
+		</div>
+		{#if isEdit}
+			<button
+				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
+				on:click={() => endEdit()}
+			>
+				{$t('button.save')}
+			</button>
+			<button
+				class="float-end border rounded-full px-4 py-2 mt-2 mr-2"
+				on:click={() => endEdit(false)}
+			>
+				{$t('button.cancel')}
+			</button>
+		{/if}
+		{#if isSender}
+			<button
+				class="absolute left-[-1.5rem] mt-2 mr-2 invisible group-hover:visible"
+				on:click={() => (isEdit ? endEdit() : startEdit())}
+			>
+				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
+			</button>
+		{/if}
 	</div>
 	<div class="chat-footer opacity-50">
 		<Icon src={Check} class="w-4 inline" />
 		{displayedTime}
+		{#if message.edited}
+			<span class="italic">
+				{$t('chatbox.edited')}
+			</span>
+		{/if}
 	</div>
 </div>

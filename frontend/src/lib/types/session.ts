@@ -181,16 +181,19 @@ export default class Session {
 		content: string,
 		metadata: { message: string; date: number }[]
 	): Promise<Message | null> {
-		const id = await createMessageAPI(this.id, content, metadata);
-		if (id == null) return null;
+		const json = await createMessageAPI(this.id, content, metadata);
+		if (json == null || json.id == null || json.message_id == null) {
+			toastAlert('Failed to parse message');
+			return null;
+		}
 
-		const message = new Message(id, content, new Date(), sender, this);
+		const message = new Message(json.id, json.message_id, content, new Date(), sender, this);
 
 		this._messages.update((messages) => {
-			if (!messages.find((m) => m.id === message.id)) {
+			if (!messages.find((m) => m.message_id === message.message_id)) {
 				return [...messages, message];
 			}
-			return messages.map((m) => (m.id === message.id ? message : m));
+			return messages.map((m) => (m.message_id === message.message_id ? message : m));
 		});
 
 		return message;
@@ -241,10 +244,22 @@ export default class Session {
 					const message = Message.parse(data['data']);
 					if (message) {
 						this._messages.update((messages) => {
-							if (!messages.find((m) => m.id === message.id)) {
+							if (!messages.find((m) => m.message_id === message.message_id)) {
 								return [...messages, message];
 							}
-							return messages.map((m) => (m.id === message.id ? message : m));
+							return messages.map((m) => (m.message_id === message.message_id ? message : m));
+						});
+
+						return;
+					}
+				} else if (data['action'] === 'update') {
+					const message = Message.parse(data['data']);
+					if (message) {
+						this._messages.update((messages) => {
+							const mEdited = messages.find((m) => m.message_id === message.message_id);
+							if (!mEdited) return messages;
+							mEdited.localUpdate(message.content);
+							return messages.map((m) => (m.message_id === message.message_id ? mEdited : m));
 						});
 
 						return;
