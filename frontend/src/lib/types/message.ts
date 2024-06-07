@@ -2,6 +2,7 @@ import Session from './session';
 import User from './user';
 import { updateMessageAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
+import { writable, type Writable } from 'svelte/store';
 
 export default class Message {
 	private _id: number;
@@ -11,6 +12,7 @@ export default class Message {
 	private _user: User;
 	private _session: Session;
 	private _edited: boolean = false;
+	private _versions = writable([] as { content: string; date: Date }[]);
 
 	public constructor(
 		id: number,
@@ -26,6 +28,7 @@ export default class Message {
 		this._created_at = created_at;
 		this._user = user;
 		this._session = session;
+		this._versions.set([{ content: content, date: created_at }]);
 	}
 
 	get id(): number {
@@ -56,10 +59,15 @@ export default class Message {
 		return this._edited;
 	}
 
+	get versions(): Writable<{ content: string; date: Date }[]> {
+		return this._versions;
+	}
+
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
 		const response = await updateMessageAPI(this._session.id, this._message_id, content, metadata);
 		if (response == null || response.id == null) return false;
 
+		this._versions.update((v) => [...v, { content: content, date: new Date() }]);
 		this._content = content;
 		this._edited = true;
 
@@ -138,6 +146,7 @@ export default class Message {
 			}
 
 			if (prev.created_at < m.created_at) {
+				prev._versions.update((v) => [...v, { content: m.content, date: m.created_at }]);
 				prev._content = m.content;
 				prev._edited = true;
 			}

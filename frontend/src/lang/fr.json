@@ -15,7 +15,8 @@
 		"placeholder": "Écrivez votre message ici...",
 		"sendError": "Erreur lors de l'envoi du message",
 		"disabled": "Cette session est accessible uniquement en lecture",
-		"edited": "modifié"
+		"edited": "modifié",
+		"history": "Historique"
 	},
 	"home": {
 		"date": "Date",
@@ -173,7 +174,8 @@
 		"thank-you": "Merci !",
 		"login": "Se connecter",
 		"cancel": "Annuler",
-		"save": "Sauvegarder"
+		"save": "Sauvegarder",
+		"close": "Fermer"
 	},
 	"utils": {
 		"month": {
