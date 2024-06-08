@@ -574,9 +574,9 @@ def create_message(
             detail="You do not have permission to create a message in this session",
         )
 
-    message = crud.create_message(db, entryMessage, current_user, db_session)
-
     action = "create" if entryMessage.message_id is None else "update"
+
+    message = crud.create_message(db, entryMessage, current_user, db_session)
 
     background_tasks.add_task(store_metadata, db, message.id, entryMessage.metadata)
     background_tasks.add_task(

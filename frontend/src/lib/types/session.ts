@@ -254,7 +254,7 @@ export default class Session {
 					}
 				} else if (data['action'] === 'update') {
 					const message = Message.parse(data['data']);
-					if (message) {
+					if (message && !get(this._messages).find((m) => m.id === message.id)) {
 						this._messages.update((messages) => {
 							const mEdited = messages.find((m) => m.message_id === message.message_id);
 							if (!mEdited) return messages;
