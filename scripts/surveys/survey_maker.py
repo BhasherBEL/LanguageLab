@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 import os
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = input("APP (API) URL: ")
 LOCAL_ITEMS_FOLDER = "../../frontend/static/surveys/items"
 REMOTE_ITEMS_FOLDER = "/surveys/items"
 
