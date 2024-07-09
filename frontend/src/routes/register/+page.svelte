@@ -16,6 +16,7 @@
 	} from '$lib/api/users';
 	import { ArrowRight, Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
+	import AvailableTutors from '$lib/components/users/availableTutors.svelte';
 
 	let current_step = 0;
 
@@ -459,50 +460,7 @@
 		<!--{#if get(user)}-->
 		<h2 class="my-4 text-xl">{$t('timeslots.availabilities')}</h2>
 		<Timeslots bind:timeslots />
-		<h2 class="my-8 text-xl">{$t('timeslots.availableTutors')}</h2>
-
-		{#if filteredUsers.length > 0}
-			<table class="table table-fixed">
-				<thead>
-					<tr>
-						<th>{$t('users.nickname')}</th>
-						<th>{$t('users.email')}</th>
-						<th>{$t('users.availability')}</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each filteredUsers as user}
-						<tr>
-							<td>{user.nickname}</td>
-							<td>{user.email}</td>
-							<td>
-								{#each Array.from({ length: 8 }, (_, i) => i) as i}
-									{@const time = i * 2 + 8}
-									{#each Array.from({ length: 7 }, (_, day) => day) as day}
-										{@const bin = 1n << BigInt(i * 7 + day + 1)}
-										{#if user.availability & bin}
-											<span class:font-bold={timeslots & bin}>
-												{$t('utils.days.' + day)}
-												{time}h - {time + 2}h
-												<br />
-											</span>
-										{/if}
-									{/each}
-								{/each}
-							</td>
-							<td class="border-2 text-center">
-								<button class="button m-auto" on:click={() => onTutor(user)}>
-									<Icon src={ArrowRight} size="32" />
-								</button>
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		{:else}
-			<p>{$t('timeslots.noTutors')}</p>
-		{/if}
+		<AvailableTutors users={filteredUsers} {timeslots} onSelect={onTutor} />
 	{:else if current_step == 5}
 		<Typingtest onFinish={onTyping} />
 	{:else if current_step == 6}

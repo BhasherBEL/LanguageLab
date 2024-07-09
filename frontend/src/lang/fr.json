@@ -163,6 +163,13 @@
 			"1": "Tuteur",
 			"2": "Étudiant"
 		},
+		"gender": "Genre",
+		"genders": {
+			"male": "Homme",
+			"female": "Femme",
+			"other": "Autre",
+			"na": "N/A"
+		},
 		"availability": "Disponibilités"
 	},
 	"button": {
