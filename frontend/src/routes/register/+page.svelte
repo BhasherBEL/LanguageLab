@@ -182,10 +182,13 @@
 		<li class="step" class:step-primary={current_step >= 4}>
 			{$t('register.tab.timeslots')}
 		</li>
-		<li class="step" class:step-primary={current_step >= 5}>
+		<li class="step" class:step-primary={current_step >= 5} data-content="?">
+			{$t('register.tab.continue')}
+		</li>
+		<li class="step" class:step-primary={current_step >= 6} data-content="">
 			{$t('register.tab.test')}
 		</li>
-		<li class="step" class:step-primary={current_step >= 6}>
+		<li class="step" class:step-primary={current_step >= 7} data-content="★">
 			{$t('register.tab.start')}
 		</li>
 	</ul>
@@ -462,8 +465,20 @@
 		<Timeslots bind:timeslots />
 		<AvailableTutors users={filteredUsers} {timeslots} onSelect={onTutor} />
 	{:else if current_step == 5}
-		<Typingtest onFinish={onTyping} />
+		<div class="text-center">
+			<p class="text-center">
+				{@html $t('register.continue')}
+			</p>
+			<button class="button mt-4 w-full" on:click={() => (current_step = 6)}>
+				{$t('register.continueButton')}
+			</button>
+			<button class="button mt-4 w-full" on:click={() => (document.location.href = '/')}>
+				{$t('register.startFastButton')}
+			</button>
+		</div>
 	{:else if current_step == 6}
+		<Typingtest onFinish={onTyping} />
+	{:else if current_step == 7}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.start')}
