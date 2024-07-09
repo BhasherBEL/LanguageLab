@@ -22,7 +22,7 @@ export default class User {
 	private _email: string;
 	private _nickname: string;
 	private _type: number;
-	private _availability: number;
+	private _availability: bigint;
 	private _is_active: boolean;
 	private _ui_language: string | null;
 	private _home_language: string | null;
@@ -36,7 +36,7 @@ export default class User {
 		email: string,
 		nickname: string,
 		type: number,
-		availability: number,
+		availability: bigint,
 		is_active: boolean,
 		ui_language: string | null,
 		home_language: string | null,
@@ -87,7 +87,7 @@ export default class User {
 		return this._type === 1;
 	}
 
-	get availability(): number {
+	get availability(): bigint {
 		return this._availability;
 	}
 
@@ -123,8 +123,11 @@ export default class User {
 		return this._id === user._id;
 	}
 
-	async setAvailability(availability: number, calcom_link: string): Promise<boolean> {
-		return await patchUserAPI(this.id, { availability: availability, calcom_link: calcom_link });
+	async setAvailability(availability: bigint, calcom_link: string): Promise<boolean> {
+		return await patchUserAPI(this.id, {
+			availability: availability.toString(),
+			calcom_link: calcom_link
+		});
 	}
 
 	notEquals<T>(obj: T): boolean {
@@ -137,7 +140,7 @@ export default class User {
 			email: this.email,
 			nickname: this.nickname,
 			type: this.type,
-			availability: this.availability,
+			availability: this.availability.toString(),
 			is_active: this.is_active,
 			ui_language: this.ui_language,
 			home_language: this.home_language,
@@ -167,7 +170,7 @@ export default class User {
 			email,
 			nickname,
 			type,
-			0,
+			BigInt(0),
 			is_active,
 			null,
 			null,
@@ -207,7 +210,7 @@ export default class User {
 			json.email,
 			json.nickname,
 			json.type,
-			json.availability,
+			BigInt(json.availability),
 			json.is_active,
 			json.ui_language,
 			json.home_language,

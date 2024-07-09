@@ -114,14 +114,20 @@ export async function createUserAPI(
 }
 
 export async function patchUserAPI(user_id: number, data: any): Promise<boolean> {
-	const response = await axiosInstance.patch(`/users/${user_id}`, data);
+	try {
+		const response = await axiosInstance.patch(`/users/${user_id}`, data);
 
-	if (response.status !== 204) {
-		toastAlert('Failed to update user');
+		if (response.status !== 204) {
+			toastAlert('Failed to update user');
+			return false;
+		}
+
+		return true;
+	} catch (e) {
+		console.error(e);
+		toastAlert('Failed to update user due to unknown error');
 		return false;
 	}
-
-	return true;
 }
 
 export async function createTestTypingAPI(

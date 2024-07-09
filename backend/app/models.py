@@ -39,7 +39,7 @@ class User(Base):
     password = Column(String)
     type = Column(Integer, default=UserType.STUDENT.value)
     is_active = Column(Boolean, default=True)
-    availability = Column(Integer, default=0)
+    availability = Column(String, default=0)
     ui_language = Column(String, default="fr")
     home_language = Column(String, default="en")
     target_language = Column(String, default="fr")

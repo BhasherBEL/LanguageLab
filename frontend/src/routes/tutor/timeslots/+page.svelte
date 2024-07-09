@@ -6,8 +6,8 @@
 	import { toastWarning } from '$lib/utils/toasts';
 	import { Icon, Calendar } from 'svelte-hero-icons';
 
-	$: lastTimeslots = 0;
-	$: timeslots = 0;
+	$: lastTimeslots = 0n;
+	$: timeslots = 0n;
 	$: calcom_link = '';
 	$: last_calcom_link = '';
 	let ready = false;
@@ -17,7 +17,7 @@
 		if ($user != null) {
 			timeslots = $user.availability;
 			lastTimeslots = timeslots;
-			calcom_link = $user.calcom_link;
+			calcom_link = $user.calcom_link || '';
 			console.log(calcom_link);
 			last_calcom_link = calcom_link;
 			ready = true;

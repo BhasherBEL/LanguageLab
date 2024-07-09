@@ -62,10 +62,10 @@
 	let birthdate: string;
 	let gender: string;
 
-	let timeslots = 0;
+	let timeslots = 0n;
 	$: filteredUsers = $users.filter((user) => {
-		if (user.availability === 0) return false;
-		if (timeslots === 0) return true;
+		if (user.availability === 0n) return false;
+		if (timeslots === 0n) return true;
 
 		return user.availability & timeslots;
 	});
@@ -477,14 +477,14 @@
 							<td>{user.nickname}</td>
 							<td>{user.email}</td>
 							<td>
-								{#each Array.from({ length: 5 }, (_, i) => i) as i}
+								{#each Array.from({ length: 8 }, (_, i) => i) as i}
 									{@const time = i * 2 + 8}
-									{#each Array.from({ length: 5 }, (_, day) => day) as day}
-										{@const bin = 1 << (i * 5 + day)}
+									{#each Array.from({ length: 7 }, (_, day) => day) as day}
+										{@const bin = 1n << BigInt(i * 7 + day + 1)}
 										{#if user.availability & bin}
 											<span class:font-bold={timeslots & bin}>
-												{$t('utils.days.' + (day - 1))}
-												{time}:30 - {time + 2}:30
+												{$t('utils.days.' + day)}
+												{time}h - {time + 2}h
 												<br />
 											</span>
 										{/if}

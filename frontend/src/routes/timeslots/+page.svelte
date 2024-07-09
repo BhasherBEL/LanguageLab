@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Header from '$lib/components/header.svelte';
 	import { onMount } from 'svelte';
 	import { t } from '$lib/services/i18n';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
@@ -10,14 +9,14 @@
 		User.parseAll(await getUsersAPI());
 	});
 
+	let timeslots = 0n;
+
 	$: filteredUsers = $users.filter((user) => {
-		if (user.availability === 0) return false;
-		if (timeslots === 0) return true;
+		if (user.availability === 0n) return false;
+		if (timeslots === 0n) return true;
 
 		return user.availability & timeslots;
 	});
-
-	let timeslots = 0;
 </script>
 
 <div class="w-4/5 m-auto mt-4">
@@ -41,14 +40,14 @@
 						<td class="border-2">{user.nickname}</td>
 						<td class="border-2">{user.email}</td>
 						<td class="border-2">
-							{#each Array.from({ length: 5 }, (_, i) => i) as i}
+							{#each Array.from({ length: 8 }, (_, i) => i) as i}
 								{@const time = i * 2 + 8}
-								{#each Array.from({ length: 5 }, (_, day) => day) as day}
-									{@const bin = 1 << (i * 5 + day)}
+								{#each Array.from({ length: 7 }, (_, day) => day) as day}
+									{@const bin = 1n << BigInt(i * 7 + day + 1)}
 									{#if user.availability & bin}
 										<span class:font-bold={timeslots & bin}>
 											{$t('utils.days.' + day)}
-											{time}:30 - {time + 2}:30
+											{time}h - {time + 2}h
 											<br />
 										</span>
 									{/if}
