@@ -22,6 +22,7 @@
 				body: news.content,
 				icon: '/favicon.ico'
 			});
+			new Audio('/notification.wav').play();
 		}
 	});
 
