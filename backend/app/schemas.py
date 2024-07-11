@@ -83,6 +83,12 @@ class SessionUpdate(BaseModel):
         from_attributes = True
 
 
+class SessionSatisfyCreate(BaseModel):
+    usefullness: int
+    easiness: int
+    remarks: str | None = None
+
+
 class Message(BaseModel):
     id: int
     message_id: str

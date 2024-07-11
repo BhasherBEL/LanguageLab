@@ -85,3 +85,23 @@ export async function patchLanguageAPI(id: number, language: string) {
 
 	return true;
 }
+
+export async function createSessionSatisfyAPI(
+	id: number,
+	usefullness: number,
+	easiness: number,
+	remarks: string
+): Promise<boolean> {
+	const response = await axiosInstance.post(`/sessions/${id}/satisfy`, {
+		usefullness,
+		easiness,
+		remarks
+	});
+
+	if (response.status !== 204) {
+		toastAlert('Failed to satisfy session');
+		return false;
+	}
+
+	return true;
+}

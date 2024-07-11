@@ -83,6 +83,18 @@ class Session(Base):
     users = relationship("User", secondary="user_sessions", back_populates="sessions")
 
 
+class SessionSatisfy(Base):
+    __tablename__ = "session_satisfy"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    session_id = Column(Integer, ForeignKey("sessions.id"))
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    usefullness = Column(Integer)
+    easiness = Column(Integer)
+    remarks = Column(String)
+
+
 class UserSession(Base):
     __tablename__ = "user_sessions"
 
