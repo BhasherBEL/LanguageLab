@@ -511,6 +511,28 @@ def read_sessions(
 
     return crud.get_sessions(db, current_user, skip=skip, limit=limit)
 
+@sessionsRouter.post('/{session_id}/satisfy', status_code=status.HTTP_204_NO_CONTENT)
+def create_session_satisfy(
+        session_id: int,
+        satisfy: schemas.SessionSatisfyCreate,
+        db: Session = Depends(get_db),
+        current_user: schemas.User = Depends(get_jwt_user),
+        ):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user not in db_session.users
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to satisfy this session",
+        )
+
+    crud.create_session_satisfy(db, current_user.id, session_id, satisfy)
+
 
 @sessionsRouter.get("/{session_id}/messages", response_model=list[schemas.Message])
 def read_messages(

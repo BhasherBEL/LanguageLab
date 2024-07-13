@@ -2,7 +2,12 @@ import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import User, { user } from './user';
 import { axiosInstance } from '$lib/api/apiInstance';
-import { createMessageAPI, getMessagesAPI, patchLanguageAPI } from '$lib/api/sessions';
+import {
+	createMessageAPI,
+	createSessionSatisfyAPI,
+	getMessagesAPI,
+	patchLanguageAPI
+} from '$lib/api/sessions';
 import Message from './message';
 import config from '$lib/config';
 
@@ -217,6 +222,10 @@ export default class Session {
 		}
 
 		return true;
+	}
+
+	async sendSatisfy(usefullness: number, easiness: number, remarks: string): Promise<boolean> {
+		return await createSessionSatisfyAPI(this.id, usefullness, easiness, remarks);
 	}
 
 	async changeLanguage(language: string): Promise<boolean> {

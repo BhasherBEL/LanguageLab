@@ -176,6 +176,17 @@
 		},
 		"availability": "Disponibilités"
 	},
+	"session": {
+		"modal": {
+			"satisfy": {
+				"title": "Questionnaire de satisfaction",
+				"success": "Vos réponses ont été enregistrées. Merci pour votre participation !",
+				"q1": "À quel point cette application est-elle utile ?",
+				"q2": "À quel point cette application est-elle facile à utiliser ?",
+				"q3": "Remarques éventuelles"
+			}
+		}
+	},
 	"button": {
 		"create": "Créer",
 		"submit": "Envoyer",
@@ -226,6 +237,15 @@
 		"bool": {
 			"true": "Oui",
 			"false": "Non"
+		}
+	},
+	"inputs": {
+		"range": {
+			"1": "Pas du tout",
+			"2": "Un peu",
+			"3": "Moyennement",
+			"4": "Beaucoup",
+			"5": "Énormément"
 		}
 	}
 }

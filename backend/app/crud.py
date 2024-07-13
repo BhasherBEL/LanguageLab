@@ -132,6 +132,18 @@ def update_session(db: Session, session: schemas.SessionUpdate, session_id: int)
     db.commit()
 
 
+def create_session_satisfy(
+    db: Session, user_id: int, session_id: int, satisfy: schemas.SessionSatisfyCreate
+):
+    db_satisfy = models.SessionSatisfy(
+        user_id=user_id, session_id=session_id, **satisfy.dict()
+    )
+    db.add(db_satisfy)
+    db.commit()
+    db.refresh(db_satisfy)
+    return db_satisfy
+
+
 def get_messages(db: Session, session_id: int, skip: int = 0, limit: int = 100):
     return (
         db.query(models.Message)

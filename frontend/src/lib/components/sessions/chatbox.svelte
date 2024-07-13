@@ -4,6 +4,9 @@
 	import MessageC from './message.svelte';
 	import { get } from 'svelte/store';
 	import Writebox from './writebox.svelte';
+	import { t } from '$lib/services/i18n';
+	import { toastSuccess } from '$lib/utils/toasts';
+	import { Icon, PencilSquare } from 'svelte-hero-icons';
 
 	export let token: string;
 
@@ -22,6 +25,7 @@
 				body: news.content,
 				icon: '/favicon.ico'
 			});
+			new Audio('/notification.wav').play();
 		}
 	});
 
@@ -71,10 +75,43 @@
 		}, 5000);
 	}
 
+	let satisfyTimeout: number;
+	let satisfyModalElement: HTMLDialogElement;
+
+	function satisfyModal() {
+		clearTimeout(satisfyTimeout);
+
+		const satifyTime =
+			(session.end_time.getTime() - session.start_time.getTime()) / 2 +
+			session.start_time.getTime();
+		const timeBeforeSatify = satifyTime - new Date().getTime();
+
+		if (timeBeforeSatify < 0) {
+			return;
+		}
+
+		satisfyTimeout = setTimeout(() => {
+			satisfyModalElement.showModal();
+		}, timeBeforeSatify);
+	}
+
+	let satisfyQ1: number = 2;
+	let satisfyQ2: number = 2;
+	let satisfyQ3: string = '';
+
+	async function submitSatisfy() {
+		const res = await session.sendSatisfy(satisfyQ1, satisfyQ2, satisfyQ3);
+		if (res) {
+			satisfyModalElement.close();
+			toastSuccess(get(t)('session.modal.satisfy.success'));
+		}
+	}
+
 	onMount(async () => {
 		await session.loadMessages();
 		session.wsConnect(token);
 		presenceIndicator();
+		satisfyModal();
 		Notification.requestPermission(); // Should do something with denial ?
 	});
 
@@ -102,4 +139,61 @@
 	<div class="flex flex-row h-30">
 		<Writebox {session} />
 	</div>
+</div>
+
+<dialog bind:this={satisfyModalElement} class="modal">
+	<div class="modal-box">
+		<form method="post" on:submit|preventDefault={submitSatisfy}>
+			<h3 class="text-lg font-bold">{$t('session.modal.satisfy.title')}</h3>
+			<p class="mt-4 mb-2">{$t('session.modal.satisfy.q1')}</p>
+			<input
+				bind:value={satisfyQ1}
+				type="range"
+				min="0"
+				max="4"
+				class="range range-primary"
+				step="1"
+			/>
+			<div class="flex w-full justify-between px-2 text-xs">
+				<span>{$t('inputs.range.1')}</span>
+				<span>{$t('inputs.range.2')}</span>
+				<span>{$t('inputs.range.3')}</span>
+				<span>{$t('inputs.range.4')}</span>
+				<span>{$t('inputs.range.5')}</span>
+			</div>
+			<p class="mt-4 mb-2">{$t('session.modal.satisfy.q2')}</p>
+			<input
+				bind:value={satisfyQ2}
+				type="range"
+				min="0"
+				max="4"
+				class="range range-primary"
+				step="1"
+			/>
+			<div class="flex w-full justify-between px-2 text-xs">
+				<span>{$t('inputs.range.1')}</span>
+				<span>{$t('inputs.range.2')}</span>
+				<span>{$t('inputs.range.3')}</span>
+				<span>{$t('inputs.range.4')}</span>
+				<span>{$t('inputs.range.5')}</span>
+			</div>
+			<p class="mt-4 mb-2">{$t('session.modal.satisfy.q3')}</p>
+			<textarea bind:value={satisfyQ3} class="textarea textarea-bordered w-full"></textarea>
+			<input type="submit" class="btn btn-primary mt-4 float-end" value={$t('button.submit')} />
+		</form>
+		<form method="dialog">
+			<button class="btn btn-sm btn-circle btn-ghost absolute right-6 top-6 text-xl">✕</button>
+		</form>
+	</div>
+</dialog>
+
+<div class="absolute bottom-4 right-4">
+	<button
+		on:click={() => {
+			satisfyModalElement.showModal();
+		}}
+		class="btn btn-primary btn-circle"
+	>
+		<Icon src={PencilSquare} class="icon" size="32" />
+	</button>
 </div>
