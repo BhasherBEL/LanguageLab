@@ -144,6 +144,10 @@ def create_session_satisfy(
     return db_satisfy
 
 
+def get_message(db: Session, message_id: int):
+    return db.query(models.Message).filter(models.Message.id == message_id).first()
+
+
 def get_messages(db: Session, session_id: int, skip: int = 0, limit: int = 100):
     return (
         db.query(models.Message)
@@ -186,6 +190,26 @@ def create_message_metadata(
     db.commit()
     db.refresh(db_message_metadata)
     return db_message_metadata
+
+
+def create_message_spellcheck(
+    db: Session,
+    message_id: int,
+    message: str,
+    spellcheck: schemas.MessageSpellCheckCreate,
+):
+    message = (
+        message[: spellcheck.start]
+        + "¤µ"
+        + message[spellcheck.start : spellcheck.end]
+        + "µ¤"
+        + message[spellcheck.end :]
+    )
+
+    db.query(models.Message).filter(models.Message.id == message_id).update(
+        {"content": message}
+    )
+    db.commit()
 
 
 def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):

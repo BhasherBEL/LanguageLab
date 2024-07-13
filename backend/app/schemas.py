@@ -128,6 +128,11 @@ class MessageCreate(BaseModel):
         from_attributes = True
 
 
+class MessageSpellCheckCreate(BaseModel):
+    start: int
+    end: int
+
+
 class TestTypingEntryCreate(BaseModel):
     exerciceId: int
     position: int

@@ -47,6 +47,7 @@
 	"type": "module",
 	"dependencies": {
 		"emoji-picker-element": "^1.21.3",
+		"sanitize-html": "^2.13.0",
 		"svelte-gravatar": "^1.0.3",
 		"svelte-i18n": "^4.0.0",
 		"svelte-material-icons": "^3.0.5",

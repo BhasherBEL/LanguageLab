@@ -1,6 +1,6 @@
 import Session from './session';
 import User from './user';
-import { updateMessageAPI } from '$lib/api/sessions';
+import { updateMessageAPI, addMessageSpellCheckAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
 import { writable, type Writable } from 'svelte/store';
 
@@ -81,6 +81,28 @@ export default class Message {
 		return true;
 	}
 
+	async addSpellCheck(start: number, end: number): Promise<boolean> {
+		for (let i = 0; i < start + 1; i++) {
+			if (this._content[i] == '¤' || this._content[i] == 'µ') {
+				start++;
+				end++;
+			}
+		}
+
+		const response = await addMessageSpellCheckAPI(this._session.id, this._id, start, end);
+
+		if (!response) return false;
+
+		this._content =
+			this._content.slice(0, start) +
+			'¤µ' +
+			this._content.slice(start, end) +
+			'µ¤' +
+			this._content.slice(end);
+
+		return true;
+	}
+
 	static parse(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		json: any,
@@ -148,6 +170,7 @@ export default class Message {
 			if (prev.created_at < m.created_at) {
 				prev._versions.update((v) => [...v, { content: m.content, date: m.created_at }]);
 				prev._content = m.content;
+				prev._id = m.id;
 				prev._edited = true;
 			}
 		}
