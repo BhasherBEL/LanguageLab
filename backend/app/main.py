@@ -511,13 +511,14 @@ def read_sessions(
 
     return crud.get_sessions(db, current_user, skip=skip, limit=limit)
 
-@sessionsRouter.post('/{session_id}/satisfy', status_code=status.HTTP_204_NO_CONTENT)
+
+@sessionsRouter.post("/{session_id}/satisfy", status_code=status.HTTP_204_NO_CONTENT)
 def create_session_satisfy(
-        session_id: int,
-        satisfy: schemas.SessionSatisfyCreate,
-        db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_jwt_user),
-        ):
+    session_id: int,
+    satisfy: schemas.SessionSatisfyCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
     db_session = crud.get_session(db, session_id)
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -609,6 +610,37 @@ def create_message(
     )
 
     return {"id": message.id, "message_id": message.message_id}
+
+
+@sessionsRouter.post(
+    "/{session_id}/messages/{message_id}/spellcheck",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def spellcheck_message(
+    session_id: int,
+    message_id: int,
+    spellcheck: schemas.MessageSpellCheckCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user not in db_session.users
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to spellcheck a message in this session",
+        )
+
+    message = crud.get_message(db, message_id)
+    if message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    crud.create_message_spellcheck(db, message_id, message.content, spellcheck)
 
 
 async def send_websoket_typing(session_id: int, user_id: int):
