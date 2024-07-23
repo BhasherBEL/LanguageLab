@@ -75,18 +75,18 @@ export async function updateMessageAPI(
 	return response.data;
 }
 
-export async function addMessageSpellCheckAPI(
+export async function addMessageFeedbackAPI(
 	id: number,
 	message_id: number,
 	start: number,
 	end: number
 ): Promise<boolean> {
-	const response = await axiosInstance.post(`/sessions/${id}/messages/${message_id}/spellcheck`, {
+	const response = await axiosInstance.post(`/sessions/${id}/messages/${message_id}/feedback`, {
 		start,
 		end
 	});
 	if (response.status !== 204) {
-		toastAlert('Failed to add spellcheck');
+		toastAlert('Failed to add feedback');
 		return false;
 	}
 	return true;

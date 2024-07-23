@@ -263,15 +263,24 @@ export default class Session {
 					}
 				} else if (data['action'] === 'update') {
 					const message = Message.parse(data['data']);
-					if (message && !get(this._messages).find((m) => m.id === message.id)) {
-						this._messages.update((messages) => {
-							const mEdited = messages.find((m) => m.message_id === message.message_id);
-							if (!mEdited) return messages;
-							mEdited.localUpdate(message.content);
-							return messages.map((m) => (m.message_id === message.message_id ? mEdited : m));
-						});
+					if (message) {
+						if (get(this._messages).find((m) => m.id === message.id)) {
+							this._messages.update((messages) => {
+								const mEdited = messages.find((m) => m.id === message.id);
+								if (!mEdited) return messages;
+								mEdited.localUpdate(message.content, true);
+								return messages.map((m) => (m.id === message.id ? mEdited : m));
+							});
+						} else {
+							this._messages.update((messages) => {
+								const mEdited = messages.find((m) => m.message_id === message.message_id);
+								if (!mEdited) return messages;
+								mEdited.localUpdate(message.content);
+								return messages.map((m) => (m.message_id === message.message_id ? mEdited : m));
+							});
 
-						return;
+							return;
+						}
 					}
 				} else if (data['action'] == 'typing') {
 					this._lastTyping.set(new Date());

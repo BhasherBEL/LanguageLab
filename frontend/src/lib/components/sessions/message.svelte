@@ -126,7 +126,7 @@
 		const end = range.end;
 		console.log(start, end);
 
-		const res = await message.addSpellCheck(start, end);
+		const res = await message.addFeedback(start, end);
 
 		if (res) {
 			selection.removeAllRanges();

@@ -613,13 +613,14 @@ def create_message(
 
 
 @sessionsRouter.post(
-    "/{session_id}/messages/{message_id}/spellcheck",
+    "/{session_id}/messages/{message_id}/feedback",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def spellcheck_message(
+def feedback_message(
     session_id: int,
     message_id: int,
-    spellcheck: schemas.MessageSpellCheckCreate,
+    feedback: schemas.MessageFeedbackCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
@@ -633,14 +634,23 @@ def spellcheck_message(
     ):
         raise HTTPException(
             status_code=401,
-            detail="You do not have permission to spellcheck a message in this session",
+            detail="You do not have permission to feedback this message in this session",
         )
 
     message = crud.get_message(db, message_id)
     if message is None:
         raise HTTPException(status_code=404, detail="Message not found")
 
-    crud.create_message_spellcheck(db, message_id, message.content, spellcheck)
+    new_message = crud.create_message_feedback(db, message_id, message.content, feedback)
+
+    message.content = new_message
+
+    background_tasks.add_task(
+        send_websoket_message,
+        session_id,
+        schemas.Message.model_validate(message),
+        'update',
+    )
 
 
 async def send_websoket_typing(session_id: int, user_id: int):
