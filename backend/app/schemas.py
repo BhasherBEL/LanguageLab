@@ -128,7 +128,7 @@ class MessageCreate(BaseModel):
         from_attributes = True
 
 
-class MessageSpellCheckCreate(BaseModel):
+class MessageFeedbackCreate(BaseModel):
     start: int
     end: int
 

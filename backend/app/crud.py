@@ -192,24 +192,26 @@ def create_message_metadata(
     return db_message_metadata
 
 
-def create_message_spellcheck(
+def create_message_feedback(
     db: Session,
     message_id: int,
     message: str,
-    spellcheck: schemas.MessageSpellCheckCreate,
-):
+    feedback: schemas.MessageFeedbackCreate,
+) -> str:
     message = (
-        message[: spellcheck.start]
+        message[: feedback.start]
         + "¤µ"
-        + message[spellcheck.start : spellcheck.end]
+        + message[feedback.start : feedback.end]
         + "µ¤"
-        + message[spellcheck.end :]
+        + message[feedback.end :]
     )
 
     db.query(models.Message).filter(models.Message.id == message_id).update(
         {"content": message}
     )
     db.commit()
+
+    return message
 
 
 def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):

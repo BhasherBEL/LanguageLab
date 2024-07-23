@@ -1,6 +1,6 @@
 import Session from './session';
 import User from './user';
-import { updateMessageAPI, addMessageSpellCheckAPI } from '$lib/api/sessions';
+import { updateMessageAPI, addMessageFeedbackAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
 import { writable, type Writable } from 'svelte/store';
 
@@ -74,14 +74,14 @@ export default class Message {
 		return true;
 	}
 
-	async localUpdate(content: string): Promise<boolean> {
+	async localUpdate(content: string, force: boolean = false): Promise<boolean> {
 		this._content = content;
-		this._edited = true;
+		if (!force) this._edited = true;
 
 		return true;
 	}
 
-	async addSpellCheck(start: number, end: number): Promise<boolean> {
+	async addFeedback(start: number, end: number): Promise<boolean> {
 		for (let i = 0; i < start + 1; i++) {
 			if (this._content[i] == '¤' || this._content[i] == 'µ') {
 				start++;
@@ -89,7 +89,7 @@ export default class Message {
 			}
 		}
 
-		const response = await addMessageSpellCheckAPI(this._session.id, this._id, start, end);
+		const response = await addMessageFeedbackAPI(this._session.id, this._id, start, end);
 
 		if (!response) return false;
 
