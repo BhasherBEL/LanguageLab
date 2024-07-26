@@ -570,6 +570,15 @@ async def send_websoket_message(session_id: int, message: schemas.Message, actio
             await user_websocket.send_text(content)
 
 
+async def send_websoket_feedback(session_id: int, feedback: dict):
+
+    content = json.dumps({"type": "message", "action": "feedback", "data": feedback})
+
+    for _, user_websockets in websocket_users[session_id].items():
+        for user_websocket in user_websockets:
+            await user_websocket.send_text(content)
+
+
 def store_metadata(db, message_id, metadata: list[schemas.MessageMetadataCreate]):
     for m in metadata:
         crud.create_message_metadata(db, message_id, m)
@@ -614,7 +623,7 @@ def create_message(
 
 @sessionsRouter.post(
     "/{session_id}/messages/{message_id}/feedback",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_201_CREATED,
 )
 def feedback_message(
     session_id: int,
@@ -641,16 +650,15 @@ def feedback_message(
     if message is None:
         raise HTTPException(status_code=404, detail="Message not found")
 
-    new_message = crud.create_message_feedback(db, message_id, message.content, feedback)
-
-    message.content = new_message
+    feedback = crud.create_message_feedback(db, message_id, feedback)
 
     background_tasks.add_task(
-        send_websoket_message,
+        send_websoket_feedback,
         session_id,
-        schemas.Message.model_validate(message),
-        'update',
+        schemas.MessageFeedback.model_validate(feedback).to_dict()
     )
+
+    return feedback.id
 
 
 async def send_websoket_typing(session_id: int, user_id: int):

@@ -195,23 +195,15 @@ def create_message_metadata(
 def create_message_feedback(
     db: Session,
     message_id: int,
-    message: str,
     feedback: schemas.MessageFeedbackCreate,
-) -> str:
-    message = (
-        message[: feedback.start]
-        + "¤µ"
-        + message[feedback.start : feedback.end]
-        + "µ¤"
-        + message[feedback.end :]
+):
+    db_message_feedback = models.MessageFeedback(
+        message_id=message_id, **feedback.dict()
     )
-
-    db.query(models.Message).filter(models.Message.id == message_id).update(
-        {"content": message}
-    )
+    db.add(db_message_feedback)
     db.commit()
-
-    return message
+    db.refresh(db_message_feedback)
+    return db_message_feedback
 
 
 def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):

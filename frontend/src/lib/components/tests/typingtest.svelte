@@ -74,7 +74,6 @@
 			on:click={() => {
 				currentExercice++;
 				inProgress = false;
-				console.log(data);
 			}}
 			disabled={inProgress}
 		>

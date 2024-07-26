@@ -75,21 +75,23 @@ export async function updateMessageAPI(
 	return response.data;
 }
 
-export async function addMessageFeedbackAPI(
+export async function createMessageFeedbackAPI(
 	id: number,
 	message_id: number,
 	start: number,
-	end: number
-): Promise<boolean> {
+	end: number,
+	content: string | null
+): Promise<number> {
 	const response = await axiosInstance.post(`/sessions/${id}/messages/${message_id}/feedback`, {
 		start,
-		end
+		end,
+		content
 	});
-	if (response.status !== 204) {
+	if (response.status !== 201) {
 		toastAlert('Failed to add feedback');
-		return false;
+		return -1;
 	}
-	return true;
+	return response.data;
 }
 
 export async function patchLanguageAPI(id: number, language: string) {

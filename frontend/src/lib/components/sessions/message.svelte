@@ -1,20 +1,15 @@
 <script lang="ts">
 	import type Message from '$lib/types/message';
 	import { displayTime } from '$lib/utils/date';
-	import {
-		ChatBubbleBottomCenter,
-		ChatBubbleBottomCenterText,
-		Check,
-		Icon,
-		Pencil,
-		PencilSquare
-	} from 'svelte-hero-icons';
+	import { Check, Icon, Pencil } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
 	import Gravatar from 'svelte-gravatar';
 	import { t } from '$lib/services/i18n';
 	import { onMount } from 'svelte';
 	import SpellCheck from '$lib/components/icons/spellCheck.svelte';
-	import { sanitize } from '$lib/utils/sanitize';
+	import ChatBubble from '../icons/chatBubble.svelte';
+	import { get } from 'svelte/store';
+	import type Feedback from '$lib/types/feedback';
 
 	export let message: Message;
 
@@ -91,7 +86,7 @@
 
 	function onTextSelect() {
 		const selection = window.getSelection();
-		if (!selection) return;
+		if (!selection || selection.rangeCount < 1 || !hightlight) return;
 		const range = selection.getRangeAt(0);
 		const start = range.startOffset;
 		const end = range.endOffset;
@@ -106,36 +101,58 @@
 				hightlight.style.visibility = 'hidden';
 				return;
 			}
-			hightlight.style.top = rect.bottom + 'px';
-			hightlight.style.left = rect.right + 'px';
+			hightlight.style.top = (rect.top + rect.bottom - hightlight.clientHeight) / 2 + 'px';
+			hightlight.style.left = rect.right + 10 + 'px';
 			hightlight.style.visibility = 'visible';
 		} else {
 			hightlight.style.visibility = 'hidden';
 		}
 	}
 
-	async function onSpellSelect() {
+	async function onSelect(hasComment: boolean) {
 		const selection = window.getSelection();
 		if (!selection) {
-			hightlight.style.visibility = 'hidden';
+			if (hightlight) hightlight.style.visibility = 'hidden';
 			return;
 		}
 		const range = getSelectionCharacterOffsetWithin();
 
 		const start = range.start;
 		const end = range.end;
-		console.log(start, end);
+		let comment: string | null = null;
 
-		const res = await message.addFeedback(start, end);
+		if (hasComment) {
+			comment = prompt($t('chatbox.comment'));
+			if (!comment) return;
+		}
+
+		const res = await message.addFeedback(start, end, comment);
 
 		if (res) {
 			selection.removeAllRanges();
 			hightlight.style.visibility = 'hidden';
-			contentDiv.innerHTML = sanitize(message.content)
-				.replaceAll('¤µ', '<span class="decoration-wavy decoration-orange-500 underline">')
-				.replaceAll('µ¤', '</span>');
 		}
 	}
+
+	function getParts(content: string, feedbacks: Feedback[]) {
+		let parts: { text: string; feedback: Feedback | null }[] = [];
+		let current = 0;
+		feedbacks.sort((a: Feedback, b: Feedback) => a.start - b.start);
+		for (const feedback of feedbacks) {
+			if (feedback.start > current) {
+				parts.push({ text: content.slice(current, feedback.start), feedback: null });
+			}
+			parts.push({ text: content.slice(feedback.start, feedback.end), feedback });
+			current = feedback.end;
+		}
+		if (current < content.length) {
+			parts.push({ text: content.slice(current), feedback: null });
+		}
+		return parts;
+	}
+
+	$: fbs = message.feedbacks;
+	$: parts = getParts(message.content, $fbs);
 
 	const isSender = message.user.id == $user?.id;
 </script>
@@ -157,9 +174,29 @@
 		class:text-white={isSender}
 	>
 		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
-			{@html sanitize(message.content)
-				.replaceAll('¤µ', '<span class="decoration-wavy decoration-orange-500 underline">')
-				.replaceAll('µ¤', '</span>')}
+			{#each parts as part}
+				{#if part.feedback}
+					{#if part.feedback.content}
+						<span class="tooltip" data-tip={part.feedback.content}
+							><!--
+							--><span class="underline decoration-red-500 decoration-2 hover:cursor-help"
+								><!--
+							-->{part.text}<!--
+						--></span
+							><!--
+						--></span
+						>
+					{:else}
+						<span class="underline decoration-wavy decoration-red-500 decoration-1"
+							><!--
+							-->{part.text}<!--
+						--></span
+						>
+					{/if}
+				{:else}
+					{part.text}
+				{/if}
+			{/each}
 		</div>
 		{#if isEdit}
 			<button
@@ -198,12 +235,7 @@
 						{#each $messageVersions as version}
 							<div class="flex justify-between items-center border-b border-gray-300 py-1">
 								<div>
-									{@html sanitize(version.content)
-										.replaceAll(
-											'¤µ',
-											'<span class="decoration-wavy decoration-orange-500 underline">'
-										)
-										.replaceAll('µ¤', '</span>')}
+									{version.content}
 								</div>
 								<div class="whitespace-nowrap">{displayTime(version.date)}</div>
 							</div>
@@ -222,14 +254,15 @@
 
 <div class="absolute invisible rounded-full border-black border bg-white" bind:this={hightlight}>
 	<button
-		on:click={onSpellSelect}
+		on:click={() => onSelect(false)}
 		class="bg-opacity-0 bg-blue-500 hover:bg-opacity-50 p-2 pl-4 rounded-l-full"
 	>
 		<SpellCheck />
 	</button><!---
 	--><button
-		class="bg-opacity-0 bg-blue-500 hover:bg-opacity-50 p-2 pr-4 rounded-r-full hover:cursor-not-allowed"
+		on:click={() => onSelect(true)}
+		class="bg-opacity-0 bg-blue-500 hover:bg-opacity-50 p-2 pr-4 rounded-r-full"
 	>
-		<Icon src={ChatBubbleBottomCenterText} size="20" />
+		<ChatBubble />
 	</button>
 </div>

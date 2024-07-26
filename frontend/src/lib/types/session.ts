@@ -1,4 +1,4 @@
-import { toastAlert } from '$lib/utils/toasts';
+import { toastAlert, toastWarning } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import User, { user } from './user';
 import { axiosInstance } from '$lib/api/apiInstance';
@@ -10,6 +10,7 @@ import {
 } from '$lib/api/sessions';
 import Message from './message';
 import config from '$lib/config';
+import Feedback from './feedback';
 
 const { subscribe, set, update } = writable<Session[]>([]);
 
@@ -285,6 +286,15 @@ export default class Session {
 				} else if (data['action'] == 'typing') {
 					this._lastTyping.set(new Date());
 					return;
+				} else if (data['action'] == 'feedback') {
+					const message = get(this._messages).find((m) => m.id === data['data']['message_id']);
+					if (message) {
+						const feedback = Feedback.parse(data['data'], message);
+						if (feedback) {
+							feedback.message.localFeedback(feedback);
+							return;
+						}
+					}
 				}
 			} else if (data['type'] === 'presence') {
 				const user_id = data['data']['user'];
