@@ -89,6 +89,34 @@ class SessionSatisfyCreate(BaseModel):
     remarks: str | None = None
 
 
+class MessageFeedback(BaseModel):
+    id: int
+    message_id: int
+    start: int
+    end: int
+    content: str
+    date: datetime.datetime
+
+    class Config:
+        from_attributes = True
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "message_id": self.message_id,
+            "start": self.start,
+            "end": self.end,
+            "content": self.content,
+            "date": self.date.isoformat(),
+        }
+
+
+class MessageFeedbackCreate(BaseModel):
+    start: int
+    end: int
+    content: str | None = None
+
+
 class Message(BaseModel):
     id: int
     message_id: str
@@ -96,6 +124,7 @@ class Message(BaseModel):
     user_id: int
     session_id: int
     created_at: datetime.datetime
+    feedbacks: list[MessageFeedback]
 
     class Config:
         from_attributes = True
@@ -108,6 +137,7 @@ class Message(BaseModel):
             "user_id": self.user_id,
             "session_id": self.session_id,
             "created_at": self.created_at.isoformat(),
+            "feedbacks": [feedback.to_dict() for feedback in self.feedbacks],
         }
 
 
@@ -126,11 +156,6 @@ class MessageCreate(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class MessageFeedbackCreate(BaseModel):
-    start: int
-    end: int
 
 
 class TestTypingEntryCreate(BaseModel):

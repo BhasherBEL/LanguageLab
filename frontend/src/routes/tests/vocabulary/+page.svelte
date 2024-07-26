@@ -17,7 +17,6 @@
 
 	async function surveyComplete(survey, options) {
 		options.showSaveInProgress();
-		console.log(survey.data);
 
 		const res = await sendTestVocabularyAPI(JSON.stringify(survey.data));
 

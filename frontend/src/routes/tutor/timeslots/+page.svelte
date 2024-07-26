@@ -18,7 +18,6 @@
 			timeslots = $user.availability;
 			lastTimeslots = timeslots;
 			calcom_link = $user.calcom_link || '';
-			console.log(calcom_link);
 			last_calcom_link = calcom_link;
 			ready = true;
 		}

@@ -1,8 +1,9 @@
 import Session from './session';
 import User from './user';
-import { updateMessageAPI, addMessageFeedbackAPI } from '$lib/api/sessions';
+import { updateMessageAPI, createMessageFeedbackAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
-import { writable, type Writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
+import Feedback from './feedback';
 
 export default class Message {
 	private _id: number;
@@ -13,6 +14,7 @@ export default class Message {
 	private _session: Session;
 	private _edited: boolean = false;
 	private _versions = writable([] as { content: string; date: Date }[]);
+	private _feedbacks = writable([] as Feedback[]);
 
 	public constructor(
 		id: number,
@@ -63,6 +65,10 @@ export default class Message {
 		return this._versions;
 	}
 
+	get feedbacks(): Writable<Feedback[]> {
+		return this._feedbacks;
+	}
+
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
 		const response = await updateMessageAPI(this._session.id, this._message_id, content, metadata);
 		if (response == null || response.id == null) return false;
@@ -81,26 +87,26 @@ export default class Message {
 		return true;
 	}
 
-	async addFeedback(start: number, end: number): Promise<boolean> {
-		for (let i = 0; i < start + 1; i++) {
-			if (this._content[i] == '¤' || this._content[i] == 'µ') {
-				start++;
-				end++;
-			}
-		}
+	async addFeedback(start: number, end: number, content: string | null = null): Promise<boolean> {
+		const response = await createMessageFeedbackAPI(
+			this._session.id,
+			this._id,
+			start,
+			end,
+			content
+		);
+		if (response == -1) return false;
 
-		const response = await addMessageFeedbackAPI(this._session.id, this._id, start, end);
-
-		if (!response) return false;
-
-		this._content =
-			this._content.slice(0, start) +
-			'¤µ' +
-			this._content.slice(start, end) +
-			'µ¤' +
-			this._content.slice(end);
-
+		const feedback = new Feedback(response, this, start, end, content);
+		this.localFeedback(feedback);
 		return true;
+	}
+
+	localFeedback(feedback: Feedback): void {
+		this._feedbacks.update((f) => {
+			if (!f.find((fb) => fb.id == feedback.id)) return [...f, feedback];
+			return f.map((fb) => (fb.id == feedback.id ? feedback : fb));
+		});
 	}
 
 	static parse(
@@ -138,6 +144,8 @@ export default class Message {
 			user,
 			session
 		);
+
+		message.feedbacks.set(Feedback.parseAll(json.feedbacks, message));
 
 		return message;
 	}

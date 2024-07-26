@@ -112,6 +112,8 @@ class Message(Base):
     session_id = Column(Integer, ForeignKey("sessions.id"))
     created_at = Column(DateTime, default=datetime.datetime.now)
 
+    feedbacks = relationship("MessageFeedback", backref="message")
+
 
 class MessageMetadata(Base):
     __tablename__ = "message_metadata"
@@ -120,6 +122,17 @@ class MessageMetadata(Base):
     message_id = Column(Integer, ForeignKey("messages.id"))
     message = Column(String)
     date = Column(Integer)
+
+
+class MessageFeedback(Base):
+    __tablename__ = "message_feedbacks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    message_id = Column(Integer, ForeignKey("messages.id"))
+    start = Column(Integer)
+    end = Column(Integer)
+    content = Column(String, default="")
+    date = Column(DateTime, default=datetime.datetime.now)
 
 
 class TestTyping(Base):
