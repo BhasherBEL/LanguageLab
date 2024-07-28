@@ -3,7 +3,9 @@ export default {
 	API_PROXY: import.meta.env.VITE_API_PROXY || 'https://languagelab.sipr.ucl.ac.be:8000',
 	APP_URL: import.meta.env.VITE_APP_URL || 'https://languagelab.sipr.ucl.ac.be',
 	WS_URL: import.meta.env.VITE_WS_URL || 'wss://languagelab.sipr.ucl.ac.be/api/v1/ws',
-	LEARNING_LANGUAGES: ['fr'], // future: ['fr', 'en']
+	LEARNING_LANGUAGES: {
+		fra: 'French - fran\u00e7ais'
+	},
 	SPECIAL_CHARS: [
 		'à',
 		'â',

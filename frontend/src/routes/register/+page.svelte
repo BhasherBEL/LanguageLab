@@ -14,7 +14,7 @@
 		createUserContactAPI,
 		getUserContactsAPI
 	} from '$lib/api/users';
-	import { ArrowRight, Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
+	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import AvailableTutors from '$lib/components/users/availableTutors.svelte';
 
@@ -29,6 +29,7 @@
 			'<label for="humanCheck" class="cursor-pointer label">' +
 			$t('register.humans') +
 			'<input type="checkbox" id="humanCheck" class="checkbox" required></label>';*/
+
 		const u = get(user);
 
 		if (u == null) {
@@ -375,8 +376,8 @@
 					required
 					bind:value={target_language}
 				>
-					{#each config.LEARNING_LANGUAGES as language}
-						<option value={language}>{language}</option>
+					{#each Object.entries(config.LEARNING_LANGUAGES) as [code, name]}
+						<option value={code}>{name}</option>
 					{/each}
 				</select>
 			</div>
