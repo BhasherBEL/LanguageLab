@@ -177,9 +177,9 @@
 			{#each parts as part}
 				{#if part.feedback}
 					{#if part.feedback.content}
-						<span class="tooltip" data-tip={part.feedback.content}
+						<span class="tooltip tooltip-accent" data-tip={part.feedback.content}
 							><!--
-							--><span class="underline decoration-red-500 decoration-2 hover:cursor-help"
+							--><span class="underline decoration-wavy decoration-blue-500 hover:cursor-help"
 								><!--
 							-->{part.text}<!--
 						--></span
