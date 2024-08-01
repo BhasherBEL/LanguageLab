@@ -219,3 +219,4 @@ class SurveyResponse(Base):
     question_id = Column(Integer, ForeignKey("survey_questions.id"))
     selected_id = Column(Integer)
     response_time = Column(Float)
+    text = Column(String)

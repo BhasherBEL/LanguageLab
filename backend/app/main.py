@@ -655,7 +655,7 @@ def feedback_message(
     background_tasks.add_task(
         send_websoket_feedback,
         session_id,
-        schemas.MessageFeedback.model_validate(feedback).to_dict()
+        schemas.MessageFeedback.model_validate(feedback).to_dict(),
     )
 
     return feedback.id

@@ -19,7 +19,8 @@ export async function sendSurveyResponseAPI(
 	group_id: number,
 	question_id: number,
 	option_id: number,
-	response_time: number
+	response_time: number,
+	text: string = ''
 ) {
 	const response = await axiosInstance.post(`/surveys/responses`, {
 		uuid,
@@ -28,7 +29,8 @@ export async function sendSurveyResponseAPI(
 		question_id,
 		group_id,
 		selected_id: option_id,
-		response_time
+		response_time,
+		text
 	});
 
 	if (response.status !== 201) {

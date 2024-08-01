@@ -249,6 +249,7 @@ class SurveyResponseCreate(BaseModel):
     question_id: int
     selected_id: int
     response_time: float
+    text: str | None = None
 
 
 class SurveyResponse(BaseModel):
@@ -261,3 +262,4 @@ class SurveyResponse(BaseModel):
     question_id: int
     selected_id: int
     response_time: float
+    text: str | None = None
