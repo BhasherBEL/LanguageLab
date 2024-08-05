@@ -4,6 +4,8 @@ import { updateMessageAPI, createMessageFeedbackAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import Feedback from './feedback';
+import { parse } from 'svelte/compiler';
+import { parseToLocalDate } from '$lib/utils/date';
 
 export default class Message {
 	private _id: number;
@@ -140,7 +142,7 @@ export default class Message {
 			json.id,
 			json.message_id,
 			json.content,
-			new Date(json.created_at),
+			parseToLocalDate(json.created_at),
 			user,
 			session
 		);
