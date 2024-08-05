@@ -11,6 +11,7 @@ import {
 import Message from './message';
 import config from '$lib/config';
 import Feedback from './feedback';
+import { parseToLocalDate } from '$lib/utils/date';
 
 const { subscribe, set, update } = writable<Session[]>([]);
 
@@ -371,9 +372,9 @@ export default class Session {
 			json.token,
 			json.is_active,
 			[],
-			new Date(json.created_at),
-			new Date(json.start_time),
-			new Date(json.end_time),
+			parseToLocalDate(json.created_at),
+			parseToLocalDate(json.start_time),
+			parseToLocalDate(json.end_time),
 			json.language
 		);
 
