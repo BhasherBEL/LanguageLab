@@ -2,9 +2,8 @@ import Session from './session';
 import User from './user';
 import { updateMessageAPI, createMessageFeedbackAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
-import { get, writable, type Writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import Feedback from './feedback';
-import { parse } from 'svelte/compiler';
 import { parseToLocalDate } from '$lib/utils/date';
 
 export default class Message {
