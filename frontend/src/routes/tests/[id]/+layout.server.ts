@@ -1,6 +1,6 @@
 import { type ServerLoad, redirect } from '@sveltejs/kit';
 
-const publicly_allowed = ['/login', '/register', '/tests/vocabulary', '/surveys'];
+const publicly_allowed = ['/login', '/register', '/tests', '/surveys'];
 
 const isPublic = (path: string) => {
 	for (const allowed of publicly_allowed) {
