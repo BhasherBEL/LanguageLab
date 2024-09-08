@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Header from '$lib/components/header.svelte';
 	import User, { users } from '$lib/types/user';
 	import { getUsersAPI } from '$lib/api/users';
 	import { t } from '$lib/services/i18n';
 	import { Icon, Trash } from 'svelte-hero-icons';
+	import UserItem from '$lib/components/users/userItem.svelte';
 
 	let ready = false;
 
@@ -57,27 +57,7 @@
 			</thead>
 			<tbody>
 				{#each $users as user (user.id)}
-					<tr>
-						<td>{user.id}</td>
-						<td>{user.nickname}</td>
-						<td>{user.email}</td>
-						<td>
-							{#if user.type === 0}
-								{$t('users.type.admin')}
-							{:else if user.type === 1}
-								{$t('users.type.tutor')}
-							{:else}
-								{$t('users.type.student')}
-							{/if}
-						</td>
-						<td>{$t('utils.bool.' + user.is_active)}</td>
-						<td class="py-3 px-6 flex justify-center">
-							<Icon
-								src={Trash}
-								class="w-5 hover:cursor-not-allowed stroke-gray-400 hover:text-secondaryHover"
-							/>
-						</td></tr
-					>
+					<UserItem {user} />
 				{/each}
 			</tbody>
 			<tfoot class="">

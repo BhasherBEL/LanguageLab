@@ -151,6 +151,24 @@ export default class User {
 		});
 	}
 
+	async patch(data: any): Promise<boolean> {
+		const res = await patchUserAPI(this.id, data);
+		if (res) {
+			if (data.email) this._email = data.email;
+			if (data.nickname) this._nickname = data.nickname;
+			if (data.type) this._type = data.type;
+			if (data.availability) this._availability = BigInt(data.availability);
+			if (data.is_active) this._is_active = data.is_active;
+			if (data.ui_language) this._ui_language = data.ui_language;
+			if (data.home_language) this._home_language = data.home_language;
+			if (data.target_language) this._target_language = data.target_language;
+			if (data.birthdate) this._birthdate = data.birthdate;
+			if (data.gender) this._gender = data.gender;
+			if (data.calcum_link) this._calcom_link = data.calcom_link;
+		}
+		return res;
+	}
+
 	static find(user_id: number): User | undefined {
 		return get(users).find((user) => user.id === user_id);
 	}
