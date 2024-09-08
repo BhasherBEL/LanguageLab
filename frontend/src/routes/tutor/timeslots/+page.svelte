@@ -4,7 +4,7 @@
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import { user } from '$lib/types/user';
 	import { toastWarning } from '$lib/utils/toasts';
-	import { Icon, Calendar } from 'svelte-hero-icons';
+	import { Icon, Calendar, QuestionMarkCircle } from 'svelte-hero-icons';
 
 	$: lastTimeslots = 0n;
 	$: timeslots = 0n;
@@ -48,6 +48,17 @@
 			<label class="label" for="calcom">
 				<span class="label-text">
 					{$t('timeslots.calcom')}
+					<a
+						href="https://forge.uclouvain.be/sbibauw/languagelab/-/blob/93897d67f63ec81ebbe13b10035e4cd5a3a09071/docs/cal.com.md"
+						target="_blank"
+					>
+						<Icon
+							src={QuestionMarkCircle}
+							class="w-5 h-5 cursor-pointer inline"
+							title="Documentation"
+							solid
+						/>
+					</a>
 				</span>
 			</label>
 			<div class="input flex items-center">
