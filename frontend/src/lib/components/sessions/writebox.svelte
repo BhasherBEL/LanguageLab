@@ -25,8 +25,8 @@
 	let disabled =
 		us == null ||
 		session.users.find((u) => us.id === u.id) === undefined ||
-		new Date() > session.end_time ||
-		new Date() < session.start_time;
+		new Date().getTime() > session.end_time.getTime() + 3600000 ||
+		new Date().getTime() < session.start_time.getTime() - 3600000;
 
 	async function sendMessage() {
 		message = message.trim();

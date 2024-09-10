@@ -10,6 +10,8 @@
 	import ChatBubble from '../icons/chatBubble.svelte';
 	import { get } from 'svelte/store';
 	import type Feedback from '$lib/types/feedback';
+	import linkifyHtml from 'linkify-html';
+	import { sanitize } from '$lib/utils/sanitize';
 
 	export let message: Message;
 
@@ -194,7 +196,7 @@
 						>
 					{/if}
 				{:else}
-					{part.text}
+					{@html linkifyHtml(sanitize(part.text), { className: 'underline' })}
 				{/if}
 			{/each}
 		</div>
