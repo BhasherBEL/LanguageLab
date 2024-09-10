@@ -206,6 +206,14 @@ def create_message_feedback(
     return db_message_feedback
 
 
+def create_study(db: Session, study: schemas.StudyCreate):
+    db_study = models.Study(**study.dict())
+    db.add(db_study)
+    db.commit()
+    db.refresh(db_study)
+    return db_study
+
+
 def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):
     db_test = models.TestTyping(user_id=user.id)
     db.add(db_test)

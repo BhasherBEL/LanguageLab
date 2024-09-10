@@ -46,6 +46,7 @@ class User(Base):
     birthdate = Column(Integer, default=None)
     gender = Column(String, default=None)
     calcom_link = Column(String, default="")
+    study_id = Column(Integer, ForeignKey("studies.id"), default=None)
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"
@@ -220,3 +221,13 @@ class SurveyResponse(Base):
     selected_id = Column(Integer)
     response_time = Column(Float)
     text = Column(String)
+
+
+class Study(Base):
+    __tablename__ = "studies"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    chat_duration = Column(Integer)

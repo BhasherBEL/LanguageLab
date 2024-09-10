@@ -66,6 +66,7 @@ v1Router = APIRouter(prefix="/v1")
 authRouter = APIRouter(prefix="/auth", tags=["auth"])
 usersRouter = APIRouter(prefix="/users", tags=["users"])
 sessionsRouter = APIRouter(prefix="/sessions", tags=["sessions"])
+studyRouter = APIRouter(prefix="/studies", tags=["studies"])
 websocketRouter = APIRouter(prefix="/ws", tags=["websocket"])
 webhookRouter = APIRouter(prefix="/webhooks", tags=["webhook"])
 surveyRouter = APIRouter(prefix="/surveys", tags=["surveys"])
@@ -715,6 +716,17 @@ def propagate_presence(
 
     return
 
+@studyRouter.post("/", status_code=status.HTTP_201_CREATED)
+def study_create(
+    study: schemas.StudyCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to create a study"
+        )
+    return crud.create_study(db, study).id
 
 @websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
@@ -1066,10 +1078,10 @@ def get_survey_responses(
 
     return crud.get_survey_responses(db, survey_id)
 
-
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
 v1Router.include_router(sessionsRouter)
+v1Router.include_router(studyRouter)
 v1Router.include_router(websocketRouter)
 v1Router.include_router(webhookRouter)
 v1Router.include_router(surveyRouter)

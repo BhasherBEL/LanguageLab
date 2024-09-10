@@ -17,6 +17,7 @@ class User(BaseModel):
     birthdate: datetime.datetime | None
     gender: str | None = None
     calcom_link: str | None
+    study_id: int | None = None
 
     class Config:
         from_attributes = True
@@ -35,6 +36,7 @@ class UserCreate(BaseModel):
     birthdate: datetime.datetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
+    study_id: int | None = None
 
 
 class UserUpdate(BaseModel):
@@ -50,6 +52,7 @@ class UserUpdate(BaseModel):
     birthdate: datetime.datetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
+    study_id: int | None = None
 
     class Config:
         from_attributes = True
@@ -263,3 +266,20 @@ class SurveyResponse(BaseModel):
     selected_id: int
     response_time: float
     text: str | None = None
+
+
+class Study(BaseModel):
+    id: int
+    title: str
+    description: str
+    start_date: datetime.datetime
+    end_date: datetime.datetime
+    chat_duration: int
+
+
+class StudyCreate(BaseModel):
+    title: str
+    description: str
+    start_date: datetime.datetime
+    end_date: datetime.datetime
+    chat_duration: int = 30 * 60
