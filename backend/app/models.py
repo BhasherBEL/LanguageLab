@@ -47,6 +47,7 @@ class User(Base):
     gender = Column(String, default=None)
     calcom_link = Column(String, default="")
     study_id = Column(Integer, ForeignKey("studies.id"), default=None)
+    last_survey = Column(DateTime, default=None)
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"
@@ -67,6 +68,18 @@ class User(Base):
         secondaryjoin=(id == Contact.user_id),
         back_populates="contacts",
     )
+
+
+class UserSurveyWeekly(Base):
+    __tablename__ = "users_survey_weekly"
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    q1 = Column(Float)
+    q2 = Column(Float)
+    q3 = Column(Float)
+    q4 = Column(Float)
 
 
 class Session(Base):

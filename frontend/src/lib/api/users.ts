@@ -145,3 +145,23 @@ export async function createTestTypingAPI(
 
 	return response.data;
 }
+
+export async function createWeeklySurveyAPI(
+	user_id: number,
+	q1: number,
+	q2: number,
+	q3: number,
+	q4: number
+): Promise<number | null> {
+	const response = await axiosInstance.post(`/users/${user_id}/surveys/weekly`, {
+		q1,
+		q2,
+		q3,
+		q4
+	});
+	if (response.status !== 201) {
+		toastAlert('Failed to create weekly survey');
+		return null;
+	}
+	return response.data;
+}

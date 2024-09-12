@@ -1,4 +1,5 @@
 import { createUserAPI, getUsersAPI, patchUserAPI } from '$lib/api/users';
+import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
 
@@ -30,6 +31,8 @@ export default class User {
 	private _birthdate: number | null;
 	private _gender: string | null;
 	private _calcom_link: string | null;
+	private _study_id: number | null;
+	private _last_survey: Date | null;
 
 	private constructor(
 		id: number,
@@ -43,7 +46,9 @@ export default class User {
 		target_language: string | null,
 		birthdate: number | null,
 		gender: string | null,
-		calcom_link: string | null
+		calcom_link: string | null,
+		study_id: number | null,
+		last_survey: Date | null
 	) {
 		this._id = id;
 		this._email = email;
@@ -57,6 +62,8 @@ export default class User {
 		this._birthdate = birthdate;
 		this._gender = gender;
 		this._calcom_link = calcom_link;
+		this._study_id = study_id;
+		this._last_survey = last_survey;
 	}
 
 	get id(): number {
@@ -115,6 +122,14 @@ export default class User {
 		return this._calcom_link;
 	}
 
+	get study_id(): number | null {
+		return this._study_id;
+	}
+
+	get last_survey(): Date | null {
+		return this._last_survey;
+	}
+
 	equals<T>(obj: T): boolean {
 		if (obj === null || obj === undefined) return false;
 		if (!(obj instanceof User)) return false;
@@ -147,7 +162,9 @@ export default class User {
 			target_language: this.target_language,
 			birthdate: this.birthdate,
 			gender: this.gender,
-			calcom_link: this.calcom_link
+			calcom_link: this.calcom_link,
+			study_id: this.study_id,
+			last_survey: this.last_survey
 		});
 	}
 
@@ -165,6 +182,8 @@ export default class User {
 			if (data.birthdate) this._birthdate = data.birthdate;
 			if (data.gender) this._gender = data.gender;
 			if (data.calcum_link) this._calcom_link = data.calcom_link;
+			if (data.study_id) this._study_id = data.study_id;
+			if (data.last_survey) this._last_survey = data.last_survey;
 		}
 		return res;
 	}
@@ -190,6 +209,8 @@ export default class User {
 			type,
 			BigInt(0),
 			is_active,
+			null,
+			null,
 			null,
 			null,
 			null,
@@ -235,7 +256,9 @@ export default class User {
 			json.target_language,
 			json.birthdate,
 			json.gender,
-			json.calcom_link
+			json.calcom_link,
+			json.study_id,
+			json.last_survey === null ? null : new Date(json.last_survey)
 		);
 
 		users.update((us) => {

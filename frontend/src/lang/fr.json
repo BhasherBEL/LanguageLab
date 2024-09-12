@@ -211,6 +211,36 @@
 				"q1": "À quel point cette application est-elle utile ?",
 				"q2": "À quel point cette application est-elle facile à utiliser ?",
 				"q3": "Remarques éventuelles"
+			},
+			"weekly": {
+				"title": "Questionnaire hebdomadaire",
+				"description": "Au cours des 7 derniers jours...",
+				"questions": [
+					"Combien d'heures de <span class='font-bold'>cours</span> de {TARGET_LANGUAGE} avez vous suivies ?",
+					"Combien d'heures avez-vous <span class='font-bold'>regardé des vidéos</span> en {TARGET_LANGUAGE} (films, séries, Youtube...) ou <span class='font-bold'>écouté des contenus</span> en {TARGET_LANGUAGE} (podcasts, radio, cours universitaires...) ?",
+					"Combien d'heures avez-vous <span class='font-bold'>lu des textes</span> en {TARGET_LANGUAGE} (livre, journal, BD, sites web...) ?",
+					"Combien d'heures avez-vous <span class='font-bold'>parlé</span> en {TARGET_LANGUAGE} (discussions avec amis, famille, collègues...) ?"
+				],
+				"answers": {
+					"placeholder": "",
+					"0": "Aucune",
+					"05": "30 minutes ou moins",
+					"1": "1 heure",
+					"2": "2 heures",
+					"3": "3 heures",
+					"4": "4 heures",
+					"5": "5 heures",
+					"6": "6 heures",
+					"7": "7 heures",
+					"8": "8 heures",
+					"9": "9 heures",
+					"10": "10 heures ou plus"
+				},
+				"errors": {
+					"null": "Veuillez répondre à toutes les questions",
+					"submit": "Erreur lors de l'envoi du questionnaire"
+				},
+				"success": "Questionnaire envoyé, merci !"
 			}
 		}
 	},

@@ -7,6 +7,8 @@
 	import { onMount } from 'svelte';
 	import { user } from '$lib/types/user';
 	import Gravatar from 'svelte-gravatar';
+	import WeeklySurvey from '$lib/components/users/weeklySurvey.svelte';
+	import config from '$lib/config.js';
 	export let data;
 
 	let session: Session | null = null;
@@ -60,4 +62,8 @@
 		</div>
 		<div class=""></div>
 	</div>
+{/if}
+
+{#if $user}
+	<WeeklySurvey />
 {/if}

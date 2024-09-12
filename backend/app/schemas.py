@@ -18,6 +18,7 @@ class User(BaseModel):
     gender: str | None = None
     calcom_link: str | None
     study_id: int | None = None
+    last_survey: datetime.datetime | None = None
 
     class Config:
         from_attributes = True
@@ -37,6 +38,7 @@ class UserCreate(BaseModel):
     gender: str | None = None
     calcom_link: str | None = None
     study_id: int | None = None
+    last_survey: datetime.datetime | None = None
 
 
 class UserUpdate(BaseModel):
@@ -53,6 +55,7 @@ class UserUpdate(BaseModel):
     gender: str | None = None
     calcom_link: str | None = None
     study_id: int | None = None
+    last_survey: datetime.datetime | None = None
 
     class Config:
         from_attributes = True
@@ -63,6 +66,13 @@ class ContactCreate(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserSurveyWeeklyCreate(BaseModel):
+    q1: float
+    q2: float
+    q3: float
+    q4: float
 
 
 class Session(BaseModel):

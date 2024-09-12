@@ -66,6 +66,12 @@ def create_contact(db: Session, user, contact):
     db.refresh(user)
     return user
 
+def create_user_survey_weekly(db: Session, user_id: int, survey: schemas.SurveyCreate):
+    db_user_survey_weekly = models.UserSurveyWeekly(user_id=user_id, **survey.dict())
+    db.add(db_user_survey_weekly)
+    db.commit()
+    db.refresh(db_user_survey_weekly)
+    return db_user_survey_weekly
 
 def get_contact_sessions(db: Session, user_id: int, contact_id: int):
     return (
