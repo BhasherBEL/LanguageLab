@@ -258,7 +258,7 @@ export default class User {
 			json.gender,
 			json.calcom_link,
 			json.study_id,
-			json.last_survey === null ? null : new Date(json.last_survey)
+			json.last_survey === null ? null : parseToLocalDate(json.last_survey)
 		);
 
 		users.update((us) => {

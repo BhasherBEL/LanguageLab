@@ -3,6 +3,7 @@
 	import config from '$lib/config';
 	import { t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
+	import { formatToUTCDate } from '$lib/utils/date';
 	import { toastAlert, toastSuccess, toastWarning } from '$lib/utils/toasts';
 
 	let open =
@@ -27,7 +28,7 @@
 			toastAlert($t('session.modal.weekly.errors.submit'));
 		}
 
-		await $user.patch({ last_survey: new Date() });
+		await $user.patch({ last_survey: formatToUTCDate(new Date()) });
 
 		open = false;
 

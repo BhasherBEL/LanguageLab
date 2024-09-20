@@ -2,6 +2,7 @@ import datetime
 from sqlalchemy.orm import Session
 import secrets
 
+from utils import datetime_aware
 import models
 import schemas
 from hashing import Hasher
@@ -66,12 +67,14 @@ def create_contact(db: Session, user, contact):
     db.refresh(user)
     return user
 
+
 def create_user_survey_weekly(db: Session, user_id: int, survey: schemas.SurveyCreate):
     db_user_survey_weekly = models.UserSurveyWeekly(user_id=user_id, **survey.dict())
     db.add(db_user_survey_weekly)
     db.commit()
     db.refresh(db_user_survey_weekly)
     return db_user_survey_weekly
+
 
 def get_contact_sessions(db: Session, user_id: int, contact_id: int):
     return (
@@ -83,7 +86,9 @@ def get_contact_sessions(db: Session, user_id: int, contact_id: int):
 
 
 def create_session(db: Session, user: schemas.User):
+    print("before")
     db_session = models.Session(is_active=True, users=[user])
+    print(db_session.created_at)
     db.add(db_session)
     db.commit()
     db.refresh(db_session)
@@ -93,8 +98,8 @@ def create_session(db: Session, user: schemas.User):
 def create_session_with_users(
     db: Session,
     users: list[schemas.User],
-    start_time: datetime.datetime | None = None,
-    end_time: datetime.datetime | None = None,
+    start_time: datetime.datetime | None = datetime_aware(),
+    end_time: datetime.datetime | None = datetime_aware() + datetime.timedelta(hours=12),
 ):
     db_session = models.Session(
         is_active=True, users=users, start_time=start_time, end_time=end_time

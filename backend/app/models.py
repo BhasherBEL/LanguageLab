@@ -13,6 +13,7 @@ from enum import Enum
 
 from database import Base
 import datetime
+from utils import datetime_aware
 
 
 class UserType(Enum):
@@ -43,7 +44,7 @@ class User(Base):
     ui_language = Column(String, default="fr")
     home_language = Column(String, default="en")
     target_language = Column(String, default="fr")
-    birthdate = Column(Integer, default=None)
+    birthdate = Column(DateTime, default=None)
     gender = Column(String, default=None)
     calcom_link = Column(String, default="")
     study_id = Column(Integer, ForeignKey("studies.id"), default=None)
@@ -74,7 +75,7 @@ class UserSurveyWeekly(Base):
     __tablename__ = "users_survey_weekly"
 
     id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     user_id = Column(Integer, ForeignKey("users.id"))
     q1 = Column(Float)
     q2 = Column(Float)
@@ -86,11 +87,12 @@ class Session(Base):
     __tablename__ = "sessions"
 
     id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     is_active = Column(Boolean, default=True)
-    start_time = Column(DateTime, default=datetime.datetime.now)
+    start_time = Column(DateTime, default=datetime_aware)
     end_time = Column(
-        DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(hours=12)
+        DateTime,
+        default=lambda: datetime_aware() + datetime.timedelta(hours=12),
     )
     language = Column(String, default="fr")
 
@@ -103,7 +105,7 @@ class SessionSatisfy(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     session_id = Column(Integer, ForeignKey("sessions.id"))
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     usefullness = Column(Integer)
     easiness = Column(Integer)
     remarks = Column(String)
@@ -124,7 +126,7 @@ class Message(Base):
     content = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     session_id = Column(Integer, ForeignKey("sessions.id"))
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
 
     feedbacks = relationship("MessageFeedback", backref="message")
 
@@ -146,7 +148,7 @@ class MessageFeedback(Base):
     start = Column(Integer)
     end = Column(Integer)
     content = Column(String, default="")
-    date = Column(DateTime, default=datetime.datetime.now)
+    date = Column(DateTime, default=datetime_aware)
 
 
 class TestTyping(Base):
@@ -154,7 +156,7 @@ class TestTyping(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     entries = relationship("TestTypingEntry", backref="typing")
 
 
@@ -227,7 +229,7 @@ class SurveyResponse(Base):
     id = Column(Integer, primary_key=True, index=True)
     uuid = Column(String)
     sid = Column(String)
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
     group_id = Column(Integer, ForeignKey("survey_groups.id"))
     question_id = Column(Integer, ForeignKey("survey_questions.id"))
