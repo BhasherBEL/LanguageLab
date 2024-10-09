@@ -28,7 +28,7 @@ export default class User {
 	private _ui_language: string | null;
 	private _home_language: string | null;
 	private _target_language: string | null;
-	private _birthdate: number | null;
+	private _birthdate: Date | null;
 	private _gender: string | null;
 	private _calcom_link: string | null;
 	private _study_id: number | null;
@@ -44,7 +44,7 @@ export default class User {
 		ui_language: string | null,
 		home_language: string | null,
 		target_language: string | null,
-		birthdate: number | null,
+		birthdate: Date | null,
 		gender: string | null,
 		calcom_link: string | null,
 		study_id: number | null,
@@ -110,7 +110,7 @@ export default class User {
 		return this._target_language;
 	}
 
-	get birthdate(): number | null {
+	get birthdate(): Date | null {
 		return this._birthdate;
 	}
 

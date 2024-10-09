@@ -18,6 +18,7 @@
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import AvailableTutors from '$lib/components/users/availableTutors.svelte';
 	import { browser } from '$app/environment';
+	import { formatToUTCDate } from '$lib/utils/date';
 
 	let current_step = 0;
 
@@ -388,7 +389,7 @@
 					id="birthyear"
 					name="birthyear"
 					required
-					bind:value={birthdate}
+					on:change={(e) => (birthdate = formatToUTCDate(new Date(e.target.value, 1, 1)))}
 				>
 					<option disabled selected value="">{$t('register.birthyear')}</option>
 					{#each Array.from({ length: 82 }, (_, i) => i + 1931).reverse() as year}
