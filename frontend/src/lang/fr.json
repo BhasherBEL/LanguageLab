@@ -260,7 +260,10 @@
 		"login": "Se connecter",
 		"cancel": "Annuler",
 		"save": "Sauvegarder",
-		"close": "Fermer"
+		"close": "Fermer",
+		"tryit": "Essayer",
+		"update": "Mettre à jour",
+		"updated": "Mis à jour!"
 	},
 	"utils": {
 		"month": {

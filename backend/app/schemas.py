@@ -102,6 +102,11 @@ class SessionSatisfyCreate(BaseModel):
     remarks: str | None = None
 
 
+class SessionBookingCreate(BaseModel):
+    start_time: NaiveDatetime
+    end_time: NaiveDatetime
+
+
 class MessageFeedback(BaseModel):
     id: int
     message_id: int

@@ -1,3 +1,4 @@
+import { formatToUTCDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import { axiosInstance } from './apiInstance';
 
@@ -123,4 +124,22 @@ export async function createSessionSatisfyAPI(
 	}
 
 	return true;
+}
+
+export async function createSessionFromCalComAPI(
+	user_id: number,
+	contact_id: number,
+	start: Date,
+	end: Date
+): Promise<number | null> {
+	const response = await axiosInstance.post(`/users/${user_id}/contacts/${contact_id}/bookings`, {
+		start_time: formatToUTCDate(start),
+		end_time: formatToUTCDate(end)
+	});
+	if (response.status !== 201) {
+		toastAlert('Failed to create cal.com session');
+		return null;
+	}
+
+	return response.data;
 }

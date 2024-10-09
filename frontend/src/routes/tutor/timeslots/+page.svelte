@@ -24,7 +24,7 @@
 	});
 
 	async function send() {
-		if (!calcom_link || !calcom_link.startsWith('https://cal.com/')) {
+		if (!calcom_link || calcom_link.length == 0) {
 			toastWarning($t('timeslots.calcomWarning'));
 			return;
 		}
@@ -34,16 +34,53 @@
 		if (!res) return;
 
 		lastTimeslots = timeslots;
+		last_calcom_link = calcom_link;
 		sent = true;
 		setTimeout(() => (sent = false), 3000);
 	}
 </script>
 
+<svelte:head>
+	<script>
+		(function (C, A, L) {
+			let p = function (a, ar) {
+				a.q.push(ar);
+			};
+			let d = C.document;
+			C.Cal =
+				C.Cal ||
+				function () {
+					let cal = C.Cal;
+					let ar = arguments;
+					if (!cal.loaded) {
+						cal.ns = {};
+						cal.q = cal.q || [];
+						d.head.appendChild(d.createElement('script')).src = A;
+						cal.loaded = true;
+					}
+					if (ar[0] === L) {
+						const api = function () {
+							p(api, arguments);
+						};
+						const namespace = ar[1];
+						api.q = api.q || [];
+						if (typeof namespace === 'string') {
+							cal.ns[namespace] = cal.ns[namespace] || api;
+							p(cal.ns[namespace], ar);
+							p(cal, ['initNamespace', namespace]);
+						} else p(cal, ar);
+						return;
+					}
+					p(cal, ar);
+				};
+		})(window, 'https://app.cal.com/embed/embed.js', 'init');
+		Cal('init');
+	</script>
+</svelte:head>
+
 <div class="max-w-screen-md mx-auto p-2">
 	<h2 class="my-4 text-xl">{$t('timeslots.setAvailabilities')}</h2>
 	{#if ready}
-		<Timeslots bind:timeslots />
-
 		<div class="form-control mt-4">
 			<label class="label" for="calcom">
 				<span class="label-text">
@@ -67,17 +104,18 @@
 					type="text"
 					id="calcom"
 					class="grow"
-					placeholder="https://cal.com/username/tutoring"
+					placeholder="username/tutoring"
 					bind:value={calcom_link}
 				/>
 			</div>
 		</div>
 
 		<div class="form-control mt-4">
+			<button class="button" data-cal-link={calcom_link}>{$t('button.tryit')}</button>
 			<button
-				class="button"
+				class="button mt-4"
 				disabled={sent || (lastTimeslots === timeslots && calcom_link === last_calcom_link)}
-				on:click={send}>{$t(sent ? 'button.sent' : 'button.submit')}</button
+				on:click={send}>{$t(sent ? 'button.updated' : 'button.update')}</button
 			>
 		</div>
 	{/if}

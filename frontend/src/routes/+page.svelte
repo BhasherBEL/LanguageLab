@@ -16,7 +16,8 @@
 		getUserContactsAPI,
 		getUserContactSessionsAPI
 	} from '$lib/api/users';
-	import { toastWarning } from '$lib/utils/toasts';
+	import { createSessionFromCalComAPI } from '$lib/api/sessions';
+	import { toastAlert, toastWarning } from '$lib/utils/toasts';
 
 	let ready = false;
 	$: contacts = [] as User[];
@@ -43,6 +44,56 @@
 		}
 
 		ready = true;
+
+		(function (C: any, A: any, L: any) {
+			let p = function (a: any, ar: any) {
+				a.q.push(ar);
+			};
+			let d = C.document;
+			C.Cal =
+				C.Cal ||
+				function () {
+					let cal = C.Cal;
+					let ar = arguments;
+					if (!cal.loaded) {
+						cal.ns = {};
+						cal.q = cal.q || [];
+						d.head.appendChild(d.createElement('script')).src = A;
+						cal.loaded = true;
+					}
+					if (ar[0] === L) {
+						const api: any = function () {
+							p(api, arguments);
+						};
+						const namespace = ar[1];
+						api.q = api.q || [];
+						if (typeof namespace === 'string') {
+							cal.ns[namespace] = cal.ns[namespace] || api;
+							p(cal.ns[namespace], ar);
+							p(cal, ['initNamespace', namespace]);
+						} else p(cal, ar);
+						return;
+					}
+					p(cal, ar);
+				};
+		})(window, 'https://app.cal.com/embed/embed.js', 'init');
+		// @ts-ignore
+		Cal('init');
+		// @ts-ignore
+		Cal('on', {
+			action: 'bookingSuccessful',
+			callback: (e: any) => {
+				if (!contact || !$user || !e.detail.data) {
+					toastAlert('Automatic session creation failed');
+					return;
+				}
+
+				let date = new Date(e.detail.data.date);
+				let duration = e.detail.data.duration;
+				let end = new Date(date.getTime() + duration * 60000);
+				createSessionFromCalComAPI($user.id, contact.id, date, end);
+			}
+		});
 	});
 
 	async function createSession() {
@@ -66,6 +117,11 @@
 		contacts = User.parseAll(await getUserContactsAPI($user.id));
 	}
 </script>
+
+<svelte:head>
+	<script>
+	</script>
+</svelte:head>
 
 {#if ready}
 	<div class="h-full w-full flex">
@@ -110,14 +166,13 @@
 						{$t('home.createSession')}
 					</button>
 					<div class="size-4 float-end"></div>
-					<a
+					<button
 						class="button float-end"
 						class:btn-disabled={!contact || !contact.calcom_link}
-						href={contact.calcom_link}
-						target="_blank"
+						data-cal-link={`${contact.calcom_link}?email=${$user?.email}&name=${$user?.nickname}`}
 					>
 						{$t('home.bookSession')}
-					</a>
+					</button>
 				</div>
 				<div class="flex-grow p-2">
 					<h2 class="text-xl my-4 font-bold">{$t('home.currentSessions')}</h2>

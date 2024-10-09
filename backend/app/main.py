@@ -402,6 +402,30 @@ def create_weekly_survey(
     
     return crud.create_user_survey_weekly(db, user_id, survey).id
 
+@usersRouter.post('/{user_id}/contacts/{contact_id}/bookings', status_code=status.HTTP_201_CREATED)
+def create_booking(
+        user_id: int,
+        contact_id: int,
+        booking: schemas.SessionBookingCreate,
+        db: Session = Depends(get_db),
+        current_user: schemas.User = Depends(get_jwt_user),
+        ):
+        if (
+            not check_user_level(current_user, models.UserType.ADMIN)
+            and current_user.id != user_id
+        ):
+            raise HTTPException(
+                status_code=401,
+                detail="You do not have permission to create a booking for this user",
+            )
+        db_user = crud.get_user(db, user_id)
+        if db_user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        db_contact = crud.get_user(db, contact_id)
+        if db_contact is None:
+            raise HTTPException(status_code=404, detail="Contact not found")
+        return crud.create_session_with_users(db, [db_user, db_contact], booking.start_time, booking.end_time).id
+
 @sessionsRouter.post("", response_model=schemas.Session)
 def create_session(
     db: Session = Depends(get_db),
