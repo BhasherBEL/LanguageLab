@@ -1,7 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, NaiveDatetime
 
 from models import UserType
-import datetime
 
 
 class User(BaseModel):
@@ -14,9 +13,11 @@ class User(BaseModel):
     ui_language: str | None
     home_language: str | None
     target_language: str | None
-    birthdate: datetime.datetime | None
+    birthdate: NaiveDatetime | None
     gender: str | None = None
     calcom_link: str | None
+    study_id: int | None = None
+    last_survey: NaiveDatetime | None = None
 
     class Config:
         from_attributes = True
@@ -32,9 +33,11 @@ class UserCreate(BaseModel):
     ui_language: str | None = None
     home_language: str | None = None
     target_language: str | None = None
-    birthdate: datetime.datetime | None = None
+    birthdate: NaiveDatetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
+    study_id: int | None = None
+    last_survey: NaiveDatetime | None = None
 
 
 class UserUpdate(BaseModel):
@@ -47,9 +50,11 @@ class UserUpdate(BaseModel):
     ui_language: str | None = None
     home_language: str | None = None
     target_language: str | None = None
-    birthdate: datetime.datetime | None = None
+    birthdate: NaiveDatetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
+    study_id: int | None = None
+    last_survey: NaiveDatetime | None = None
 
     class Config:
         from_attributes = True
@@ -62,14 +67,22 @@ class ContactCreate(BaseModel):
         from_attributes = True
 
 
+class UserSurveyWeeklyCreate(BaseModel):
+    q1: float | None = None
+    q2: float | None = None
+    q3: float | None = None
+    q4: float | None = None
+
+
 class Session(BaseModel):
     id: int
-    created_at: datetime.datetime
+    created_at: NaiveDatetime
     is_active: bool
     users: list[User]
-    start_time: datetime.datetime
-    end_time: datetime.datetime
+    start_time: NaiveDatetime
+    end_time: NaiveDatetime
     language: str
+    length: int | None = None
 
     class Config:
         from_attributes = True
@@ -95,7 +108,7 @@ class MessageFeedback(BaseModel):
     start: int
     end: int
     content: str
-    date: datetime.datetime
+    date: NaiveDatetime
 
     class Config:
         from_attributes = True
@@ -123,7 +136,7 @@ class Message(BaseModel):
     content: str
     user_id: int
     session_id: int
-    created_at: datetime.datetime
+    created_at: NaiveDatetime
     feedbacks: list[MessageFeedback]
 
     class Config:
@@ -177,7 +190,7 @@ class TestVocabularyCreate(BaseModel):
 
 class CalComWebhook(BaseModel):
     triggerEvent: str
-    createdAt: datetime.datetime
+    createdAt: NaiveDatetime
     payload: dict
 
 
@@ -256,10 +269,27 @@ class SurveyResponse(BaseModel):
     id: int
     uuid: str
     sid: str
-    created_at: datetime.datetime
+    created_at: NaiveDatetime
     survey_id: int
     group_id: int
     question_id: int
     selected_id: int
     response_time: float
     text: str | None = None
+
+
+class Study(BaseModel):
+    id: int
+    title: str
+    description: str
+    start_date: NaiveDatetime
+    end_date: NaiveDatetime
+    chat_duration: int
+
+
+class StudyCreate(BaseModel):
+    title: str
+    description: str
+    start_date: NaiveDatetime
+    end_date: NaiveDatetime
+    chat_duration: int = 30 * 60

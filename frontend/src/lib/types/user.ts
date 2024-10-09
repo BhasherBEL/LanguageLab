@@ -1,4 +1,5 @@
 import { createUserAPI, getUsersAPI, patchUserAPI } from '$lib/api/users';
+import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
 
@@ -27,9 +28,11 @@ export default class User {
 	private _ui_language: string | null;
 	private _home_language: string | null;
 	private _target_language: string | null;
-	private _birthdate: number | null;
+	private _birthdate: Date | null;
 	private _gender: string | null;
 	private _calcom_link: string | null;
+	private _study_id: number | null;
+	private _last_survey: Date | null;
 
 	private constructor(
 		id: number,
@@ -41,9 +44,11 @@ export default class User {
 		ui_language: string | null,
 		home_language: string | null,
 		target_language: string | null,
-		birthdate: number | null,
+		birthdate: Date | null,
 		gender: string | null,
-		calcom_link: string | null
+		calcom_link: string | null,
+		study_id: number | null,
+		last_survey: Date | null
 	) {
 		this._id = id;
 		this._email = email;
@@ -57,6 +62,8 @@ export default class User {
 		this._birthdate = birthdate;
 		this._gender = gender;
 		this._calcom_link = calcom_link;
+		this._study_id = study_id;
+		this._last_survey = last_survey;
 	}
 
 	get id(): number {
@@ -103,7 +110,7 @@ export default class User {
 		return this._target_language;
 	}
 
-	get birthdate(): number | null {
+	get birthdate(): Date | null {
 		return this._birthdate;
 	}
 
@@ -113,6 +120,14 @@ export default class User {
 
 	get calcom_link(): string | null {
 		return this._calcom_link;
+	}
+
+	get study_id(): number | null {
+		return this._study_id;
+	}
+
+	get last_survey(): Date | null {
+		return this._last_survey;
 	}
 
 	equals<T>(obj: T): boolean {
@@ -147,8 +162,30 @@ export default class User {
 			target_language: this.target_language,
 			birthdate: this.birthdate,
 			gender: this.gender,
-			calcom_link: this.calcom_link
+			calcom_link: this.calcom_link,
+			study_id: this.study_id,
+			last_survey: this.last_survey
 		});
+	}
+
+	async patch(data: any): Promise<boolean> {
+		const res = await patchUserAPI(this.id, data);
+		if (res) {
+			if (data.email) this._email = data.email;
+			if (data.nickname) this._nickname = data.nickname;
+			if (data.type) this._type = data.type;
+			if (data.availability) this._availability = BigInt(data.availability);
+			if (data.is_active) this._is_active = data.is_active;
+			if (data.ui_language) this._ui_language = data.ui_language;
+			if (data.home_language) this._home_language = data.home_language;
+			if (data.target_language) this._target_language = data.target_language;
+			if (data.birthdate) this._birthdate = data.birthdate;
+			if (data.gender) this._gender = data.gender;
+			if (data.calcum_link) this._calcom_link = data.calcom_link;
+			if (data.study_id) this._study_id = data.study_id;
+			if (data.last_survey) this._last_survey = data.last_survey;
+		}
+		return res;
 	}
 
 	static find(user_id: number): User | undefined {
@@ -172,6 +209,8 @@ export default class User {
 			type,
 			BigInt(0),
 			is_active,
+			null,
+			null,
 			null,
 			null,
 			null,
@@ -217,7 +256,9 @@ export default class User {
 			json.target_language,
 			json.birthdate,
 			json.gender,
-			json.calcom_link
+			json.calcom_link,
+			json.study_id,
+			json.last_survey === null ? null : parseToLocalDate(json.last_survey)
 		);
 
 		users.update((us) => {

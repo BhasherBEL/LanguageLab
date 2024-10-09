@@ -13,6 +13,7 @@ from enum import Enum
 
 from database import Base
 import datetime
+from utils import datetime_aware
 
 
 class UserType(Enum):
@@ -43,9 +44,11 @@ class User(Base):
     ui_language = Column(String, default="fr")
     home_language = Column(String, default="en")
     target_language = Column(String, default="fr")
-    birthdate = Column(Integer, default=None)
+    birthdate = Column(DateTime, default=None)
     gender = Column(String, default=None)
     calcom_link = Column(String, default="")
+    study_id = Column(Integer, ForeignKey("studies.id"), default=None)
+    last_survey = Column(DateTime, default=None)
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"
@@ -68,15 +71,28 @@ class User(Base):
     )
 
 
+class UserSurveyWeekly(Base):
+    __tablename__ = "users_survey_weekly"
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=datetime_aware)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    q1 = Column(Float)
+    q2 = Column(Float)
+    q3 = Column(Float)
+    q4 = Column(Float)
+
+
 class Session(Base):
     __tablename__ = "sessions"
 
     id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     is_active = Column(Boolean, default=True)
-    start_time = Column(DateTime, default=datetime.datetime.now)
+    start_time = Column(DateTime, default=datetime_aware)
     end_time = Column(
-        DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(hours=12)
+        DateTime,
+        default=lambda: datetime_aware() + datetime.timedelta(hours=12),
     )
     language = Column(String, default="fr")
 
@@ -89,7 +105,7 @@ class SessionSatisfy(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     session_id = Column(Integer, ForeignKey("sessions.id"))
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     usefullness = Column(Integer)
     easiness = Column(Integer)
     remarks = Column(String)
@@ -110,7 +126,19 @@ class Message(Base):
     content = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     session_id = Column(Integer, ForeignKey("sessions.id"))
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
+
+    feedbacks = relationship("MessageFeedback", backref="message")
+
+    def raw(self):
+        return [
+            self.id,
+            self.message_id,
+            self.content,
+            self.user_id,
+            self.session_id,
+            self.created_at,
+        ]
 
     feedbacks = relationship("MessageFeedback", backref="message")
 
@@ -132,7 +160,7 @@ class MessageFeedback(Base):
     start = Column(Integer)
     end = Column(Integer)
     content = Column(String, default="")
-    date = Column(DateTime, default=datetime.datetime.now)
+    date = Column(DateTime, default=datetime_aware)
 
 
 class TestTyping(Base):
@@ -140,7 +168,7 @@ class TestTyping(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     entries = relationship("TestTypingEntry", backref="typing")
 
 
@@ -213,10 +241,20 @@ class SurveyResponse(Base):
     id = Column(Integer, primary_key=True, index=True)
     uuid = Column(String)
     sid = Column(String)
-    created_at = Column(DateTime, default=datetime.datetime.now)
+    created_at = Column(DateTime, default=datetime_aware)
     survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
     group_id = Column(Integer, ForeignKey("survey_groups.id"))
     question_id = Column(Integer, ForeignKey("survey_questions.id"))
     selected_id = Column(Integer)
     response_time = Column(Float)
     text = Column(String)
+
+
+class Study(Base):
+    __tablename__ = "studies"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    chat_duration = Column(Integer)

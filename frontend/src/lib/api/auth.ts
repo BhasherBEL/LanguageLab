@@ -34,7 +34,8 @@ export async function loginAPI(email: string, password: string): Promise<string>
 export async function registerAPI(
 	email: string,
 	password: string,
-	nickname: string
+	nickname: string,
+	tutor: boolean = false
 ): Promise<string> {
 	return axiosPublicInstance
 		.post(
@@ -43,7 +44,8 @@ export async function registerAPI(
 				email,
 				username: email,
 				password,
-				nickname
+				nickname,
+				tutor
 			},
 			{
 				headers: {

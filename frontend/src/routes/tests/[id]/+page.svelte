@@ -33,6 +33,7 @@
 	let type = currentQuestion.question.split(':')[0];
 	let value = currentQuestion.question.split(':').slice(1).join(':');
 	let gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
+	let soundPlayer: HTMLAudioElement;
 
 	function setGroupId(id: number) {
 		currentGroupId = id;
@@ -47,6 +48,7 @@
 		type = currentQuestion.question.split(':')[0];
 		value = currentQuestion.question.split(':').slice(1).join(':');
 		gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
+		if (soundPlayer) soundPlayer.load();
 	}
 
 	async function selectOption(option: string) {
@@ -186,7 +188,7 @@
 			{:else if type == 'image'}
 				<img src={value} alt="Question" />
 			{:else if type == 'audio'}
-				<audio controls autoplay class="rounded-lg mx-auto">
+				<audio bind:this={soundPlayer} controls autoplay class="rounded-lg mx-auto">
 					<source src={value} type="audio/mpeg" />
 					Your browser does not support the audio element.
 				</audio>

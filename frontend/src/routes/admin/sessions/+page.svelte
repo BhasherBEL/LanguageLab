@@ -1,0 +1,63 @@
+<script lang="ts">
+	import { getSessionsAPI } from '$lib/api/sessions';
+	import Session from '$lib/types/session';
+	import { onMount } from 'svelte';
+	import { t } from '$lib/services/i18n';
+	import { displayTime } from '$lib/utils/date';
+	import { ArrowDownTray, ArrowRightStartOnRectangle, Icon } from 'svelte-hero-icons';
+	import config from '$lib/config';
+
+	let sessions: Session[] = [];
+
+	onMount(async () => {
+		sessions = Session.parseAll(await getSessionsAPI());
+	});
+</script>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>{$t('utils.words.date')}</th>
+			<th>{$t('users.type.tutors')}</th>
+			<th>{$t('users.type.students')}</th>
+			<th># {$t('utils.words.messages')}</th>
+			<th>{$t('utils.words.actions')}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{#each sessions as session}
+			<tr>
+				<td>{session.id}</td>
+				<td>{displayTime(session.start_time)}</td>
+				<td>
+					{session.users
+						.filter((u) => u.is_tutor || u.is_admin)
+						.map((u) => u.nickname)
+						.join(', ')}
+				</td>
+				<td>
+					{session.users
+						.filter((u) => !u.is_tutor && !u.is_admin)
+						.map((u) => u.nickname)
+						.join(', ')}
+				</td>
+				<td>
+					{session.length}
+				</td>
+				<td>
+					<a class="button" title="Join" href={`/session?id=${session.id}`}>
+						<Icon src={ArrowRightStartOnRectangle} size="24" />
+					</a>
+					<a
+						class="button"
+						title="Download"
+						href={`${config.API_URL}/sessions/${session.id}/download/messages`}
+					>
+						<Icon src={ArrowDownTray} size="24" />
+					</a>
+				</td>
+			</tr>
+		{/each}
+	</tbody>
+</table>

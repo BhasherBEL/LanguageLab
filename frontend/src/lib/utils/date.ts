@@ -100,27 +100,9 @@ export function displayDuration(start: Date, end: Date): string | null {
 }
 
 export function parseToLocalDate(dateStr: string): Date {
-	const isDST = isInDST(new Date(dateStr + 'Z'));
-
-	const offset = isDST ? '+02:00' : '+01:00';
-
-	return new Date(dateStr + offset);
+	return new Date(dateStr + 'Z');
 }
 
-function isInDST(date: Date): boolean {
-	const year = date.getUTCFullYear();
-
-	// Calculate the last Sunday in March
-	const startOfDST = new Date(Date.UTC(year, 2, 31));
-	const startDay = startOfDST.getUTCDay();
-	const lastSundayMarch = 31 - startDay;
-	const startOfDSTDate = new Date(Date.UTC(year, 2, lastSundayMarch, 1));
-
-	// Calculate the last Sunday in October
-	const endOfDST = new Date(Date.UTC(year, 9, 31));
-	const endDay = endOfDST.getUTCDay();
-	const lastSundayOctober = 31 - endDay;
-	const endOfDSTDate = new Date(Date.UTC(year, 9, lastSundayOctober, 1));
-
-	return date >= startOfDSTDate && date < endOfDSTDate;
+export function formatToUTCDate(date: Date): string {
+	return date.toISOString().split('Z')[0];
 }

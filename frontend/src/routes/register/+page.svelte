@@ -17,19 +17,14 @@
 	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import AvailableTutors from '$lib/components/users/availableTutors.svelte';
+	import { browser } from '$app/environment';
+	import { formatToUTCDate } from '$lib/utils/date';
 
 	let current_step = 0;
 
 	$: message = '';
 
-	//let checker: HTMLDivElement;
-
 	onMount(async () => {
-		/*checker.innerHTML =
-			'<label for="humanCheck" class="cursor-pointer label">' +
-			$t('register.humans') +
-			'<input type="checkbox" id="humanCheck" class="checkbox" required></label>';*/
-
 		const u = get(user);
 
 		if (u == null) {
@@ -63,6 +58,12 @@
 	let target_language: string;
 	let birthdate: string;
 	let gender: string;
+	let study_id: number | null = (() => {
+		if (!browser) return null;
+		let study_id_str = new URLSearchParams(window.location.search).get('study');
+		if (!study_id_str) return null;
+		return parseInt(study_id_str) || null;
+	})();
 
 	let timeslots = 0n;
 	$: filteredUsers = $users.filter((user) => {
@@ -77,10 +78,6 @@
 			message = $t('register.error.emptyFields');
 			return;
 		}
-		/*if (checker.querySelector('input')?.checked === false) {
-			message = $t('register.error.humanity');
-			return;
-		}*/
 		if (password.length < 8) {
 			message = $t('register.error.passwordRules');
 			return;
@@ -111,7 +108,8 @@
 			return;
 		}
 
-		document.location.href = '/register';
+		if (study_id === null) document.location.href = '/register';
+		else document.location.href = `/register?study=${study_id}`;
 
 		message = 'OK';
 	}
@@ -134,7 +132,8 @@
 			home_language,
 			target_language,
 			birthdate,
-			gender
+			gender,
+			study_id
 		});
 
 		if (!res) {
@@ -390,7 +389,7 @@
 					id="birthyear"
 					name="birthyear"
 					required
-					bind:value={birthdate}
+					on:change={(e) => (birthdate = formatToUTCDate(new Date(e.target.value, 1, 1)))}
 				>
 					<option disabled selected value="">{$t('register.birthyear')}</option>
 					{#each Array.from({ length: 82 }, (_, i) => i + 1931).reverse() as year}

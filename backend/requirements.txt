@@ -5,4 +5,3 @@ sqlalchemy>=2.0.0,<2.1.0
 passlib>=1.7.0,<1.8.0
 python-jose>=3.3.0,<3.4.0
 python-multipart>=0.0.0,<0.1.0
-#crypt==4.0.1

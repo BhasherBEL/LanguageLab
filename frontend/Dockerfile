@@ -24,6 +24,7 @@ USER svelteuser
 WORKDIR /app
 
 COPY --chown=svelteuser:svelteuser --from=build /app/build /app/package.json /app/package-lock.json ./
+COPY --chown=svelteuser:svelteuser --from=build /app/node_modules /app/node_modules
 
 EXPOSE 8080
 

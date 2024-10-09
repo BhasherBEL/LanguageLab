@@ -15,9 +15,12 @@ from fastapi import (
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocket
+from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
 import json
 from jose import jwt
+from io import StringIO
+import csv
 
 import schemas
 import crud
@@ -66,6 +69,7 @@ v1Router = APIRouter(prefix="/v1")
 authRouter = APIRouter(prefix="/auth", tags=["auth"])
 usersRouter = APIRouter(prefix="/users", tags=["users"])
 sessionsRouter = APIRouter(prefix="/sessions", tags=["sessions"])
+studyRouter = APIRouter(prefix="/studies", tags=["studies"])
 websocketRouter = APIRouter(prefix="/ws", tags=["websocket"])
 webhookRouter = APIRouter(prefix="/webhooks", tags=["webhook"])
 surveyRouter = APIRouter(prefix="/surveys", tags=["surveys"])
@@ -110,13 +114,14 @@ def register(
     email: Annotated[str, Form()],
     password: Annotated[str, Form()],
     nickname: Annotated[str, Form()],
+    tutor: Annotated[bool, Form()],
     db: Session = Depends(get_db),
 ):
     db_user = crud.get_user_by_email(db, email=email)
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
 
-    user_data = schemas.UserCreate(email=email, password=password, nickname=nickname)
+    user_data = schemas.UserCreate(email=email, password=password, nickname=nickname, type=models.UserType.TUTOR.value if tutor else models.UserType.STUDENT.value)
 
     user = crud.create_user(db=db, user=user_data)
 
@@ -167,11 +172,10 @@ def read_user(
 @usersRouter.get("", response_model=list[schemas.User])
 def read_users(
     skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    return crud.get_users(db, skip=skip, limit=limit)
+    return crud.get_users(db, skip=skip)
 
 
 @usersRouter.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -377,6 +381,27 @@ def get_contacts(
     return db_user.contacts + db_user.contact_of
 
 
+@usersRouter.post("/{user_id}/surveys/weekly", status_code=status.HTTP_201_CREATED)
+def create_weekly_survey(
+    user_id: int,
+    survey: schemas.UserSurveyWeeklyCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create a survey for this user",
+        )
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return crud.create_user_survey_weekly(db, user_id, survey).id
+
 @sessionsRouter.post("", response_model=schemas.Session)
 def create_session(
     db: Session = Depends(get_db),
@@ -387,7 +412,10 @@ def create_session(
     #        status_code=401, detail="You do not have permission to create a session"
     #    )
 
-    return crud.create_session(db, current_user)
+    rep = crud.create_session(db, current_user)
+    rep.length = 0
+
+    return rep
 
 
 @sessionsRouter.get("/{session_id}", response_model=schemas.Session)
@@ -442,6 +470,34 @@ def update_session(
         )
 
     crud.update_session(db, session, session_id)
+
+@sessionsRouter.get("/{session_id}/download/messages")
+def download_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to download this session"
+        )
+
+    data = crud.get_messages(db, session_id)
+
+    output = StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(models.Message.__table__.columns.keys())
+    for row in data:
+        writer.writerow(row.raw())
+
+    output.seek(0)
+
+    return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={session_id}-messages.csv"})
 
 
 @sessionsRouter.post(
@@ -502,14 +558,13 @@ def remove_user_from_session(
 @sessionsRouter.get("", response_model=list[schemas.Session])
 def read_sessions(
     skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
     if check_user_level(current_user, models.UserType.ADMIN):
-        return crud.get_all_sessions(db, skip=skip, limit=limit)
+        return crud.get_all_sessions(db, skip=skip)
 
-    return crud.get_sessions(db, current_user, skip=skip, limit=limit)
+    return crud.get_sessions(db, current_user, skip=skip)
 
 
 @sessionsRouter.post("/{session_id}/satisfy", status_code=status.HTTP_204_NO_CONTENT)
@@ -539,7 +594,6 @@ def create_session_satisfy(
 def read_messages(
     session_id: int,
     skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
@@ -556,7 +610,7 @@ def read_messages(
             detail="You do not have permission to view messages in this session",
         )
 
-    return crud.get_messages(db, session_id, skip=skip, limit=limit)
+    return crud.get_messages(db, session_id, skip=skip)
 
 
 async def send_websoket_message(session_id: int, message: schemas.Message, action: str):
@@ -714,6 +768,17 @@ def propagate_presence(
 
     return
 
+@studyRouter.post("/", status_code=status.HTTP_201_CREATED)
+def study_create(
+    study: schemas.StudyCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to create a study"
+        )
+    return crud.create_study(db, study).id
 
 @websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
@@ -1065,10 +1130,10 @@ def get_survey_responses(
 
     return crud.get_survey_responses(db, survey_id)
 
-
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
 v1Router.include_router(sessionsRouter)
+v1Router.include_router(studyRouter)
 v1Router.include_router(websocketRouter)
 v1Router.include_router(webhookRouter)
 v1Router.include_router(surveyRouter)
