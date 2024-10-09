@@ -68,10 +68,10 @@ class ContactCreate(BaseModel):
 
 
 class UserSurveyWeeklyCreate(BaseModel):
-    q1: float
-    q2: float
-    q3: float
-    q4: float
+    q1: float | None = None
+    q2: float | None = None
+    q3: float | None = None
+    q4: float | None = None
 
 
 class Session(BaseModel):

@@ -289,7 +289,9 @@
 		},
 		"language": {
 			"fr": "Français",
-			"en": "Anglais"
+			"en": "Anglais",
+			"fra": "Français",
+			"eng": "Anglais"
 		},
 		"bool": {
 			"true": "Oui",

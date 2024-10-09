@@ -4,10 +4,13 @@
 	import { t } from '$lib/services/i18n';
 	import { user } from '$lib/types/user';
 	import { formatToUTCDate } from '$lib/utils/date';
-	import { toastAlert, toastSuccess, toastWarning } from '$lib/utils/toasts';
+	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
 
 	let open =
-		!$user?.last_survey || $user.last_survey.getTime() + config.WEEKLY_SURVEY_INTERVAL < Date.now();
+		!$user?.is_tutor &&
+		!$user?.is_admin &&
+		(!$user?.last_survey ||
+			$user.last_survey.getTime() + config.WEEKLY_SURVEY_INTERVAL < Date.now());
 
 	async function send() {
 		if (!$user) return;
@@ -16,11 +19,6 @@
 			const value = (document.getElementById('questions-' + i) as HTMLSelectElement).value;
 			return value === '-1' ? null : parseFloat(value);
 		});
-
-		if (data.includes(null)) {
-			toastWarning($t('session.modal.weekly.errors.null'));
-			return;
-		}
 
 		const res = await createWeeklySurveyAPI($user.id, data[0]!, data[1]!, data[2]!, data[3]!);
 
@@ -44,7 +42,7 @@
 	tabindex="0"
 	aria-modal="true"
 >
-	<div class="modal-box max-w-none">
+	<div class="modal-box max-w-[800px]">
 		<h2 class="text-xl font-bold mb-4">{$t('session.modal.weekly.title')}</h2>
 		<p>{@html $t('session.modal.weekly.description')}</p>
 		{#each new Array(4) as _, i}
