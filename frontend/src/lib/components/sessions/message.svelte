@@ -8,7 +8,6 @@
 	import { onMount } from 'svelte';
 	import SpellCheck from '$lib/components/icons/spellCheck.svelte';
 	import ChatBubble from '../icons/chatBubble.svelte';
-	import { get } from 'svelte/store';
 	import type Feedback from '$lib/types/feedback';
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
@@ -177,7 +176,7 @@
 	>
 		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
 			{#each parts as part}
-				{#if part.feedback}
+				{#if part.feedback && !isEdit}
 					{#if part.feedback.content}
 						<span class="tooltip tooltip-accent" data-tip={part.feedback.content}
 							><!--

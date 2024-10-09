@@ -2,7 +2,7 @@ import Session from './session';
 import User from './user';
 import { updateMessageAPI, createMessageFeedbackAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
-import { writable, type Writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
 import Feedback from './feedback';
 import { parseToLocalDate } from '$lib/utils/date';
 
@@ -77,12 +77,14 @@ export default class Message {
 		this._versions.update((v) => [...v, { content: content, date: new Date() }]);
 		this._content = content;
 		this._edited = true;
+		this.feedbacks.set([]);
 
 		return true;
 	}
 
 	async localUpdate(content: string, force: boolean = false): Promise<boolean> {
 		this._content = content;
+		this.feedbacks.set([]);
 		if (!force) this._edited = true;
 
 		return true;
@@ -181,6 +183,7 @@ export default class Message {
 				prev._content = m.content;
 				prev._id = m.id;
 				prev._edited = true;
+				prev.feedbacks.set(get(m.feedbacks));
 			}
 		}
 
