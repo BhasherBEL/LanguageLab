@@ -40,7 +40,9 @@
 		"currentSessions": "Sessions en cours",
 		"plannedSessions": "Sessions planifiées",
 		"pastSessions": "Sessions terminées",
-		"newContact": "Ajouter un contact"
+		"newContact": "Ajouter un contact",
+		"bookingSuccessful": "Session réservée avec succès",
+		"bookingFailed": "Erreur lors de la réservation de la session"
 	},
 	"login": {
 		"email": "E-mail",

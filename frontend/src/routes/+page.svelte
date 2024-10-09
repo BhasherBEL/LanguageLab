@@ -17,7 +17,8 @@
 		getUserContactSessionsAPI
 	} from '$lib/api/users';
 	import { createSessionFromCalComAPI } from '$lib/api/sessions';
-	import { toastAlert, toastWarning } from '$lib/utils/toasts';
+	import { toastAlert, toastSuccess, toastWarning } from '$lib/utils/toasts';
+	import { get } from 'svelte/store';
 
 	let ready = false;
 	$: contacts = [] as User[];
@@ -82,16 +83,27 @@
 		// @ts-ignore
 		Cal('on', {
 			action: 'bookingSuccessful',
-			callback: (e: any) => {
+			callback: async (e: any) => {
 				if (!contact || !$user || !e.detail.data) {
-					toastAlert('Automatic session creation failed');
+					toastAlert(get(t)('home.bookingFailed'));
 					return;
 				}
 
-				let date = new Date(e.detail.data.date);
-				let duration = e.detail.data.duration;
-				let end = new Date(date.getTime() + duration * 60000);
-				createSessionFromCalComAPI($user.id, contact.id, date, end);
+				const date = new Date(e.detail.data.date);
+				const duration = e.detail.data.duration;
+				const end = new Date(date.getTime() + duration * 60000);
+				const sess_id: number | null = await createSessionFromCalComAPI(
+					$user.id,
+					contact.id,
+					date,
+					end
+				);
+				if (!sess_id) {
+					toastAlert(get(t)('home.bookingFailed'));
+					return;
+				}
+				toastSuccess(get(t)('home.bookingSuccessful'));
+				contactSessions = Session.parseAll(await getUserContactSessionsAPI($user!.id, contact.id));
 			}
 		});
 	});
