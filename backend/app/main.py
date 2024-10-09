@@ -169,11 +169,10 @@ def read_user(
 @usersRouter.get("", response_model=list[schemas.User])
 def read_users(
     skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    return crud.get_users(db, skip=skip, limit=limit)
+    return crud.get_users(db, skip=skip)
 
 
 @usersRouter.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -525,14 +524,13 @@ def remove_user_from_session(
 @sessionsRouter.get("", response_model=list[schemas.Session])
 def read_sessions(
     skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
     if check_user_level(current_user, models.UserType.ADMIN):
-        return crud.get_all_sessions(db, skip=skip, limit=limit)
+        return crud.get_all_sessions(db, skip=skip)
 
-    return crud.get_sessions(db, current_user, skip=skip, limit=limit)
+    return crud.get_sessions(db, current_user, skip=skip)
 
 
 @sessionsRouter.post("/{session_id}/satisfy", status_code=status.HTTP_204_NO_CONTENT)
@@ -562,7 +560,6 @@ def create_session_satisfy(
 def read_messages(
     session_id: int,
     skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
@@ -579,7 +576,7 @@ def read_messages(
             detail="You do not have permission to view messages in this session",
         )
 
-    return crud.get_messages(db, session_id, skip=skip, limit=limit)
+    return crud.get_messages(db, session_id, skip=skip)
 
 
 async def send_websoket_message(session_id: int, message: schemas.Message, action: str):
