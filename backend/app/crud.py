@@ -25,8 +25,8 @@ def get_user_by_email_and_password(db: Session, email: str, password: str):
     return user_db
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_users(db: Session, skip: int = 0):
+    return db.query(models.User).offset(skip).all()
 
 
 def create_user(db: Session, user: schemas.UserCreate):
@@ -99,7 +99,8 @@ def create_session_with_users(
     db: Session,
     users: list[schemas.User],
     start_time: datetime.datetime | None = datetime_aware(),
-    end_time: datetime.datetime | None = datetime_aware() + datetime.timedelta(hours=12),
+    end_time: datetime.datetime | None = datetime_aware()
+    + datetime.timedelta(hours=12),
 ):
     db_session = models.Session(
         is_active=True, users=users, start_time=start_time, end_time=end_time
@@ -114,7 +115,7 @@ def get_session(db: Session, session_id: int):
     return db.query(models.Session).filter(models.Session.id == session_id).first()
 
 
-def get_sessions(db: Session, user: schemas.User, skip: int = 0, limit: int = 100):
+def get_sessions(db: Session, user: schemas.User, skip: int = 0):
     return (
         db.query(models.Session)
         .filter(models.Session.users.any(models.User.id == user.id))
@@ -122,13 +123,12 @@ def get_sessions(db: Session, user: schemas.User, skip: int = 0, limit: int = 10
         # .filter(models.Session.end_time >= datetime.datetime.now())
         # .filter(models.Session.start_time <= datetime.datetime.now())
         .offset(skip)
-        .limit(limit)
         .all()
     )
 
 
-def get_all_sessions(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Session).offset(skip).limit(limit).all()
+def get_all_sessions(db: Session, skip: int = 0):
+    return db.query(models.Session).offset(skip).all()
 
 
 def delete_session(db: Session, session_id: int):
@@ -159,12 +159,11 @@ def get_message(db: Session, message_id: int):
     return db.query(models.Message).filter(models.Message.id == message_id).first()
 
 
-def get_messages(db: Session, session_id: int, skip: int = 0, limit: int = 100):
+def get_messages(db: Session, session_id: int, skip: int = 0):
     return (
         db.query(models.Message)
         .filter(models.Message.session_id == session_id)
         .offset(skip)
-        .limit(limit)
         .all()
     )
 
@@ -259,8 +258,8 @@ def get_survey(db: Session, survey_id: int):
     )
 
 
-def get_surveys(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.SurveySurvey).offset(skip).limit(limit).all()
+def get_surveys(db: Session, skip: int = 0):
+    return db.query(models.SurveySurvey).offset(skip).all()
 
 
 def delete_survey(db: Session, survey_id: int):
@@ -312,8 +311,8 @@ def get_survey_group(db: Session, survey_group_id: int) -> schemas.SurveyGroup:
     )
 
 
-def get_survey_groups(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.SurveyGroup).offset(skip).limit(limit).all()
+def get_survey_groups(db: Session, skip: int = 0):
+    return db.query(models.SurveyGroup).offset(skip).all()
 
 
 def delete_survey_group(db: Session, survey_group_id: int):
@@ -365,8 +364,8 @@ def get_survey_question(db: Session, survey_question_id: int):
     )
 
 
-def get_survey_questions(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.SurveyQuestion).offset(skip).limit(limit).all()
+def get_survey_questions(db: Session, skip: int = 0):
+    return db.query(models.SurveyQuestion).offset(skip).all()
 
 
 def delete_survey_question(db: Session, survey_question_id: int):
@@ -384,11 +383,10 @@ def create_survey_response(db: Session, survey_response: schemas.SurveyResponseC
     return db_survey_response
 
 
-def get_survey_responses(db: Session, survey_id: int, skip: int = 0, limit: int = 100):
+def get_survey_responses(db: Session, survey_id: int, skip: int = 0):
     return (
         db.query(models.SurveyResponse)
         .filter(models.SurveyResponse.survey_id == survey_id)
         .offset(skip)
-        .limit(limit)
         .all()
     )
