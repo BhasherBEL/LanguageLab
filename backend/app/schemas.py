@@ -82,6 +82,7 @@ class Session(BaseModel):
     start_time: NaiveDatetime
     end_time: NaiveDatetime
     language: str
+    length: int | None = None
 
     class Config:
         from_attributes = True

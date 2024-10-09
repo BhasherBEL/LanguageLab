@@ -9,7 +9,10 @@
 		"tutorSelection": "Tuteur",
 		"language": "Langue",
 		"availability": "Disponibilités",
-		"admin": "Administration"
+		"admin": {
+			"users": "Utilisateurs",
+			"sessions": "Sessions"
+		}
 	},
 	"chatbox": {
 		"placeholder": "Écrivez votre message ici...",
@@ -190,6 +193,9 @@
 			"admin": "Admin",
 			"tutor": "Tuteur",
 			"student": "Étudiant",
+			"admins": "Admin(s)",
+			"tutors": "Tuteur(s)",
+			"students": "Étudiant(s)",
 			"0": "Admin",
 			"1": "Tuteur",
 			"2": "Étudiant"
@@ -296,6 +302,11 @@
 		"bool": {
 			"true": "Oui",
 			"false": "Non"
+		},
+		"words": {
+			"date": "Date",
+			"messages": "Messages",
+			"actions": "Actions"
 		}
 	},
 	"inputs": {

@@ -3,7 +3,6 @@
 	import User, { users } from '$lib/types/user';
 	import { getUsersAPI } from '$lib/api/users';
 	import { t } from '$lib/services/i18n';
-	import { Icon, Trash } from 'svelte-hero-icons';
 	import UserItem from '$lib/components/users/userItem.svelte';
 
 	let ready = false;

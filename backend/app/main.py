@@ -15,9 +15,12 @@ from fastapi import (
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocket
+from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
 import json
 from jose import jwt
+from io import StringIO
+import csv
 
 import schemas
 import crud
@@ -409,7 +412,10 @@ def create_session(
     #        status_code=401, detail="You do not have permission to create a session"
     #    )
 
-    return crud.create_session(db, current_user)
+    rep = crud.create_session(db, current_user)
+    rep.length = 0
+
+    return rep
 
 
 @sessionsRouter.get("/{session_id}", response_model=schemas.Session)
@@ -464,6 +470,34 @@ def update_session(
         )
 
     crud.update_session(db, session, session_id)
+
+@sessionsRouter.get("/{session_id}/download/messages")
+def download_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to download this session"
+        )
+
+    data = crud.get_messages(db, session_id)
+
+    output = StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(models.Message.__table__.columns.keys())
+    for row in data:
+        writer.writerow(row.raw())
+
+    output.seek(0)
+
+    return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={session_id}-messages.csv"})
 
 
 @sessionsRouter.post(

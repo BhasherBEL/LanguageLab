@@ -86,9 +86,7 @@ def get_contact_sessions(db: Session, user_id: int, contact_id: int):
 
 
 def create_session(db: Session, user: schemas.User):
-    print("before")
     db_session = models.Session(is_active=True, users=[user])
-    print(db_session.created_at)
     db.add(db_session)
     db.commit()
     db.refresh(db_session)
@@ -112,11 +110,13 @@ def create_session_with_users(
 
 
 def get_session(db: Session, session_id: int):
-    return db.query(models.Session).filter(models.Session.id == session_id).first()
+    session = db.query(models.Session).filter(models.Session.id == session_id).first()
+
+    return session
 
 
 def get_sessions(db: Session, user: schemas.User, skip: int = 0):
-    return (
+    sessions = (
         db.query(models.Session)
         .filter(models.Session.users.any(models.User.id == user.id))
         .filter(models.Session.is_active or user.type < 2)
@@ -126,9 +126,20 @@ def get_sessions(db: Session, user: schemas.User, skip: int = 0):
         .all()
     )
 
+    return sessions
+
 
 def get_all_sessions(db: Session, skip: int = 0):
-    return db.query(models.Session).offset(skip).all()
+    sessions = db.query(models.Session).offset(skip).all()
+
+    for session in sessions:
+        session.length = (
+            db.query(models.Message)
+            .filter(models.Message.session_id == session.id)
+            .count()
+        )
+
+    return sessions
 
 
 def delete_session(db: Session, session_id: int):

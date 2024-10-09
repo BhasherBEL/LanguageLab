@@ -38,6 +38,7 @@ export default class Session {
 	private _lastTyping: Writable<Date | null> = writable(null);
 	private _onlineUsers: Writable<Set<number>> = writable(new Set());
 	private _onlineTimers: Map<number, number> = new Map();
+	private _length: number;
 
 	private constructor(
 		id: number,
@@ -47,7 +48,8 @@ export default class Session {
 		created_at: Date,
 		start_time: Date,
 		end_time: Date,
-		language: string
+		language: string,
+		length: number
 	) {
 		this._id = id;
 		this._token = token;
@@ -58,6 +60,7 @@ export default class Session {
 		this._start_time = start_time;
 		this._end_time = end_time;
 		this._language = language;
+		this._length = length;
 	}
 
 	get id(): number {
@@ -106,6 +109,10 @@ export default class Session {
 
 	get onlineUsers(): Writable<Set<number>> {
 		return this._onlineUsers;
+	}
+
+	get length(): number {
+		return this._length;
 	}
 
 	usersList(maxLength = 30): string {
@@ -375,7 +382,8 @@ export default class Session {
 			parseToLocalDate(json.created_at),
 			parseToLocalDate(json.start_time),
 			parseToLocalDate(json.end_time),
-			json.language
+			json.language,
+			json.length
 		);
 
 		session._users = User.parseAll(json.users);

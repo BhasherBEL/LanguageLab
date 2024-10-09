@@ -130,6 +130,16 @@ class Message(Base):
 
     feedbacks = relationship("MessageFeedback", backref="message")
 
+    def raw(self):
+        return [
+            self.id,
+            self.message_id,
+            self.content,
+            self.user_id,
+            self.session_id,
+            self.created_at,
+        ]
+
 
 class MessageMetadata(Base):
     __tablename__ = "message_metadata"

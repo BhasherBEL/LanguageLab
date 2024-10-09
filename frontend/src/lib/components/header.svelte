@@ -95,13 +95,17 @@
 							<summary class="p-3">
 								<Icon src={Cog6Tooth} class="h-5 w-5" />
 							</summary>
-							<ul class="menu menu-sm dropdown-content absolute right-0">
+							<ul class="menu menu-sm dropdown-content absolute right-0 z-10">
 								<li>
 									<a data-sveltekit-reload href="/admin">
-										{$t('header.admin')}
+										{$t('header.admin.users')}
 									</a>
 								</li>
-								<li><a>Submenu 2</a></li>
+								<li>
+									<a data-sveltekit-reload href="/admin/sessions">
+										{$t('header.admin.sessions')}
+									</a>
+								</li>
 							</ul>
 						</details>
 					</li>
