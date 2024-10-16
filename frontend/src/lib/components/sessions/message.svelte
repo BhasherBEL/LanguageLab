@@ -195,7 +195,7 @@
 						>
 					{/if}
 				{:else}
-					{@html linkifyHtml(sanitize(part.text), { className: 'underline' })}
+					{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 				{/if}
 			{/each}
 		</div>
