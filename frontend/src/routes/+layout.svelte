@@ -8,6 +8,8 @@
 	export let data;
 
 	User.parseFromServer(data);
+
+	console.log(2);
 </script>
 
 <svelte:head>

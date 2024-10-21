@@ -1,0 +1,15 @@
+#!/bin/sh
+
+git stash -q --keep-index
+
+cd frontend 
+npm run format
+npm run lint
+cd ..
+
+black backend
+black --check backend
+
+git stash pop -q
+
+exit 0
