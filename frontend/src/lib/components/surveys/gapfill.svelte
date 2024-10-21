@@ -11,8 +11,7 @@
 		bind:value={content}
 		on:input={(event) => onInput(event.target.value)}
 		maxlength={length}
-	/><!-- 
-	-->{#each Array.from({ length }) as _, i}
+	/><!-- -->{#each Array.from({ length }) as _, i}
 		<label>{content[i] || '_'}</label>
 	{/each}
 </span>

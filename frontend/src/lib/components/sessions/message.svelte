@@ -195,6 +195,7 @@
 						>
 					{/if}
 				{:else}
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 				{/if}
 			{/each}
