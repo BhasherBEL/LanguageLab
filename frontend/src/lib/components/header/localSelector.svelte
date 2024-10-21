@@ -1,9 +1,6 @@
 <script lang="ts">
-	import { locale, locales, t } from '$lib/services/i18n';
+	import { locale, locales } from '$lib/services/i18n';
 	import { get } from 'svelte/store';
-
-	let classes = '';
-	export { classes as class };
 
 	function onChange(value: string) {
 		if (value !== get(locale)) {

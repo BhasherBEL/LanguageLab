@@ -23,7 +23,7 @@
 	}
 </script>
 
-<div class="flex justify-center items-center h-screen"> 
+<div class="flex justify-center items-center h-screen">
 	<div class="flex flex-col w-full max-w-md rounded-box shadow-xl bg-base-200 gap-4 p-6">
 		<h1 class="text-3xl font-bold self-center">{$t('login.title')}</h1>
 
@@ -53,7 +53,14 @@
 					<span class="label-text">{$t('login.email')}</span>
 				</div>
 
-				<input type="text" id="email" name="email" class="input input-bordered" bind:value={email} required />
+				<input
+					type="text"
+					id="email"
+					name="email"
+					class="input input-bordered"
+					bind:value={email}
+					required
+				/>
 			</label>
 
 			<label class="form-control">
@@ -63,7 +70,14 @@
 					<a class="label-text link link-secondary">{$t('login.forgotPassword')}</a> -->
 				</div>
 
-				<input type="password" id="password" name="password" class="input input-bordered" bind:value={password} required />
+				<input
+					type="password"
+					id="password"
+					name="password"
+					class="input input-bordered"
+					bind:value={password}
+					required
+				/>
 			</label>
 
 			<!-- <div class="form-control">

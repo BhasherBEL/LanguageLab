@@ -45,7 +45,7 @@ export async function createMessageAPI(
 	id: number,
 	content: string,
 	metadata: { message: string; date: number }[]
-): Promise<any | null> {
+): Promise<number | null> {
 	const response = await axiosInstance.post(`/sessions/${id}/messages`, { content, metadata });
 
 	if (response.status !== 201) {
@@ -61,7 +61,7 @@ export async function updateMessageAPI(
 	message_id: string,
 	content: string,
 	metadata: { message: string; date: number }[]
-): Promise<any | null> {
+): Promise<number | null> {
 	const response = await axiosInstance.post(`/sessions/${id}/messages`, {
 		message_id,
 		content,

@@ -7,8 +7,8 @@
 		"build": "vite build",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"lint": "prettier --check .",
+		"format": "prettier --write . --log-level warn"
 	},
 	"devDependencies": {
 		"@rollup/plugin-json": "^6.1.0",

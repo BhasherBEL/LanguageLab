@@ -35,7 +35,7 @@ export default class SurveyQuestion {
 			return null;
 		}
 
-		let options = [];
+		const options = [];
 		if (data.option1) options.push(data.option1);
 		if (data.option2) options.push(data.option2);
 		if (data.option3) options.push(data.option3);

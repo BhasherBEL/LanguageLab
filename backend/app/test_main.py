@@ -15,9 +15,7 @@ def test_read_main():
 def test_webhook_create():
     response = client.post(
         "/api/v1/webhooks/sessions",
-        headers={
-            "X-Cal-Signature-256": config.CALCOM_SECRET
-        },
+        headers={"X-Cal-Signature-256": config.CALCOM_SECRET},
         json={
             "triggerEvent": "BOOKING_CREATED",
             "createdAt": "2023-05-24T09:30:00.538Z",
@@ -27,44 +25,34 @@ def test_webhook_create():
                 "description": "",
                 "additionalNotes": "",
                 "customInputs": {},
-                "startTime": (datetime.datetime.now() + datetime.timedelta(days=1, hours=1)).isoformat(),
-                "endTime": (datetime.datetime.now() + datetime.timedelta(days=1, hours=2)).isoformat(),
+                "startTime": (
+                    datetime.datetime.now() + datetime.timedelta(days=1, hours=1)
+                ).isoformat(),
+                "endTime": (
+                    datetime.datetime.now() + datetime.timedelta(days=1, hours=2)
+                ).isoformat(),
                 "organizer": {
                     "id": 5,
                     "name": "Pro Example",
                     "email": "pro@example.com",
                     "username": "pro",
                     "timeZone": "Asia/Kolkata",
-                    "language": {
-                        "locale": "en"
-                    },
-                    "timeFormat": "h:mma"
+                    "language": {"locale": "en"},
+                    "timeFormat": "h:mma",
                 },
                 "responses": {
-                    "name": {
-                        "label": "your_name",
-                        "value": "John Doe"
-                    },
+                    "name": {"label": "your_name", "value": "John Doe"},
                     "email": {
                         "label": "email_address",
-                        "value": "john.doe@example.com"
+                        "value": "john.doe@example.com",
                     },
                     "location": {
                         "label": "location",
-                        "value": {
-                            "optionValue": "",
-                            "value": "inPerson"
-                        }
+                        "value": {"optionValue": "", "value": "inPerson"},
                     },
-                    "notes": {
-                        "label": "additional_notes"
-                    },
-                    "guests": {
-                        "label": "additional_guests"
-                    },
-                    "rescheduleReason": {
-                        "label": "reschedule_reason"
-                    }
+                    "notes": {"label": "additional_notes"},
+                    "guests": {"label": "additional_guests"},
+                    "rescheduleReason": {"label": "reschedule_reason"},
                 },
                 "userFieldsResponses": {},
                 "attendees": [
@@ -72,9 +60,7 @@ def test_webhook_create():
                         "email": "admin@admin.tld",
                         "name": "John Doe",
                         "timeZone": "Asia/Kolkata",
-                        "language": {
-                            "locale": "en"
-                        }
+                        "language": {"locale": "en"},
                     }
                 ],
                 "location": "Calcom HQ",
@@ -84,7 +70,7 @@ def test_webhook_create():
                     "externalId": "https://caldav.icloud.com/1234567/calendars/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/",
                     "userId": 5,
                     "eventTypeId": None,
-                    "credentialId": 1
+                    "credentialId": 1,
                 },
                 "hideCalendarNotes": False,
                 "requiresConfirmation": None,
@@ -99,7 +85,7 @@ def test_webhook_create():
                         "success": 1,
                         "failures": 0,
                         "errors": [],
-                        "warnings": []
+                        "warnings": [],
                     }
                 ],
                 "eventTitle": "60min",
@@ -109,10 +95,12 @@ def test_webhook_create():
                 "length": 60,
                 "bookingId": 91,
                 "metadata": {},
-                "status": "ACCEPTED"
-            }
-        }
+                "status": "ACCEPTED",
+            },
+        },
     )
 
-    assert response.status_code == 202, (response.status_code,
-                                         response.content.decode("utf-8"))
+    assert response.status_code == 202, (
+        response.status_code,
+        response.content.decode("utf-8"),
+    )
