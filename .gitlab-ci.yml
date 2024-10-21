@@ -1,17 +1,30 @@
-default:
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
 stages:
+  - lint
   - build
+
+lint_frontend:
+  stage: lint
+  image: node
+  script:
+    - cd frontend
+    - npm install
+    - npm run lint
+
+lint_backend:
+  stage: lint
+  image: registry.gitlab.com/pipeline-components/black:latest
+  script:
+    - black --check --verbose -- .
 
 build:
   stage: build
   only:
     - main
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   parallel:
     matrix:
       - COMPONENT: [frontend, backend]
