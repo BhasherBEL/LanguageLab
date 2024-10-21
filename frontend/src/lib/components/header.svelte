@@ -31,7 +31,7 @@
 				<Icon src={Bars3} class="h-5 w-5" />
 			</div>
 			<ul
-				tabindex="0"
+				tabindex="-1"
 				class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 			>
 				{#if $user}
@@ -46,7 +46,7 @@
 					<li><a href="/">Item 3</a></li>
 				{/if}
 				<li>
-					<a>{$t('header.language')}</a>
+					<span>{$t('header.language')}</span>
 					<ul class="p-2">
 						<LocalSelector />
 					</ul>

@@ -2,7 +2,7 @@ import axios from 'axios';
 import config from '$lib/config';
 import { writable, get } from 'svelte/store';
 
-export let access_cookie = writable('');
+export const access_cookie = writable('');
 
 export const axiosPublicInstance = axios.create({
 	...axios.defaults,

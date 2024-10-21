@@ -113,6 +113,7 @@ export async function createUserAPI(
 	return response.data;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function patchUserAPI(user_id: number, data: any): Promise<boolean> {
 	try {
 		const response = await axiosInstance.patch(`/users/${user_id}`, data);

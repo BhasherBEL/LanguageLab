@@ -80,7 +80,7 @@
 			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
 			{disabled}
 			bind:value={message}
-			on:keypress={(e) => keyPress()}
+			on:keypress={() => keyPress()}
 			on:keypress={async (e) => {
 				if (e.key === 'Enter' && !e.shiftKey) {
 					await sendMessage();

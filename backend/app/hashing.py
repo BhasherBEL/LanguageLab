@@ -15,18 +15,12 @@ import crud
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-reuseable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/login",
-    scheme_name="JWT"
-)
+reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/login", scheme_name="JWT")
 
-reuseable_refresh_oauth = OAuth2PasswordBearer(
-    tokenUrl="/refresh",
-    scheme_name="JWT"
-)
+reuseable_refresh_oauth = OAuth2PasswordBearer(tokenUrl="/refresh", scheme_name="JWT")
 
 
-class Hasher():
+class Hasher:
     @staticmethod
     def verify_password(plain_password, hashed_password):
         return pwd_context.verify(plain_password, hashed_password)
@@ -40,13 +34,22 @@ def create_access_token(user: models.User, expires_delta: int = -1) -> str:
     if expires_delta > 0:
         expires_delta = int(datetime.now(UTC).timestamp()) + expires_delta
     else:
-        expires_delta = int((datetime.now(
-            UTC) + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)).timestamp())
+        expires_delta = int(
+            (
+                datetime.now(UTC)
+                + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
+            ).timestamp()
+        )
 
-    to_encode = {"exp": expires_delta, "sub": str(
-        user.id), "type": user.type, "email": user.email, "nickname": user.nickname, "is_active": user.is_active}
-    encoded_jwt = jwt.encode(
-        to_encode, config.JWT_SECRET_KEY, config.ALGORITHM)
+    to_encode = {
+        "exp": expires_delta,
+        "sub": str(user.id),
+        "type": user.type,
+        "email": user.email,
+        "nickname": user.nickname,
+        "is_active": user.is_active,
+    }
+    encoded_jwt = jwt.encode(to_encode, config.JWT_SECRET_KEY, config.ALGORITHM)
     return encoded_jwt
 
 
@@ -54,20 +57,30 @@ def create_refresh_token(user: models.User, expires_delta: int = -1) -> str:
     if expires_delta > 0:
         expires_delta = int(datetime.now(UTC).timestamp()) + expires_delta
     else:
-        expires_delta = int((datetime.now(
-            UTC) + timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)).timestamp())
+        expires_delta = int(
+            (
+                datetime.now(UTC)
+                + timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)
+            ).timestamp()
+        )
 
-    to_encode = {"exp": expires_delta, "sub": str(
-        user.id), "type": user.type, "email": user.email, "nickname": user.nickname, "is_active": user.is_active}
-    encoded_jwt = jwt.encode(
-        to_encode, config.JWT_REFRESH_SECRET_KEY, config.ALGORITHM)
+    to_encode = {
+        "exp": expires_delta,
+        "sub": str(user.id),
+        "type": user.type,
+        "email": user.email,
+        "nickname": user.nickname,
+        "is_active": user.is_active,
+    }
+    encoded_jwt = jwt.encode(to_encode, config.JWT_REFRESH_SECRET_KEY, config.ALGORITHM)
     return encoded_jwt
 
 
 def get_jwt_user(token: str = Depends(reuseable_oauth), db: Session = Depends(get_db)):
     try:
-        payload = jwt.decode(token, config.JWT_SECRET_KEY,
-                             algorithms=[config.ALGORITHM])
+        payload = jwt.decode(
+            token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM]
+        )
         token_data = schemas.TokenPayload(**payload)
 
         if token_data.exp is None or token_data.sub is None:
@@ -81,12 +94,19 @@ def get_jwt_user(token: str = Depends(reuseable_oauth), db: Session = Depends(ge
     except jwte.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
 
-    except (jwte.JWTError, jwte.ExpiredSignatureError, ValidationError, ValueError) as e:
+    except (
+        jwte.JWTError,
+        jwte.ExpiredSignatureError,
+        ValidationError,
+        ValueError,
+    ) as e:
         print(e)
         raise HTTPException(status_code=403, detail="Invalid token")
 
     return db_user
 
 
-def get_jwt_user_from_refresh_token(token: str = Depends(reuseable_refresh_oauth), db: Session = Depends(get_db)):
+def get_jwt_user_from_refresh_token(
+    token: str = Depends(reuseable_refresh_oauth), db: Session = Depends(get_db)
+):
     return get_jwt_user(token, db)

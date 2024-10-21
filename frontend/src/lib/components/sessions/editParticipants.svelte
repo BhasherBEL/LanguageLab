@@ -5,7 +5,7 @@
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import { Icon, Language, XMark } from 'svelte-hero-icons';
+	import { Icon, XMark } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
 	import config from '$lib/config';
 

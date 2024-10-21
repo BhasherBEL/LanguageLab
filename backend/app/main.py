@@ -121,7 +121,12 @@ def register(
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
 
-    user_data = schemas.UserCreate(email=email, password=password, nickname=nickname, type=models.UserType.TUTOR.value if tutor else models.UserType.STUDENT.value)
+    user_data = schemas.UserCreate(
+        email=email,
+        password=password,
+        nickname=nickname,
+        type=models.UserType.TUTOR.value if tutor else models.UserType.STUDENT.value,
+    )
 
     user = crud.create_user(db=db, user=user_data)
 
@@ -399,32 +404,38 @@ def create_weekly_survey(
     db_user = crud.get_user(db, user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     return crud.create_user_survey_weekly(db, user_id, survey).id
 
-@usersRouter.post('/{user_id}/contacts/{contact_id}/bookings', status_code=status.HTTP_201_CREATED)
+
+@usersRouter.post(
+    "/{user_id}/contacts/{contact_id}/bookings", status_code=status.HTTP_201_CREATED
+)
 def create_booking(
-        user_id: int,
-        contact_id: int,
-        booking: schemas.SessionBookingCreate,
-        db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_jwt_user),
-        ):
-        if (
-            not check_user_level(current_user, models.UserType.ADMIN)
-            and current_user.id != user_id
-        ):
-            raise HTTPException(
-                status_code=401,
-                detail="You do not have permission to create a booking for this user",
-            )
-        db_user = crud.get_user(db, user_id)
-        if db_user is None:
-            raise HTTPException(status_code=404, detail="User not found")
-        db_contact = crud.get_user(db, contact_id)
-        if db_contact is None:
-            raise HTTPException(status_code=404, detail="Contact not found")
-        return crud.create_session_with_users(db, [db_user, db_contact], booking.start_time, booking.end_time).id
+    user_id: int,
+    contact_id: int,
+    booking: schemas.SessionBookingCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create a booking for this user",
+        )
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_contact = crud.get_user(db, contact_id)
+    if db_contact is None:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    return crud.create_session_with_users(
+        db, [db_user, db_contact], booking.start_time, booking.end_time
+    ).id
+
 
 @sessionsRouter.post("", response_model=schemas.Session)
 def create_session(
@@ -495,6 +506,7 @@ def update_session(
 
     crud.update_session(db, session, session_id)
 
+
 @sessionsRouter.get("/{session_id}/download/messages")
 def download_session(
     session_id: int,
@@ -507,7 +519,8 @@ def download_session(
 
     if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(
-            status_code=401, detail="You do not have permission to download this session"
+            status_code=401,
+            detail="You do not have permission to download this session",
         )
 
     data = crud.get_messages(db, session_id)
@@ -521,7 +534,13 @@ def download_session(
 
     output.seek(0)
 
-    return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={session_id}-messages.csv"})
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename={session_id}-messages.csv"
+        },
+    )
 
 
 @sessionsRouter.post(
@@ -792,6 +811,7 @@ def propagate_presence(
 
     return
 
+
 @studyRouter.post("/", status_code=status.HTTP_201_CREATED)
 def study_create(
     study: schemas.StudyCreate,
@@ -803,6 +823,7 @@ def study_create(
             status_code=401, detail="You do not have permission to create a study"
         )
     return crud.create_study(db, study).id
+
 
 @websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
@@ -1153,6 +1174,7 @@ def get_survey_responses(
         raise HTTPException(status_code=404, detail="Survey not found")
 
     return crud.get_survey_responses(db, survey_id)
+
 
 v1Router.include_router(authRouter)
 v1Router.include_router(usersRouter)
