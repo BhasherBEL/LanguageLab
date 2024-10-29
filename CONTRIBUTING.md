@@ -1,4 +1,27 @@
-## Initial setup
+## Introduction
+
+This document aims to specify how we currently work on this project, and how to get it working on your machine.
+
+## General organisation
+
+To keep track of the past, present and future work, we use the gitlab repository as a source of trust for the progress of the project. All the bugs, *to do*, improvement ideas and discussions are developed in the [issues](https://forge.uclouvain.be/sbibauw/languagelab/-/issues).
+
+The issues are categorised using tags. There are two types of tags. Gray tags are used to specify the kind of issues: UX, Studies, AI, topics, ... New kinds could be created at any time to reflect the progress and the targets of the project. Colored tags are used to specify the priority of an issue. Here are the different priorities:
+
+- Bug: Urgent issues that prevent the normal or expected application's operations.
+- To do: New functionalities or improvements already discussed and validated.
+- Waiting: Issues where work has already started, but is waiting someone else's answer or opinion to continue.
+- To review: Developed functionalities and improvements waiting for a review.
+- Nice to have: Non-priority features or improvements, that would be *nice to have*.
+- Open for discussions: Features and improvements that still need more discussions before being started.
+- Won't: Rejected features and improvements.
+
+To keep track of who is working on what, it's better to assign our-self an issue when working on it (or plan to work on it in a near future), and unassign if we plan to not work anymore (or anytime soon) on it.
+
+The different planned versions and the issues assigned to them are presented in the form of [milestones](https://forge.uclouvain.be/sbibauw/languagelab/-/milestones). The general idea is to finish a milestone before working on the next one.
+
+
+## Getting started
 
 #### Requirements
 
