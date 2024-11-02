@@ -215,10 +215,7 @@
 	</div>
 	<div class="chat-footer opacity-50 flex items-center">
 		{#if isSender}
-			<button
-				class="mr-2"
-				on:click={() => (isEdit ? endEdit() : startEdit())}
-			>
+			<button class="mr-2" on:click={() => (isEdit ? endEdit() : startEdit())}>
 				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
 			</button>
 		{/if}
