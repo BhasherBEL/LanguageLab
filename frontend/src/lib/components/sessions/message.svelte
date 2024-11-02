@@ -172,7 +172,7 @@
 		class:bg-blue-200={isSender}
 		class:bg-gray-300={!isSender}
 	>
-		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
+		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-200={isEdit}>
 			{#each parts as part}
 				{#if part.feedback && !isEdit}
 					{#if part.feedback.content}
@@ -197,8 +197,8 @@
 					{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 				{/if}
 			{/each}
-		</div>
-		{#if isEdit}
+		</div><!--
+		-->{#if isEdit}
 			<button
 				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
 				on:click={() => endEdit()}
@@ -212,20 +212,20 @@
 				{$t('button.cancel')}
 			</button>
 		{/if}
+	</div>
+	<div class="chat-footer opacity-50 flex items-center">
 		{#if isSender}
 			<button
-				class="absolute left-[-1.5rem] mt-2 mr-2 invisible group-hover:visible"
+				class="mr-2"
 				on:click={() => (isEdit ? endEdit() : startEdit())}
 			>
 				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
 			</button>
 		{/if}
-	</div>
-	<div class="chat-footer opacity-50">
 		<Icon src={Check} class="w-4 inline" />
 		{displayedTime}
 		{#if message.edited}
-			<button class="italic cursor-help" on:click={historyModal.showModal()}>
+			<button class="italic cursor-help ml-2" on:click={historyModal.showModal()}>
 				{$t('chatbox.edited')}
 			</button>
 			<dialog bind:this={historyModal} class="modal">
