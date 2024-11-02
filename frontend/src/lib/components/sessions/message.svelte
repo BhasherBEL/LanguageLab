@@ -168,11 +168,9 @@
 		/>
 	</div>
 	<div
-		class="chat-bubble whitespace-pre-wrap"
-		class:bg-blue-700={isSender}
+		class="chat-bubble whitespace-pre-wrap text-black"
+		class:bg-blue-200={isSender}
 		class:bg-gray-300={!isSender}
-		class:text-black={!isSender}
-		class:text-white={isSender}
 	>
 		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
 			{#each parts as part}
