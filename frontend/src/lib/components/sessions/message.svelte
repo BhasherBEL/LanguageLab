@@ -1,173 +1,109 @@
 <script lang="ts">
-	import type Message from '$lib/types/message';
-	import { displayTime } from '$lib/utils/date';
-	import { Check, Icon, Pencil } from 'svelte-hero-icons';
-	import { ArrowUturnLeft } from 'svelte-hero-icons';
-	import { ChatBubbleLeft } from 'svelte-hero-icons';
-	import { user } from '$lib/types/user';
-	// import Gravatar from 'svelte-gravatar';      // Gravatar is not working
-	import { t } from '$lib/services/i18n';
-	import { onMount } from 'svelte';
-	import SpellCheck from '$lib/components/icons/spellCheck.svelte';
-	import ChatBubble from '../icons/chatBubble.svelte';
-	import type Feedback from '$lib/types/feedback';
-	import linkifyHtml from 'linkify-html';
-	import { sanitize } from '$lib/utils/sanitize';
+    import type Message from '$lib/types/message';
+    import { displayTime } from '$lib/utils/date';
+    import { Check, Icon, Pencil, ArrowUturnLeft } from 'svelte-hero-icons';
+    import { user } from '$lib/types/user';
+    import { t } from '$lib/services/i18n';
+    import { onMount } from 'svelte';
+    import SpellCheck from '$lib/components/icons/spellCheck.svelte';
+    import ChatBubble from '../icons/chatBubble.svelte';
+    import type Feedback from '$lib/types/feedback';
+    import linkifyHtml from 'linkify-html';
+    import { sanitize } from '$lib/utils/sanitize';
 
-	export let message: Message;
+    export let message: Message;
+    export let sendMessage: (content: string, replyTo?: Message) => void;
+    export let messages: Message[];
 
-	let timer: number;
-	$: displayedTime = displayTime(message.created_at);
-	$: {
-		clearInterval(timer);
-		timer = setInterval(() => {
-			displayedTime = displayTime(message.created_at);
-		}, 1000);
-	}
-	let isEdit = false;
-	let contentDiv: HTMLDivElement;
-	let historyModal: HTMLDialogElement;
-	$: messageVersions = message.versions;
+    let timer: number;
+    $: displayedTime = displayTime(message.created_at);
+    $: {
+        clearInterval(timer);
+        timer = setInterval(() => {
+            displayedTime = displayTime(message.created_at);
+        }, 1000);
+    }
 
-	function startEdit() {
-		isEdit = true;
-		setTimeout(() => {
-			if (!contentDiv) return;
-			contentDiv.focus();
-		}, 0);
-	}
+    let isEdit = false;
+    let contentDiv: HTMLDivElement;
+    let historyModal: HTMLDialogElement;
+    $: messageVersions = message.versions;
 
-	async function endEdit(validate = true) {
-		if (!validate) {
-			contentDiv.innerText = message.content;
-			isEdit = false;
-			return;
-		}
+    let isReplying = false;
+    let replyingTo: Message | null = null;
+    let replyContent = '';
 
-		if (contentDiv.innerText.trim() === message.content) {
-			isEdit = false;
-			return;
-		}
+    function initiateReply(msg: Message) {
+        isReplying = true;
+        replyingTo = msg;
+        replyContent = '';
+    }
 
-		const res = await message.update(contentDiv.innerText.trim(), []);
+    function cancelReply() {
+        isReplying = false;
+        replyingTo = null;
+        replyContent = '';
+    }
 
-		if (res) {
-			isEdit = false;
-		}
-	}
+    function handleSend() {
+        if (replyContent.trim() === '') return;
 
-	let hightlight: HTMLDivElement;
+        if (replyingTo) {
+            sendMessage(replyContent, replyingTo);
+        } else {
+            sendMessage(replyContent);
+        }
 
-	onMount(() => {
-		document.addEventListener('selectionchange', onTextSelect);
-	});
+        isReplying = false;
+        replyingTo = null;
+        replyContent = '';
+    }
 
-	function getSelectionCharacterOffsetWithin() {
-		var start = 0;
-		var end = 0;
-		var doc = contentDiv.ownerDocument;
-		var win = doc.defaultView;
-		if (!doc || !win) return { start: 0, end: 0 };
-		var sel;
-		if (typeof win.getSelection === 'undefined') {
-			return { start: 0, end: 0 };
-		}
-		sel = win.getSelection();
-		if (!sel) return { start: 0, end: 0 };
-		if (sel.rangeCount <= 0) return { start: 0, end: 0 };
+    function findMessageById(id: string): Message | undefined {
+        return messages.find((msg) => msg.id === Number(id));
+    }
 
-		var range = sel.getRangeAt(0);
-		var preCaretRange = range.cloneRange();
-		preCaretRange.selectNodeContents(contentDiv);
-		preCaretRange.setEnd(range.startContainer, range.startOffset);
-		start = preCaretRange.toString().length;
-		preCaretRange.setEnd(range.endContainer, range.endOffset);
-		end = preCaretRange.toString().length;
+    function startEdit() {
+        isEdit = true;
+        setTimeout(() => {
+            if (!contentDiv) return;
+            contentDiv.focus();
+        }, 0);
+    }
 
-		return { start: start, end: end };
-	}
+    async function endEdit(validate = true) {
+        if (!validate) {
+            contentDiv.innerText = message.content;
+            isEdit = false;
+            return;
+        }
 
-	function onTextSelect() {
-		const selection = window.getSelection();
-		if (!selection || selection.rangeCount < 1 || !hightlight) return;
-		const range = selection.getRangeAt(0);
-		const start = range.startOffset;
-		const end = range.endOffset;
-		if (range.commonAncestorContainer.parentElement === contentDiv && end - start > 0) {
-			const rects = range.getClientRects();
-			if (!rects.length) {
-				hightlight.style.visibility = 'hidden';
-				return;
-			}
-			const rect = rects[rects.length - 1];
-			if (!rect) {
-				hightlight.style.visibility = 'hidden';
-				return;
-			}
-			hightlight.style.top = (rect.top + rect.bottom - hightlight.clientHeight) / 2 + 'px';
-			hightlight.style.left = rect.right + 10 + 'px';
-			hightlight.style.visibility = 'visible';
-		} else {
-			hightlight.style.visibility = 'hidden';
-		}
-	}
+        if (contentDiv.innerText.trim() === message.content) {
+            isEdit = false;
+            return;
+        }
 
-	async function onSelect(hasComment: boolean) {
-		const selection = window.getSelection();
-		if (!selection) {
-			if (hightlight) hightlight.style.visibility = 'hidden';
-			return;
-		}
-		const range = getSelectionCharacterOffsetWithin();
+        const res = await message.update(contentDiv.innerText.trim(), []);
 
-		const start = range.start;
-		const end = range.end;
-		let comment: string | null = null;
+        if (res) {
+            isEdit = false;
+        }
+    }
 
-		if (hasComment) {
-			comment = prompt($t('chatbox.comment'));
-			if (!comment) return;
-		}
-
-		const res = await message.addFeedback(start, end, comment);
-
-		if (res) {
-			selection.removeAllRanges();
-			hightlight.style.visibility = 'hidden';
-		}
-	}
-
-	function getParts(content: string, feedbacks: Feedback[]) {
-		let parts: { text: string; feedback: Feedback | null }[] = [];
-		let current = 0;
-		feedbacks.sort((a: Feedback, b: Feedback) => a.start - b.start);
-		for (const feedback of feedbacks) {
-			if (feedback.start > current) {
-				parts.push({ text: content.slice(current, feedback.start), feedback: null });
-			}
-			parts.push({ text: content.slice(feedback.start, feedback.end), feedback });
-			current = feedback.end;
-		}
-		if (current < content.length) {
-			parts.push({ text: content.slice(current), feedback: null });
-		}
-		return parts;
-	}
-
-	$: fbs = message.feedbacks;
-	$: parts = getParts(message.content, $fbs);
-
-	const isSender = message.user.id == $user?.id;
+    const isSender = message.user.id == $user?.id;
 </script>
 
+<!-- Reply Preview (shown only when actively replying to a specific message) -->
+{#if isReplying && replyingTo}
+    <div class="reply-preview">
+        <p class="replying-to-text">Replying to: <span class="replying-to-content">{replyingTo.content}</span></p>
+        <button on:click={cancelReply} class="cancel-reply">Cancel</button>
+    </div>
+{/if}
+
+<!-- Messages Display -->
 <div class="chat group" class:chat-start={!isSender} class:chat-end={isSender}>
     <div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
-        <!-- <Gravatar
-            email={message.user.email}
-            size={64}
-            title={message.user.nickname}
-            class="rounded-full"
-        /> -->
     </div>
     <div
         class="chat-bubble whitespace-pre-wrap"
@@ -176,36 +112,18 @@
         class:text-black={!isSender}
         class:text-white={isSender}
     >
+        {#if message.replyTo}
+            <!-- Display Original Message if this is a Reply -->
+            <div class="reply-to">
+                <p class="replying-to-text">Replying to: <span class="replying-to-content">{findMessageById(message.replyTo)?.content}</span></p>
+            </div>
+        {/if}
         <div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
-            {#each parts as part}
-                {#if part.feedback && !isEdit}
-                    {#if part.feedback.content}
-                        <span class="tooltip tooltip-accent" data-tip={part.feedback.content}
-                            ><!--
-                            --><span class="underline decoration-wavy decoration-blue-500 hover:cursor-help"
-                                ><!--
-                            -->{part.text}<!--
-                        --></span
-                            ><!--
-                        --></span
-                        >
-                    {:else}
-                        <span class="underline decoration-wavy decoration-red-500 decoration-1"
-                            ><!--
-                            -->{part.text}<!--
-                        --></span
-                        >
-                    {/if}
-                {:else}
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    {@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
-                {/if}
-            {/each}
+            {@html linkifyHtml(sanitize(message.content), { className: 'underline', target: '_blank' })}
         </div>
 
-        <!-- Reply Icon for Design Only -->
-        <button class="reply-icon absolute right-[-1.5rem] mt-2 mr-2 invisible group-hover:visible">
-			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
+        <button class="reply-icon" on:click={() => initiateReply(message)}>
+            <Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
         </button>
 
         {#if isEdit}
@@ -235,45 +153,98 @@
         <Icon src={Check} class="w-4 inline" />
         {displayedTime}
         {#if message.edited}
-            <button class="italic cursor-help" on:click={() => historyModal.showModal()}>
-                {$t('chatbox.edited')}
-            </button>
-            <dialog bind:this={historyModal} class="modal">
-                <div class="modal-box">
-                    <h3 class="text-xl">{$t('chatbox.history')}</h3>
-                    <div>
-                        {#each $messageVersions as version}
-                            <div class="flex justify-between items-center border-b border-gray-300 py-1">
-                                <div>
-                                    {version.content}
-                                </div>
-                                <div class="whitespace-nowrap">{displayTime(version.date)}</div>
-                            </div>
-                        {/each}
-                    </div>
-                    <div class="modal-action">
-                        <form method="dialog">
-                            <button class="btn btn-primary">{$t('button.close')}</button>
-                        </form>
-                    </div>
-                </div>
-            </dialog>
+            <span class="italic">Edited</span>
         {/if}
     </div>
 </div>
 
+<!-- Reply Input (shown only when actively replying) -->
+{#if isReplying}
+    <div class="reply-input-container">
+        <input
+            type="text"
+            placeholder="Type your reply..."
+            bind:value={replyContent}
+            class="message-input"
+        />
+        <button on:click={handleSend} class="send-button">Send</button>
+    </div>
+{/if}
 
-<div class="absolute invisible rounded-full border-black border bg-white" bind:this={hightlight}>
-	<button
-		on:click={() => onSelect(false)}
-		class="bg-opacity-0 bg-blue-500 hover:bg-opacity-50 p-2 pl-4 rounded-l-full"
-	>
-		<SpellCheck />
-	</button><!---
-	--><button
-		on:click={() => onSelect(true)}
-		class="bg-opacity-0 bg-blue-500 hover:bg-opacity-50 p-2 pr-4 rounded-r-full"
-	>
-		<ChatBubble />
-	</button>
-</div>
+<style>
+    /* Style the reply preview when replying to a specific message */
+    .reply-preview {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+        background-color: #f0f4f8;
+        border-left: 4px solid #007bff;
+        margin-bottom: 0.5rem;
+        border-radius: 5px;
+    }
+    .replying-to-text {
+        color: #555;
+        font-size: 0.9rem;
+    }
+    .replying-to-content {
+        font-weight: bold;
+        color: #333;
+    }
+    .cancel-reply {
+        font-size: 0.8rem;
+        color: #007bff;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    /* Chat message bubble */
+    .chat-bubble {
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        border-radius: 10px;
+        position: relative;
+    }
+    .reply-to {
+        background-color: #e9f4ff;
+        padding: 0.5rem;
+        border-left: 3px solid #007bff;
+        border-radius: 5px;
+        margin-bottom: 0.5rem;
+    }
+    /* Positioning and styling for reply icon */
+    .reply-icon {
+        position: absolute;
+        right: -1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .group:hover .reply-icon {
+        opacity: 1;
+    }
+    /* Input area for reply message */
+    .reply-input-container {
+        display: flex;
+        align-items: center;
+        margin-top: 0.5rem;
+        gap: 0.5rem;
+    }
+    .message-input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .send-button {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>

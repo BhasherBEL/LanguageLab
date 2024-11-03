@@ -16,6 +16,7 @@ export default class Message {
 	private _edited: boolean = false;
 	private _versions = writable([] as { content: string; date: Date }[]);
 	private _feedbacks = writable([] as Feedback[]);
+	replyTo: any;
 
 	public constructor(
 		id: number,
