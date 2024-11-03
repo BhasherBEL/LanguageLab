@@ -2,8 +2,10 @@
 	import type Message from '$lib/types/message';
 	import { displayTime } from '$lib/utils/date';
 	import { Check, Icon, Pencil } from 'svelte-hero-icons';
+	import { ArrowUturnLeft } from 'svelte-hero-icons';
+	import { ChatBubbleLeft } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
-	import Gravatar from 'svelte-gravatar';
+	// import Gravatar from 'svelte-gravatar';      // Gravatar is not working
 	import { t } from '$lib/services/i18n';
 	import { onMount } from 'svelte';
 	import SpellCheck from '$lib/components/icons/spellCheck.svelte';
@@ -159,100 +161,107 @@
 </script>
 
 <div class="chat group" class:chat-start={!isSender} class:chat-end={isSender}>
-	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
-		<Gravatar
-			email={message.user.email}
-			size={64}
-			title={message.user.nickname}
-			class="rounded-full"
-		/>
-	</div>
-	<div
-		class="chat-bubble whitespace-pre-wrap"
-		class:bg-blue-700={isSender}
-		class:bg-gray-300={!isSender}
-		class:text-black={!isSender}
-		class:text-white={isSender}
-	>
-		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
-			{#each parts as part}
-				{#if part.feedback && !isEdit}
-					{#if part.feedback.content}
-						<span class="tooltip tooltip-accent" data-tip={part.feedback.content}
-							><!--
-							--><span class="underline decoration-wavy decoration-blue-500 hover:cursor-help"
-								><!--
-							-->{part.text}<!--
-						--></span
-							><!--
-						--></span
-						>
-					{:else}
-						<span class="underline decoration-wavy decoration-red-500 decoration-1"
-							><!--
-							-->{part.text}<!--
-						--></span
-						>
-					{/if}
-				{:else}
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
-				{/if}
-			{/each}
-		</div>
-		{#if isEdit}
-			<button
-				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
-				on:click={() => endEdit()}
-			>
-				{$t('button.save')}
-			</button>
-			<button
-				class="float-end border rounded-full px-4 py-2 mt-2 mr-2"
-				on:click={() => endEdit(false)}
-			>
-				{$t('button.cancel')}
-			</button>
-		{/if}
-		{#if isSender}
-			<button
-				class="absolute left-[-1.5rem] mt-2 mr-2 invisible group-hover:visible"
-				on:click={() => (isEdit ? endEdit() : startEdit())}
-			>
-				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
-			</button>
-		{/if}
-	</div>
-	<div class="chat-footer opacity-50">
-		<Icon src={Check} class="w-4 inline" />
-		{displayedTime}
-		{#if message.edited}
-			<button class="italic cursor-help" on:click={historyModal.showModal()}>
-				{$t('chatbox.edited')}
-			</button>
-			<dialog bind:this={historyModal} class="modal">
-				<div class="modal-box">
-					<h3 class="text-xl">{$t('chatbox.history')}</h3>
-					<div>
-						{#each $messageVersions as version}
-							<div class="flex justify-between items-center border-b border-gray-300 py-1">
-								<div>
-									{version.content}
-								</div>
-								<div class="whitespace-nowrap">{displayTime(version.date)}</div>
-							</div>
-						{/each}
-					</div>
-					<div class="modal-action">
-						<form method="dialog">
-							<button class="btn btn-primary">{$t('button.close')}</button>
-						</form>
-					</div>
-				</div>
-			</dialog>
-		{/if}
-	</div>
+    <div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
+        <!-- <Gravatar
+            email={message.user.email}
+            size={64}
+            title={message.user.nickname}
+            class="rounded-full"
+        /> -->
+    </div>
+    <div
+        class="chat-bubble whitespace-pre-wrap"
+        class:bg-blue-700={isSender}
+        class:bg-gray-300={!isSender}
+        class:text-black={!isSender}
+        class:text-white={isSender}
+    >
+        <div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
+            {#each parts as part}
+                {#if part.feedback && !isEdit}
+                    {#if part.feedback.content}
+                        <span class="tooltip tooltip-accent" data-tip={part.feedback.content}
+                            ><!--
+                            --><span class="underline decoration-wavy decoration-blue-500 hover:cursor-help"
+                                ><!--
+                            -->{part.text}<!--
+                        --></span
+                            ><!--
+                        --></span
+                        >
+                    {:else}
+                        <span class="underline decoration-wavy decoration-red-500 decoration-1"
+                            ><!--
+                            -->{part.text}<!--
+                        --></span
+                        >
+                    {/if}
+                {:else}
+                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                    {@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
+                {/if}
+            {/each}
+        </div>
+
+        <!-- Reply Icon for Design Only -->
+        <button class="reply-icon absolute right-[-1.5rem] mt-2 mr-2 invisible group-hover:visible">
+			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
+        </button>
+
+        {#if isEdit}
+            <button
+                class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
+                on:click={() => endEdit()}
+            >
+                {$t('button.save')}
+            </button>
+            <button
+                class="float-end border rounded-full px-4 py-2 mt-2 mr-2"
+                on:click={() => endEdit(false)}
+            >
+                {$t('button.cancel')}
+            </button>
+        {/if}
+        {#if isSender}
+            <button
+                class="absolute left-[-1.5rem] mt-2 mr-2 invisible group-hover:visible"
+                on:click={() => (isEdit ? endEdit() : startEdit())}
+            >
+                <Icon src={Pencil} class="w-4 h-4 text-gray-800" />
+            </button>
+        {/if}
+    </div>
+    <div class="chat-footer opacity-50">
+        <Icon src={Check} class="w-4 inline" />
+        {displayedTime}
+        {#if message.edited}
+            <button class="italic cursor-help" on:click={() => historyModal.showModal()}>
+                {$t('chatbox.edited')}
+            </button>
+            <dialog bind:this={historyModal} class="modal">
+                <div class="modal-box">
+                    <h3 class="text-xl">{$t('chatbox.history')}</h3>
+                    <div>
+                        {#each $messageVersions as version}
+                            <div class="flex justify-between items-center border-b border-gray-300 py-1">
+                                <div>
+                                    {version.content}
+                                </div>
+                                <div class="whitespace-nowrap">{displayTime(version.date)}</div>
+                            </div>
+                        {/each}
+                    </div>
+                    <div class="modal-action">
+                        <form method="dialog">
+                            <button class="btn btn-primary">{$t('button.close')}</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
+        {/if}
+    </div>
 </div>
+
 
 <div class="absolute invisible rounded-full border-black border bg-white" bind:this={hightlight}>
 	<button
