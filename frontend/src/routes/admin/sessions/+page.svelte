@@ -26,7 +26,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#each sessions as session}
+		{#each sessions.toReversed() as session (session.id)}
 			<tr>
 				<td>{session.id}</td>
 				<td>{displayTime(session.start_time)}</td>
@@ -45,16 +45,16 @@
 				<td>
 					{session.length}
 				</td>
-				<td>
-					<a class="button" title="Join" href={`/session?id=${session.id}`}>
-						<Icon src={ArrowRightStartOnRectangle} size="24" />
+				<td class="p-0">
+					<a class="btn btn-primary btn-sm test" title="Join" href={`/session?id=${session.id}`}>
+						<Icon src={ArrowRightStartOnRectangle} size="16" />
 					</a>
 					<a
-						class="button"
+						class="btn btn-primary btn-sm"
 						title="Download"
 						href={`${config.API_URL}/sessions/${session.id}/download/messages`}
 					>
-						<Icon src={ArrowDownTray} size="24" />
+						<Icon src={ArrowDownTray} size="16" />
 					</a>
 				</td>
 			</tr>
