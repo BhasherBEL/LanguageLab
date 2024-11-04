@@ -491,10 +491,6 @@
 </div>
 
 <style lang="postcss">
-	/* input:not([type='radio']) {
-		@apply w-full;
-	} */
-
 	.label-text-alt {
 		@apply opacity-50 ml-8;
 	}
