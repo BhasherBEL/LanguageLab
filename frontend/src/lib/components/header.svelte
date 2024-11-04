@@ -97,13 +97,18 @@
 							</summary>
 							<ul class="menu menu-sm dropdown-content absolute right-0 z-10">
 								<li>
-									<a data-sveltekit-reload href="/admin">
+									<a data-sveltekit-reload href="/admin/users">
 										{$t('header.admin.users')}
 									</a>
 								</li>
 								<li>
 									<a data-sveltekit-reload href="/admin/sessions">
 										{$t('header.admin.sessions')}
+									</a>
+								</li>
+								<li>
+									<a data-sveltekit-reload href="/admin/studies">
+										{$t('header.admin.studies')}
 									</a>
 								</li>
 							</ul>

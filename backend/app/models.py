@@ -47,7 +47,6 @@ class User(Base):
     birthdate = Column(DateTime, default=None)
     gender = Column(String, default=None)
     calcom_link = Column(String, default="")
-    study_id = Column(Integer, ForeignKey("studies.id"), default=None)
     last_survey = Column(DateTime, default=None)
 
     sessions = relationship(
@@ -69,6 +68,8 @@ class User(Base):
         secondaryjoin=(id == Contact.user_id),
         back_populates="contacts",
     )
+
+    studies = relationship("Study", secondary="study_users", back_populates="users")
 
 
 class UserSurveyWeekly(Base):
@@ -258,3 +259,12 @@ class Study(Base):
     start_date = Column(DateTime)
     end_date = Column(DateTime)
     chat_duration = Column(Integer)
+
+    users = relationship("User", secondary="study_users", back_populates="studies")
+
+
+class StudyUser(Base):
+    __tablename__ = "study_users"
+
+    study_id = Column(Integer, ForeignKey("studies.id"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)

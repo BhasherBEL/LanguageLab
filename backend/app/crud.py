@@ -235,6 +235,34 @@ def create_study(db: Session, study: schemas.StudyCreate):
     return db_study
 
 
+def get_study(db: Session, study_id: int):
+    return db.query(models.Study).filter(models.Study.id == study_id).first()
+
+
+def get_studies(db: Session, skip: int = 0):
+    return db.query(models.Study).offset(skip).all()
+
+
+def update_study(db: Session, study: schemas.StudyCreate, study_id: int):
+    db.query(models.Study).filter(models.Study.id == study_id).update(
+        {**study.model_dump(exclude_unset=True)}
+    )
+    db.commit()
+
+
+def delete_study(db: Session, study_id: int):
+    db.query(models.Study).filter(models.Study.id == study_id).delete()
+    db.commit()
+
+
+def add_user_to_study(db: Session, study_id: int, user: schemas.User):
+    db_study = db.query(models.Study).filter(models.Study.id == study_id).first()
+    db_study.users.append(user)
+    db.commit()
+    db.refresh(db_study)
+    return db_study
+
+
 def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):
     db_test = models.TestTyping(user_id=user.id)
     db.add(db_test)

@@ -130,11 +130,6 @@
 	}
 </script>
 
-<svelte:head>
-	<script>
-	</script>
-</svelte:head>
-
 {#if ready}
 	<div class="h-full w-full flex">
 		<ul class="h-full [width:_clamp(200px,25%,500px)] overflow-y-scroll border-r-2 flex flex-col">

@@ -14,6 +14,7 @@
 	});
 </script>
 
+<h1 class="text-xl font-bold m-5 text-center">{$t('header.admin.sessions')}</h1>
 <table class="table">
 	<thead>
 		<tr>

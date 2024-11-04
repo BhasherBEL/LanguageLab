@@ -812,7 +812,7 @@ def propagate_presence(
     return
 
 
-@studyRouter.post("/", status_code=status.HTTP_201_CREATED)
+@studyRouter.post("", status_code=status.HTTP_201_CREATED)
 def study_create(
     study: schemas.StudyCreate,
     db: Session = Depends(get_db),
@@ -823,6 +823,90 @@ def study_create(
             status_code=401, detail="You do not have permission to create a study"
         )
     return crud.create_study(db, study).id
+
+
+@studyRouter.get("", response_model=list[schemas.Study])
+def studies_read(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    return crud.get_studies(db)
+
+
+@studyRouter.get("/{study_id}", response_model=schemas.Study)
+def study_read(
+    study_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+    return study
+
+
+@studyRouter.patch("/{study_id}", status_code=status.HTTP_204_NO_CONTENT)
+def study_update(
+    study_id: int,
+    studyUpdate: schemas.StudyCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to update a study"
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    crud.update_study(db, studyUpdate, study_id)
+
+
+@studyRouter.delete("/{study_id}", status_code=status.HTTP_204_NO_CONTENT)
+def study_delete(
+    study_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to delete a study"
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    crud.delete_study(db, study_id)
+
+
+@studyRouter.post("/{study_id}/add_user/{user_id}", status_code=status.HTTP_201_CREATED)
+def study_add_user(
+    study_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user.id != user_id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a user to a study",
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    user = crud.get_user(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    crud.add_user_to_study(db, study_id, user)
 
 
 @websocketRouter.websocket("/sessions/{session_id}")

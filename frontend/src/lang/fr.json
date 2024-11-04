@@ -11,7 +11,8 @@
 		"availability": "Disponibilités",
 		"admin": {
 			"users": "Utilisateurs",
-			"sessions": "Sessions"
+			"sessions": "Sessions",
+			"studies": "Études"
 		}
 	},
 	"chatbox": {
@@ -252,6 +253,17 @@
 			}
 		}
 	},
+	"studies": {
+		"study": "Étude",
+		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
+		"startDate": "Date de début",
+		"endDate": "Date de fin",
+		"chatDuration": "Durée des sessions (en secondes)",
+		"updated": "Étude mise à jour avec succès",
+		"noChanges": "Aucune modification",
+		"updateError": "Erreur lors de la mise à jour de l'étude",
+		"create": "Créer une nouvelle étude"
+	},
 	"button": {
 		"create": "Créer",
 		"submit": "Envoyer",
@@ -265,7 +277,8 @@
 		"close": "Fermer",
 		"tryit": "Essayer",
 		"update": "Mettre à jour",
-		"updated": "Mis à jour!"
+		"updated": "Mis à jour!",
+		"delete": "Supprimer"
 	},
 	"utils": {
 		"month": {
@@ -311,7 +324,10 @@
 		"words": {
 			"date": "Date",
 			"messages": "Messages",
-			"actions": "Actions"
+			"actions": "Actions",
+			"title": "Titre",
+			"users": "Utilisateurs",
+			"description": "Description"
 		}
 	},
 	"inputs": {

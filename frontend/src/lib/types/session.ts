@@ -1,4 +1,4 @@
-import { toastAlert, toastWarning } from '$lib/utils/toasts';
+import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import User, { user } from './user';
 import { axiosInstance } from '$lib/api/apiInstance';
