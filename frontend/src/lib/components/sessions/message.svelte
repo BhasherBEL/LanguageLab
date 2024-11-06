@@ -167,14 +167,13 @@
 			class="rounded-full"
 		/>
 	</div>
+	<!-- prettier-ignore -->
 	<div
-		class="chat-bubble whitespace-pre-wrap"
-		class:bg-blue-700={isSender}
+		class="chat-bubble whitespace-pre-wrap text-black"
+		class:bg-blue-200={isSender}
 		class:bg-gray-300={!isSender}
-		class:text-black={!isSender}
-		class:text-white={isSender}
 	>
-		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
+		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-200={isEdit}>
 			{#each parts as part}
 				{#if part.feedback && !isEdit}
 					{#if part.feedback.content}
@@ -199,8 +198,8 @@
 					{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 				{/if}
 			{/each}
-		</div>
-		{#if isEdit}
+		</div><!--
+		-->{#if isEdit}
 			<button
 				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
 				on:click={() => endEdit()}
@@ -213,10 +212,9 @@
 			>
 				{$t('button.cancel')}
 			</button>
-		{/if}
-		{#if isSender}
+		{/if}{#if isSender}
 			<button
-				class="absolute left-[-1.5rem] mt-2 mr-2 invisible group-hover:visible"
+				class="absolute bottom-2 left-[-1.5rem] invisible group-hover:visible"
 				on:click={() => (isEdit ? endEdit() : startEdit())}
 			>
 				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
