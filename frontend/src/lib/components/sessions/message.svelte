@@ -212,18 +212,20 @@
 			>
 				{$t('button.cancel')}
 			</button>
-		{/if}
-	</div>
-	<div class="chat-footer opacity-50 flex items-center">
-		{#if isSender}
-			<button class="mr-2" on:click={() => (isEdit ? endEdit() : startEdit())}>
+		{/if}{#if isSender}
+			<button
+				class="absolute bottom-2 left-[-1.5rem] invisible group-hover:visible"
+				on:click={() => (isEdit ? endEdit() : startEdit())}
+			>
 				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
 			</button>
 		{/if}
+	</div>
+	<div class="chat-footer opacity-50">
 		<Icon src={Check} class="w-4 inline" />
 		{displayedTime}
 		{#if message.edited}
-			<button class="italic cursor-help ml-2" on:click={historyModal.showModal()}>
+			<button class="italic cursor-help" on:click={historyModal.showModal()}>
 				{$t('chatbox.edited')}
 			</button>
 			<dialog bind:this={historyModal} class="modal">
