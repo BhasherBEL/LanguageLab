@@ -10,8 +10,9 @@
 	import User from '$lib/types/user';
 	import { Icon, MagnifyingGlass } from 'svelte-hero-icons';
 	import { getUserByEmailAPI } from '$lib/api/users';
+	import { writable, type Writable } from 'svelte/store';
 
-	let studies: Study[] | null = null;
+	let studies: Writable<Study[] | null> = writable(null);
 	let selectedStudy: Study | null = null;
 	let title: string | null = null;
 	let description: string | null = null;
@@ -67,6 +68,7 @@
 		if (result) {
 			selectStudy(null);
 			toastSuccess($t('studies.updated'));
+			studies.update((s) => s);
 		} else {
 			toastAlert($t('studies.updateError'));
 		}
@@ -91,9 +93,16 @@
 		if (study) {
 			toastSuccess($t('studies.created'));
 			studyCreate = false;
+			studies.update((s) => (s ? [...s, study] : [study]));
 		} else {
 			toastAlert($t('studies.createError'));
 		}
+	}
+
+	async function deleteStudy() {
+		studies.update((s) => (s ? s.filter((t) => t !== selectedStudy) : null));
+		selectedStudy?.delete();
+		selectStudy(null);
 	}
 
 	async function removeUser(user: User) {
@@ -153,14 +162,14 @@
 	}
 
 	onMount(async () => {
-		studies = Study.parseAll(await getStudiesAPI());
+		studies.set(Study.parseAll(await getStudiesAPI()));
 		//selectStudy(studies[0]);
 	});
 </script>
 
 <h1 class="text-xl font-bold m-5 text-center">{$t('header.admin.studies')}</h1>
 
-{#if studies === null}
+{#if $studies === null}
 	<span class="loading loading-bars text-center mx-auto loading-md"></span>
 {:else}
 	<table class="table max-w-5xl mx-auto text-center">
@@ -173,7 +182,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each studies as study (study.id)}
+			{#each $studies as study (study.id)}
 				<tr class="hover:bg-gray-100 hover:cursor-pointer" on:click={() => selectStudy(study)}>
 					<td>{study.id}</td>
 					<td>{displayDate(study.startDate)} - {displayDate(study.endDate)}</td>
@@ -247,8 +256,7 @@
 			</button>
 			<button
 				class="btn btn-error btn-outline float-end"
-				on:click={() =>
-					confirm($t('studies.deleteConfirm')) && selectedStudy?.delete() && selectStudy(null)}
+				on:click={() => confirm($t('studies.deleteConfirm')) && deleteStudy()}
 			>
 				{$t('button.delete')}
 			</button>

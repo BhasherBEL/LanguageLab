@@ -263,8 +263,21 @@
 		"noChanges": "Aucune modification",
 		"updateError": "Erreur lors de la mise à jour de l'étude",
 		"create": "Créer une nouvelle étude",
+		"createMissing": "Veuillez remplir tous les champs",
+		"created": "Étude créée avec succès",
+		"createError": "Erreur lors de la création de l'étude",
 		"addUserButton": "Ajouter un participant",
-		"newUser": "Nouveau participant"
+		"newUser": "Nouveau participant",
+		"addUserError": "Erreur lors de l'ajout du participant",
+		"removeUserConfirm": "Êtes-vous sûr de vouloir retirer ce participant de l'étude ?",
+		"removeUserSuccess": "Participant retiré de l'étude",
+		"removeUserError": "Erreur lors de la suppression du participant",
+		"invalidEmail": "Adresse e-mail invalide",
+		"userNotFound": "Utilisateur non trouvé",
+		"addUserError": "Erreur lors de l'ajout de l'utilisateur",
+		"addUserSuccess": "Utilisateur ajouté à l'étude",
+		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
+		"createTitle": "Créer une nouvelle étude"
 	},
 	"button": {
 		"create": "Créer",

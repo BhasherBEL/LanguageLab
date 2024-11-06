@@ -92,8 +92,8 @@ export default class Study {
 		if (res) {
 			if (data.title) this._title = data.title;
 			if (data.description) this._description = data.description;
-			if (data.start_date) this._startDate = data.start_date;
-			if (data.end_date) this._endDate = data.end_date;
+			if (data.start_date) this._startDate = parseToLocalDate(data.start_date);
+			if (data.end_date) this._endDate = parseToLocalDate(data.end_date);
 			if (data.chat_duration) this._chatDuration = data.chat_duration;
 			return true;
 		}

@@ -55,7 +55,7 @@ export async function addUserToStudyAPI(study_id: number, user_id: number): Prom
 	try {
 		const response = await axiosInstance.post(`/studies/${study_id}/users/${user_id}`);
 		if (response.status === 400) {
-			toastAlert(response.data);
+			toastAlert(response.data.detail);
 			return false;
 		}
 		if (response.status !== 201) {
@@ -74,7 +74,7 @@ export async function removeUserToStudyAPI(study_id: number, user_id: number): P
 	try {
 		const response = await axiosInstance.delete(`/studies/${study_id}/users/${user_id}`);
 		if (response.status === 400) {
-			toastAlert(response.data);
+			toastAlert(response.data.detail);
 			return false;
 		}
 		if (response.status !== 204) {
