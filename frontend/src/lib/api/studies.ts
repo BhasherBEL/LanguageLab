@@ -50,3 +50,41 @@ export async function patchStudyAPI(study_id: number, data: any): Promise<boolea
 		return false;
 	}
 }
+
+export async function addUserToStudyAPI(study_id: number, user_id: number): Promise<boolean> {
+	try {
+		const response = await axiosInstance.post(`/studies/${study_id}/users/${user_id}`);
+		if (response.status === 400) {
+			toastAlert(response.data);
+			return false;
+		}
+		if (response.status !== 201) {
+			toastAlert('Failed to add user to study');
+			return false;
+		}
+		return true;
+	} catch (e) {
+		console.error(e);
+		toastAlert('Failed to add user to study due to unknown error');
+		return false;
+	}
+}
+
+export async function removeUserToStudyAPI(study_id: number, user_id: number): Promise<boolean> {
+	try {
+		const response = await axiosInstance.delete(`/studies/${study_id}/users/${user_id}`);
+		if (response.status === 400) {
+			toastAlert(response.data);
+			return false;
+		}
+		if (response.status !== 204) {
+			toastAlert('Failed to remove user from study');
+			return false;
+		}
+		return true;
+	} catch (e) {
+		console.error(e);
+		toastAlert('Failed to remove user from study due to unknown error');
+		return false;
+	}
+}

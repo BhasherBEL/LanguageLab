@@ -1,4 +1,10 @@
-import { createStudyAPI, deleteStudyAPI, patchStudyAPI } from '$lib/api/studies';
+import {
+	addUserToStudyAPI,
+	createStudyAPI,
+	deleteStudyAPI,
+	patchStudyAPI,
+	removeUserToStudyAPI
+} from '$lib/api/studies';
 import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import User from './user';
@@ -92,6 +98,24 @@ export default class Study {
 			return true;
 		}
 		return false;
+	}
+
+	async removeUser(user: User): Promise<boolean> {
+		const res = await removeUserToStudyAPI(this._id, user.id);
+		if (res) {
+			this._users = this._users.filter((u) => u.id !== user.id);
+		}
+
+		return res;
+	}
+
+	async addUser(user: User): Promise<boolean> {
+		const res = await addUserToStudyAPI(this._id, user.id);
+		if (res) {
+			this._users.push(user);
+		}
+
+		return res;
 	}
 
 	static parse(json: any): Study | null {

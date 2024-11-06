@@ -263,6 +263,14 @@ def add_user_to_study(db: Session, study_id: int, user: schemas.User):
     return db_study
 
 
+def remove_user_from_study(db: Session, study_id: int, user: schemas.User):
+    study = db.query(models.Study).filter(models.Study.id == study_id).first()
+    user = db.query(models.User).filter(models.User.id == user.id).first()
+    study.users.remove(user)
+    db.commit()
+    return study
+
+
 def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):
     db_test = models.TestTyping(user_id=user.id)
     db.add(db_test)

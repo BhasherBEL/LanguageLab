@@ -28,6 +28,15 @@ export async function getUserAPI(user_id: number) {
 	return response.data;
 }
 
+export async function getUserByEmailAPI(email: string) {
+	const response = await axiosInstance.get(`/users/by-email/${email}`);
+	if (response.status !== 200) {
+		toastAlert('Failed to get user');
+		return null;
+	}
+	return response.data;
+}
+
 export async function createUserContactAPI(user_id: number, contact_id: number) {
 	const response = await axiosInstance.post(`/users/${user_id}/contacts/${contact_id}`);
 

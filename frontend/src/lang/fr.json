@@ -262,7 +262,9 @@
 		"updated": "Étude mise à jour avec succès",
 		"noChanges": "Aucune modification",
 		"updateError": "Erreur lors de la mise à jour de l'étude",
-		"create": "Créer une nouvelle étude"
+		"create": "Créer une nouvelle étude",
+		"addUserButton": "Ajouter un participant",
+		"newUser": "Nouveau participant"
 	},
 	"button": {
 		"create": "Créer",
@@ -278,7 +280,8 @@
 		"tryit": "Essayer",
 		"update": "Mettre à jour",
 		"updated": "Mis à jour!",
-		"delete": "Supprimer"
+		"delete": "Supprimer",
+		"remove": "Retirer"
 	},
 	"utils": {
 		"month": {
@@ -327,7 +330,8 @@
 			"actions": "Actions",
 			"title": "Titre",
 			"users": "Utilisateurs",
-			"description": "Description"
+			"description": "Description",
+			"email": "E-mail"
 		}
 	},
 	"inputs": {

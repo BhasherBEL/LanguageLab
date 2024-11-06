@@ -217,6 +217,24 @@ def update_user(
         raise HTTPException(status_code=404, detail="User not found")
 
 
+@usersRouter.get("/by-email/{email}", response_model=schemas.User)
+def read_user_by_email(
+    email: str,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to view this user"
+        )
+
+    db_user = crud.get_user_by_email(db, email)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
 @usersRouter.get("/{user_id}/sessions", response_model=list[schemas.Session])
 def read_user_sessions(
     user_id: int,
@@ -882,17 +900,14 @@ def study_delete(
     crud.delete_study(db, study_id)
 
 
-@studyRouter.post("/{study_id}/add_user/{user_id}", status_code=status.HTTP_201_CREATED)
+@studyRouter.post("/{study_id}/users/{user_id}", status_code=status.HTTP_201_CREATED)
 def study_add_user(
     study_id: int,
     user_id: int,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    if (
-        not check_user_level(current_user, models.UserType.ADMIN)
-        and current_user.id != user_id
-    ):
+    if not check_user_level(current_user, models.UserType.ADMIN):
         raise HTTPException(
             status_code=401,
             detail="You do not have permission to add a user to a study",
@@ -906,7 +921,39 @@ def study_add_user(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
+    if user in study.users:
+        raise HTTPException(status_code=400, detail="User already exists in this study")
+
     crud.add_user_to_study(db, study_id, user)
+
+
+@studyRouter.delete(
+    "/{study_id}/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+def study_delete_user(
+    study_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a user to a study",
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    user = crud.get_user(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user not in study.users:
+        raise HTTPException(status_code=400, detail="User does not exist in this study")
+
+    crud.remove_user_from_study(db, study_id, user)
 
 
 @websocketRouter.websocket("/sessions/{session_id}")

@@ -6,9 +6,12 @@
 	import { displayDate, formatToUTCDate } from '$lib/utils/date';
 	import autosize from 'svelte-autosize';
 	import DateInput from '$lib/components/utils/dateInput.svelte';
-	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
+	import { toastAlert, toastSuccess, toastWarning } from '$lib/utils/toasts';
+	import User from '$lib/types/user';
+	import { Icon, MagnifyingGlass } from 'svelte-hero-icons';
+	import { getUserByEmailAPI } from '$lib/api/users';
 
-	let studies: Study[] = [];
+	let studies: Study[] | null = null;
 	let selectedStudy: Study | null = null;
 	let title: string | null = null;
 	let description: string | null = null;
@@ -93,41 +96,103 @@
 		}
 	}
 
+	async function removeUser(user: User) {
+		if (selectedStudy === null) return;
+		if (!confirm($t('studies.removeUserConfirm'))) return;
+
+		const res = await selectedStudy.removeUser(user);
+
+		if (res) {
+			toastSuccess($t('studies.removeUserSuccess'));
+			selectStudy(null);
+		} else {
+			toastAlert($t('studies.removeUserError'));
+		}
+	}
+
+	let newUsername: string = '';
+	let newUserModal = false;
+
+	async function addUser() {
+		if (selectedStudy === null) return;
+		newUserModal = true;
+	}
+
+	async function searchUser() {
+		if (selectedStudy === null) return;
+		if (!newUsername || !newUsername.includes('@')) {
+			toastWarning($t('studies.invalidEmail'));
+			return;
+		}
+
+		const userData = await getUserByEmailAPI(newUsername);
+
+		if (!userData) {
+			toastWarning($t('studies.userNotFound'));
+			return;
+		}
+
+		const user = User.parse(userData);
+
+		if (!user) {
+			toastAlert($t('studies.userNotFound'));
+			return;
+		}
+
+		const res = await selectedStudy.addUser(user);
+
+		if (!res) {
+			toastAlert($t('studies.addUserError'));
+			return;
+		}
+
+		newUsername = '';
+		newUserModal = false;
+		toastSuccess($t('studies.addUserSuccess'));
+		selectStudy(null);
+	}
+
 	onMount(async () => {
 		studies = Study.parseAll(await getStudiesAPI());
+		//selectStudy(studies[0]);
 	});
 </script>
 
 <h1 class="text-xl font-bold m-5 text-center">{$t('header.admin.studies')}</h1>
 
-<table class="table max-w-5xl mx-auto text-center">
-	<thead>
-		<tr>
-			<th>#</th>
-			<th>{$t('utils.words.date')}</th>
-			<th>{$t('utils.words.title')}</th>
-			<th># {$t('utils.words.users')}</th>
-		</tr>
-	</thead>
-	<tbody>
-		{#each studies as study (study.id)}
-			<tr class="hover:bg-gray-100 hover:cursor-pointer" on:click={() => selectStudy(study)}>
-				<td>{study.id}</td>
-				<td>{displayDate(study.startDate)} - {displayDate(study.endDate)}</td>
-				<td>{study.title}</td>
-				<td>{study.numberOfUsers}</td>
+{#if studies === null}
+	<span class="loading loading-bars text-center mx-auto loading-md"></span>
+{:else}
+	<table class="table max-w-5xl mx-auto text-center">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>{$t('utils.words.date')}</th>
+				<th>{$t('utils.words.title')}</th>
+				<th># {$t('utils.words.users')}</th>
 			</tr>
-		{/each}
-	</tbody>
-</table>
-<div class="mt-8 w-[64rem] mx-auto">
-	<button class="button" on:click={() => (studyCreate = true)}>{$t('studies.create')}</button>
-</div>
+		</thead>
+		<tbody>
+			{#each studies as study (study.id)}
+				<tr class="hover:bg-gray-100 hover:cursor-pointer" on:click={() => selectStudy(study)}>
+					<td>{study.id}</td>
+					<td>{displayDate(study.startDate)} - {displayDate(study.endDate)}</td>
+					<td>{study.title}</td>
+					<td>{study.numberOfUsers}</td>
+					<td></td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+	<div class="mt-8 w-[64rem] mx-auto">
+		<button class="button" on:click={() => (studyCreate = true)}>{$t('studies.create')}</button>
+	</div>
+{/if}
 
 <dialog class="modal bg-black bg-opacity-50" open={selectedStudy != null}>
 	<div class="modal-box max-w-4xl">
 		<h2 class="text-xl font-bold m-5 text-center">{$t('studies.study')} #{selectedStudy?.id}</h2>
-		<form>
+		<form class="mb-4">
 			<label class="label" for="title">{$t('utils.words.title')}</label>
 			<input class="input w-full" type="text" id="title" bind:value={title} />
 			<label class="label" for="description">{$t('utils.words.description')}</label>
@@ -144,6 +209,36 @@
 				bind:value={chatDuration}
 				min="0"
 			/>
+			<label class="label" for="users">{$t('utils.words.users')}</label>
+			<table class="table">
+				<thead>
+					<tr>
+						<td>#</td>
+						<td>{$t('users.category')}</td>
+						<td>{$t('users.nickname')}</td>
+						<td>{$t('users.email')}</td>
+						<td></td>
+					</tr>
+				</thead>
+				<tbody>
+					{#each selectedStudy?.users ?? [] as user (user.id)}
+						<tr>
+							<td>{user.id}</td>
+							<td>{$t('users.type.' + user.type)}</td>
+							<td>{user.nickname}</td>
+							<td>{user.email}</td>
+							<td>
+								<button class="btn btn-sm btn-error text-white" on:click={() => removeUser(user)}>
+									{$t('button.remove')}
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+			<button class="btn btn-primary block mx-auto" on:click={addUser}>
+				{$t('studies.addUserButton')}
+			</button>
 		</form>
 		<div class="mt-4">
 			<button class="button" on:click={studyUpdate}>{$t('button.update')}</button>
@@ -191,5 +286,24 @@
 				{$t('button.cancel')}
 			</button>
 		</div>
+	</div>
+</dialog>
+
+<dialog class="modal bg-black bg-opacity-50" open={newUserModal}>
+	<div class="modal-box">
+		<h2 class="text-xl font-bold mb-4">{$t('studies.newUser')}</h2>
+		<div class="w-full flex">
+			<input
+				type="text"
+				placeholder={$t('utils.words.email')}
+				bind:value={newUsername}
+				class="input flex-grow mr-2"
+				on:keypress={(e) => e.key === 'Enter' && searchUser()}
+			/>
+			<button class="button w-16" on:click={searchUser}>
+				<Icon src={MagnifyingGlass} />
+			</button>
+		</div>
+		<button class="btn float-end mt-4" on:click={() => (newUserModal = false)}>Close</button>
 	</div>
 </dialog>
