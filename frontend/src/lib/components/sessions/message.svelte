@@ -167,6 +167,7 @@
 			class="rounded-full"
 		/>
 	</div>
+	<!-- prettier-ignore -->
 	<div
 		class="chat-bubble whitespace-pre-wrap text-black"
 		class:bg-blue-200={isSender}
