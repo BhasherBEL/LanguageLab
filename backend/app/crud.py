@@ -179,6 +179,18 @@ def get_messages(db: Session, session_id: int, skip: int = 0):
     )
 
 
+def get_all_messages(db: Session, skip: int = 0):
+    return db.query(models.Message).offset(skip).all()
+
+
+def get_all_metadata(db: Session, skip: int = 0):
+    return db.query(models.MessageMetadata).offset(skip).all()
+
+
+def get_all_feedbacks(db: Session, skip: int = 0):
+    return db.query(models.MessageFeedback).offset(skip).all()
+
+
 def create_message(
     db: Session,
     message: schemas.MessageCreate,

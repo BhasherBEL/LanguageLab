@@ -14,6 +14,32 @@
 	});
 </script>
 
+<h1 class="text-xl font-bold m-5 text-center">{$t('header.admin.sessions')}</h1>
+
+<div class="my-4 mx-auto">
+	<a
+		class="btn btn-primary btn-sm"
+		title="Download"
+		href={`${config.API_URL}/sessions/download/messages`}
+	>
+		{$t('session.downloadAllMessages')}
+	</a>
+	<a
+		class="btn btn-primary btn-sm"
+		title="Download"
+		href={`${config.API_URL}/sessions/download/metadata`}
+	>
+		{$t('session.downloadAllMetadata')}
+	</a>
+	<a
+		class="btn btn-primary btn-sm"
+		title="Download"
+		href={`${config.API_URL}/sessions/download/feedbacks`}
+	>
+		{$t('session.downloadAllFeedbacks')}
+	</a>
+</div>
+
 <table class="table">
 	<thead>
 		<tr>

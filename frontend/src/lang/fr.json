@@ -250,7 +250,10 @@
 				},
 				"success": "Questionnaire envoyé, merci !"
 			}
-		}
+		},
+		"downloadAllMessages": "Télécharger toutes les conversations",
+		"downloadAllMetadata": "Télécharger toutes les métadonnées",
+		"downloadAllFeedbacks": "Télécharger tous les feedbacks"
 	},
 	"button": {
 		"create": "Créer",

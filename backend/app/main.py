@@ -543,6 +543,79 @@ def download_session(
     )
 
 
+@sessionsRouter.get("/download/messages")
+def download_sessions_messages(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to download messages",
+        )
+
+    data = crud.get_all_messages(db)
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(models.Message.__table__.columns.keys())
+    for row in data:
+        writer.writerow(row.raw())
+    output.seek(0)
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=messages.csv"},
+    )
+
+
+@sessionsRouter.get("/download/metadata")
+def download_sessions_metadata(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to download metadata",
+        )
+    data = crud.get_all_metadata(db)
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(models.MessageMetadata.__table__.columns.keys())
+    for row in data:
+        writer.writerow(row.raw())
+    output.seek(0)
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=metadata.csv"},
+    )
+
+
+@sessionsRouter.get("/download/feedbacks")
+def download_sessions_feedbacks(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to download feedbacks",
+        )
+    data = crud.get_all_feedbacks(db)
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(models.MessageFeedback.__table__.columns.keys())
+    for row in data:
+        writer.writerow(row.raw())
+    output.seek(0)
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=feedbacks.csv"},
+    )
+
+
 @sessionsRouter.post(
     "/{session_id}/users/{user_id}", status_code=status.HTTP_201_CREATED
 )

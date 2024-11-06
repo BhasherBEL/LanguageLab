@@ -151,6 +151,9 @@ class MessageMetadata(Base):
     message = Column(String)
     date = Column(Integer)
 
+    def raw(self):
+        return [self.id, self.message_id, self.message, self.date]
+
 
 class MessageFeedback(Base):
     __tablename__ = "message_feedbacks"
@@ -161,6 +164,9 @@ class MessageFeedback(Base):
     end = Column(Integer)
     content = Column(String, default="")
     date = Column(DateTime, default=datetime_aware)
+
+    def raw(self):
+        return [self.id, self.message_id, self.start, self.end, self.content, self.date]
 
 
 class TestTyping(Base):
