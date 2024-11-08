@@ -216,10 +216,10 @@
 		{/if}
 		{#if isSender}
 			<button
-				class="absolute bottom-2 left-[-1.5rem] invisible group-hover:visible"
+				class="absolute bottom-0 left-[-1.5rem] invisible group-hover:visible h-full p-0"
 				on:click={() => (isEdit ? endEdit() : startEdit())}
 			>
-				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
+				<Icon src={Pencil} class="w-5 h-full text-gray-500 hover:text-gray-800" />
 			</button>
 		{/if}
 	</div>
@@ -234,16 +234,19 @@
 	</div>
 </div>
 
-<div class="absolute invisible rounded-full border-black border bg-white" bind:this={hightlight}>
+<div
+	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
+	bind:this={hightlight}
+>
 	<button
 		on:click={() => onSelect(false)}
-		class="bg-opacity-0 bg-blue-500 hover:bg-opacity-50 p-2 pl-4 rounded-l-full"
+		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
 	>
 		<SpellCheck />
 	</button><!---
 	--><button
 		on:click={() => onSelect(true)}
-		class="bg-opacity-0 bg-blue-500 hover:bg-opacity-50 p-2 pr-4 rounded-r-full"
+		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
 	>
 		<ChatBubble />
 	</button>
