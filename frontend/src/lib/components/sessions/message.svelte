@@ -227,29 +227,9 @@
 		<Icon src={Check} class="w-4 inline" />
 		{displayedTime}
 		{#if message.edited}
-			<button class="italic cursor-help" on:click={historyModal.showModal()}>
+			<button class="italic cursor-help" on:click={() => historyModal.showModal()}>
 				{$t('chatbox.edited')}
 			</button>
-			<dialog bind:this={historyModal} class="modal">
-				<div class="modal-box">
-					<h3 class="text-xl">{$t('chatbox.history')}</h3>
-					<div>
-						{#each $messageVersions as version}
-							<div class="flex justify-between items-center border-b border-gray-300 py-1">
-								<div>
-									{version.content}
-								</div>
-								<div class="whitespace-nowrap">{displayTime(version.date)}</div>
-							</div>
-						{/each}
-					</div>
-					<div class="modal-action">
-						<form method="dialog">
-							<button class="btn btn-primary">{$t('button.close')}</button>
-						</form>
-					</div>
-				</div>
-			</dialog>
 		{/if}
 	</div>
 </div>
@@ -268,3 +248,24 @@
 		<ChatBubble />
 	</button>
 </div>
+
+<dialog bind:this={historyModal} class="modal">
+	<div class="modal-box">
+		<h3 class="text-xl">{$t('chatbox.history')}</h3>
+		<div>
+			{#each $messageVersions as version}
+				<div class="flex justify-between items-center border-b border-gray-300 py-1">
+					<div>
+						{version.content}
+					</div>
+					<div class="whitespace-nowrap">{displayTime(version.date)}</div>
+				</div>
+			{/each}
+		</div>
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn btn-primary">{$t('button.close')}</button>
+			</form>
+		</div>
+	</div>
+</dialog>

@@ -83,9 +83,12 @@ export default class Message {
 	}
 
 	async localUpdate(content: string, force: boolean = false): Promise<boolean> {
+		if (!force) {
+			this._versions.update((v) => [...v, { content: content, date: new Date() }]);
+			this._edited = true;
+		}
 		this._content = content;
 		this.feedbacks.set([]);
-		if (!force) this._edited = true;
 
 		return true;
 	}
