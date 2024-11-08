@@ -1,6 +1,7 @@
 stages:
   - lint
   - build
+  - deploy
 
 lint_frontend:
   stage: lint
@@ -31,3 +32,23 @@ build:
   script:
     - docker build -t $CI_REGISTRY/sbibauw/languagelab:$COMPONENT $COMPONENT
     - docker push $CI_REGISTRY/sbibauw/languagelab:$COMPONENT
+
+docker_deploy:
+  stage: deploy
+  only:
+    - main
+    - feat/cd
+  image: debian:latest
+  before_script:
+    - "command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - touch ~/.ssh/config
+    - touch ~/.ssh/known_hosts
+    - chmod -R 400 ~/.ssh
+    - ssh bridubois@languagelab.sipr.ucl.ac.be
+  script:
+    - cd /mnt/data/languagelab/repo/
+    - git pull
+    - docker compose up -d
