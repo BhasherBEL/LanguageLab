@@ -86,6 +86,7 @@
 	}
 
 	function onTextSelect() {
+		if (isEdit) return;
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount < 1 || !hightlight) return;
 		const range = selection.getRangeAt(0);
@@ -167,39 +168,15 @@
 			class="rounded-full"
 		/>
 	</div>
-	<!-- prettier-ignore -->
-	<div
-		class="chat-bubble whitespace-pre-wrap text-black"
-		class:bg-blue-200={isSender}
-		class:bg-gray-300={!isSender}
-	>
-		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-200={isEdit}>
-			{#each parts as part}
-				{#if part.feedback && !isEdit}
-					{#if part.feedback.content}
-						<span class="tooltip tooltip-accent" data-tip={part.feedback.content}
-							><!--
-							--><span class="underline decoration-wavy decoration-blue-500 hover:cursor-help"
-								><!--
-							-->{part.text}<!--
-						--></span
-							><!--
-						--></span
-						>
-					{:else}
-						<span class="underline decoration-wavy decoration-red-500 decoration-1"
-							><!--
-							-->{part.text}<!--
-						--></span
-						>
-					{/if}
-				{:else}
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
-				{/if}
-			{/each}
-		</div><!--
-		-->{#if isEdit}
+	<div class="chat-bubble text-black" class:bg-blue-200={isSender} class:bg-gray-300={!isSender}>
+		{#if isEdit}
+			<div
+				contenteditable="true"
+				bind:this={contentDiv}
+				class="bg-blue-200 whitespace-pre-wrap min-h-8"
+			>
+				{message.content}
+			</div>
 			<button
 				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
 				on:click={() => endEdit()}
@@ -212,7 +189,32 @@
 			>
 				{$t('button.cancel')}
 			</button>
-		{/if}{#if isSender}
+		{:else}
+			<div class="whitespace-pre-wrap" bind:this={contentDiv}>
+				{#each parts as part}
+					{#if isEdit || !part.feedback}
+						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
+					{:else if part.feedback.content}
+						<span class="tooltip tooltip-accent" data-tip={part.feedback.content}
+							><!--
+						--><span class="underline decoration-wavy decoration-blue-500 hover:cursor-help"
+								><!--
+						-->{part.text}<!--
+					--></span
+							><!--
+					--></span
+						>
+					{:else}
+						<span class="underline decoration-wavy decoration-red-500 decoration-1"
+							><!--
+						-->{part.text}<!--
+					--></span
+						>
+					{/if}
+				{/each}
+			</div>
+		{/if}
+		{#if isSender}
 			<button
 				class="absolute bottom-2 left-[-1.5rem] invisible group-hover:visible"
 				on:click={() => (isEdit ? endEdit() : startEdit())}
