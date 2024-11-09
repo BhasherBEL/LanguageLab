@@ -35,15 +35,15 @@
 	let replyContent = '';
 
 	function initiateReply(msg: Message) {
-    console.log("Replying to message:", msg);
-    isReplying = true;
-    replyingToMessage = msg; // Store the message being replied to
-}
+		console.log('Replying to message:', msg);
+		isReplying = true;
+		replyingToMessage = msg; // Store the message being replied to
+	}
 
-function cancelReply() {
-    isReplying = false;
-    replyingToMessage = null; // Clear the reply state
-}
+	function cancelReply() {
+		isReplying = false;
+		replyingToMessage = null; // Clear the reply state
+	}
 
 	function findMessageById(id: string): Message | undefined {
 		return messages.find((msg) => msg.id === Number(id));

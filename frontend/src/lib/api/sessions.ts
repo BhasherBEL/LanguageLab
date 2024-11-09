@@ -47,7 +47,7 @@ export async function createMessageAPI(
 	metadata: { message: string; date: number }[]
 ): Promise<number | null> {
 	const response = await axiosInstance.post(`/sessions/${id}/messages`, { content, metadata });
-	console.log("response", response);
+	console.log('response', response);
 
 	if (response.status !== 201) {
 		toastAlert('Failed to send message');
