@@ -12,7 +12,6 @@
 	import { sanitize } from '$lib/utils/sanitize';
 
 	export let message: Message;
-	export let sendMessage: (content: string, replyTo?: Message) => void;
 	export let messages: Message[];
 
 	let timer: number;
@@ -30,34 +29,21 @@
 	$: messageVersions = message.versions;
 
 	let isReplying = false;
+	let replyingToMessage: Message | null = null; // Store the entire message object being replied to
+
 	let replyingTo: Message | null = null;
 	let replyContent = '';
 
 	function initiateReply(msg: Message) {
-		isReplying = true;
-		replyingTo = msg;
-		replyContent = '';
-	}
+    console.log("Replying to message:", msg);
+    isReplying = true;
+    replyingToMessage = msg; // Store the message being replied to
+}
 
-	function cancelReply() {
-		isReplying = false;
-		replyingTo = null;
-		replyContent = '';
-	}
-
-	function handleSend() {
-		if (replyContent.trim() === '') return;
-
-		if (replyingTo) {
-			sendMessage(replyContent, replyingTo);
-		} else {
-			sendMessage(replyContent);
-		}
-
-		isReplying = false;
-		replyingTo = null;
-		replyContent = '';
-	}
+function cancelReply() {
+    isReplying = false;
+    replyingToMessage = null; // Clear the reply state
+}
 
 	function findMessageById(id: string): Message | undefined {
 		return messages.find((msg) => msg.id === Number(id));
@@ -172,7 +158,7 @@
 			bind:value={replyContent}
 			class="message-input"
 		/>
-		<button on:click={handleSend} class="send-button">Send</button>
+		<button class="send-button">Send</button>
 	</div>
 {/if}
 

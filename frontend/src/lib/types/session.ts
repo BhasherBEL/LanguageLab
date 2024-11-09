@@ -182,10 +182,19 @@ export default class Session {
 		return this._users.some((u) => u.equals(user));
 	}
 
+	logMessages(): void {
+		this._messages.subscribe((messages) => {
+			console.log("All Messages in Current Session:", messages);
+		});
+	}
+	
+
 	async loadMessages(): Promise<boolean> {
 		const messagesStr = await getMessagesAPI(this.id);
 
 		this._messages.set(Message.parseAll(messagesStr));
+
+		this.logMessages();
 
 		return true;
 	}
@@ -195,14 +204,20 @@ export default class Session {
 		content: string,
 		metadata: { message: string; date: number }[]
 	): Promise<Message | null> {
+		// Log the details of the message being sent
+		console.log("Sender:", sender);
+		console.log("Message Content:", content);
+		console.log("Metadata:", metadata);
+	
 		const json = await createMessageAPI(this.id, content, metadata);
+		console.log("JSON:", json);
 		if (json == null || json.id == null || json.message_id == null) {
 			toastAlert('Failed to parse message');
 			return null;
 		}
-
+	
 		const message = new Message(json.id, json.message_id, content, new Date(), sender, this);
-
+	
 		this._messages.update((messages) => {
 			if (!messages.find((m) => m.message_id === message.message_id)) {
 				return [...messages, message];
@@ -210,8 +225,11 @@ export default class Session {
 			return messages.map((m) => (m.message_id === message.message_id ? message : m));
 		});
 
+		this.logMessages();
+	
 		return message;
 	}
+	
 
 	async sendTyping(): Promise<boolean> {
 		const response = await axiosInstance.post(`/sessions/${this.id}/typing`);
