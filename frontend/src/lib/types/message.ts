@@ -70,6 +70,10 @@ export default class Message {
 		return this._feedbacks;
 	}
 
+	get uuid(): string {
+		return `message-${this._message_id}`;
+	}
+
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
 		const response = await updateMessageAPI(this._session.id, this._message_id, content, metadata);
 		if (response == null || response.id == null) return false;
@@ -174,7 +178,9 @@ export default class Message {
 
 			if (!m) continue;
 
-			const prev = messages.find((msg) => msg.message_id == m?.message_id);
+			const prev = messages.find(
+				(msg) => msg instanceof Message && msg.message_id == m?.message_id
+			);
 
 			if (!prev) {
 				messages.push(m);

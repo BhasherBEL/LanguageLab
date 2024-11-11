@@ -159,7 +159,12 @@
 	const isSender = message.user.id == $user?.id;
 </script>
 
-<div class="chat group" class:chat-start={!isSender} class:chat-end={isSender}>
+<div
+	class="chat group scroll-smooth target:bg-gray-200 rounded-xl"
+	id={message.uuid}
+	class:chat-start={!isSender}
+	class:chat-end={isSender}
+>
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
 		<Gravatar
 			email={message.user.email}
