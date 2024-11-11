@@ -34,7 +34,9 @@
 	let value = currentQuestion.question.split(':').slice(1).join(':');
 	let gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
 	let soundPlayer: HTMLAudioElement;
-	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])].sort(() => Math.random() - 0.5);
+	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])].sort(
+		() => Math.random() - 0.5
+	);
 
 	function setGroupId(id: number) {
 		currentGroupId = id;
@@ -67,6 +69,7 @@
 		) {
 			return;
 		}
+		console.log(currentQuestion.options.findIndex((o: string) => o === option));
 		if (currentQuestionId < questionsRandomized.length - 1) {
 			setQuestionId(currentQuestionId + 1);
 			startTime = new Date().getTime();
