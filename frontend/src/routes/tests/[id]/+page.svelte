@@ -34,6 +34,7 @@
 	let value = currentQuestion.question.split(':').slice(1).join(':');
 	let gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
 	let soundPlayer: HTMLAudioElement;
+	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])].sort(() => Math.random() - 0.5);
 
 	function setGroupId(id: number) {
 		currentGroupId = id;
@@ -48,6 +49,7 @@
 		type = currentQuestion.question.split(':')[0];
 		value = currentQuestion.question.split(':').slice(1).join(':');
 		gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
+		displayQuestionOptions = [...(currentQuestion.options ?? [])].sort(() => Math.random() - 0.5);
 		if (soundPlayer) soundPlayer.load();
 	}
 
@@ -197,7 +199,7 @@
 
 		<div class="mx-auto mt-16">
 			<div class="flex justify-around min-w-[600px] space-x-10">
-				{#each currentQuestion?.options as option (option)}
+				{#each displayQuestionOptions as option (option)}
 					{@const type = option.split(':')[0]}
 					{@const value = option.split(':').slice(1).join(':')}
 					<div
