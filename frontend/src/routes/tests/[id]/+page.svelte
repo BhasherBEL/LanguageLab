@@ -196,7 +196,7 @@
 		</div>
 
 		<div class="mx-auto mt-16">
-			<div class="flex justify-around min-w-[600px] space-x-10">
+			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 				{#each currentQuestion?.options as option (option)}
 					{@const type = option.split(':')[0]}
 					{@const value = option.split(':').slice(1).join(':')}
