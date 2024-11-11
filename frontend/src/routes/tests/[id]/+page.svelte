@@ -34,6 +34,21 @@
 	let value = currentQuestion.question.split(':').slice(1).join(':');
 	let gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
 	let soundPlayer: HTMLAudioElement;
+	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])];
+	shuffle(displayQuestionOptions);
+
+	//source: shuffle function code taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array/18650169#18650169
+	function shuffle(array: string[]) {
+		let currentIndex = array.length;
+		// While there remain elements to shuffle...
+		while (currentIndex != 0) {
+			// Pick a remaining element...
+			let randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex--;
+			// And swap it with the current element.
+			[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+		}
+	}
 
 	function setGroupId(id: number) {
 		currentGroupId = id;
@@ -48,6 +63,8 @@
 		type = currentQuestion.question.split(':')[0];
 		value = currentQuestion.question.split(':').slice(1).join(':');
 		gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
+		displayQuestionOptions = [...(currentQuestion.options ?? [])];
+		shuffle(displayQuestionOptions);
 		if (soundPlayer) soundPlayer.load();
 	}
 
@@ -65,6 +82,7 @@
 		) {
 			return;
 		}
+		console.log(currentQuestion.options.findIndex((o: string) => o === option));
 		if (currentQuestionId < questionsRandomized.length - 1) {
 			setQuestionId(currentQuestionId + 1);
 			startTime = new Date().getTime();
@@ -196,8 +214,8 @@
 		</div>
 
 		<div class="mx-auto mt-16">
-			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-				{#each currentQuestion?.options as option (option)}
+			<div class="flex justify-around min-w-[600px] space-x-10">
+				{#each displayQuestionOptions as option (option)}
 					{@const type = option.split(':')[0]}
 					{@const value = option.split(':').slice(1).join(':')}
 					<div
