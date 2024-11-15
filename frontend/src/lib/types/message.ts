@@ -148,7 +148,11 @@ export default class Message {
 			session
 		);
 	
-		message.replyTo = json.replyTo || null; // Parse and assign replyTo
+		if (json.replyTo) {
+			message.replyTo = Message.parse(json.replyTo); 
+		} else {
+			message.replyTo = null;
+		}
 		message.feedbacks.set(Feedback.parseAll(json.feedbacks, message));
 	
 		return message;

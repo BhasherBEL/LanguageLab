@@ -716,7 +716,7 @@ def create_message(
         action,
     )
 
-    return {"id": message.id, "message_id": message.message_id}
+    return {"id": message.id, "message_id": message.message_id, "reply_to": message.reply_to_message_id}
 
 
 @sessionsRouter.post(
