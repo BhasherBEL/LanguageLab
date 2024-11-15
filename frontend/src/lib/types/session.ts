@@ -201,34 +201,34 @@ export default class Session {
 	async sendMessage(
 		sender: User,
 		content: string,
-		metadata: { message: string; date: number }[]
+		metadata: { message: string; date: number }[],
+		replyTo: number | null 
 	): Promise<Message | null> {
-		// Log the details of the message being sent
 		console.log('Sender:', sender);
 		console.log('Message Content:', content);
 		console.log('Metadata:', metadata);
-
-		const json = await createMessageAPI(this.id, content, metadata);
-		console.log('JSON:', json);
+		console.log('ReplyTo:', replyTo);
+	
+		const json = await createMessageAPI(this.id, content, metadata, replyTo); 
 		if (json == null || json.id == null || json.message_id == null) {
 			toastAlert('Failed to parse message');
 			return null;
 		}
-
+	
 		const message = new Message(json.id, json.message_id, content, new Date(), sender, this);
-
+		message.replyTo = replyTo; 
+	
 		this._messages.update((messages) => {
 			if (!messages.find((m) => m.message_id === message.message_id)) {
 				return [...messages, message];
 			}
 			return messages.map((m) => (m.message_id === message.message_id ? message : m));
 		});
-
+	
 		this.logMessages();
-
 		return message;
 	}
-
+	
 	async sendTyping(): Promise<boolean> {
 		const response = await axiosInstance.post(`/sessions/${this.id}/typing`);
 		if (response.status !== 204) {

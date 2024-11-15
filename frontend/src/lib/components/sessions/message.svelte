@@ -10,6 +10,7 @@
 	import type Feedback from '$lib/types/feedback';
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
+	import { initiateReply } from '$lib/utils/replyUtils';
 
 	export let message: Message;
 	export let messages: Message[];
@@ -34,10 +35,13 @@
 	let replyingTo: Message | null = null;
 	let replyContent = '';
 
-	function initiateReply(msg: Message) {
-		console.log('Replying to message:', msg);
-		isReplying = true;
-		replyingToMessage = msg; // Store the message being replied to
+	// function initiateReply(msg: Message) {
+	// 	console.log('Replying to message:', msg);
+	// 	isReplying = true;
+	// 	replyingToMessage = msg; // Store the message being replied to
+	// }
+
+	async function sendReply() {
 	}
 
 	function cancelReply() {
@@ -80,13 +84,15 @@
 </script>
 
 <!-- Reply Preview (shown only when actively replying to a specific message) -->
-{#if isReplying && replyingTo}
-	<div class="reply-preview">
-		<p class="replying-to-text">
-			Replying to: <span class="replying-to-content">{replyingTo.content}</span>
-		</p>
-		<button on:click={cancelReply} class="cancel-reply">Cancel</button>
-	</div>
+{#if message.replyTo}
+    <div class="reply-to">
+        <p class="replying-to-text">
+            Replying to: 
+            <span class="replying-to-content">
+                {findMessageById(message.replyTo)?.content || 'Message not found'}
+            </span>
+        </p>
+    </div>
 {/if}
 
 <!-- Messages Display -->
@@ -115,7 +121,7 @@
 
 		<button class="reply-icon" on:click={() => initiateReply(message)}>
 			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
-		</button>
+		  </button>		  
 
 		{#if isEdit}
 			<button
@@ -158,7 +164,7 @@
 			bind:value={replyContent}
 			class="message-input"
 		/>
-		<button class="send-button">Send</button>
+		<button class="send-button" on:click={sendReply}>Send</button>
 	</div>
 {/if}
 

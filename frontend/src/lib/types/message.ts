@@ -1,6 +1,6 @@
 import Session from './session';
 import User from './user';
-import { updateMessageAPI, createMessageFeedbackAPI } from '$lib/api/sessions';
+import { updateMessageAPI, createMessageFeedbackAPI, createMessageAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import Feedback from './feedback';
@@ -114,7 +114,6 @@ export default class Message {
 	}
 
 	static parse(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		json: any,
 		user: User | null | undefined = null,
 		session: Session | null | undefined = null
@@ -123,7 +122,7 @@ export default class Message {
 			toastAlert('Failed to parse message: json is null');
 			return null;
 		}
-
+	
 		if (user == null || user == undefined) {
 			user = User.find(json.user_id);
 			if (user == null) {
@@ -131,7 +130,7 @@ export default class Message {
 				return null;
 			}
 		}
-
+	
 		if (session == null || session == undefined) {
 			session = Session.find(json.session_id);
 			if (session == null) {
@@ -139,7 +138,7 @@ export default class Message {
 				return null;
 			}
 		}
-
+	
 		const message = new Message(
 			json.id,
 			json.message_id,
@@ -148,11 +147,12 @@ export default class Message {
 			user,
 			session
 		);
-
+	
+		message.replyTo = json.replyTo || null; // Parse and assign replyTo
 		message.feedbacks.set(Feedback.parseAll(json.feedbacks, message));
-
+	
 		return message;
-	}
+	}	
 
 	static parseAll(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
