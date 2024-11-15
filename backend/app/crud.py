@@ -77,12 +77,20 @@ def create_user_survey_weekly(db: Session, user_id: int, survey: schemas.SurveyC
 
 
 def get_contact_sessions(db: Session, user_id: int, contact_id: int):
-    return (
+    sessions = (
         db.query(models.Session)
         .filter(models.Session.users.any(models.User.id == user_id))
         .filter(models.Session.users.any(models.User.id == contact_id))
         .all()
     )
+    for session in sessions:
+        session.length = (
+            db.query(models.Message)
+            .filter(models.Message.session_id == session.id)
+            .count()
+        )
+
+    return sessions
 
 
 def create_session(db: Session, user: schemas.User):

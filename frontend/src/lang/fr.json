@@ -22,10 +22,7 @@
 		"history": "Historique"
 	},
 	"home": {
-		"date": "Date",
-		"participants": "Participants",
 		"email": "E-mail",
-		"actions": "Actions",
 		"add": "Ajouter",
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
 		"createSession": "Session immédiate",
@@ -42,7 +39,9 @@
 		"pastSessions": "Sessions terminées",
 		"newContact": "Ajouter un contact",
 		"bookingSuccessful": "Session réservée avec succès",
-		"bookingFailed": "Erreur lors de la réservation de la session"
+		"bookingFailed": "Erreur lors de la réservation de la session",
+		"noCurrentOrFutureSessions": "Aucune session en cours ou planifiée",
+		"noSessions": "Aucune session"
 	},
 	"login": {
 		"email": "E-mail",
@@ -286,6 +285,20 @@
 			"november": "novembre",
 			"december": "décembre"
 		},
+		"shortMonth": {
+			"january": "janv.",
+			"february": "févr.",
+			"march": "mars",
+			"april": "avr.",
+			"may": "mai",
+			"june": "juin",
+			"july": "juil.",
+			"august": "août",
+			"september": "sept.",
+			"october": "oct.",
+			"november": "nov.",
+			"december": "déc."
+		},
 		"days": {
 			"monday": "Lundi",
 			"tuesday": "Mardi",
@@ -324,7 +337,13 @@
 		"words": {
 			"date": "Date",
 			"messages": "Messages",
-			"actions": "Actions"
+			"actions": "Actions",
+			"participants": "Participants",
+			"status": "Statut",
+			"date": "Date",
+			"programed": "Programmée",
+			"inProgress": "En cours",
+			"finished": "Terminée"
 		}
 	},
 	"inputs": {

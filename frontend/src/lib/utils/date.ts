@@ -32,6 +32,37 @@ export function getFullMonth(id: number): string {
 	}
 }
 
+export function getShortMonth(id: number): string {
+	switch (id) {
+		case 0:
+			return get(t)('utils.shortMonth.january');
+		case 1:
+			return get(t)('utils.shortMonth.february');
+		case 2:
+			return get(t)('utils.shortMonth.march');
+		case 3:
+			return get(t)('utils.shortMonth.april');
+		case 4:
+			return get(t)('utils.shortMonth.may');
+		case 5:
+			return get(t)('utils.shortMonth.june');
+		case 6:
+			return get(t)('utils.shortMonth.july');
+		case 7:
+			return get(t)('utils.shortMonth.august');
+		case 8:
+			return get(t)('utils.shortMonth.september');
+		case 9:
+			return get(t)('utils.shortMonth.october');
+		case 10:
+			return get(t)('utils.shortMonth.november');
+		case 11:
+			return get(t)('utils.shortMonth.december');
+		default:
+			return '??';
+	}
+}
+
 export function displayDate(date: Date): string {
 	if (date === null) return '';
 
@@ -110,16 +141,16 @@ export function formatToUTCDate(date: Date): string {
 }
 
 export function displayShortTime(date: Date): string {
+	const now = new Date();
+
 	return (
 		('0' + date.getDate()).slice(-2) +
-		'/' +
-		('0' + (date.getMonth() + 1)).slice(-2) +
-		'/' +
-		date.getFullYear() +
+		' ' +
+		getShortMonth(date.getMonth()) +
+		(date.getFullYear() != now.getFullYear() ? ' ' + date.getFullYear() : '') +
 		' ' +
 		('0' + date.getHours()).slice(-2) +
-		':' +
-		('0' + date.getMinutes()).slice(-2)
+		'h'
 	);
 }
 
