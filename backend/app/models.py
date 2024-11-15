@@ -127,8 +127,10 @@ class Message(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     session_id = Column(Integer, ForeignKey("sessions.id"))
     created_at = Column(DateTime, default=datetime_aware)
+    reply_to_message_id = Column(Integer, ForeignKey("messages.id"), nullable=True)  
 
     feedbacks = relationship("MessageFeedback", backref="message")
+    replies = relationship("Message", backref="parent_message", remote_side=[id])
 
     def raw(self):
         return [
@@ -137,6 +139,7 @@ class Message(Base):
             self.content,
             self.user_id,
             self.session_id,
+            self.reply_to_message_id,
             self.created_at,
         ]
 

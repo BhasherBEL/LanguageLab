@@ -194,6 +194,7 @@ def create_message(
         user_id=user.id,
         session_id=session.id,
         message_id=message.message_id,
+        reply_to_message_id=message.reply_to_message_id,
     )
     db.add(db_message)
     db.commit()
