@@ -1,6 +1,6 @@
 import Session from './session';
 import User from './user';
-import { updateMessageAPI, createMessageFeedbackAPI, createMessageAPI } from '$lib/api/sessions';
+import { updateMessageAPI, createMessageFeedbackAPI, getMessagesAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import Feedback from './feedback';
@@ -82,6 +82,38 @@ export default class Message {
 
 		return true;
 	}
+
+	async getMessageById(id: number): Promise<Message | null> {
+		try {
+			const response = await getMessagesAPI(this._session.id); // Fetch all messages for the session
+			console.log('Response from API2:', response);
+			if (!response) {
+				toastAlert('Failed to retrieve messages from the server.');
+				return null;
+			}
+	
+			// Locate the message by ID in the response
+			const messageData = response.find((msg: any) => msg.id === id);
+			if (!messageData) {
+				toastAlert(`Message with ID ${id} not found.`);
+				return null;
+			}
+	
+			// Parse the message object
+			const parsedMessage = Message.parse(messageData, this._user, this._session);
+			if (!parsedMessage) {
+				toastAlert(`Failed to parse message with ID ${id}`);
+				return null;
+			}
+	
+			return parsedMessage;
+		} catch (error) {
+			console.error(`Error while fetching message by ID ${id}:`, error);
+			toastAlert(`Unexpected error while retrieving message.`);
+			return null;
+		}
+	}	
+	
 
 	async localUpdate(content: string, force: boolean = false): Promise<boolean> {
 		this._content = content;

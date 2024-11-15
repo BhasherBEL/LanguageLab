@@ -24,6 +24,14 @@
 		}, 1000);
 	}
 
+	let replyToMessage: Message | null = null;
+
+	$: if (message.replyTo) {
+		findMessageById(message.replyTo).then((msg) => {
+			replyToMessage = msg;
+		});
+	}
+
 	let isEdit = false;
 	let contentDiv: HTMLDivElement;
 	let historyModal: HTMLDialogElement;
@@ -35,22 +43,23 @@
 	let replyingTo: Message | null = null;
 	let replyContent = '';
 
-	// function initiateReply(msg: Message) {
-	// 	console.log('Replying to message:', msg);
-	// 	isReplying = true;
-	// 	replyingToMessage = msg; // Store the message being replied to
-	// }
-
-	async function sendReply() {
-	}
+	async function sendReply() {}
 
 	function cancelReply() {
 		isReplying = false;
 		replyingToMessage = null; // Clear the reply state
 	}
 
-	function findMessageById(id: string): Message | undefined {
-		return messages.find((msg) => msg.id === Number(id));
+	async function findMessageById(id: string): Promise<Message | null> {
+		try {
+			console.log('Finding message by id:', id);
+			const resolvedMessage = await message.getMessageById(Number(id));
+			console.log('Resolved Message:', resolvedMessage);
+			return resolvedMessage;
+		} catch (error) {
+			console.error(`Error resolving message ID ${id}:`, error);
+			return null;
+		}
 	}
 
 	function startEdit() {
@@ -83,16 +92,12 @@
 	const isSender = message.user.id == $user?.id;
 </script>
 
-<!-- Reply Preview (shown only when actively replying to a specific message) -->
-{#if message.replyTo}
-    <div class="reply-to">
-        <p class="replying-to-text">
-            Replying to: 
-            <span class="replying-to-content">
-                {findMessageById(message.replyTo)?.content || 'Message not found'}
-            </span>
-        </p>
-    </div>
+<!-- Display the replied-to message context -->
+{#if replyToMessage}
+	<div class="reply-context">
+		<p class="replying-to-label">Replying to:</p>
+		<p class="replying-to-content">{replyToMessage.content}</p>
+	</div>
 {/if}
 
 <!-- Messages Display -->
@@ -121,7 +126,7 @@
 
 		<button class="reply-icon" on:click={() => initiateReply(message)}>
 			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
-		  </button>		  
+		</button>
 
 		{#if isEdit}
 			<button
@@ -243,5 +248,24 @@
 		border: none;
 		border-radius: 5px;
 		cursor: pointer;
+	}
+	.reply-context {
+		padding: 0.5rem;
+		background-color: #f3f4f6;
+		border-left: 3px solid #007bff;
+		margin-bottom: 0.5rem;
+		border-radius: 5px;
+		font-size: 0.9rem;
+		color: #555;
+	}
+
+	.replying-to-label {
+		font-weight: bold;
+		margin-bottom: 0.2rem;
+	}
+
+	.replying-to-content {
+		color: #333;
+		font-style: italic;
 	}
 </style>
