@@ -832,7 +832,7 @@ async def websocket_session(
     websocket: WebSocket,
     db: Session = Depends(get_db),
 ):
-    payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"])
+    payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"], options={"verify_exp": False}) # FIXME: Verify expiration
 
     current_user = crud.get_user(db, user_id=payload["subject"]["uid"])
     if current_user is None:
