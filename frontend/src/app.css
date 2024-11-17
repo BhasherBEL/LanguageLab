@@ -26,3 +26,12 @@
 .input {
 	@apply border-2 border-gray-300 rounded-md p-2;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.no-scrollbar {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
