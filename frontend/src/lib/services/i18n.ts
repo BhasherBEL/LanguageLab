@@ -1,6 +1,12 @@
-import i18n, { type Config } from 'sveltekit-i18n';
+import i18n from '@sveltekit-i18n/base';
+import parser from '@sveltekit-i18n/parser-icu';
+
+import type { Config } from '@sveltekit-i18n/parser-icu';
 
 const config: Config = {
+	parser: parser({
+		ignoreTag: true
+	}),
 	loaders: [
 		{
 			locale: 'en',

@@ -1,13 +1,14 @@
 <script lang="ts">
 	import Session from '$lib/types/session';
 	import { onMount } from 'svelte';
-	import { displayTime } from '$lib/utils/date';
+	import { displayShortTime, displayTimeSince } from '$lib/utils/date';
 	import {
 		AcademicCap,
 		Sparkles,
 		Icon,
 		User as UserIcon,
-		MagnifyingGlass
+		MagnifyingGlass,
+		ArrowRightCircle
 	} from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
 	import User, { user } from '$lib/types/user';
@@ -27,14 +28,19 @@
 	let modalNew = false;
 	let nickname = '';
 
+	let showTerminatedSessions = false;
+
 	async function selectContact(c: User | null) {
+		showTerminatedSessions = false;
 		contact = c;
 		if (!contact) {
 			contactSessions = [];
 			return;
 		}
 
-		contactSessions = Session.parseAll(await getUserContactSessionsAPI($user!.id, contact.id));
+		contactSessions = Session.parseAll(await getUserContactSessionsAPI($user!.id, contact.id)).sort(
+			(a, b) => b.start_time.getTime() - a.start_time.getTime()
+		);
 	}
 
 	onMount(async () => {
@@ -103,7 +109,9 @@
 					return;
 				}
 				toastSuccess(get(t)('home.bookingSuccessful'));
-				contactSessions = Session.parseAll(await getUserContactSessionsAPI($user!.id, contact.id));
+				contactSessions = Session.parseAll(
+					await getUserContactSessionsAPI($user!.id, contact.id)
+				).sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
 			}
 		});
 	});
@@ -113,7 +121,9 @@
 		let session = await Session.create();
 		if (!session) return;
 		await session.addUser(contact);
-		contactSessions = [...contactSessions, session];
+		contactSessions = [...contactSessions, session].sort(
+			(a, b) => b.start_time.getTime() - a.start_time.getTime()
+		);
 	}
 
 	async function searchNickname() {
@@ -130,18 +140,13 @@
 	}
 </script>
 
-<svelte:head>
-	<script>
-	</script>
-</svelte:head>
-
 {#if ready}
-	<div class="h-full w-full flex">
-		<ul class="h-full [width:_clamp(200px,25%,500px)] overflow-y-scroll border-r-2 flex flex-col">
+	<div class="flex-row h-full flex py-4 flex-grow overflow-y-hidden">
+		<div class="flex flex-col border shadow-[0_0_6px_0_rgba(0,14,156,.2)] min-w-72 rounded-r-xl">
 			<div class="flex-grow">
 				{#each contacts as c (c.id)}
-					<li
-						class="h-20 flex border-gray-300 border-b-2 hover:bg-gray-200 hover:cursor-pointer"
+					<div
+						class="h-24 flex border-gray-300 border-b-2 hover:bg-gray-200 hover:cursor-pointer p-4"
 						class:bg-gray-200={c.id === contact?.id}
 						on:click={() => selectContact(c)}
 						role="button"
@@ -149,19 +154,19 @@
 						tabindex="0"
 						on:keydown={(e) => e.key === 'Enter' && selectContact(c)}
 					>
-						<div class="w-16 ml-2 mr-4 p-4 avatar bg-gray-300 mask-squircle mask">
+						<div class="w-16 ml-2 mr-4 p-4 bg-gray-300 rounded-2xl">
 							{#if c.type == 0}
 								<Icon src={Sparkles} class="mask mask-squircle" />
 							{:else if c.type == 1}
-								<Icon src={AcademicCap} />
+								<Icon src={AcademicCap} class="" />
 							{:else}
 								<Icon src={UserIcon} />
 							{/if}
 						</div>
-						<div class="flex items-center text-lg">
+						<div class="text-lg font-bold capitalize flex items-center">
 							{c.nickname}
 						</div>
-					</li>
+					</div>
 				{/each}
 			</div>
 			<button
@@ -170,80 +175,125 @@
 			>
 				+
 			</button>
-		</ul>
-		<div class="flex-grow flex-col flex">
-			{#if contact}
-				<div class="p-4 pr-8">
-					<button on:click|preventDefault={createSession} class="button float-end">
+		</div>
+		{#if contact}
+			<div class="flex flex-col xl:mx-auto xl:w-[60rem] m-4">
+				<div>
+					<button on:click|preventDefault={createSession} class="button float-start mr-2">
 						{$t('home.createSession')}
 					</button>
-					<div class="size-4 float-end"></div>
 					<button
-						class="button float-end"
+						class="button float-start"
 						class:btn-disabled={!contact || !contact.calcom_link}
 						data-cal-link={`${contact.calcom_link}?email=${$user?.email}&name=${$user?.nickname}`}
 					>
 						{$t('home.bookSession')}
 					</button>
 				</div>
-				<div class="flex-grow p-2">
-					<h2 class="text-xl my-4 font-bold">{$t('home.currentSessions')}</h2>
-					<ul>
-						{#each contactSessions as s (s.id)}
-							{#if s.start_time <= new Date() && s.end_time >= new Date()}
-								<li>
-									<a
-										class="block p-4 m-1 mx-4 rounded-md w-[calc(100%-32px)] border-2 hover:bg-gray-200 text-center"
-										href={`/session?id=${s.id}`}
+				<div
+					class="border p-4 mt-4 rounded-xl shadow-[0_0_6px_0_rgba(0,14,156,.2)] overflow-y-scroll no-scrollbar"
+				>
+					<table class="divide-y divide-neutral-300 text-center w-full table-fixed">
+						<thead>
+							<tr>
+								<th scope="col" class="text-left">{$t('utils.words.date')}</th>
+								<th scope="col">{$t('utils.words.status')}</th>
+								<th scope="col"># {$t('utils.words.messages').toLowerCase()}</th>
+								<th scope="col">{$t('utils.words.actions')}</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-neutral-200">
+							{#if contactSessions.length === 0}
+								<tr>
+									<td colspan="4" class="py-5 text-gray-500">{$t('home.noSessions')}</td>
+								</tr>
+							{:else}
+								{#if !showTerminatedSessions && contactSessions.filter((s) => s.end_time >= new Date()).length === 0}
+									<tr>
+										<td colspan="4" class="py-5 text-gray-500"
+											>{$t('home.noCurrentOrFutureSessions')}</td
+										>
+									</tr>
+								{/if}
+								{#each contactSessions as s (s.id)}
+									{#if showTerminatedSessions || s.end_time >= new Date()}
+										<tr>
+											<td class="py-2 text-left space-y-1">
+												<div>
+													{displayShortTime(s.start_time)}
+												</div>
+												<div class="text-sm italic text-gray-600">
+													{displayTimeSince(s.start_time)}
+												</div>
+											</td>
+											<td class="py-2">
+												{#if s.start_time <= new Date() && s.end_time >= new Date()}
+													<span class="bg-green-200 rounded-lg px-2 py-1"
+														>{$t('utils.words.inProgress')}</span
+													>
+												{:else if s.start_time > new Date()}
+													<span class="bg-orange-200 rounded-lg px-2 py-1"
+														>{$t('utils.words.programed')}</span
+													>
+												{:else}
+													<span class="bg-red-200 rounded-lg px-2 py-1"
+														>{$t('utils.words.finished')}</span
+													>
+												{/if}
+											</td>
+											<td class="py-2">{s.length} {$t('utils.words.messages').toLowerCase()}</td>
+											<td class="py-2">
+												<a href="/session?id={s.id}" class="group">
+													<Icon
+														src={ArrowRightCircle}
+														size="32"
+														class="text-accent mx-auto group-hover:text-white group-hover:bg-accent rounded-full"
+													/>
+												</a>
+											</td>
+										</tr>
+									{/if}
+								{/each}
+								<tr>
+									<td
+										class="py-2 hover:cursor-pointer"
+										colspan="4"
+										on:click={() => (showTerminatedSessions = !showTerminatedSessions)}
 									>
-										{displayTime(s.start_time)} - {displayTime(s.end_time)}
-									</a>
-								</li>
+										<button aria-label={showTerminatedSessions ? 'Hide' : 'Show'}>
+											<svg
+												class="size-3 ms-3"
+												aria-hidden="true"
+												xmlns="http://www.w3.org/2000/svg"
+												fill="none"
+												viewBox="0 0 10 6"
+												class:rotate-180={showTerminatedSessions}
+											>
+												<path
+													stroke="currentColor"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="m1 1 4 4 4-4"
+												/>
+											</svg>
+										</button>
+									</td>
+								</tr>
 							{/if}
-						{/each}
-					</ul>
-					<h2 class="text-xl my-4 font-bold">{$t('home.plannedSessions')}</h2>
-					<ul>
-						{#each contactSessions as s (s.id)}
-							{#if s.start_time > new Date()}
-								<li>
-									<a
-										class="block p-4 m-1 mx-4 rounded-md w-[calc(100%-32px)] border-2 hover:bg-gray-200 text-center"
-										href={`/session?id=${s.id}`}
-									>
-										{displayTime(s.start_time)} - {displayTime(s.end_time)}
-									</a>
-								</li>
-							{/if}
-						{/each}
-					</ul>
-					<h2 class="text-xl my-4 font-bold">{$t('home.pastSessions')}</h2>
-					<ul>
-						{#each contactSessions as s (s.id)}
-							{#if s.end_time < new Date()}
-								<li>
-									<a
-										class="block p-4 m-1 mx-4 rounded-md w-[calc(100%-32px)] border-2 hover:bg-gray-200 text-center"
-										href={`/session?id=${s.id}`}
-									>
-										{displayTime(s.start_time)} - {displayTime(s.end_time)}
-									</a>
-								</li>
-							{/if}
-						{/each}
-					</ul>
+						</tbody>
+					</table>
 				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 {/if}
 
 <dialog
-	class="modal"
+	class="modal bg-black bg-opacity-50"
 	open={modalNew}
 	on:close={() => (modalNew = false)}
-	on:keydown={(e) => e.key === 'Escape' && (modalNew = false)}
-	tabindex="0"
+	tabindex="-1"
 >
 	<div class="modal-box">
 		<h2 class="text-xl font-bold mb-4">{$t('home.newContact')}</h2>
@@ -253,6 +303,7 @@
 				placeholder={$t('home.email')}
 				bind:value={nickname}
 				class="input flex-grow mr-2"
+				on:keydown={(e) => e.key === 'Escape' && (modalNew = false)}
 			/>
 			<button class="button w-16" on:click={searchNickname}>
 				<Icon src={MagnifyingGlass} />

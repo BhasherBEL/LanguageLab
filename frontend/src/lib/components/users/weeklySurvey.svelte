@@ -49,10 +49,9 @@
 			<label class="form-control w-full">
 				<div class="label">
 					<span class="label-text"
-						>{@html $t('session.modal.weekly.questions.' + i).replaceAll(
-							'{TARGET_LANGUAGE}',
-							$t('utils.language.' + $user?.target_language).toLowerCase()
-						)}</span
+						>{@html $t('session.modal.weekly.questions.' + i, {
+							lang: $t('utils.language.' + $user?.target_language).toLowerCase()
+						})}</span
 					>
 				</div>
 				<select id={'questions-' + i} class="select select-bordered">

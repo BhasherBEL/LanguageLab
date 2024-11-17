@@ -46,6 +46,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltekit-i18n/parser-icu": "^1.0.8",
 		"dayjs": "^1.11.13",
 		"emoji-picker-element": "^1.23.0",
 		"linkify-html": "^4.1.3",

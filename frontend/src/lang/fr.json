@@ -22,10 +22,7 @@
 		"history": "Historique"
 	},
 	"home": {
-		"date": "Date",
-		"participants": "Participants",
 		"email": "E-mail",
-		"actions": "Actions",
 		"add": "Ajouter",
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
 		"createSession": "Session immédiate",
@@ -42,7 +39,9 @@
 		"pastSessions": "Sessions terminées",
 		"newContact": "Ajouter un contact",
 		"bookingSuccessful": "Session réservée avec succès",
-		"bookingFailed": "Erreur lors de la réservation de la session"
+		"bookingFailed": "Erreur lors de la réservation de la session",
+		"noCurrentOrFutureSessions": "Aucune session en cours ou planifiée",
+		"noSessions": "Aucune session"
 	},
 	"login": {
 		"email": "E-mail",
@@ -225,10 +224,10 @@
 				"title": "Questionnaire hebdomadaire",
 				"description": "Au cours des 7 derniers jours...",
 				"questions": [
-					"Combien d'heures de <span class='font-bold'>cours</span> de {TARGET_LANGUAGE} avez vous suivies ?",
-					"Combien d'heures avez-vous <span class='font-bold'>regardé des vidéos</span> en {TARGET_LANGUAGE} (films, séries, Youtube...) ou <span class='font-bold'>écouté des contenus</span> en {TARGET_LANGUAGE} (podcasts, radio, cours universitaires...) ?",
-					"Combien d'heures avez-vous <span class='font-bold'>lu des textes</span> en {TARGET_LANGUAGE} (livre, journal, BD, sites web...) ?",
-					"Combien d'heures avez-vous <span class='font-bold'>parlé</span> en {TARGET_LANGUAGE} (discussions avec amis, famille, collègues...) ?"
+					"Combien d'heures de <span class='font-bold'>cours</span> de {lang} avez vous suivies ?",
+					"Combien d'heures avez-vous <span class='font-bold'>regardé des vidéos</span> en {lang} (films, séries, Youtube...) ou <span class='font-bold'>écouté des contenus</span> en {lang} (podcasts, radio, cours universitaires...) ?",
+					"Combien d'heures avez-vous <span class='font-bold'>lu des textes</span> en {lang} (livre, journal, BD, sites web...) ?",
+					"Combien d'heures avez-vous <span class='font-bold'>parlé</span> en {lang} (discussions avec amis, famille, collègues...) ?"
 				],
 				"answers": {
 					"placeholder": "",
@@ -286,6 +285,20 @@
 			"november": "novembre",
 			"december": "décembre"
 		},
+		"shortMonth": {
+			"january": "janv.",
+			"february": "févr.",
+			"march": "mars",
+			"april": "avr.",
+			"may": "mai",
+			"june": "juin",
+			"july": "juil.",
+			"august": "août",
+			"september": "sept.",
+			"october": "oct.",
+			"november": "nov.",
+			"december": "déc."
+		},
 		"days": {
 			"monday": "Lundi",
 			"tuesday": "Mardi",
@@ -302,6 +315,15 @@
 			"5": "Samedi",
 			"6": "Dimanche"
 		},
+		"past": {
+			"year": "Il y a {n, plural, one {# an} other {# ans}}",
+			"month": "Il y a {n, plural, one {# mois} other {# mois}}",
+			"day": "Il y a {n, plural, one {# jour} other {# jours}}",
+			"hour": "Il y a {n, plural, one {# heure} other {# heures}}",
+			"today": "Aujourd'hui",
+			"yesterday": "Hier",
+			"justNow": "Il y a moins d'une heure"
+		},
 		"language": {
 			"fr": "Français",
 			"en": "Anglais",
@@ -315,7 +337,13 @@
 		"words": {
 			"date": "Date",
 			"messages": "Messages",
-			"actions": "Actions"
+			"actions": "Actions",
+			"participants": "Participants",
+			"status": "Statut",
+			"date": "Date",
+			"programed": "Programmée",
+			"inProgress": "En cours",
+			"finished": "Terminée"
 		}
 	},
 	"inputs": {
