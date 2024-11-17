@@ -5,6 +5,8 @@ stages:
 
 lint_frontend:
   stage: lint
+  except:
+    - feat/cd
   image: node
   script:
     - cd frontend
@@ -13,6 +15,8 @@ lint_frontend:
 
 lint_backend:
   stage: lint
+  except:
+    - feat/cd
   image: registry.gitlab.com/pipeline-components/black:latest
   script:
     - black --check --verbose -- .
@@ -38,17 +42,6 @@ docker_deploy:
   only:
     - main
     - feat/cd
-  image: debian:latest
-  before_script:
-    - "command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )"
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - touch ~/.ssh/config
-    - touch ~/.ssh/known_hosts
-    - chmod -R 400 ~/.ssh
-    - ssh bridubois@languagelab.sipr.ucl.ac.be
+  image: alpine:latest
   script:
-    - cd /mnt/data/languagelab/repo/
-    - git pull
-    - docker compose up -d
+    - echo "/mnt/data/languagelab/repo/scripts/update.sh" > /mnt/pipeline
