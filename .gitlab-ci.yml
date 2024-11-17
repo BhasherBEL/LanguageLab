@@ -1,9 +1,12 @@
 stages:
   - lint
   - build
+  - deploy
 
 lint_frontend:
   stage: lint
+  except:
+    - feat/cd
   image: node
   script:
     - cd frontend
@@ -12,6 +15,8 @@ lint_frontend:
 
 lint_backend:
   stage: lint
+  except:
+    - feat/cd
   image: registry.gitlab.com/pipeline-components/black:latest
   script:
     - black --check --verbose -- .
@@ -31,3 +36,12 @@ build:
   script:
     - docker build -t $CI_REGISTRY/sbibauw/languagelab:$COMPONENT $COMPONENT
     - docker push $CI_REGISTRY/sbibauw/languagelab:$COMPONENT
+
+docker_deploy:
+  stage: deploy
+  only:
+    - main
+    - feat/cd
+  image: alpine:latest
+  script:
+    - echo "/mnt/data/languagelab/repo/scripts/update.sh" > /mnt/pipeline
