@@ -1248,10 +1248,11 @@ def get_survey_responses(
 
     return crud.get_survey_responses(db, survey_id)
 
+
 @surveyRouter.get("/{survey_id}/score", response_model=dict)
 def get_survey_score(
-        survey_id: int,
-        db: Session = Depends(get_db),
+    survey_id: int,
+    db: Session = Depends(get_db),
 ):
     if not crud.get_survey(db, survey_id):
         raise HTTPException(status_code=404, detail="Survey not found")
@@ -1264,7 +1265,7 @@ def get_survey_score(
         question = crud.get_survey_question(db, response.question_id)
         if not question:
             continue
-        total+=1
+        total += 1
         if response.selected_id == question.correct:
             score += 1
 
