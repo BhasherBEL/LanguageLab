@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { sendSurveyResponseAPI } from '$lib/api/survey';
+	import { getSurveyScoreAPI } from '$lib/api/survey';
 
 	import Survey from '$lib/types/survey.js';
 	import { t } from '$lib/services/i18n';
@@ -36,6 +37,7 @@
 	let soundPlayer: HTMLAudioElement;
 	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])];
 	shuffle(displayQuestionOptions);
+	let finalScore: number | null = null;
 
 	//source: shuffle function code taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array/18650169#18650169
 	function shuffle(array: string[]) {
@@ -75,7 +77,7 @@
 				sid,
 				survey.id,
 				currentGroupId,
-				currentQuestionId,
+				questionsRandomized[currentQuestionId]['_id'],
 				currentQuestion.options.findIndex((o: string) => o === option),
 				(new Date().getTime() - startTime) / 1000
 			))
@@ -105,7 +107,7 @@
 				sid,
 				survey.id,
 				currentGroupId,
-				currentQuestionId,
+				questionsRandomized[currentQuestionId]['_id'],
 				-1,
 				(new Date().getTime() - startTime) / 1000,
 				gapTexts
@@ -121,10 +123,14 @@
 		}
 	}
 
-	function nextGroup() {
+	async function nextGroup() {
 		if (currentGroupId < survey.groups.length - 1) {
 			setGroupId(currentGroupId + 1);
 		} else {
+			const scoreData = await getSurveyScoreAPI(survey.id);
+			if (scoreData) {
+				finalScore = scoreData.score;
+			}
 			step++;
 		}
 	}
@@ -251,5 +257,8 @@
 {:else if step == 3}
 	<div class="mx-auto mt-16 text-center">
 		<h1>{$t('surveys.complete')}</h1>
+		{#if finalScore !== null}
+			<p>{$t('surveys.score')} {finalScore} %</p>
+		{/if}
 	</div>
 {/if}
