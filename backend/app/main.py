@@ -740,9 +740,8 @@ async def send_websoket_message(session_id: int, message: schemas.Message, actio
             await user_websocket.send_text(content)
 
 
-async def send_websoket_feedback(session_id: int, feedback: dict):
-
-    content = json.dumps({"type": "message", "action": "feedback", "data": feedback})
+async def send_websoket_feedback(session_id: int, action: str, feedback: dict):
+    content = json.dumps({"type": "message", "action": action, "data": feedback})
 
     for _, user_websockets in websocket_users[session_id].items():
         for user_websocket in user_websockets:
@@ -825,10 +824,58 @@ def feedback_message(
     background_tasks.add_task(
         send_websoket_feedback,
         session_id,
+        "feedback",
         schemas.MessageFeedback.model_validate(feedback).to_dict(),
     )
 
     return feedback.id
+
+
+@sessionsRouter.delete(
+    "/{session_id}/messages/{message_id}/feedback/{feedback_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_feedback(
+    session_id: int,
+    message_id: int,
+    feedback_id: int,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user not in db_session.users
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to delete feedbacks in this session",
+        )
+
+    db_message = crud.get_message(db, message_id)
+    if db_message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    db_feedback = crud.get_message_feedback(db, feedback_id)
+    if db_feedback is None:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+
+    crud.delete_message_feedback(db, feedback_id)
+
+    background_tasks.add_task(
+        send_websoket_feedback,
+        session_id,
+        "deleteFeedback",
+        {
+            "message_id": message_id,
+            "feedback_id": feedback_id,
+        },
+    )
 
 
 async def send_websoket_typing(session_id: int, user_id: int):

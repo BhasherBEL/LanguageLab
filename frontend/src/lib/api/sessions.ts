@@ -95,6 +95,21 @@ export async function createMessageFeedbackAPI(
 	return response.data;
 }
 
+export async function deleteMessageFeedbackAPI(
+	id: number,
+	message_id: number,
+	feedback_id: number
+) {
+	const response = await axiosInstance.delete(
+		`/sessions/${id}/messages/${message_id}/feedback/${feedback_id}`
+	);
+	if (response.status !== 204) {
+		toastAlert('Failed to delete feedback');
+		return false;
+	}
+	return true;
+}
+
 export async function patchLanguageAPI(id: number, language: string) {
 	const response = await axiosInstance.patch(`/sessions/${id}`, { language });
 

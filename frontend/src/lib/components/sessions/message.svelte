@@ -11,6 +11,7 @@
 	import type Feedback from '$lib/types/feedback';
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
+	import CloseIcon from '../icons/closeIcon.svelte';
 
 	export let message: Message;
 
@@ -157,6 +158,13 @@
 	$: parts = getParts(message.content, $fbs);
 
 	const isSender = message.user.id == $user?.id;
+
+	async function deleteFeedback(feedback: Feedback | null) {
+		if (!feedback) return;
+		if (!confirm($t('chatbox.deleteFeedback'))) return;
+
+		await message.deleteFeedback(feedback);
+	}
 </script>
 
 <div
@@ -199,20 +207,30 @@
 				{#each parts as part}
 					{#if isEdit || !part.feedback}
 						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
-					{:else if part.feedback.content}
-						<span class="tooltip tooltip-accent" data-tip={part.feedback.content}
+					{:else}
+						<!-- prettier-ignore -->
+						<span class=""
 							><!--
-						--><span class="underline decoration-wavy decoration-blue-500 hover:cursor-help"
+						--><span
+								class="underline group/feedback relative decoration-wavy hover:cursor-help"
+								class:decoration-blue-500={part.feedback.content}
+								class:decoration-red-500={!part.feedback.content}
+								><div
+									class="absolute group-hover/feedback:flex hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10"
+								><!--
+									-->{part.feedback.content}<button
+										aria-label="close"
+										class:ml-1={part.feedback.content}
+										class="hover:border-inherit border border-transparent rounded"
+										on:click={() => deleteFeedback(part.feedback)}
+									>
+										<CloseIcon />
+									</button>
+								</div
 								><!--
 						-->{part.text}<!--
 					--></span
 							><!--
-					--></span
-						>
-					{:else}
-						<span class="underline decoration-wavy decoration-red-500 decoration-1"
-							><!--
-						-->{part.text}<!--
 					--></span
 						>
 					{/if}

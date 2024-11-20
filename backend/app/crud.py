@@ -247,6 +247,21 @@ def create_message_feedback(
     return db_message_feedback
 
 
+def get_message_feedback(db: Session, feedback_id: int):
+    return (
+        db.query(models.MessageFeedback)
+        .filter(models.MessageFeedback.id == feedback_id)
+        .first()
+    )
+
+
+def delete_message_feedback(db: Session, feedback_id: int):
+    db.query(models.MessageFeedback).filter(
+        models.MessageFeedback.id == feedback_id
+    ).delete()
+    db.commit()
+
+
 def create_study(db: Session, study: schemas.StudyCreate):
     db_study = models.Study(**study.dict())
     db.add(db_study)

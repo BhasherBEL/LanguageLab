@@ -19,7 +19,8 @@
 		"sendError": "Erreur lors de l'envoi du message",
 		"disabled": "Cette session est accessible uniquement en lecture",
 		"edited": "modifié",
-		"history": "Historique"
+		"history": "Historique",
+		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible."
 	},
 	"home": {
 		"email": "E-mail",
