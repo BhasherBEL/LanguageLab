@@ -40,3 +40,12 @@ export async function sendSurveyResponseAPI(
 
 	return true;
 }
+
+export async function getSurveyScoreAPI(survey_id: number) {
+	const response = await axiosInstance.get(`/surveys/${survey_id}/score`);
+	if (response.status !== 200) {
+		toastAlert('Failed to retrieve survey score');
+		return null;
+	}
+	return response.data;
+}
