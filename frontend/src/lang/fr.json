@@ -182,7 +182,8 @@
 		"loginUser": "Se connecter via un compte utilisateur",
 		"loginEmail": "Utiliser une adresse e-mail",
 		"invalidEmail": "Adresse e-mail invalide",
-		"complete": "Questionnaire complété. Merci pour votre participation !"
+		"complete": "Questionnaire complété. Merci pour votre participation !",
+		"score": "Vous avez obtenu un score de "
 	},
 	"users": {
 		"nickname": "Nom",
