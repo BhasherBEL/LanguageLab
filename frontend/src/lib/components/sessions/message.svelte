@@ -92,14 +92,6 @@
 	const isSender = message.user.id == $user?.id;
 </script>
 
-<!-- Display the replied-to message context -->
-{#if replyToMessage}
-	<div class="reply-context">
-		<p class="replying-to-label">Replying to:</p>
-		<p class="replying-to-content">{replyToMessage.content}</p>
-	</div>
-{/if}
-
 <!-- Messages Display -->
 <div class="chat group" class:chat-start={!isSender} class:chat-end={isSender}>
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}></div>
@@ -110,12 +102,12 @@
 		class:text-black={!isSender}
 		class:text-white={isSender}
 	>
-		{#if message.replyTo}
-			<!-- Display Original Message if this is a Reply -->
+		{#if replyToMessage}
+			<!-- Display the replied-to message context -->
 			<div class="reply-to">
 				<p class="replying-to-text">
 					Replying to: <span class="replying-to-content"
-						>{findMessageById(message.replyTo)?.content}</span
+						>{replyToMessage.content}</span
 					>
 				</p>
 			</div>
