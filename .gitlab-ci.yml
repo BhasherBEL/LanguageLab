@@ -5,14 +5,11 @@ stages:
 lint_frontend:
   stage: lint
   image: node
+  allow_failure: true 
   script:
     - cd frontend
     - npm install
-    - npm run lint > lint-frontend.log || (cat lint-frontend.log && exit 1)
-  artifacts:
-    paths:
-      - frontend/lint-frontend.log
-  allow_failure: true
+    - npm run lint
 
 lint_backend:
   stage: lint
