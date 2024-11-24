@@ -16,7 +16,7 @@ export default class Message {
 	private _edited: boolean = false;
 	private _versions = writable([] as { content: string; date: Date }[]);
 	private _feedbacks = writable([] as Feedback[]);
-	replyTo: any;
+	private _replyTo: any;
 
 	public constructor(
 		id: number,
@@ -24,7 +24,8 @@ export default class Message {
 		content: string,
 		created_at: Date,
 		user: User,
-		session: Session
+		session: Session,
+		replyTo: string
 	) {
 		this._id = id;
 		this._message_id = message_id;
@@ -33,6 +34,7 @@ export default class Message {
 		this._user = user;
 		this._session = session;
 		this._versions.set([{ content: content, date: created_at }]);
+		this._replyTo = replyTo;
 	}
 
 	get id(): number {
@@ -71,6 +73,10 @@ export default class Message {
 		return this._feedbacks;
 	}
 
+	get replyTo(): any {
+		return this._replyTo;
+	}
+
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
 		const response = await updateMessageAPI(this._session.id, this._message_id, content, metadata);
 		if (response == null || response.id == null) return false;
@@ -98,6 +104,7 @@ export default class Message {
 				toastAlert(`Message with ID ${id} not found.`);
 				return null;
 			}
+			console.log('Message data:', messageData);
 	
 			// Parse the message object
 			const parsedMessage = Message.parse(messageData, this._user, this._session);
@@ -177,14 +184,18 @@ export default class Message {
 			json.content,
 			parseToLocalDate(json.created_at),
 			user,
-			session
+			session,
+			json.reply_to_message_id
 		);
+		console.log('Parsing message:', json);
 	
-		if (json.replyTo) {
-			message.replyTo = Message.parse(json.replyTo); 
-		} else {
-			message.replyTo = null;
-		}
+		// if (json.reply_to_message_id) {
+		// 	console.log('Parsing reply to:', json.reply_to_message_id);
+		// 	message.replyTo = Message.parse(json.reply_to_message_id);
+		// } else {
+		// 	console.log('No reply to:', json.reply_to_message_id);
+		// 	message.replyTo = null;
+		// }
 		message.feedbacks.set(Feedback.parseAll(json.feedbacks, message));
 	
 		return message;

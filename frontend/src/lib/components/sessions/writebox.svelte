@@ -2,7 +2,6 @@
 	import config from '$lib/config';
 	import { t } from '$lib/services/i18n';
 	import type Session from '$lib/types/session';
-	import type Message from '$lib/types/message';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';

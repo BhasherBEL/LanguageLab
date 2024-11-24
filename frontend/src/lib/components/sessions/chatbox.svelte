@@ -12,6 +12,7 @@
 
 	export let session: Session;
 	let messages = get(session.messages);
+	console.log('Messages - Chatbox:', messages);
 
 	session.messages.subscribe((newMessages) => {
 		let news = newMessages
