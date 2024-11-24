@@ -4,7 +4,6 @@
 	import { Check, Icon, Pencil, ArrowUturnLeft } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
 	import { t } from '$lib/services/i18n';
-	import { onMount } from 'svelte';
 	import SpellCheck from '$lib/components/icons/spellCheck.svelte';
 	import ChatBubble from '../icons/chatBubble.svelte';
 	import type Feedback from '$lib/types/feedback';
@@ -106,9 +105,7 @@
 			<!-- Display the replied-to message context -->
 			<div class="reply-to">
 				<p class="replying-to-text">
-					Replying to: <span class="replying-to-content"
-						>{replyToMessage.content}</span
-					>
+					Replying to: <span class="replying-to-content">{replyToMessage.content}</span>
 				</p>
 			</div>
 		{/if}

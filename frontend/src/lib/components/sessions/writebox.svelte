@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 
-    import { replyToMessage, clearReplyToMessage } from '$lib/utils/replyUtils';
+	import { replyToMessage, clearReplyToMessage } from '$lib/utils/replyUtils';
 
 	onMount(async () => {
 		await import('emoji-picker-element');
@@ -17,7 +17,7 @@
 	export let session: Session;
 
 	// State for replying
-    let currentReplyToMessage = null;
+	let currentReplyToMessage = null;
 	console.log('Reply To Message2:', replyToMessage); // Debugging
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
@@ -28,14 +28,12 @@
 
 	$: currentReplyToMessage = $replyToMessage;
 	$: {
-    console.log('Reactive currentReplyToMessage:', currentReplyToMessage);
-}
+		console.log('Reactive currentReplyToMessage:', currentReplyToMessage);
+	}
 
 	function cancelReply() {
-        clearReplyToMessage();
-    }
-
-
+		clearReplyToMessage();
+	}
 
 	// User and disabled checks
 	let us = get(user);
@@ -47,36 +45,36 @@
 
 	// Send message logic
 	async function sendMessage() {
-    message = message.trim();
-    if (message.length == 0) return;
+		message = message.trim();
+		if (message.length == 0) return;
 
-    if ($user === null) {
-        toastAlert("You must be logged in to send a message.");
-        return;
-    }
+		if ($user === null) {
+			toastAlert('You must be logged in to send a message.');
+			return;
+		}
 
-    try {
-        const m = await session.sendMessage(
-            $user,
-            message,
-            metadata,
-            $replyToMessage?.id || null // Access the reactive value of replyToMessage
-        );
+		try {
+			const m = await session.sendMessage(
+				$user,
+				message,
+				metadata,
+				$replyToMessage?.id || null // Access the reactive value of replyToMessage
+			);
 
-        if (m === null) {
-            toastAlert($t('chatbox.sendError'));
-            return;
-        }
+			if (m === null) {
+				toastAlert($t('chatbox.sendError'));
+				return;
+			}
 
-        // Reset state after sending
-        message = '';
-        metadata = [];
-        clearReplyToMessage(); // Clear reply state
-    } catch (error) {
-        console.error("Failed to send message:", error);
-        toastAlert("Failed to send your message. Please try again.");
-    }
-}
+			// Reset state after sending
+			message = '';
+			metadata = [];
+			clearReplyToMessage(); // Clear reply state
+		} catch (error) {
+			console.error('Failed to send message:', error);
+			toastAlert('Failed to send your message. Please try again.');
+		}
+	}
 
 	// Handle typing events
 	function keyPress(event: KeyboardEvent) {
@@ -97,15 +95,13 @@
 
 <!-- Reply Preview -->
 {#if currentReplyToMessage}
-    <div class="reply-preview">
-        <p class="replying-to-text">
-            Replying to: <span class="replying-to-content">{currentReplyToMessage.content}</span>
-        </p>
-        <button class="cancel-reply" on:click={cancelReply}>Cancel</button>
-    </div>
+	<div class="reply-preview">
+		<p class="replying-to-text">
+			Replying to: <span class="replying-to-content">{currentReplyToMessage.content}</span>
+		</p>
+		<button class="cancel-reply" on:click={cancelReply}>Cancel</button>
+	</div>
 {/if}
-
-
 
 <div class="w-full border-t-2">
 	<!-- Special Characters -->
@@ -188,33 +184,32 @@
 
 <style>
 	.reply-preview {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
-  background-color: #f0f4f8;
-  border-left: 4px solid #007bff;
-  margin-bottom: 0.5rem;
-  border-radius: 5px;
-}
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5rem 1rem;
+		background-color: #f0f4f8;
+		border-left: 4px solid #007bff;
+		margin-bottom: 0.5rem;
+		border-radius: 5px;
+	}
 
-.replying-to-text {
-  color: #555;
-  font-size: 0.9rem;
-}
+	.replying-to-text {
+		color: #555;
+		font-size: 0.9rem;
+	}
 
-.replying-to-content {
-  font-weight: bold;
-  color: #333;
-}
+	.replying-to-content {
+		font-weight: bold;
+		color: #333;
+	}
 
-.cancel-reply {
-  font-size: 0.8rem;
-  color: #007bff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
+	.cancel-reply {
+		font-size: 0.8rem;
+		color: #007bff;
+		background: none;
+		border: none;
+		cursor: pointer;
+		text-decoration: underline;
+	}
 </style>

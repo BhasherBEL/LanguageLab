@@ -42,25 +42,25 @@ export async function getMessagesAPI(id: number) {
 }
 
 export async function createMessageAPI(
-    id: number,
-    content: string,
-    metadata: { message: string; date: number }[],
-    replyTo: number | null 
+	id: number,
+	content: string,
+	metadata: { message: string; date: number }[],
+	replyTo: number | null
 ): Promise<number | null> {
 	console.log('Payload sent to API:', { content, metadata, reply_to: replyTo });
-    const response = await axiosInstance.post(`/sessions/${id}/messages`, {
-        content,
-        metadata,
-        reply_to_message_id: replyTo
-    });
+	const response = await axiosInstance.post(`/sessions/${id}/messages`, {
+		content,
+		metadata,
+		reply_to_message_id: replyTo
+	});
 	console.log('Response from API:', response);
 
-    if (response.status !== 201) {
-        toastAlert('Failed to send message');
-        return null;
-    }
+	if (response.status !== 201) {
+		toastAlert('Failed to send message');
+		return null;
+	}
 
-    return response.data;
+	return response.data;
 }
 
 export async function updateMessageAPI(
