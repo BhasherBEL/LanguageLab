@@ -110,10 +110,7 @@ def login(
         expires_delta=jwt_cookie.refresh_expires_delta,
     )
 
-    return {
-    "message": "Login successful"
-}
-
+    return {"message": "Login successful"}
 
 
 @authRouter.post("/register", status_code=status.HTTP_201_CREATED)
@@ -722,7 +719,11 @@ def create_message(
         action,
     )
 
-    return {"id": message.id, "message_id": message.message_id, "reply_to": message.reply_to_message_id}
+    return {
+        "id": message.id,
+        "message_id": message.message_id,
+        "reply_to": message.reply_to_message_id,
+    }
 
 
 @sessionsRouter.post(
@@ -833,7 +834,9 @@ def study_create(
 
 
 @websocketRouter.websocket("/sessions/{session_id}")
-async def websocket_session(session_id: int, token: str, websocket: WebSocket, db: Session = Depends(get_db)):
+async def websocket_session(
+    session_id: int, token: str, websocket: WebSocket, db: Session = Depends(get_db)
+):
     try:
         payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"])
     except ExpiredSignatureError:

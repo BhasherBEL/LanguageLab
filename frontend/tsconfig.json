@@ -1,19 +1,21 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": true,
-		"types": ["svelte"],
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
-		"strict": true,
-		"moduleResolution": "bundler"
-	}
-	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
-	//
-	// If you want to overwrite includes/excludes, make sure to copy over the relevant includes/excludes
-	// from the referenced tsconfig.json - TypeScript does not merge them in
-}
+	  "allowJs": true,
+	  "checkJs": true,
+	  "types": ["svelte"],
+	  "esModuleInterop": true,
+	  "forceConsistentCasingInFileNames": true,
+	  "resolveJsonModule": true,
+	  "skipLibCheck": true,
+	  "sourceMap": true,
+	  "strict": true,
+	  "moduleResolution": "bundler",
+	  "target": "ESNext", // Ensure the latest features are supported
+	  "module": "ESNext", // Matches Svelte's output
+	  "isolatedModules": false // Prevent conflicts with .d.ts files
+	},
+	"include": ["src/**/*", "global.d.ts"], // Add the global type declaration file
+	"exclude": ["node_modules"] // Optional: exclude unnecessary files
+  }
+  
