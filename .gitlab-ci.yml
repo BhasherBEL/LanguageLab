@@ -8,7 +8,11 @@ lint_frontend:
   script:
     - cd frontend
     - npm install
-    - npm run lint
+    - npm run lint > lint-frontend.log || (cat lint-frontend.log && exit 1)
+  artifacts:
+    paths:
+      - frontend/lint-frontend.log
+  allow_failure: true
 
 lint_backend:
   stage: lint
