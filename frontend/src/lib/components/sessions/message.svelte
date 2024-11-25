@@ -181,12 +181,12 @@
 			class="rounded-full"
 		/>
 	</div>
-	<div class="chat-bubble text-black" class:bg-blue-200={isSender} class:bg-gray-300={!isSender}>
+	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
 		{#if isEdit}
 			<div
 				contenteditable="true"
 				bind:this={contentDiv}
-				class="bg-blue-200 whitespace-pre-wrap min-h-8"
+				class="bg-blue-50 whitespace-pre-wrap min-h-8"
 			>
 				{message.content}
 			</div>
