@@ -1,7 +1,6 @@
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
-import User, { user } from './user';
-import { axiosInstance } from '$lib/api/apiInstance';
+import User from './user';
 import {
 	createMessageAPI,
 	createSessionSatisfyAPI,
@@ -183,8 +182,8 @@ export default class Session {
 		return this._users.some((u) => u.equals(user));
 	}
 
-	async loadMessages(): Promise<boolean> {
-		const messagesStr = await getMessagesAPI(this.id);
+	async loadMessages(jwt: string): Promise<boolean> {
+		const messagesStr = await getMessagesAPI(this.id, jwt);
 
 		this._messages.set(Message.parseAll(messagesStr));
 

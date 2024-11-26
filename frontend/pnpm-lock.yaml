@@ -29,6 +29,9 @@ importers:
       sanitize-html:
         specifier: ^2.13.1
         version: 2.13.1
+      svelte-autosize:
+        specifier: ^1.1.5
+        version: 1.1.5(svelte@5.2.5)
       svelte-gravatar:
         specifier: ^1.0.3
         version: 1.0.3(svelte@5.2.5)
@@ -717,6 +720,9 @@ packages:
   '@sveltekit-i18n/parser-icu@1.0.8':
     resolution: {integrity: sha512-/LnvE1EJv+higIxB5cWIV+9neiOe+CfC7VKhpv9mnU35NcZO3yOhEZ8y6F8nHHkMYIABLcqr15yk4hSvmRGWDw==}
 
+  '@types/autosize@4.0.3':
+    resolution: {integrity: sha512-o0ZyU3ePp3+KRbhHsY4ogjc+ZQWgVN5h6j8BHW5RII4cFKi6PEKK9QPAcphJVkD0dGpyFnD3VRR0WMvHVjCv9w==}
+
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
@@ -862,6 +868,9 @@ packages:
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
+
+  autosize@6.0.1:
+    resolution: {integrity: sha512-f86EjiUKE6Xvczc4ioP1JBlWG7FKrE13qe/DxBCpe8GCipCq2nFw73aO8QEBKHfSbYGDN5eB9jXWKen7tspDqQ==}
 
   axios-jwt@4.0.3:
     resolution: {integrity: sha512-8y2lXSG3v/AKgrwT2fjwN0+GRjOVoHJk/dlbAoaUOI9+Ym9xbptkPZd7HS+QdPynzdcDykeiJjQUoruInF+shQ==}
@@ -1816,6 +1825,11 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  svelte-autosize@1.1.5:
+    resolution: {integrity: sha512-whiND/GthFDG9Ansvil21qxmFhSMfuooVZPg40sbcLHYKR9srYhnfrP5qdw8MXHAm6DY9g5PawurOAWl34fK7g==}
+    peerDependencies:
+      svelte: '>=3.0.0'
+
   svelte-check@4.0.9:
     resolution: {integrity: sha512-SVNCz2L+9ZELGli7G0n3B3QE5kdf0u27RtKr2ZivWQhcWIXatZxwM4VrQ6AiA2k9zKp2mk5AxkEhdjbpjv7rEw==}
     engines: {node: '>= 18.0.0'}
@@ -2441,6 +2455,8 @@ snapshots:
     dependencies:
       intl-messageformat: 10.7.7
 
+  '@types/autosize@4.0.3': {}
+
   '@types/cookie@0.6.0': {}
 
   '@types/eslint@9.6.1':
@@ -2593,6 +2609,8 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.4.49
       postcss-value-parser: 4.2.0
+
+  autosize@6.0.1: {}
 
   axios-jwt@4.0.3(axios@1.7.7):
     dependencies:
@@ -3574,6 +3592,12 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  svelte-autosize@1.1.5(svelte@5.2.5):
+    dependencies:
+      '@types/autosize': 4.0.3
+      autosize: 6.0.1
+      svelte: 5.2.5
 
   svelte-check@4.0.9(picomatch@4.0.2)(svelte@5.2.5)(typescript@5.6.3):
     dependencies:

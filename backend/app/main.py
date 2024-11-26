@@ -82,12 +82,11 @@ def health():
 
 @authRouter.post("/login", status_code=200)
 def login(
-    email: Annotated[str, Form()],
-    password: Annotated[str, Form()],
+    login: schemas.LoginData,
     response: Response,
     db: Session = Depends(get_db),
 ):
-    db_user = crud.get_user_by_email_and_password(db, email, password)
+    db_user = crud.get_user_by_email_and_password(db, login.email, login.password)
     if db_user is None:
         raise HTTPException(status_code=401, detail="Incorrect email or password")
 
@@ -111,21 +110,22 @@ def login(
 
 @authRouter.post("/register", status_code=status.HTTP_201_CREATED)
 def register(
-    email: Annotated[str, Form()],
-    password: Annotated[str, Form()],
-    nickname: Annotated[str, Form()],
-    tutor: Annotated[bool, Form()],
+    register: schemas.RegisterData,
     db: Session = Depends(get_db),
 ):
-    db_user = crud.get_user_by_email(db, email=email)
+    db_user = crud.get_user_by_email(db, email=register.email)
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
 
     user_data = schemas.UserCreate(
-        email=email,
-        password=password,
-        nickname=nickname,
-        type=models.UserType.TUTOR.value if tutor else models.UserType.STUDENT.value,
+        email=register.email,
+        password=register.password,
+        nickname=register.nickname,
+        type=(
+            models.UserType.TUTOR.value
+            if register.is_tutor
+            else models.UserType.STUDENT.value
+        ),
     )
 
     user = crud.create_user(db=db, user=user_data)
@@ -205,9 +205,8 @@ def update_user(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    if (
-        not check_user_level(current_user, models.UserType.ADMIN)
-        and current_user.id != user_id
+    if not check_user_level(current_user, models.UserType.ADMIN) and (
+        current_user.id != user_id or user.type is not None
     ):
         raise HTTPException(
             status_code=401, detail="You do not have permission to update this user"

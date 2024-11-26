@@ -5,10 +5,5 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	optimizeDeps: {
 		exclude: ['emoji-picker-element']
-	},
-	server: {
-		proxy: {
-			'/api': 'http://localhost:8000'
-		}
 	}
 });

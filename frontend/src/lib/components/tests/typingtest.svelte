@@ -3,16 +3,15 @@
 	import Typingbox from '$lib/components/tests/typingbox.svelte';
 	import { get } from 'svelte/store';
 	import { createTestTypingAPI } from '$lib/api/users';
-	import { user } from '$lib/types/user';
-	import { toastAlert } from '$lib/utils/toasts';
+	import type User from '$lib/types/user';
 
-	export let onFinish: Function;
+	let { user, onFinish }: { user: User; onFinish: Function } = $props();
 
-	let data: typingEntry[] = [];
+	let data: typingEntry[] = $state([]);
 
-	$: currentExercice = 0;
+	let currentExercice = $state(0);
 
-	let inProgress = false;
+	let inProgress = $state(false);
 
 	let exercices = [
 		{
@@ -33,14 +32,7 @@
 	];
 
 	async function submit() {
-		const user_id = $user?.id;
-
-		if (!user_id) {
-			toastAlert('Failed to get user');
-			return;
-		}
-
-		const res = await createTestTypingAPI(user_id, data);
+		const res = await createTestTypingAPI(user.id, data);
 
 		if (!res) return;
 
@@ -71,7 +63,7 @@
 	{#if currentExercice < exercices.length - 1}
 		<button
 			class="button m-auto"
-			on:click={() => {
+			onclick={() => {
 				currentExercice++;
 				inProgress = false;
 			}}
@@ -80,7 +72,7 @@
 			{$t('button.next')}
 		</button>
 	{:else}
-		<button class="button m-auto" disabled={inProgress} on:click={submit}
+		<button class="button m-auto" disabled={inProgress} onclick={submit}
 			>{$t('button.submit')}</button
 		>
 	{/if}

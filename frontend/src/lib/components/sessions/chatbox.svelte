@@ -10,21 +10,19 @@
 	import Message from '$lib/types/message';
 	import Feedback from '$lib/types/feedback';
 
-	export let token: string;
+	const { session, jwt }: { session: Session; jwt: string } = $props();
 
-	export let session: Session;
-	let messages = get(session.messages);
+	const { messages } = session;
 
-	session.messages.subscribe((newMessages) => {
+	messages.subscribe((newMessages) => {
 		let news = newMessages
 			.filter(
 				(m) =>
-					!messages.find(
+					!$messages.find(
 						(m2) => m instanceof Message && m2 instanceof Message && m2.message_id === m.message_id
 					)
 			)
 			.at(-1);
-		messages = newMessages;
 		if (!news || !(news instanceof Message)) return;
 
 		if (document.hidden) {
@@ -36,7 +34,7 @@
 		}
 	});
 
-	let wsConnected = true;
+	let wsConnected = $state(true);
 	let timeout: number;
 	session.wsConnected.subscribe((newConnected) => {
 		clearTimeout(timeout);
@@ -50,7 +48,7 @@
 		}
 	});
 
-	$: isTyping = false;
+	let isTyping = $state(false);
 	let timeoutTyping: number;
 
 	session.lastTyping.subscribe((lastTyping) => {
@@ -102,9 +100,9 @@
 		}, timeBeforeSatify);
 	}
 
-	let satisfyQ1: number = 2;
-	let satisfyQ2: number = 2;
-	let satisfyQ3: string = '';
+	let satisfyQ1: number = $state(2);
+	let satisfyQ2: number = $state(2);
+	let satisfyQ3: string = $state('');
 
 	async function submitSatisfy() {
 		const res = await session.sendSatisfy(satisfyQ1, satisfyQ2, satisfyQ3);
@@ -115,8 +113,7 @@
 	}
 
 	onMount(async () => {
-		await session.loadMessages();
-		session.wsConnect(token);
+		session.wsConnect(jwt);
 		presenceIndicator();
 		satisfyModal();
 		Notification.requestPermission(); // Should do something with denial ?
@@ -127,12 +124,12 @@
 	});
 </script>
 
-<div class="flex flex-col w-full h-full border-x-2 scroll-smooth">
+<div class="flex flex-col w-full max-w-5xl mx-auto h-full scroll-smooth">
 	<div class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex mb-2">
 		<div class:hidden={!isTyping}>
 			<span class="loading loading-dots loading-md"></span>
 		</div>
-		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.uuid)}
+		{#each $messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.uuid)}
 			{#if message instanceof Message}
 				<MessageC {message} />
 			{:else if message instanceof Feedback}
@@ -151,14 +148,20 @@
 			Real-time sync lost. You may need to refresh the page to see new messages.
 		</div>
 	{/if}
-	<div class="flex flex-row h-30">
+	<div class="flex flex-row">
 		<Writebox {session} />
 	</div>
 </div>
 
 <dialog bind:this={satisfyModalElement} class="modal">
 	<div class="modal-box">
-		<form method="post" on:submit|preventDefault={submitSatisfy}>
+		<form
+			method="post"
+			onsubmit={(e) => {
+				e.preventDefault();
+				submitSatisfy();
+			}}
+		>
 			<h3 class="text-lg font-bold">{$t('session.modal.satisfy.title')}</h3>
 			<p class="mt-4 mb-2">{$t('session.modal.satisfy.q1')}</p>
 			<input
@@ -204,7 +207,7 @@
 
 <div class="absolute bottom-4 right-4">
 	<button
-		on:click={() => {
+		onclick={() => {
 			satisfyModalElement.showModal();
 		}}
 		class="btn btn-primary btn-circle"

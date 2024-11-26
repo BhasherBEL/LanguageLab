@@ -1,6 +1,6 @@
+import config from '$lib/config';
 import { formatToUTCDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
-import { axiosInstance } from './apiInstance';
 
 export async function getSessionsAPI() {
 	const response = await axiosInstance.get(`/sessions`);
@@ -16,15 +16,20 @@ export async function createSessionAPI() {
 	}
 }
 
-export async function getSessionAPI(id: number) {
-	const response = await axiosInstance.get(`/sessions/${id}`);
+export async function getSessionAPI(id: number, jwt: string): Promise<any | null> {
+	const response = await fetch(`${config.API_URL}/sessions/${id}`, {
+		headers: {
+			'Content-Type': 'application/json',
+			Cookie: `access_token_cookie=${jwt}`
+		}
+	});
 
-	if (response.status !== 200) {
+	if (!response.ok) {
 		toastAlert('Failed to get session');
 		return null;
 	}
 
-	return response.data;
+	return await response.json();
 }
 
 export async function deleteSessionAPI(id: number) {
@@ -35,10 +40,20 @@ export async function deleteSessionAPI(id: number) {
 	}
 }
 
-export async function getMessagesAPI(id: number) {
-	const response = await axiosInstance.get(`/sessions/${id}/messages`);
+export async function getMessagesAPI(id: number, jwt: string): Promise<any | null> {
+	const response = await fetch(`${config.API_URL}/sessions/${id}/messages`, {
+		headers: {
+			'Content-Type': 'application/json',
+			Cookie: `access_token_cookie=${jwt}`
+		}
+	});
 
-	return response.data;
+	if (!response.ok) {
+		toastAlert('Failed to get session messages');
+		return null;
+	}
+
+	return await response.json();
 }
 
 export async function createMessageAPI(

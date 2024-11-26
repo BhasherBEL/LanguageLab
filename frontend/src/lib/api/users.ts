@@ -1,31 +1,28 @@
 import { toastAlert } from '$lib/utils/toasts';
-import { axiosInstance, access_cookie } from './apiInstance';
-import { get } from 'svelte/store';
+import type { fetchType } from '$lib/utils/types';
 
 export async function getUsersAPI() {
-	const response = await axiosInstance.get(`/users`);
+	const response = await fetch(`/api/users`);
 
-	if (response.status !== 200) {
+	if (!response.ok) {
 		toastAlert('Failed to get users');
 		return [];
 	}
 
-	return response.data;
+	return await response.json();
 }
 
 export async function getUserAPI(user_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+	const response = await fetch(`/api/users/${user_id}`);
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get user');
+	console.log(response);
+
+	if (!response.ok) {
+		console.log('Failed to get user');
 		return null;
 	}
 
-	return response.data;
+	return await response.json();
 }
 
 export async function createUserContactAPI(user_id: number, contact_id: number) {
@@ -60,34 +57,28 @@ export async function createUserContactFromEmailAPI(user_id: number, email: stri
 	return response.data;
 }
 
-export async function getUserContactsAPI(user_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}/contacts`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserContactsAPI(fetch: fetchType, user_id: number) {
+	const response = await fetch(`/api/users/${user_id}/contacts`);
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get user contacts');
+	if (!response.ok) {
 		return [];
 	}
 
-	return response.data;
+	return await response.json();
 }
 
-export async function getUserContactSessionsAPI(user_id: number, contact_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}/contacts/${contact_id}/sessions`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserContactSessionsAPI(
+	fetch: fetchType,
+	user_id: number,
+	contact_id: number
+) {
+	const response = await fetch(`/api/users/${user_id}/contacts/${contact_id}/sessions`);
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get user contact sessions');
+	if (!response.ok) {
 		return [];
 	}
 
-	return response.data;
+	return await response.json();
 }
 
 export async function createUserAPI(
@@ -113,22 +104,14 @@ export async function createUserAPI(
 	return response.data;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function patchUserAPI(user_id: number, data: any): Promise<boolean> {
-	try {
-		const response = await axiosInstance.patch(`/users/${user_id}`, data);
-
-		if (response.status !== 204) {
-			toastAlert('Failed to update user');
-			return false;
-		}
-
-		return true;
-	} catch (e) {
-		console.error(e);
-		toastAlert('Failed to update user due to unknown error');
-		return false;
-	}
+export async function patchUserAPI(fetch: fetchType, user_id: number, data: any) {
+	return await fetch(`/api/users/${user_id}`, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	});
 }
 
 export async function createTestTypingAPI(

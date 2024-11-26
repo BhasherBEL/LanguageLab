@@ -345,7 +345,8 @@
 			"date": "Date",
 			"programed": "Programmée",
 			"inProgress": "En cours",
-			"finished": "Terminée"
+			"finished": "Terminée",
+			"topics": "Topics"
 		}
 	},
 	"inputs": {

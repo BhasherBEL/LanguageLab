@@ -5,12 +5,15 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			user: User?;
-			session: string?;
+			jwt: string?;
 			locale: string;
 		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
+		interface FormData {
+			message: string;
+		}
 	}
 }
 

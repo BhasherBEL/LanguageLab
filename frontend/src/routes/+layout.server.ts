@@ -20,7 +20,6 @@ export const load: ServerLoad = async ({ locals, url }) => {
 
 	return {
 		user: locals.user,
-		session: locals.session,
 		locale: locals.locale
 	};
 };

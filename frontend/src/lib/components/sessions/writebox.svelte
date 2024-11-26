@@ -7,6 +7,7 @@
 	import { user } from '$lib/types/user';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	import autosize from 'svelte-autosize';
 
 	onMount(async () => {
 		await import('emoji-picker-element');
@@ -16,7 +17,7 @@
 
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
-	let message = '';
+	$: message = '';
 	let showPicker = false;
 	let showSpecials = false;
 	let textearea: HTMLTextAreaElement;
@@ -43,6 +44,9 @@
 
 		message = '';
 		metadata = [];
+		setTimeout(() => {
+			autosize.update(textearea);
+		}, 10);
 	}
 
 	function keyPress() {
@@ -55,7 +59,7 @@
 	}
 </script>
 
-<div class="w-full border-t-2">
+<div class="w-full mb-2">
 	{#if showSpecials}
 		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
 			{#each config.SPECIAL_CHARS as char (char)}
@@ -73,24 +77,9 @@
 			{/each}
 		</ul>
 	{/if}
-	<div class="w-full flex relative">
-		<textarea
-			bind:this={textearea}
-			class="flex-grow p-2 resize-none overflow-y-hidden pr-16"
-			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
-			{disabled}
-			bind:value={message}
-			on:keypress={() => keyPress()}
-			on:keypress={async (e) => {
-				if (e.key === 'Enter' && !e.shiftKey) {
-					await sendMessage();
-				} else {
-					keyPress();
-				}
-			}}
-		/>
+	<div class="w-full flex items-center relative">
 		<div
-			class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
+			class="text-2xl select-none cursor-pointer mx-4"
 			on:click={() => (showPicker = !showPicker)}
 			data-tooltip-target="tooltip-emoji"
 			data-tooltip-placement="right"
@@ -101,7 +90,7 @@
 		>
 			😀
 		</div>
-		<div class="relative">
+		<div>
 			<div
 				id="tooltip-emoji"
 				data-tooltip="tooltip-emoji"
@@ -119,8 +108,24 @@
 				</emoji-picker>
 			</div>
 		</div>
+		<textarea
+			bind:this={textearea}
+			class="flex-grow p-2 resize-none overflow-hidden py-4 pr-12 border rounded-[32px]"
+			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+			{disabled}
+			use:autosize
+			bind:value={message}
+			rows={1}
+			on:keypress={async (e) => {
+				if (e.key === 'Enter' && !e.shiftKey) {
+					await sendMessage();
+				} else {
+					keyPress();
+				}
+			}}
+		></textarea>
 		<div
-			class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
+			class="absolute right-28 kbd text-sm select-none cursor-pointer"
 			on:click={() => (showSpecials = !showSpecials)}
 			aria-hidden={false}
 			role="button"
@@ -128,7 +133,7 @@
 		>
 			É
 		</div>
-		<button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
+		<button class="btn btn-primary rounded-full size-14 mx-4" on:click={sendMessage}>
 			<Icon src={PaperAirplane} />
 		</button>
 	</div>

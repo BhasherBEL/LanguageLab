@@ -5,8 +5,6 @@ import { get, writable } from 'svelte/store';
 
 const { subscribe, set, update } = writable<User[]>([]);
 
-export const user = writable<User | null>(null);
-
 export const users = {
 	subscribe,
 	set,
@@ -23,7 +21,6 @@ export default class User {
 	private _email: string;
 	private _nickname: string;
 	private _type: number;
-	private _availability: bigint;
 	private _is_active: boolean;
 	private _ui_language: string | null;
 	private _home_language: string | null;
@@ -39,7 +36,6 @@ export default class User {
 		email: string,
 		nickname: string,
 		type: number,
-		availability: bigint,
 		is_active: boolean,
 		ui_language: string | null,
 		home_language: string | null,
@@ -54,7 +50,6 @@ export default class User {
 		this._email = email;
 		this._nickname = nickname;
 		this._type = type;
-		this._availability = availability;
 		this._is_active = is_active;
 		this._ui_language = ui_language;
 		this._home_language = home_language;
@@ -92,10 +87,6 @@ export default class User {
 
 	get is_tutor(): boolean {
 		return this._type === 1;
-	}
-
-	get availability(): bigint {
-		return this._availability;
 	}
 
 	get ui_language(): string | null {
@@ -155,7 +146,6 @@ export default class User {
 			email: this.email,
 			nickname: this.nickname,
 			type: this.type,
-			availability: this.availability.toString(),
 			is_active: this.is_active,
 			ui_language: this.ui_language,
 			home_language: this.home_language,
@@ -174,7 +164,6 @@ export default class User {
 			if (data.email) this._email = data.email;
 			if (data.nickname) this._nickname = data.nickname;
 			if (data.type) this._type = data.type;
-			if (data.availability) this._availability = BigInt(data.availability);
 			if (data.is_active) this._is_active = data.is_active;
 			if (data.ui_language) this._ui_language = data.ui_language;
 			if (data.home_language) this._home_language = data.home_language;
@@ -207,7 +196,6 @@ export default class User {
 			email,
 			nickname,
 			type,
-			BigInt(0),
 			is_active,
 			null,
 			null,
@@ -232,8 +220,6 @@ export default class User {
 		const userFinal = User.parse(userObject);
 		if (userFinal == null || userFinal.id == null || userFinal.id == undefined) return null;
 
-		user.set(userFinal);
-
 		return userFinal;
 	}
 
@@ -249,7 +235,6 @@ export default class User {
 			json.email,
 			json.nickname,
 			json.type,
-			BigInt(json.availability),
 			json.is_active,
 			json.ui_language,
 			json.home_language,

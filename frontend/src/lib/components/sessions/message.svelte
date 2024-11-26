@@ -203,7 +203,7 @@
 				{$t('button.cancel')}
 			</button>
 		{:else}
-			<div class="whitespace-pre-wrap" bind:this={contentDiv}>
+			<div class="whitespace-pre-wrap text-lg" bind:this={contentDiv}>
 				{#each parts as part}
 					{#if isEdit || !part.feedback}
 						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}

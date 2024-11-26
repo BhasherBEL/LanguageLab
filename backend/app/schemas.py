@@ -3,6 +3,18 @@ from pydantic import BaseModel, NaiveDatetime
 from models import UserType
 
 
+class LoginData(BaseModel):
+    email: str
+    password: str
+
+
+class RegisterData(BaseModel):
+    email: str
+    password: str
+    nickname: str
+    is_tutor: bool
+
+
 class User(BaseModel):
     id: int
     email: str
