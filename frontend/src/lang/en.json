@@ -77,5 +77,15 @@
 			"true": "Yes",
 			"false": "No"
 		}
+	},
+	"button": {
+		"next": "Next"
+	},
+	"surveys": {
+		"complete": "Thank you for participating!",
+		"score": "You got a score of ",
+		"code": "Your code:",
+		"codeIndication": "The instructor should have given you a personal code. If not, please write your email address.",
+		"invalidCode": "Invalid code"
 	}
 }
