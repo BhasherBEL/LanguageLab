@@ -9,6 +9,9 @@
 	import User from '$lib/types/user.js';
 	import type SurveyGroup from '$lib/types/surveyGroup';
 	import Gapfill from '$lib/components/surveys/gapfill.svelte';
+	import Consent from '$lib/components/surveys/consent.svelte';
+	import config from '$lib/config';
+	import { formatToUTCDate } from '$lib/utils/date';
 
 	export let data;
 
@@ -23,8 +26,9 @@
 		return group.questions.sort(() => Math.random() - 0.5);
 	}
 
-	$: step = user ? 2 : 0;
+	$: step = user ? 1 : 0;
 	$: uuid = user?.email || '';
+	$: code = '';
 
 	let currentGroupId = 0;
 	let currentGroup = survey.groups[currentGroupId];
@@ -135,6 +139,16 @@
 		}
 	}
 
+	function checkCode() {
+		if (!code) {
+			toastWarning(get(t)('surveys.invalidCode'));
+			return;
+		}
+		//TODO: check format du code?
+
+		step = 2;
+	}
+
 	function checkUUID() {
 		if (!uuid) {
 			toastWarning(get(t)('surveys.invalidEmail'));
@@ -166,30 +180,32 @@
 </script>
 
 {#if step == 0}
-	<div class="max-w-screen-lg mx-auto text-center mt-8">
-		<div class="text-lg">{@html $t('surveys.loginWarning')}</div>
-		<div class="flex mt-8">
-			<div class="grow border-r-gray-300 border-r py-16">
-				<p class="mb-4">{$t('surveys.loginUser')}</p>
-				<a href="/login?redirect=/tests/{survey.id}" class="button">{$t('button.login')}</a>
-			</div>
-			<div class="grow py-16">
-				<p class="mb-4">{$t('surveys.loginEmail')}</p>
-				<input
-					type="email"
-					placeholder="Email"
-					on:keydown={(e) => e.key === 'Enter' && checkUUID()}
-					class="input block mx-auto"
-					bind:value={uuid}
-				/>
-				<button class="button mt-4 block" on:click={checkUUID}>{$t('button.next')}</button>
-			</div>
+	<div class="max-w-screen-md mx-auto p-5">
+		<Consent introText={$t('register.consent.intro')} />
+		<div class="form-control">
+			<button class="button mt-4" on:click={() => step++}>
+				{$t('register.consent.ok')}
+			</button>
 		</div>
 	</div>
 {:else if step == 1}
-	<div class="max-w-screen-lg mx-auto text-center">
-		<div class="my-16">{@html $t('surveys.introduction')}</div>
-		<button class="button" on:click={() => step++}>{$t('button.next')}</button>
+	<div class="max-w-screen-md mx-auto p-28 flex flex-col items-center min-h-screen">
+		<p class="mb-4 text-lg font-semibold">{$t('surveys.code')}</p>
+		<p class="mb-6 text-sm text-gray-600 text-center">{$t('surveys.codeIndication')}</p>
+		<input
+			type="text"
+			placeholder="Code"
+			class="input block mx-auto w-full max-w-xs border border-gray-300 rounded-md py-2 px-3 text-center"
+			on:keydown={(e) => e.key === 'Enter' && checkCode()}
+			bind:value={code}
+		/>
+		<!-- Button -->
+		<button
+			class="button mt-4 block bg-yellow-500 text-white rounded-md py-2 px-6 hover:bg-yellow-600 transition"
+			on:click={checkCode}
+		>
+			{$t('button.next')}
+		</button>
 	</div>
 {:else if step == 2}
 	{#if type == 'gap'}
