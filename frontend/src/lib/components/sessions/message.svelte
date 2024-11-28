@@ -8,7 +8,7 @@
 	import { sanitize } from '$lib/utils/sanitize';
 	import { initiateReply } from '$lib/utils/replyUtils';
 
-	export let message: Message; // Keep export if this is external
+	export let message: Message; 
 
 	let timer: number;
 	$: displayedTime = displayTime(message.created_at);
@@ -85,14 +85,13 @@
 		class:text-black={!isSender}
 		class:text-white={isSender}
 	>
-		{#if replyToMessage}
-			<!-- Display the replied-to message context -->
-			<div class="reply-to">
-				<p class="replying-to-text">
-					Replying to: <span class="replying-to-content">{replyToMessage.content}</span>
-				</p>
-			</div>
-		{/if}
+	{#if replyToMessage}
+        <div class="replying-to-text">
+            Replying to: <span class="replying-to-content">{replyToMessage.content}</span>
+        </div>
+    {/if}
+
+
 		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
 			{@html linkifyHtml(sanitize(message.content), { className: 'underline', target: '_blank' })}
 		</div>
@@ -147,24 +146,32 @@
 {/if}
 
 <style>
-	/* Remove unused selectors */
-	.reply-to {
-		background-color: #e9f4ff;
-		padding: 0.5rem;
-		border-left: 3px solid #007bff;
-		border-radius: 5px;
-		margin-bottom: 0.5rem;
-	}
 
-	.replying-to-text {
-		color: #555;
-		font-size: 0.9rem;
-	}
+.replying-to-text {
+    font-size: 0.8rem; 
+    color: #555;
+    margin-bottom: 0.4rem; 
+    display: block;
+}
 
-	.replying-to-content {
-		font-weight: bold;
-		color: #333;
-	}
+/* When the bubble is blue (sent by the user) */
+.chat-bubble.bg-blue-700 .replying-to-text {
+    color: rgb(196, 229, 240); 
+}
+
+/* When the bubble is gray (received) */
+.chat-bubble.bg-gray-300 .replying-to-text {
+    color: #555; 
+}
+
+.replying-to-content {
+    font-weight: bold; 
+    color: inherit; 
+}
+
+
+
+
 
 	.reply-icon {
 		position: absolute;
