@@ -82,7 +82,7 @@
 				survey.id,
 				currentGroupId,
 				questionsRandomized[currentQuestionId]['_id'],
-				currentQuestion.options.findIndex((o: string) => o === option),
+				currentQuestion.options.findIndex((o: string) => o === option) + 1,
 				(new Date().getTime() - startTime) / 1000
 			))
 		) {
@@ -224,7 +224,7 @@
 	{:else}
 		<div class="mx-auto mt-16 text-center">
 			{#if type == 'text'}
-				<pre>{value}</pre>
+				<pre class="text-center font-bold py-4 px-6 m-auto">{value}</pre>
 			{:else if type == 'image'}
 				<img src={value} alt="Question" />
 			{:else if type == 'audio'}
@@ -239,33 +239,64 @@
 			<div class="flex justify-around min-w-[600px] space-x-10">
 				{#each displayQuestionOptions as option (option)}
 					{@const type = option.split(':')[0]}
-					{@const value = option.split(':').slice(1).join(':')}
-					<div
-						class="h-48 w-48 overflow-hidden rounded-lg border border-black"
-						on:click={() => selectOption(option)}
-						role="button"
-						on:keydown={() => selectOption(option)}
-						tabindex="0"
-					>
-						{#if type === 'text'}
-							<span
-								class="flex items-center justify-center h-full w-full text-2xl transition-transform duration-200 ease-in-out transform hover:scale-105"
-							>
-								{value}
-							</span>
-						{:else if type === 'image'}
-							<img
-								src={value}
-								alt="Option {option}"
-								class="object-cover h-full w-full transition-transform duration-200 ease-in-out transform hover:scale-105"
-							/>
-						{:else if type == 'audio'}
-							<audio controls class="w-full" on:click|preventDefault|stopPropagation>
-								<source src={value} type="audio/mpeg" />
-								Your browser does not support the audio element.
-							</audio>
-						{/if}
-					</div>
+					{#if type == 'dropdown'}
+						{@const value = option.split(':')[1].split(', ')}
+						<select
+							class="select select-bordered !ml-0"
+							id="dropdown"
+							name="dropdown"
+							bind:value={option}
+							on:change={() => selectOption(option)}
+							required
+						>
+							{#each value as op}
+								<option value={op}>{op}</option>
+							{/each}
+						</select>
+					{:else if type == 'radio'}
+						{@const value = option.split(':')[1].split(', ')}
+						{#each value as op}
+							<label class="radio-label">
+								<input
+									type="radio"
+									name="dropdown"
+									value={op}
+									on:change={() => selectOption(op)}
+									required
+									class="radio-button"
+								/>
+								{op}
+							</label>
+						{/each}
+					{:else}
+						{@const value = option.split(':').slice(1).join(':')}
+						<div
+							class="h-48 w-48 overflow-hidden rounded-lg border border-black"
+							on:click={() => selectOption(option)}
+							role="button"
+							on:keydown={() => selectOption(option)}
+							tabindex="0"
+						>
+							{#if type === 'text'}
+								<span
+									class="flex items-center justify-center h-full w-full text-2xl transition-transform duration-200 ease-in-out transform hover:scale-105"
+								>
+									{value}
+								</span>
+							{:else if type === 'image'}
+								<img
+									src={value}
+									alt="Option {option}"
+									class="object-cover h-full w-full transition-transform duration-200 ease-in-out transform hover:scale-105"
+								/>
+							{:else if type == 'audio'}
+								<audio controls class="w-full" on:click|preventDefault|stopPropagation>
+									<source src={value} type="audio/mpeg" />
+									Your browser does not support the audio element.
+								</audio>
+							{/if}
+						</div>
+					{/if}
 				{/each}
 			</div>
 		</div>

@@ -32,15 +32,26 @@ for i, row in df_items.iterrows():
     else:
         print(f"Failed to find corect for item {id_}")
 
-    for j in range(1, 9):
-        op = f"option{j}"
-        if op in row:
-            o[op] = "text:" + row[op]
-        elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.mp3"):
-            o[op] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.mp3"
-        elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.jpeg"):
-            o[op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpeg"
-
+    if os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/1_dropdown.txt"):
+        with open(f"{LOCAL_ITEMS_FOLDER}/{id_}/1_dropdown.txt", "r") as file:
+            options = file.read().split(",")
+        options = [option.strip() for option in options]
+        o[f"option1"] = f"dropdown:{', '.join(options)}"
+    elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/1_radio.txt"):
+        with open(f"{LOCAL_ITEMS_FOLDER}/{id_}/1_radio.txt", "r") as file:
+            options = file.read().split(",")
+        options = [option.strip() for option in options]
+        o[f"option1"] = f"radio:{', '.join(options)}"
+    else:
+        for j in range(1, 9):
+            op = f"option{j}"
+            if op in row:
+                o[op] = "text:" + row[op]
+            elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.mp3"):
+                o[op] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.mp3"
+            elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.jpeg"):
+                o[op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpeg"
+    #print(o)
 # PARSE GROUPS
 
 groups = []
