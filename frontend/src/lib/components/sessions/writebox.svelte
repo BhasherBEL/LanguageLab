@@ -45,52 +45,55 @@
 
 	// Send message logic
 	async function sendMessage() {
-		message = message.trim();
-		if (message.length == 0) return;
+    message = message.trim();
+    if (message.length == 0) return;
 
-		if ($user === null) {
-			toastAlert('You must be logged in to send a message.');
-			return;
-		}
+    if ($user === null) {
+        toastAlert('You must be logged in to send a message.');
+        return;
+    }
 
-		try {
-			const m = await session.sendMessage(
-				$user,
-				message,
-				metadata,
-				$replyToMessage?.id || null // Access the reactive value of replyToMessage
-			);
+    try {
+        // Clone objects to avoid readonly issues
+        const m = await session.sendMessage(
+            structuredClone($user),
+            message,
+            [...metadata],
+            $replyToMessage?.id || null
+        );
 
-			if (m === null) {
-				toastAlert($t('chatbox.sendError'));
-				return;
-			}
+        if (m === null) {
+            toastAlert($t('chatbox.sendError'));
+            return;
+        }
 
-			// Reset state after sending
-			message = '';
-			metadata = [];
-			clearReplyToMessage(); // Clear reply state
-		} catch (error) {
-			console.error('Failed to send message:', error);
-			toastAlert('Failed to send your message. Please try again.');
-		}
-	}
+        // Reset after sending
+        message = '';
+        metadata = [];
+        clearReplyToMessage();
+    } catch (error) {
+        console.error('Failed to send message:', error);
+        toastAlert('Failed to send your message. Please try again.');
+    }
+}
 
-	// Handle typing events
-	function keyPress(event: KeyboardEvent) {
-		if (message === lastMessage) return;
+function keyPress(event: KeyboardEvent) {
+    if (message === lastMessage) return;
 
-		metadata.push({ message: message, date: new Date().getTime() });
-		lastMessage = message;
+    // Add metadata only if unique
+    if (metadata.length === 0 || metadata[metadata.length - 1].message !== message) {
+        metadata.push({ message: message, date: new Date().getTime() });
+    }
+    lastMessage = message;
 
-		// Send message on Enter, prevent new line unless Shift is held
-		if (event.key === 'Enter' && !event.shiftKey) {
-			event.preventDefault();
-			sendMessage();
-		} else {
-			session.sendTyping();
-		}
-	}
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    } else {
+        session.sendTyping();
+    }
+}
+
 </script>
 
 <!-- Reply Preview -->

@@ -186,7 +186,7 @@ export default class Message {
 			session,
 			json.reply_to_message_id
 		);
-		console.log('Parsing message:', json);
+		// console.log('Parsing message:', json);
 
 		// if (json.reply_to_message_id) {
 		// 	console.log('Parsing reply to:', json.reply_to_message_id);

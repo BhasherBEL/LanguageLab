@@ -214,17 +214,16 @@ export default class Session {
 			toastAlert('Failed to parse message');
 			return null;
 		}
-
-		const message = new Message(json.id, json.message_id, content, new Date(), sender, this);
-		message.replyTo = json.reply_to;
-		console.log('Message being sent2:', message);
-
-		this._messages.update((messages) => {
-			if (!messages.find((m) => m.message_id === message.message_id)) {
-				return [...messages, message];
-			}
-			return messages.map((m) => (m.message_id === message.message_id ? message : m));
-		});
+		console.log('User:', sender);
+		const message = new Message(
+			json.id,
+			json.message_id,
+			content,
+			new Date(),
+			sender,
+			this,
+			json.reply_to 
+		);
 
 		return message;
 	}
@@ -238,16 +237,26 @@ export default class Session {
 
 		return true;
 	}
+	private presenceTimer: NodeJS.Timeout | null = null;
 
-	async sendPresence(): Promise<boolean> {
-		const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
-		if (response.status !== 204) {
-			console.log('Failed to send presence data', response);
-			return false;
-		}
+	async sendPresence(): Promise<void> {
+    if (this.presenceTimer) {
+        clearTimeout(this.presenceTimer);
+    }
 
-		return true;
-	}
+    this.presenceTimer = setTimeout(async () => {
+        try {
+            const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
+            if (response.status === 204) {
+                console.log('Presence updated successfully');
+            } else {
+                console.warn('Unexpected presence response:', response.status);
+            }
+        } catch (error) {
+            console.error('Error in sendPresence:', error.message || error);
+        }
+    }, 5000); // Debounce with a 5-second delay
+}
 
 	async sendSatisfy(usefullness: number, easiness: number, remarks: string): Promise<boolean> {
 		return await createSessionSatisfyAPI(this.id, usefullness, easiness, remarks);
@@ -344,7 +353,7 @@ export default class Session {
 							users.delete(user_id);
 							return users;
 						});
-					}, 30000)
+					}, 30000) as unknown as number
 				);
 
 				return;
