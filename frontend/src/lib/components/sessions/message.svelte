@@ -146,33 +146,76 @@
 {/if}
 
 <style>
-
-.replying-to-text {
-    font-size: 0.8rem; 
-    color: #555;
-    margin-bottom: 0.4rem; 
-    display: block;
-}
-
-/* When the bubble is blue (sent by the user) */
-.chat-bubble.bg-blue-700 .replying-to-text {
-    color: rgb(196, 229, 240); 
-}
-
-/* When the bubble is gray (received) */
-.chat-bubble.bg-gray-300 .replying-to-text {
-    color: #555; 
-}
-
-.replying-to-content {
-    font-weight: bold; 
-    color: inherit; 
-}
-
-
-
-
-
+	.chat-bubble {
+		max-width: 70%; /* Adjust the maximum width to reduce bubble size */
+		padding: 8px 12px; /* Reduce padding inside the message bubble */
+		font-size: 0.9rem; /* Slightly smaller font for compact appearance */
+		line-height: 1.2; /* Compact line spacing */
+		border-radius: 8px; /* Keep rounded corners but make them less pronounced */
+	}
+	
+	/* Adjust for sent (blue) bubbles */
+	.chat-bubble.bg-blue-700 {
+		background-color: #007bff;
+		color: white;
+	}
+	
+	/* Adjust for received (gray) bubbles */
+	.chat-bubble.bg-gray-300 {
+		background-color: #f1f1f1;
+		color: #000;
+	}
+	
+	/* Replying-to text compact styling */
+	.replying-to-text {
+		font-size: 0.75rem; /* Smaller text for "Replying to" */
+		margin-bottom: 4px; /* Reduce spacing below */
+		color: #bbb; /* Subtle color for light backgrounds */
+	}
+	
+	/* When the bubble is blue (sent by the user) */
+	.chat-bubble.bg-blue-700 .replying-to-text {
+		color: rgb(196, 229, 240); /* Use lighter color for "Replying to" */
+	}
+	
+	/* Compact reply input */
+	.reply-input-container {
+		display: flex;
+		align-items: center;
+		margin-top: 0.5rem;
+		gap: 0.3rem; /* Reduce gap between input and button */
+	}
+	
+	.message-input {
+		flex: 1;
+		padding: 6px 10px; /* Reduce input box padding */
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		font-size: 0.9rem; /* Adjust font size for smaller input box */
+	}
+	
+	.send-button {
+		background-color: #007bff;
+		color: white;
+		padding: 6px 10px; /* Adjust padding for smaller button */
+		border: none;
+		border-radius: 5px;
+		font-size: 0.9rem; /* Adjust font size */
+		cursor: pointer;
+	}
+	
+	/* Adjust chat layout */
+	.chat {
+		margin-bottom: 6px; /* Reduce spacing between messages */
+	}
+	
+	.chat-footer {
+		font-size: 0.75rem; /* Smaller timestamp text */
+		margin-top: 2px; /* Less space above timestamp */
+		opacity: 0.7; /* Slightly faded text */
+	}
+	
+	/* General hover effect for buttons */
 	.reply-icon {
 		position: absolute;
 		right: -1.5rem;
@@ -182,31 +225,10 @@
 		opacity: 0;
 		transition: opacity 0.2s;
 	}
-
+	
 	.group:hover .reply-icon {
-		opacity: 1;
+		opacity: 1; /* Make visible on hover */
 	}
-
-	.reply-input-container {
-		display: flex;
-		align-items: center;
-		margin-top: 0.5rem;
-		gap: 0.5rem;
-	}
-
-	.message-input {
-		flex: 1;
-		padding: 8px;
-		border: 1px solid #ccc;
-		border-radius: 5px;
-	}
-
-	.send-button {
-		background-color: #007bff;
-		color: white;
-		padding: 8px 12px;
-		border: none;
-		border-radius: 5px;
-		cursor: pointer;
-	}
-</style>
+	
+	</style>
+	
