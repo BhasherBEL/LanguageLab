@@ -51,7 +51,7 @@ for i, row in df_items.iterrows():
                 o[op] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.mp3"
             elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.jpeg"):
                 o[op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpeg"
-    #print(o)
+    # print(o)
 # PARSE GROUPS
 
 groups = []
