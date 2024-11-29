@@ -79,22 +79,24 @@
 <div class="chat group" class:chat-start={!isSender} class:chat-end={isSender}>
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}></div>
 	<div
-		class="chat-bubble whitespace-pre-wrap"
-		class:bg-blue-700={isSender}
-		class:bg-gray-300={!isSender}
-		class:text-black={!isSender}
-		class:text-white={isSender}
+	class="chat-bubble whitespace-pre-wrap"
+	class:bg-blue-700={isSender}
+	class:bg-gray-300={!isSender}
+	class:text-black={!isSender}
+	class:text-white={isSender}
+	data-is-sender={isSender}
+
 	>
-	{#if replyToMessage}
+    {#if replyToMessage}
         <div class="replying-to-text">
             Replying to: <span class="replying-to-content">{replyToMessage.content}</span>
         </div>
     {/if}
 
-
-		<div contenteditable={isEdit} bind:this={contentDiv} class:bg-blue-900={isEdit}>
-			{@html linkifyHtml(sanitize(message.content), { className: 'underline', target: '_blank' })}
-		</div>
+    <div contenteditable={isEdit} bind:this={contentDiv}>
+        {@html linkifyHtml(sanitize(message.content), { className: 'underline', target: '_blank' })}
+    </div>
+		
 
 		<button class="reply-icon" on:click={() => initiateReply(message)}>
 			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
@@ -147,24 +149,50 @@
 
 <style>
 	.chat-bubble {
-		max-width: 70%; /* Adjust the maximum width to reduce bubble size */
-		padding: 8px 12px; /* Reduce padding inside the message bubble */
-		font-size: 0.9rem; /* Slightly smaller font for compact appearance */
-		line-height: 1.2; /* Compact line spacing */
-		border-radius: 8px; /* Keep rounded corners but make them less pronounced */
-	}
-	
-	/* Adjust for sent (blue) bubbles */
-	.chat-bubble.bg-blue-700 {
-		background-color: #007bff;
-		color: white;
-	}
-	
-	/* Adjust for received (gray) bubbles */
-	.chat-bubble.bg-gray-300 {
-		background-color: #f1f1f1;
-		color: #000;
-	}
+    position: relative; /* Ensure the arrow positions relative to the bubble */
+    max-width: 70%; /* Adjust the maximum width to reduce bubble size */
+    padding: 8px 12px; /* Reduce padding inside the message bubble */
+    font-size: 0.9rem; /* Slightly smaller font for compact appearance */
+    line-height: 1.2; /* Compact line spacing */
+    border-radius: 8px; /* Keep rounded corners */
+}
+
+/* Adjust for sent (blue) bubbles */
+.chat-bubble.bg-blue-700 {
+    background-color: #007bff;
+    color: white;
+}
+
+.chat-bubble.bg-blue-700::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -8px; /* Position the arrow at the right side */
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 8px 8px; /* Create a triangle */
+    border-color: transparent transparent transparent #007bff; /* Match bubble color */
+}
+
+/* Adjust for received (gray) bubbles */
+.chat-bubble.bg-gray-300 {
+    background-color: #f1f1f1;
+    color: #000;
+}
+
+.chat-bubble.bg-gray-300::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -8px; /* Position the arrow at the left side */
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 8px 8px 0; /* Create a triangle */
+    border-color: transparent #f1f1f1 transparent transparent; /* Match bubble color */
+}
+
 	
 	/* Replying-to text compact styling */
 	.replying-to-text {
@@ -172,6 +200,11 @@
 		margin-bottom: 4px; /* Reduce spacing below */
 		color: #bbb; /* Subtle color for light backgrounds */
 	}
+	.replying-to-content {
+    font-style: italic; /* Add italic styling */
+    color: inherit; /* Ensure it inherits the correct color */
+}
+
 	
 	/* When the bubble is blue (sent by the user) */
 	.chat-bubble.bg-blue-700 .replying-to-text {
