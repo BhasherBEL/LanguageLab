@@ -187,25 +187,39 @@ function keyPress(event: KeyboardEvent) {
 
 <style>
 	.reply-preview {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0.5rem 1rem;
-		background-color: #f0f4f8;
-		border-left: 4px solid #007bff;
-		margin-bottom: 0.5rem;
-		border-radius: 5px;
-	}
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.5rem 1rem;
+    background-color: #f0f4f8;
+    border-left: 4px solid #007bff;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
 
-	.replying-to-text {
-		color: #555;
-		font-size: 0.9rem;
-	}
+.replying-to-text {
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-overflow: ellipsis;
+}
 
-	.replying-to-content {
-		font-weight: bold;
-		color: #333;
-	}
+.replying-to-content {
+    font-weight: bold;
+    color: #333;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+    overflow: hidden;
+}
+
 
 	.cancel-reply {
 		font-size: 0.8rem;
