@@ -30,7 +30,7 @@ export async function createUserContactFromEmailAPI(
 	user_id: number,
 	email: string
 ): Promise<any | null> {
-	const response = await fetch(`/api/users/${user_id}/contacts-email/${email}`);
+	const response = await fetch(`/api/users/${user_id}/contacts-email/${email}`, { method: 'POST' });
 	if (!response.ok) return null;
 
 	return await response.json();

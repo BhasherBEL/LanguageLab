@@ -22,7 +22,7 @@
 	import { get } from 'svelte/store';
 
 	let { data } = $props();
-	let user = data.user;
+	let user = data.user!;
 	let contacts: User[] = $state(data.contacts);
 	let contact: User | undefined = $state(data.contact);
 	let contactSessions: Session[] = $state(data.sessions);
@@ -93,6 +93,7 @@
 				const duration = e.detail.data.duration;
 				const end = new Date(date.getTime() + duration * 60000);
 				const sess_id: number | null = await createSessionFromCalComAPI(
+					fetch,
 					user.id,
 					contact.id,
 					date,
@@ -282,6 +283,15 @@
 						{/if}
 					</tbody>
 				</table>
+			</div>
+		</div>
+	{:else}
+		<div class="flex-grow text-center mt-16">
+			<div class="text-lg text-gray-500 pt-4 italic">{$t('home.noContact')}</div>
+			<div>
+				<button class="mx-auto mt-8 button" onclick={() => (modalNew = true)}>
+					+ {$t('home.newFirstContact')}
+				</button>
 			</div>
 		</div>
 	{/if}
