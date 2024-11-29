@@ -32,7 +32,7 @@
 	];
 
 	async function submit() {
-		const res = await createTestTypingAPI(user.id, data);
+		const res = await createTestTypingAPI(fetch, user.id, data);
 
 		if (!res) return;
 

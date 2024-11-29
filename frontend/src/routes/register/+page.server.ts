@@ -47,7 +47,7 @@ export const actions: Actions = {
 		if (response.status === 422) return { message: 'Invalid request' };
 		if (!response.ok) return { message: 'Unknown error occurred' };
 
-		return redirect(307, '/register');
+		return redirect(303, '/register');
 	},
 	data: async ({ request, fetch, locals }) => {
 		if (!locals.user) {
@@ -78,10 +78,7 @@ export const actions: Actions = {
 			gender,
 			birthdate
 		});
-
-		if (response.status === 401) return { message: 'Incorrect email or password' };
-		if (response.status === 422) return { message: 'Invalid request' };
-		if (!response.ok) return { message: 'Unknown error occurred' };
+		if (!response) return { message: 'Unknown error occurred' };
 
 		redirect(303, '/register');
 	}

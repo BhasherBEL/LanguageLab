@@ -1,19 +1,14 @@
 <script lang="ts">
 	import { sendSurveyResponseAPI } from '$lib/api/survey';
 	import { getSurveyScoreAPI } from '$lib/api/survey';
-
-	import Survey from '$lib/types/survey.js';
 	import { t } from '$lib/services/i18n';
 	import { toastWarning } from '$lib/utils/toasts.js';
 	import { get } from 'svelte/store';
-	import User from '$lib/types/user.js';
 	import type SurveyGroup from '$lib/types/surveyGroup';
 	import Gapfill from '$lib/components/surveys/gapfill.svelte';
+	import type { PageData } from './$types';
 
-	export let data;
-
-	const survey: Survey = data.survey!;
-	const user = data.user ? User.parse(JSON.parse(data.user)) : null;
+	let { user, survey }: { data: PageData } = $props();
 
 	let sid =
 		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -23,21 +18,21 @@
 		return group.questions.sort(() => Math.random() - 0.5);
 	}
 
-	$: step = user ? 2 : 0;
-	$: uuid = user?.email || '';
+	let step = $state(user ? 2 : 0);
+	let uuid = $state(user?.email || '');
 
-	let currentGroupId = 0;
-	let currentGroup = survey.groups[currentGroupId];
-	let questionsRandomized = getSortedQuestions(currentGroup);
-	let currentQuestionId = 0;
-	let currentQuestion = questionsRandomized[currentQuestionId];
-	let type = currentQuestion.question.split(':')[0];
-	let value = currentQuestion.question.split(':').slice(1).join(':');
-	let gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
+	let currentGroupId = $state(0);
+	let currentGroup = $derived(survey.groups[currentGroupId]);
+	let questionsRandomized = $derived(getSortedQuestions(currentGroup));
+	let currentQuestionId = $state(0);
+	let currentQuestion = $derived(questionsRandomized[currentQuestionId]);
+	let type = $derived(currentQuestion.question.split(':')[0]);
+	let value = $derived(currentQuestion.question.split(':').slice(1).join(':'));
+	let gaps = $derived(type === 'gap' ? gapParts(currentQuestion.question) : null);
 	let soundPlayer: HTMLAudioElement;
-	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])];
-	shuffle(displayQuestionOptions);
-	let finalScore: number | null = null;
+	let displayQuestionOptions: string[] = $derived([...(currentQuestion.options ?? [])]);
+	$effect(() => shuffle(displayQuestionOptions));
+	let finalScore: number | null = $state(null);
 
 	//source: shuffle function code taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array/18650169#18650169
 	function shuffle(array: string[]) {
@@ -54,25 +49,18 @@
 
 	function setGroupId(id: number) {
 		currentGroupId = id;
-		currentGroup = survey.groups[currentGroupId];
-		questionsRandomized = getSortedQuestions(currentGroup);
 		setQuestionId(0);
 	}
 
 	function setQuestionId(id: number) {
 		currentQuestionId = id;
-		currentQuestion = questionsRandomized[currentQuestionId];
-		type = currentQuestion.question.split(':')[0];
-		value = currentQuestion.question.split(':').slice(1).join(':');
-		gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
-		displayQuestionOptions = [...(currentQuestion.options ?? [])];
-		shuffle(displayQuestionOptions);
 		if (soundPlayer) soundPlayer.load();
 	}
 
 	async function selectOption(option: string) {
 		if (
 			!(await sendSurveyResponseAPI(
+				fetch,
 				uuid,
 				sid,
 				survey.id,
@@ -103,6 +91,7 @@
 
 		if (
 			!(await sendSurveyResponseAPI(
+				fetch,
 				uuid,
 				sid,
 				survey.id,
@@ -178,21 +167,21 @@
 				<input
 					type="email"
 					placeholder="Email"
-					on:keydown={(e) => e.key === 'Enter' && checkUUID()}
+					onkeydown={(e) => e.key === 'Enter' && checkUUID()}
 					class="input block mx-auto"
 					bind:value={uuid}
 				/>
-				<button class="button mt-4 block" on:click={checkUUID}>{$t('button.next')}</button>
+				<button class="button mt-4 block" onclick={checkUUID}>{$t('button.next')}</button>
 			</div>
 		</div>
 	</div>
 {:else if step == 1}
 	<div class="max-w-screen-lg mx-auto text-center">
 		<div class="my-16">{@html $t('surveys.introduction')}</div>
-		<button class="button" on:click={() => step++}>{$t('button.next')}</button>
+		<button class="button" onclick={() => step++}>{$t('button.next')}</button>
 	</div>
 {:else if step == 2}
-	{#if type == 'gap'}
+	{#if type == 'gap' && gaps}
 		<div class="mx-auto mt-16 center flex flex-col">
 			<div>
 				{#each gaps as part}
@@ -203,7 +192,7 @@
 					{/if}
 				{/each}
 			</div>
-			<button class="button mt-8" on:click={sendGap}>{$t('button.next')}</button>
+			<button class="button mt-8" onclick={sendGap}>{$t('button.next')}</button>
 		</div>
 	{:else}
 		<div class="mx-auto mt-16 text-center">
@@ -226,9 +215,9 @@
 					{@const value = option.split(':').slice(1).join(':')}
 					<div
 						class="h-48 w-48 overflow-hidden rounded-lg border border-black"
-						on:click={() => selectOption(option)}
+						onclick={() => selectOption(option)}
 						role="button"
-						on:keydown={() => selectOption(option)}
+						onkeydown={() => selectOption(option)}
 						tabindex="0"
 					>
 						{#if type === 'text'}
@@ -244,7 +233,14 @@
 								class="object-cover h-full w-full transition-transform duration-200 ease-in-out transform hover:scale-105"
 							/>
 						{:else if type == 'audio'}
-							<audio controls class="w-full" on:click|preventDefault|stopPropagation>
+							<audio
+								controls
+								class="w-full"
+								onclick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+							>
 								<source src={value} type="audio/mpeg" />
 								Your browser does not support the audio element.
 							</audio>

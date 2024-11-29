@@ -1,14 +1,7 @@
 <script lang="ts">
 	import LocalSelector from '$lib/components/header/localSelector.svelte';
 	import { t } from '$lib/services/i18n';
-	import {
-		ExclamationTriangle,
-		Icon,
-		Bars3,
-		UserCircle,
-		Language,
-		Cog6Tooth
-	} from 'svelte-hero-icons';
+	import { ExclamationTriangle, Icon, Bars3, Language, Cog6Tooth } from 'svelte-hero-icons';
 	import { page } from '$app/stores';
 	import type User from '$lib/types/user';
 
@@ -57,29 +50,19 @@
 		</h1>
 	</div>
 	<div class="navbar-end hidden sm:flex">
-		<ul class="menu menu-horizontal p-0">
+		<ul class="menu menu-horizontal p-0 flex items-center">
 			{#if user}
 				<li>
 					<details>
-						<summary class="p-3">
-							<Icon src={UserCircle} class="h-5 w-5" />
+						<summary class="px-3">
+							<img
+								src={`https://gravatar.com/avatar/${user.emailHash}?d=identicon`}
+								alt={''}
+								class="rounded-full border text-sm size-8 border-neutral-400"
+							/>
 							{user.nickname}
 						</summary>
 						<ul class="menu menu-sm dropdown-content absolute right-0">
-							{#if user?.type === 0 || user?.type === 1}
-								<li>
-									<a data-sveltekit-reload href="/tutor/timeslots">
-										{$t('header.availability')}
-									</a>
-								</li>
-							{/if}
-							{#if user?.type === 2}
-								<li>
-									<a data-sveltekit-reload href="/timeslots">
-										{$t('header.tutorSelection')}
-									</a>
-								</li>
-							{/if}
 							<li>
 								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
 									{$t('header.signout')}

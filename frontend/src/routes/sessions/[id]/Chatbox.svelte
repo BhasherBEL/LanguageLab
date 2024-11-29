@@ -1,16 +1,17 @@
 <script lang="ts">
 	import type Session from '$lib/types/session';
 	import { onDestroy, onMount } from 'svelte';
-	import MessageC from './message.svelte';
+	import MessageC from './Message.svelte';
 	import { get } from 'svelte/store';
-	import Writebox from './writebox.svelte';
+	import Writebox from './Writebox.svelte';
 	import { t } from '$lib/services/i18n';
 	import { toastSuccess } from '$lib/utils/toasts';
 	import { Icon, PencilSquare } from 'svelte-hero-icons';
 	import Message from '$lib/types/message';
 	import Feedback from '$lib/types/feedback';
+	import type User from '$lib/types/user';
 
-	const { session, jwt }: { session: Session; jwt: string } = $props();
+	const { session, jwt, user }: { session: Session; jwt: string; user: User } = $props();
 
 	const { messages } = session;
 
@@ -131,7 +132,7 @@
 		</div>
 		{#each $messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.uuid)}
 			{#if message instanceof Message}
-				<MessageC {message} />
+				<MessageC {user} {message} />
 			{:else if message instanceof Feedback}
 				<a class="text-center italic text-gray-500 my-2" href="#{message.message.uuid}">
 					{$t('session.feedbackInline')} "{message.message.content.length > 20
@@ -149,7 +150,7 @@
 		</div>
 	{/if}
 	<div class="flex flex-row">
-		<Writebox {session} />
+		<Writebox {user} {session} />
 	</div>
 </div>
 

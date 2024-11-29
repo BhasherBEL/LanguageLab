@@ -1,6 +1,7 @@
 import { createUserAPI, getUsersAPI, patchUserAPI } from '$lib/api/users';
 import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
+import { sha256 } from 'js-sha256';
 import { get, writable } from 'svelte/store';
 
 const { subscribe, set, update } = writable<User[]>([]);
@@ -13,7 +14,7 @@ export const users = {
 	add: (user: User) => update((users) => [...users, user]),
 	delete: (id: number) => update((users) => users.filter((user) => user.id !== id)),
 	search: (email: string) => get(users).find((user) => user.email.includes(email)),
-	fetch: async () => User.parseAll(await getUsersAPI())
+	fetch: async () => User.parseAll(await getUsersAPI(fetch))
 };
 
 export default class User {
@@ -67,6 +68,10 @@ export default class User {
 
 	get email(): string {
 		return this._email;
+	}
+
+	get emailHash(): string {
+		return sha256(this._email.toLowerCase());
 	}
 
 	get nickname(): string {
@@ -130,7 +135,7 @@ export default class User {
 	}
 
 	async setAvailability(availability: bigint, calcom_link: string): Promise<boolean> {
-		return await patchUserAPI(this.id, {
+		return await patchUserAPI(fetch, this.id, {
 			availability: availability.toString(),
 			calcom_link: calcom_link
 		});
@@ -159,7 +164,7 @@ export default class User {
 	}
 
 	async patch(data: any): Promise<boolean> {
-		const res = await patchUserAPI(this.id, data);
+		const res = await patchUserAPI(fetch, this.id, data);
 		if (res) {
 			if (data.email) this._email = data.email;
 			if (data.nickname) this._nickname = data.nickname;
@@ -188,7 +193,7 @@ export default class User {
 		type: number,
 		is_active: boolean
 	): Promise<User | null> {
-		const id = await createUserAPI(nickname, email, password, type, is_active);
+		const id = await createUserAPI(fetch, nickname, email, password, type, is_active);
 		if (id == null) return null;
 
 		const user = new User(

@@ -75,7 +75,13 @@ export default class Message {
 	}
 
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
-		const response = await updateMessageAPI(this._session.id, this._message_id, content, metadata);
+		const response = await updateMessageAPI(
+			fetch,
+			this._session.id,
+			this._message_id,
+			content,
+			metadata
+		);
 		if (response == null || response.id == null) return false;
 
 		this._versions.update((v) => [...v, { content: content, date: new Date() }]);
@@ -99,13 +105,17 @@ export default class Message {
 
 	async addFeedback(start: number, end: number, content: string | null = null): Promise<boolean> {
 		const response = await createMessageFeedbackAPI(
+			fetch,
 			this._session.id,
 			this._id,
 			start,
 			end,
 			content
 		);
-		if (response == -1) return false;
+		if (!response) {
+			toastAlert('Failed to create feedback');
+			return false;
+		}
 
 		const feedback = new Feedback(response, this, start, end, content);
 		this.localFeedback(feedback);

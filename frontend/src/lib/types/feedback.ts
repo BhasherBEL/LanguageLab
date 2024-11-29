@@ -83,7 +83,12 @@ export default class Feedback {
 	}
 
 	async delete(): Promise<boolean> {
-		return await deleteMessageFeedbackAPI(this._message.session.id, this._message.id, this._id);
+		return await deleteMessageFeedbackAPI(
+			fetch,
+			this._message.session.id,
+			this._message.id,
+			this._id
+		);
 	}
 
 	static parseAll(json: any, message: Message): Feedback[] {

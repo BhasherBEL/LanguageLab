@@ -248,14 +248,24 @@
 				},
 				"errors": {
 					"null": "Veuillez répondre à toutes les questions",
-					"submit": "Erreur lors de l'envoi du questionnaire"
+					"submit": "Erreur lors de l'envoi du questionnaire",
+					"toggle": "Erreur lors de l'activation ou de la désactivation de la session"
 				},
 				"success": "Questionnaire envoyé, merci !"
 			}
 		},
 		"downloadAllMessages": "Télécharger toutes les conversations",
 		"downloadAllMetadata": "Télécharger toutes les métadonnées",
-		"downloadAllFeedbacks": "Télécharger tous les feedbacks"
+		"downloadAllFeedbacks": "Télécharger tous les feedbacks",
+		"errors": {
+			"create": "Erreur lors de la création de la session",
+			"delete": "Erreur lors de la suppression de la session",
+			"addUser": "Erreur lors de l'ajout d'un utilisateur à la session",
+			"removeUser": "Erreur lors de la suppression d'un utilisateur de la session",
+			"presence": "Erreur lors de l'envoi de la présence",
+			"typing": "Erreur lors de l'envoi de l'indicateur de saisie"
+		},
+		"noTopic": "Aucun topic disponible"
 	},
 	"button": {
 		"create": "Créer",

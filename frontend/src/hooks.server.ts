@@ -1,18 +1,11 @@
-import { error, type Handle, type RequestEvent } from '@sveltejs/kit';
+import { type Handle, type RequestEvent } from '@sveltejs/kit';
 import { jwtDecode } from 'jwt-decode';
 import { type JWTContent } from '$lib/utils/login';
-import User from '$lib/types/user';
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
 const PROXY_PATH = '/api';
 
 const handleApiProxy = async (event: RequestEvent, cookies: { name: string; value: string }[]) => {
-	//const origin = event.request.headers.get('Origin');
-
-	//if (!origin || new URL(origin).origin !== event.url.origin) {
-	//	return error(403, 'Request Forbidden.');
-	//}
-
 	const strippedPath = event.url.pathname.substring(PROXY_PATH.length);
 
 	const urlPath = `${API_BASE_URL}${strippedPath}${event.url.search}`;

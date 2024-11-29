@@ -1,18 +1,14 @@
-import { toastAlert } from '$lib/utils/toasts';
-import { axiosInstance } from './apiInstance';
+import type { fetchType } from '$lib/utils/types';
 
-export async function getSurveyAPI(survey_id: number) {
-	const response = await axiosInstance.get(`/surveys/${survey_id}`);
+export async function getSurveyAPI(fetch: fetchType, survey_id: number) {
+	const response = await fetch(`/api/surveys/${survey_id}`);
+	if (!response.ok) return null;
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get survey');
-		return null;
-	}
-
-	return response.data;
+	return await response.json();
 }
 
 export async function sendSurveyResponseAPI(
+	fetch: fetchType,
 	uuid: string,
 	sid: string,
 	survey_id: number,
@@ -22,30 +18,27 @@ export async function sendSurveyResponseAPI(
 	response_time: number,
 	text: string = ''
 ) {
-	const response = await axiosInstance.post(`/surveys/responses`, {
-		uuid,
-		sid,
-		survey_id,
-		question_id,
-		group_id,
-		selected_id: option_id,
-		response_time,
-		text
+	const response = await fetch(`/api/surveys/responses`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			uuid,
+			sid,
+			survey_id,
+			question_id,
+			group_id,
+			selected_id: option_id,
+			response_time,
+			text
+		})
 	});
 
-	if (response.status !== 201) {
-		toastAlert('Failed to send survey response');
-		return false;
-	}
-
-	return true;
+	return response.ok;
 }
 
 export async function getSurveyScoreAPI(survey_id: number) {
-	const response = await axiosInstance.get(`/surveys/${survey_id}/score`);
-	if (response.status !== 200) {
-		toastAlert('Failed to retrieve survey score');
-		return null;
-	}
-	return response.data;
+	const response = await fetch(`/api/surveys/${survey_id}/score`);
+	if (!response.ok) return null;
+
+	return await response.json();
 }

@@ -2,8 +2,8 @@ import { getSessionAPI } from '$lib/api/sessions';
 import Session from '$lib/types/session';
 import { error, type Load } from '@sveltejs/kit';
 
-export const load: Load = async ({ params, data }) => {
-	if (!data || !data.jwt) error(401, 'Unauthorized');
+export const load: Load = async ({ params, fetch, data }) => {
+	const jwt = data?.jwt;
 
 	const id = params.id;
 	if (!id) {
@@ -15,14 +15,12 @@ export const load: Load = async ({ params, data }) => {
 		error(404, 'Not found');
 	}
 
-	const session = Session.parse(await getSessionAPI(nid, data.jwt));
+	const session = Session.parse(await getSessionAPI(fetch, nid));
 	if (!session) {
 		error(404, 'Not found');
 	}
 
-	await session.loadMessages(data.jwt);
+	await session.loadMessages(fetch);
 
-	return {
-		session: session
-	};
+	return { session, jwt };
 };

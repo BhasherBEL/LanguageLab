@@ -4,7 +4,7 @@ import { type Actions, type ServerLoad, redirect } from '@sveltejs/kit';
 export const load: ServerLoad = async ({ locals, url }) => {
 	if (locals.user != null && locals.user != undefined) {
 		const path = url.searchParams.get('redirect') || '/';
-		redirect(307, path);
+		redirect(303, path);
 	}
 
 	return {

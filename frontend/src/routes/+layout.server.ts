@@ -14,7 +14,7 @@ const isPublic = (path: string) => {
 export const load: ServerLoad = async ({ locals, url }) => {
 	if (locals.user == null || locals.user == undefined) {
 		if (!isPublic(url.pathname)) {
-			redirect(307, `/login`);
+			redirect(303, `/login`);
 		}
 	}
 

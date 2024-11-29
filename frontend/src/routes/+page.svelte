@@ -126,7 +126,7 @@
 			return;
 		}
 
-		const res = await createUserContactFromEmailAPI(user.id, nickname);
+		const res = await createUserContactFromEmailAPI(fetch, user.id, nickname);
 		if (!res) return;
 
 		modalNew = false;
