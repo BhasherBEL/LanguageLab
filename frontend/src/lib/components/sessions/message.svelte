@@ -115,10 +115,10 @@
 		data-is-sender={isSender}
 	>
 		{#if replyToMessage}
-			<div class="replying-to-text" on:click={() => scrollToMessage(replyToMessage?.id)}>
+			<button class="replying-to-text" on:click={() => scrollToMessage(replyToMessage?.id)} aria-label="Scroll to replied message">
 				{$t('chatbox.replyingTo')}
 				<span class="replying-to-content">{truncateMessage(replyToMessage?.content)}</span>
-			</div>
+			</button>
 		{/if}
 
 		<div contenteditable={isEdit} bind:this={contentDiv}>
