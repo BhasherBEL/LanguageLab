@@ -96,8 +96,8 @@
 	>
 		{#if replyToMessage}
 		<div class="replying-to-text">
-			Replying to: <span class="replying-to-content">{truncateMessage(replyToMessage.content)}</span>
-		</div>
+			{$t('chatbox.replyingTo')} <span class="replying-to-content">{truncateMessage(replyToMessage.content)}</span>
+		</div>			
 		
 		{/if}
 
