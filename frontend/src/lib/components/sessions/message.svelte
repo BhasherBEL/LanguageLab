@@ -30,12 +30,6 @@
 	let isEdit = false;
 	let contentDiv: HTMLDivElement;
 
-	let isReplying = false;
-
-	let replyContent = '';
-
-	async function sendReply() {}
-
 	async function findMessageById(id: string): Promise<Message | null> {
 		try {
 			const resolvedMessage = await message.getMessageById(Number(id));
@@ -73,18 +67,44 @@
 	}
 
 	function truncateMessage(content: string, maxLength: number = 20): string {
-    if (content.length > maxLength) {
-        return content.slice(0, maxLength) + '...';
-    }
-    return content;
-}
+		if (content.length > maxLength) {
+			return content.slice(0, maxLength) + '...';
+		}
+		return content;
+	}
 
+	function scrollToMessage(messageId: number | undefined): void {
+		if (!messageId) return;
+		const elementId = `message-${messageId}`;
+		const element = document.getElementById(elementId);
+
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+			const currentHash = window.location.hash;
+			if (currentHash === `#${elementId}`) {
+				window.location.hash = '';
+				setTimeout(() => {
+					window.location.hash = elementId;
+				}, 50);
+			} else {
+				window.location.hash = elementId;
+			}
+		} else {
+			console.warn(`Message with ID ${messageId} not found in DOM.`);
+		}
+	}
 
 	const isSender = message.user.id == $user?.id;
 </script>
 
 <!-- Messages Display -->
-<div class="chat group" class:chat-start={!isSender} class:chat-end={isSender}>
+<div
+	id={`message-${message.id}`}
+	class="chat group"
+	class:chat-start={!isSender}
+	class:chat-end={isSender}
+>
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}></div>
 	<div
 		class="chat-bubble whitespace-pre-wrap"
@@ -95,10 +115,10 @@
 		data-is-sender={isSender}
 	>
 		{#if replyToMessage}
-		<div class="replying-to-text">
-			{$t('chatbox.replyingTo')} <span class="replying-to-content">{truncateMessage(replyToMessage.content)}</span>
-		</div>			
-		
+			<div class="replying-to-text" on:click={() => scrollToMessage(replyToMessage?.id)}>
+				{$t('chatbox.replyingTo')}
+				<span class="replying-to-content">{truncateMessage(replyToMessage?.content)}</span>
+			</div>
 		{/if}
 
 		<div contenteditable={isEdit} bind:this={contentDiv}>
@@ -141,29 +161,16 @@
 	</div>
 </div>
 
-<!-- Reply Input -->
-{#if isReplying}
-	<div class="reply-input-container">
-		<input
-			type="text"
-			placeholder="Type your reply..."
-			bind:value={replyContent}
-			class="message-input"
-		/>
-		<button class="send-button" on:click={sendReply}>Send</button>
-	</div>
-{/if}
-
 <style>
+	/* General styling for chat bubbles */
 	.chat-bubble {
-    white-space: normal; /* Allow text to wrap onto the next line */
-    word-wrap: break-word; /* Break words if they are too long */
-    word-break: break-word; /* Ensure long words are broken */
-    overflow-wrap: break-word; /* Prevent overflow by wrapping */
-}
+		white-space: normal;
+		word-wrap: break-word;
+		word-break: break-word;
+		overflow-wrap: break-word;
+	}
 
-
-	/* Adjust for sent (blue) bubbles */
+	/* Sent (blue) bubble styles */
 	.chat-bubble.bg-blue-700 {
 		background-color: #007bff;
 		color: white;
@@ -173,15 +180,15 @@
 		content: '';
 		position: absolute;
 		bottom: 0;
-		right: -8px; /* Position the arrow at the right side */
+		right: -8px;
 		width: 0;
 		height: 0;
 		border-style: solid;
-		border-width: 8px 0 8px 8px; /* Create a triangle */
-		border-color: transparent transparent transparent #007bff; /* Match bubble color */
+		border-width: 8px 0 8px 8px;
+		border-color: transparent transparent transparent #007bff;
 	}
 
-	/* Adjust for received (gray) bubbles */
+	/* Received (gray) bubble styles */
 	.chat-bubble.bg-gray-300 {
 		background-color: #f1f1f1;
 		color: #000;
@@ -191,77 +198,76 @@
 		content: '';
 		position: absolute;
 		bottom: 0;
-		left: -8px; /* Position the arrow at the left side */
+		left: -8px;
 		width: 0;
 		height: 0;
 		border-style: solid;
-		border-width: 8px 8px 8px 0; /* Create a triangle */
-		border-color: transparent #f1f1f1 transparent transparent; /* Match bubble color */
+		border-width: 8px 8px 8px 0;
+		border-color: transparent #f1f1f1 transparent transparent;
 	}
 
-	/* Replying-to text compact styling */
+	/* Styling for "Replying to" text */
 	.replying-to-text {
-	display: flex; /* Use flexbox for proper alignment */
-	align-items: center; /* Vertically align the text and content */
-	font-size: 0.85rem; /* Adjust the text size */
-	color: #bbb; /* Use a subtle color */
-	margin-bottom: 4px; /* Add a small margin for spacing */
-}
-
-.replying-to-content {
-	font-style: italic; /* Optionally italicize */
-	text-overflow: ellipsis; /* Truncate long text */
-	white-space: nowrap; /* Prevent wrapping */
-	overflow: hidden; /* Ensure no overflow */
-	max-width: 150px; /* Set a maximum width */
-	display: inline-block; /* Ensure inline alignment */
-}
-
-
-
-	/* When the bubble is blue (sent by the user) */
-	.chat-bubble.bg-blue-700 .replying-to-text {
-		color: rgb(196, 229, 240); /* Use lighter color for "Replying to" */
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		font-size: 0.85rem;
+		color: #bbb;
+		margin-bottom: 4px;
 	}
 
-	/* Compact reply input */
+	.replying-to-content {
+		font-style: italic;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		max-width: 150px;
+		display: inline-block;
+	}
+
+	/* Sent bubble adjustment for "Replying to" text */
+	.chat-bubble.bg-blue-700 .replying-to-text {
+		color: rgb(196, 229, 240);
+	}
+
+	/* Reply input container and buttons */
 	.reply-input-container {
 		display: flex;
 		align-items: center;
 		margin-top: 0.5rem;
-		gap: 0.3rem; /* Reduce gap between input and button */
+		gap: 0.3rem;
 	}
 
 	.message-input {
 		flex: 1;
-		padding: 6px 10px; /* Reduce input box padding */
+		padding: 6px 10px;
 		border: 1px solid #ccc;
 		border-radius: 5px;
-		font-size: 0.9rem; /* Adjust font size for smaller input box */
+		font-size: 0.9rem;
 	}
 
 	.send-button {
 		background-color: #007bff;
 		color: white;
-		padding: 6px 10px; /* Adjust padding for smaller button */
+		padding: 6px 10px;
 		border: none;
 		border-radius: 5px;
-		font-size: 0.9rem; /* Adjust font size */
+		font-size: 0.9rem;
 		cursor: pointer;
 	}
 
-	/* Adjust chat layout */
+	/* General chat layout adjustments */
 	.chat {
-		margin-bottom: 6px; /* Reduce spacing between messages */
+		margin-bottom: 6px;
 	}
 
 	.chat-footer {
-		font-size: 0.75rem; /* Smaller timestamp text */
-		margin-top: 2px; /* Less space above timestamp */
-		opacity: 0.7; /* Slightly faded text */
+		font-size: 0.75rem;
+		margin-top: 2px;
+		opacity: 0.7;
 	}
 
-	/* General hover effect for buttons */
+	/* Hover effects for reply icon */
 	.reply-icon {
 		position: absolute;
 		right: -1.5rem;
@@ -273,6 +279,35 @@
 	}
 
 	.group:hover .reply-icon {
-		opacity: 1; /* Make visible on hover */
+		opacity: 1;
+	}
+
+	/* Highlight animation for target messages */
+	.chat:target {
+		animation:
+			highlight 1.5s ease-in-out,
+			pulse 1.5s infinite;
+	}
+
+	@keyframes highlight {
+		0% {
+			background-color: rgba(255, 255, 0, 0.6);
+		}
+		50% {
+			background-color: rgba(255, 255, 0, 0.3);
+		}
+		100% {
+			background-color: transparent;
+		}
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			box-shadow: 0 0 0px rgba(255, 255, 0, 0.7);
+		}
+		50% {
+			box-shadow: 0 0 10px rgba(255, 255, 0, 0.9);
+		}
 	}
 </style>

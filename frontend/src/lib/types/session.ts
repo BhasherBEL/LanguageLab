@@ -262,6 +262,18 @@ export default class Session {
 		return await createSessionSatisfyAPI(this.id, usefullness, easiness, remarks);
 	}
 
+	scrollToMessage(messageId: number): void {
+		const elementId = `message-${messageId}`;
+		const element = document.getElementById(elementId);
+	
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		} else {
+			console.warn(`Message with ID ${messageId} not found in DOM.`);
+		}
+	}
+	
+
 	async changeLanguage(language: string): Promise<boolean> {
 		const res = await patchLanguageAPI(this.id, language);
 		if (!res) return false;
