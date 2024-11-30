@@ -211,7 +211,7 @@
 		cursor: pointer;
 		display: flex;
 		align-items: center;
-		font-size: 0.85rem;
+		font-size: 0.65rem;
 		color: #bbb;
 		margin-bottom: 4px;
 	}
@@ -222,38 +222,13 @@
 		white-space: nowrap;
 		overflow: hidden;
 		max-width: 150px;
+		font-size: 0.65rem;
 		display: inline-block;
 	}
 
 	/* Sent bubble adjustment for "Replying to" text */
 	.chat-bubble.bg-blue-700 .replying-to-text {
 		color: rgb(196, 229, 240);
-	}
-
-	/* Reply input container and buttons */
-	.reply-input-container {
-		display: flex;
-		align-items: center;
-		margin-top: 0.5rem;
-		gap: 0.3rem;
-	}
-
-	.message-input {
-		flex: 1;
-		padding: 6px 10px;
-		border: 1px solid #ccc;
-		border-radius: 5px;
-		font-size: 0.9rem;
-	}
-
-	.send-button {
-		background-color: #007bff;
-		color: white;
-		padding: 6px 10px;
-		border: none;
-		border-radius: 5px;
-		font-size: 0.9rem;
-		cursor: pointer;
 	}
 
 	/* General chat layout adjustments */
@@ -293,21 +268,7 @@
 		0% {
 			background-color: rgba(255, 255, 0, 0.6);
 		}
-		50% {
-			background-color: rgba(255, 255, 0, 0.3);
-		}
-		100% {
-			background-color: transparent;
-		}
 	}
 
-	@keyframes pulse {
-		0%,
-		100% {
-			box-shadow: 0 0 0px rgba(255, 255, 0, 0.7);
-		}
-		50% {
-			box-shadow: 0 0 10px rgba(255, 255, 0, 0.9);
-		}
-	}
+
 </style>

@@ -96,137 +96,146 @@ function keyPress(event: KeyboardEvent) {
 
 </script>
 
-<!-- Reply Preview -->
-{#if currentReplyToMessage}
-	<div class="reply-preview">
-		<p class="replying-to-text">
-			Replying to: <span class="replying-to-content">{currentReplyToMessage.content}</span>
-		</p>
-		<button class="cancel-reply" on:click={cancelReply}>Cancel</button>
-	</div>
-{/if}
+<div class="chat-input-container">
+    <!-- Reply Preview -->
+    {#if currentReplyToMessage}
+        <div class="reply-preview">
+            <p class="replying-to-text">
+                Replying to: <span class="replying-to-content">{currentReplyToMessage.content}</span>
+            </p>
+            <button class="cancel-reply" on:click={cancelReply}>Cancel</button>
+        </div>
+    {/if}
 
-<div class="w-full border-t-2">
-	<!-- Special Characters -->
-	{#if showSpecials}
-		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
-			{#each config.SPECIAL_CHARS as char (char)}
-				<button
-					class="border-none"
-					on:click={() => {
-						message += char;
-						textearea.focus();
-					}}
-				>
-					<kbd class="kbd">
-						{char}
-					</kbd>
-				</button>
-			{/each}
-		</ul>
-	{/if}
+    <!-- Special Characters -->
+    {#if showSpecials}
+        <ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
+            {#each config.SPECIAL_CHARS as char (char)}
+                <button
+                    class="border-none"
+                    on:click={() => {
+                        message += char;
+                        textearea.focus();
+                    }}
+                >
+                    <kbd class="kbd">
+                        {char}
+                    </kbd>
+                </button>
+            {/each}
+        </ul>
+    {/if}
 
-	<!-- Message Input -->
-	<div class="w-full flex relative">
-		<textarea
-			bind:this={textearea}
-			class="flex-grow p-2 resize-none overflow-y-hidden pr-16"
-			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
-			{disabled}
-			bind:value={message}
-			on:keypress={keyPress}
-		/>
-		<!-- Emoji Picker -->
-		<div
-			class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
-			on:click={() => (showPicker = !showPicker)}
-			data-tooltip-target="tooltip-emoji"
-			data-tooltip-placement="right"
-			aria-hidden={false}
-			role="button"
-			tabindex="0"
-		>
-			😀
-		</div>
-		<div class="relative">
-			<div
-				id="tooltip-emoji"
-				data-tooltip="tooltip-emoji"
-				role="tooltip"
-				class:hidden={!showPicker}
-				class="absolute z-10 tooltip bottom-16 right-0 lg:left-0 lg:right-auto"
-			>
-				<emoji-picker
-					class="light"
-					on:emoji-click={(event) => {
-						message += event.detail.unicode;
-						textearea.focus();
-					}}
-				>
-				</emoji-picker>
-			</div>
-		</div>
+    <!-- Message Input -->
+    <div class="w-full flex relative">
+        <textarea
+            bind:this={textearea}
+            class="flex-grow p-2 resize-none overflow-y-hidden pr-16"
+            placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+            {disabled}
+            bind:value={message}
+            on:keypress={keyPress}
+        />
+        <!-- Emoji Picker -->
+        <div
+            class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
+            on:click={() => (showPicker = !showPicker)}
+            data-tooltip-target="tooltip-emoji"
+            data-tooltip-placement="right"
+            aria-hidden={false}
+            role="button"
+            tabindex="0"
+        >
+            😀
+        </div>
+        <div class="relative">
+            <div
+                id="tooltip-emoji"
+                data-tooltip="tooltip-emoji"
+                role="tooltip"
+                class:hidden={!showPicker}
+                class="absolute z-10 tooltip bottom-16 right-0 lg:left-0 lg:right-auto"
+            >
+                <emoji-picker
+                    class="light"
+                    on:emoji-click={(event) => {
+                        message += event.detail.unicode;
+                        textearea.focus();
+                    }}
+                >
+                </emoji-picker>
+            </div>
+        </div>
 
-		<!-- Special Characters Button -->
-		<div
-			class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
-			on:click={() => (showSpecials = !showSpecials)}
-			aria-hidden={false}
-			role="button"
-			tabindex="0"
-		>
-			É
-		</div>
+        <!-- Special Characters Button -->
+        <div
+            class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
+            on:click={() => (showSpecials = !showSpecials)}
+            aria-hidden={false}
+            role="button"
+            tabindex="0"
+        >
+            É
+        </div>
 
-		<!-- Send Button -->
-		<button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
-			<Icon src={PaperAirplane} />
-		</button>
-	</div>
+        <!-- Send Button -->
+        <button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
+            <Icon src={PaperAirplane} />
+        </button>
+    </div>
 </div>
 
 <style>
-	.reply-preview {
+	.chat-input-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 0.5rem 1rem;
-    background-color: #f0f4f8;
-    border-left: 4px solid #007bff;
-    margin-bottom: 0.5rem;
-    border-radius: 5px;
-    word-wrap: break-word;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
+    width: 100%;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.reply-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8f9fa; /* Light background */
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.1rem; /* Space between preview and input */
+    font-size: 0.875rem;
+    color: #6c757d; /* Neutral color */
 }
 
 .replying-to-text {
-    color: #555;
-    font-size: 0.9rem;
-    line-height: 1.2;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    text-overflow: ellipsis;
+    margin: 0;
+    font-size: 0.75rem; /* Reduced font size for smaller text */
+    color: #bbb; /* Slightly darker for readability */
 }
 
 .replying-to-content {
-    font-weight: bold;
-    color: #333;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    max-width: 100%;
-    overflow: hidden;
+    font-size: 0.75rem; /* Match the smaller font size */
+    color: #bbb; /* Darker for emphasis */
+}
+
+.cancel-reply {
+    font-size: 0.75rem;
+    color: #007bff;
+    border: none;
+    background: none;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 1rem;
+}
+
+textarea {
+    flex-grow: 1;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    resize: none;
+    box-sizing: border-box;
 }
 
 
-	.cancel-reply {
-		font-size: 0.8rem;
-		color: #007bff;
-		background: none;
-		border: none;
-		cursor: pointer;
-		text-decoration: underline;
-	}
 </style>
