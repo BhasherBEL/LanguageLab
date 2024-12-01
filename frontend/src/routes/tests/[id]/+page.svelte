@@ -199,7 +199,6 @@
 
 	async function selectAnswer(selection: string, option: string) {
 		endSurveyAnswers[selection] = option;
-		console.log(endSurveyAnswers);
 		subStep += 1;
 		if (subStep == 4) {
 			await sendSurveyResponseInfoAPI(
@@ -428,4 +427,14 @@
 			<p>{$t('surveys.score')} {finalScore} %</p>
 		{/if}
 	</div>
+	{#if user == null}
+		<footer class="mt-auto text-center text-xs py-4">
+			{$t('register.consent.studyData.person')}: {$t('register.consent.studyData.personD')} - {$t(
+				'register.consent.studyData.email'
+			)}:
+			<a href="mailto:{$t('register.consent.studyData.emailD')}" class="link"
+				>{$t('register.consent.studyData.emailD')}</a
+			>
+		</footer>
+	{/if}
 {/if}
