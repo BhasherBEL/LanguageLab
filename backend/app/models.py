@@ -245,8 +245,9 @@ class SurveyResponse(Base):
     __tablename__ = "survey_responses"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(String)
+    code = Column(String)
     sid = Column(String)
+    uid = Column(Integer, ForeignKey("users.id"), default=None)
     created_at = Column(DateTime, default=datetime_aware)
     survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
     group_id = Column(Integer, ForeignKey("survey_groups.id"))
@@ -254,6 +255,17 @@ class SurveyResponse(Base):
     selected_id = Column(Integer)
     response_time = Column(Float)
     text = Column(String)
+
+
+class SurveyResponseInfo(Base):
+    __tablename__ = "survey_response_info"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sid = Column(String)
+    birthyear = Column(Integer)
+    gender = Column(String)
+    primary_language = Column(String)
+    education = Column(String)
 
 
 class Study(Base):

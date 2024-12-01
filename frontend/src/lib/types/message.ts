@@ -119,6 +119,18 @@ export default class Message {
 		});
 	}
 
+	async deleteFeedback(feedback: Feedback): Promise<boolean> {
+		const response = await feedback.delete();
+		if (!response) return false;
+
+		this._feedbacks.update((f) => f.filter((fb) => fb.id != feedback.id));
+		return true;
+	}
+
+	deleteLocalFeedback(feedback_id: number): void {
+		this._feedbacks.update((f) => f.filter((fb) => fb.id != feedback_id));
+	}
+
 	static parse(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		json: any,

@@ -13,8 +13,9 @@ export async function getSurveyAPI(survey_id: number) {
 }
 
 export async function sendSurveyResponseAPI(
-	uuid: string,
+	code: string,
 	sid: string,
+	uid: number | null,
 	survey_id: number,
 	group_id: number,
 	question_id: number,
@@ -23,8 +24,9 @@ export async function sendSurveyResponseAPI(
 	text: string = ''
 ) {
 	const response = await axiosInstance.post(`/surveys/responses`, {
-		uuid,
+		code,
 		sid,
+		uid,
 		survey_id,
 		question_id,
 		group_id,
@@ -35,6 +37,39 @@ export async function sendSurveyResponseAPI(
 
 	if (response.status !== 201) {
 		toastAlert('Failed to send survey response');
+		return false;
+	}
+
+	return true;
+}
+
+export async function getSurveyScoreAPI(survey_id: number, sid: string) {
+	const response = await axiosInstance.get(`/surveys/${survey_id}/score/${sid}`);
+	if (response.status !== 200) {
+		toastAlert('Failed to retrieve survey score');
+		return null;
+	}
+	return response.data;
+}
+
+export async function sendSurveyResponseInfoAPI(
+	survey_id: number,
+	sid: string,
+	birthyear: number,
+	gender: string,
+	primary_language: string,
+	education: string
+) {
+	const response = await axiosInstance.post(`/surveys/info/${survey_id}`, {
+		sid,
+		birthyear,
+		gender,
+		primary_language,
+		education
+	});
+
+	if (response.status !== 201) {
+		toastAlert('Failed to send survey response info');
 		return false;
 	}
 

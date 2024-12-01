@@ -317,6 +317,14 @@ export default class Session {
 							return;
 						}
 					}
+				} else if (data['action'] == 'deleteFeedback') {
+					const message = get(this._messages).find(
+						(m) => m instanceof Message && m.id === data['data']['message_id']
+					);
+					if (message && message instanceof Message) {
+						message.deleteLocalFeedback(data['data']['feedback_id']);
+						return;
+					}
 				}
 			} else if (data['type'] === 'presence') {
 				const user_id = data['data']['user'];

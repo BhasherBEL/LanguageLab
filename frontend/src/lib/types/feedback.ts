@@ -1,3 +1,4 @@
+import { deleteMessageFeedbackAPI } from '$lib/api/sessions';
 import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import Message from './message';
@@ -16,7 +17,7 @@ export default class Feedback {
 		start: number,
 		end: number,
 		content: string | null,
-		date: Date
+		date: Date = new Date()
 	) {
 		this._id = id;
 		this._message = message;
@@ -79,6 +80,10 @@ export default class Feedback {
 		);
 
 		return feedback;
+	}
+
+	async delete(): Promise<boolean> {
+		return await deleteMessageFeedbackAPI(this._message.session.id, this._message.id, this._id);
 	}
 
 	static parseAll(json: any, message: Message): Feedback[] {
