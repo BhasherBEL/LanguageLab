@@ -441,7 +441,7 @@ def get_survey_responses(db: Session, sid: str, skip: int = 0):
 def create_survey_response_info(
     db: Session, survey_response_info: schemas.SurveyResponseInfoCreate
 ):
-    db_survey_response_info = models.SurveyResponse(**survey_response_info.dict())
+    db_survey_response_info = models.SurveyResponseInfo(**survey_response_info.dict())
     db.add(db_survey_response_info)
     db.commit()
     db.refresh(db_survey_response_info)

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sendSurveyResponseAPI } from '$lib/api/survey';
+	import { sendSurveyResponseAPI, sendSurveyResponseInfoAPI } from '$lib/api/survey';
 	import { getSurveyScoreAPI } from '$lib/api/survey';
 
 	import Survey from '$lib/types/survey.js';
@@ -29,6 +29,7 @@
 
 	$: step = user ? 1 : 0;
 	$: uuid = user?.email || '';
+	$: uid = user?.id || null;
 	$: code = '';
 	$: subStep = 0;
 
@@ -45,6 +46,7 @@
 	shuffle(displayQuestionOptions);
 	let finalScore: number | null = null;
 	let selectedOption: string;
+	let endSurveyAnswers: { [key: string]: any } = {};
 
 	//source: shuffle function code taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array/18650169#18650169
 	function shuffle(array: string[]) {
@@ -62,8 +64,10 @@
 	function setGroupId(id: number) {
 		currentGroupId = id;
 		currentGroup = survey.groups[currentGroupId];
-		questionsRandomized = getSortedQuestions(currentGroup);
-		setQuestionId(0);
+		if (currentGroup.id < 1100) {
+			questionsRandomized = getSortedQuestions(currentGroup);
+			setQuestionId(0);
+		}
 	}
 
 	function setQuestionId(id: number) {
@@ -80,8 +84,9 @@
 	async function selectOption(option: string) {
 		if (
 			!(await sendSurveyResponseAPI(
-				uuid,
+				code,
 				sid,
+				uid,
 				survey.id,
 				currentGroupId,
 				questionsRandomized[currentQuestionId]['_id'],
@@ -91,7 +96,6 @@
 		) {
 			return;
 		}
-		console.log(currentQuestion.options.findIndex((o: string) => o === option));
 		if (currentQuestionId < questionsRandomized.length - 1) {
 			setQuestionId(currentQuestionId + 1);
 			startTime = new Date().getTime();
@@ -133,8 +137,17 @@
 	async function nextGroup() {
 		if (currentGroupId < survey.groups.length - 1) {
 			setGroupId(currentGroupId + 1);
+			//special group id for end of survey questions
+			if (currentGroup.id >= 1100) {
+				const scoreData = await getSurveyScoreAPI(survey.id, sid);
+				if (scoreData) {
+					finalScore = scoreData.score;
+				}
+				step += user ? 2 : 1;
+				return;
+			}
 		} else {
-			const scoreData = await getSurveyScoreAPI(survey.id);
+			const scoreData = await getSurveyScoreAPI(survey.id, sid);
 			if (scoreData) {
 				finalScore = scoreData.score;
 			}
@@ -184,11 +197,27 @@
 		return parts;
 	}
 
-	async function selectAnswer(option: string) {
-		//TODO
-		console.log(option);
+	async function selectAnswer(selection: string, option: string) {
+		endSurveyAnswers[selection] = option;
+		console.log(endSurveyAnswers);
 		subStep += 1;
-		if (subStep == 3) {
+		if (subStep == 4) {
+			console.log(
+				survey.id,
+				sid,
+				endSurveyAnswers.birthYear,
+				endSurveyAnswers.gender,
+				endSurveyAnswers.primaryLanguage,
+				endSurveyAnswers.education
+			);
+			await sendSurveyResponseInfoAPI(
+				survey.id,
+				sid,
+				endSurveyAnswers.birthYear,
+				endSurveyAnswers.gender,
+				endSurveyAnswers.primaryLanguage,
+				endSurveyAnswers.education
+			);
 			step += 1;
 		}
 		selectedOption = '';
@@ -325,46 +354,80 @@
 			</div>
 		</div>
 	{/if}
-{:else if step == 3}
-	{#if subStep === 0}
-		<div class="mx-auto mt-16 text-center">
-			<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.birthYear')}</pre>
-			<Dropdown
-				values={Array.from({ length: 82 }, (_, i) => i + 1931).reverse()}
-				bind:option={selectedOption}
-				placeholder={$t('surveys.birthYear')}
-				funct={() => selectAnswer(selectedOption)}
-			></Dropdown>
-		</div>
-	{:else if subStep === 1}
-		<div class="mx-auto mt-16 text-center">
-			<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.gender')}</pre>
-			<div class="flex flex-col items-center space-y-4">
-				{#each [$t('surveys.genders.male'), $t('surveys.genders.female'), $t('surveys.genders.other'), $t('surveys.genders.na')] as op}
-					<label class="radio-label flex items-center space-x-2">
-						<input
-							type="radio"
-							name="gender"
-							value={op}
-							on:change={() => selectAnswer(op)}
-							required
-							class="radio-button"
-						/>
-						<span>{op}</span>
-					</label>
-				{/each}
+{:else if step === 3}
+	{#if currentGroup.id === 1100}
+		{@const genderOptions = [
+			{ value: 'male', label: $t('surveys.genders.male') },
+			{ value: 'female', label: $t('surveys.genders.female') },
+			{ value: 'other', label: $t('surveys.genders.other') },
+			{ value: 'na', label: $t('surveys.genders.na') }
+		]}
+		{#if subStep === 0}
+			<div class="mx-auto mt-16 text-center">
+				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.birthYear')}</pre>
+				<Dropdown
+					values={Array.from({ length: 82 }, (_, i) => {
+						const year = 1931 + i;
+						return { value: year, display: year };
+					}).reverse()}
+					bind:option={selectedOption}
+					placeholder={$t('surveys.birthYear')}
+					funct={() => selectAnswer('birthYear', selectedOption)}
+				></Dropdown>
 			</div>
-		</div>
-	{:else if subStep === 2}
-		<div class="mx-auto mt-16 text-center">
-			<pre class="text-center font-bold py-4 px-6 m-auto">{$t('register.homeLanguage')}</pre>
-			<Dropdown
-				values={Object.entries(config.PRIMARY_LANGUAGE).map(([key, value]) => value)}
-				bind:option={selectedOption}
-				placeholder={$t('register.homeLanguage')}
-				funct={() => selectAnswer(selectedOption)}
-			></Dropdown>
-		</div>
+		{:else if subStep === 1}
+			<div class="mx-auto mt-16 text-center">
+				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.gender')}</pre>
+				<div class="flex flex-col items-center space-y-4">
+					{#each genderOptions as { value, label }}
+						<label class="radio-label flex items-center space-x-2">
+							<input
+								type="radio"
+								name="gender"
+								{value}
+								on:change={() => selectAnswer('gender', value)}
+								required
+								class="radio-button"
+							/>
+							<span>{label}</span>
+						</label>
+					{/each}
+				</div>
+			</div>
+		{:else if subStep === 2}
+			<div class="mx-auto mt-16 text-center">
+				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.homeLanguage')}</pre>
+				<Dropdown
+					values={Object.entries(config.PRIMARY_LANGUAGE).map(([code, name]) => ({
+						value: code,
+						display: name
+					}))}
+					bind:option={selectedOption}
+					placeholder={$t('surveys.homeLanguage')}
+					funct={() => selectAnswer('primaryLanguage', selectedOption)}
+				></Dropdown>
+			</div>
+		{:else if subStep === 3}
+			<div class="mx-auto mt-16 text-center">
+				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.education.title')}</pre>
+				<Dropdown
+					values={[
+						{ value: 'na', display: $t('surveys.education.na') },
+						{ value: 'PrimarySchool', display: $t('surveys.education.PrimarySchool') },
+						{ value: 'SecondarySchool', display: $t('surveys.education.SecondarySchool') },
+						{ value: 'NonUni', display: $t('surveys.education.NonUni') },
+						{ value: 'Bachelor', display: $t('surveys.education.Bachelor') },
+						{ value: 'Master', display: $t('surveys.education.Master') }
+					]}
+					bind:option={selectedOption}
+					placeholder={$t('surveys.education.title')}
+					funct={() => selectAnswer('education', selectedOption)}
+				></Dropdown>
+			</div>
+		{/if}
+	{:else}
+		<!--In case special id received not defined, can still keep going-->
+		{(step += 1)}
 	{/if}
 {:else if step == 4}
 	<div class="mx-auto mt-16 text-center">

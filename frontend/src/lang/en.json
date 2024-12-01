@@ -94,6 +94,16 @@
 			"female": "A women",
 			"other": "Other",
 			"na": "I prefer not to answer"
+		},
+		"homeLanguage": "First language",
+		"education": {
+			"title": "What is the highest grade, degree or level of education you achieved?",
+			"na": "None",
+			"PrimarySchool": "Primary school",
+			"SecondarySchool": "Secondary school/High school",
+			"NonUni": "Non-university degree",
+			"Bachelor": "Bachelor's degree",
+			"Master": "Master's degree or above"
 		}
 	}
 }

@@ -14,7 +14,7 @@
 	required
 >
 	<option value="" disabled selected>{placeholder}</option>
-	{#each values as op}
-		<option value={op}>{op}</option>
+	{#each values as { value, display }}
+		<option {value}>{display}</option>
 	{/each}
 </select>
