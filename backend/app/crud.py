@@ -247,6 +247,21 @@ def create_message_feedback(
     return db_message_feedback
 
 
+def get_message_feedback(db: Session, feedback_id: int):
+    return (
+        db.query(models.MessageFeedback)
+        .filter(models.MessageFeedback.id == feedback_id)
+        .first()
+    )
+
+
+def delete_message_feedback(db: Session, feedback_id: int):
+    db.query(models.MessageFeedback).filter(
+        models.MessageFeedback.id == feedback_id
+    ).delete()
+    db.commit()
+
+
 def create_study(db: Session, study: schemas.StudyCreate):
     db_study = models.Study(**study.dict())
     db.add(db_study)
@@ -414,10 +429,20 @@ def create_survey_response(db: Session, survey_response: schemas.SurveyResponseC
     return db_survey_response
 
 
-def get_survey_responses(db: Session, survey_id: int, skip: int = 0):
+def get_survey_responses(db: Session, sid: str, skip: int = 0):
     return (
         db.query(models.SurveyResponse)
-        .filter(models.SurveyResponse.survey_id == survey_id)
+        .filter(models.SurveyResponse.sid == sid)
         .offset(skip)
         .all()
     )
+
+
+def create_survey_response_info(
+    db: Session, survey_response_info: schemas.SurveyResponseInfoCreate
+):
+    db_survey_response_info = models.SurveyResponseInfo(**survey_response_info.dict())
+    db.add(db_survey_response_info)
+    db.commit()
+    db.refresh(db_survey_response_info)
+    return db_survey_response_info
