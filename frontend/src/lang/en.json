@@ -86,6 +86,14 @@
 		"score": "You got a score of ",
 		"code": "Your code:",
 		"codeIndication": "The instructor should have given you a personal code. If not, please write your email address.",
-		"invalidCode": "Invalid code"
+		"invalidCode": "Invalid code",
+		"birthYear": "The year you were born",
+		"gender": "What gender do you identify as?",
+		"genders": {
+			"male": "A man",
+			"female": "A women",
+			"other": "Other",
+			"na": "I prefer not to answer"
+		}
 	}
 }
