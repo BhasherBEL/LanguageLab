@@ -151,7 +151,7 @@
 			if (scoreData) {
 				finalScore = scoreData.score;
 			}
-			step+=2;
+			step += 2;
 		}
 	}
 
