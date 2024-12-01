@@ -151,7 +151,7 @@
 			if (scoreData) {
 				finalScore = scoreData.score;
 			}
-			step++;
+			step+=2;
 		}
 	}
 
@@ -202,14 +202,6 @@
 		console.log(endSurveyAnswers);
 		subStep += 1;
 		if (subStep == 4) {
-			console.log(
-				survey.id,
-				sid,
-				endSurveyAnswers.birthYear,
-				endSurveyAnswers.gender,
-				endSurveyAnswers.primaryLanguage,
-				endSurveyAnswers.education
-			);
 			await sendSurveyResponseInfoAPI(
 				survey.id,
 				sid,
