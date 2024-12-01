@@ -198,23 +198,23 @@ function keyPress(event: KeyboardEvent) {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #f8f9fa; /* Light background */
+    background: #f8f9fa; 
     padding: 0.5rem;
     border-radius: 0.25rem;
-    margin-bottom: 0.1rem; /* Space between preview and input */
+    margin-bottom: 0.1rem; 
     font-size: 0.875rem;
-    color: #6c757d; /* Neutral color */
+    color: #6c757d; 
 }
 
 .replying-to-text {
     margin: 0;
-    font-size: 0.75rem; /* Reduced font size for smaller text */
-    color: #bbb; /* Slightly darker for readability */
+    font-size: 0.75rem; 
+    color: #bbb; 
 }
 
 .replying-to-content {
-    font-size: 0.75rem; /* Match the smaller font size */
-    color: #bbb; /* Darker for emphasis */
+    font-size: 0.75rem; 
+    color: #bbb; 
 }
 
 .cancel-reply {
