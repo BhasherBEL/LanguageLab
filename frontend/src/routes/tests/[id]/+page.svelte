@@ -10,6 +10,7 @@
 	import type SurveyGroup from '$lib/types/surveyGroup';
 	import Gapfill from '$lib/components/surveys/gapfill.svelte';
 	import Consent from '$lib/components/surveys/consent.svelte';
+	import Dropdown from '\$lib/components/surveys/dropdown.svelte';
 	import config from '$lib/config';
 	import { formatToUTCDate } from '$lib/utils/date';
 
@@ -29,6 +30,7 @@
 	$: step = user ? 1 : 0;
 	$: uuid = user?.email || '';
 	$: code = '';
+	$: subStep = 0;
 
 	let currentGroupId = 0;
 	let currentGroup = survey.groups[currentGroupId];
@@ -42,6 +44,7 @@
 	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])];
 	shuffle(displayQuestionOptions);
 	let finalScore: number | null = null;
+	let selectedOption : string;
 
 	//source: shuffle function code taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array/18650169#18650169
 	function shuffle(array: string[]) {
@@ -144,7 +147,10 @@
 			toastWarning(get(t)('surveys.invalidCode'));
 			return;
 		}
-		//TODO: check format du code?
+		if(code.length < 3){
+			toastWarning(get(t)('surveys.invalidCode'));
+			return;
+		}
 
 		step = 2;
 	}
@@ -177,11 +183,25 @@
 
 		return parts;
 	}
+
+	async function selectAnswer(option: string) {
+		//TODO
+		console.log(option);
+		subStep+=1;
+		if(subStep == 3){
+			step+=1;
+		}
+		selectedOption = "";
+		return;
+	}
+
 </script>
 
 {#if step == 0}
 	<div class="max-w-screen-md mx-auto p-5">
-		<Consent introText={$t('register.consent.intro')} />
+		<Consent introText={$t('register.consent.intro')} participation={$t('register.consent.participation')}
+						 participationD={$t('register.consent.participationD')} privacy={$t('register.consent.privacy')}
+						 privacyD={$t('register.consent.privacyD')} rights={$t('register.consent.rights')} />
 		<div class="form-control">
 			<button class="button mt-4" on:click={() => step++}>
 				{$t('register.consent.ok')}
@@ -302,6 +322,41 @@
 		</div>
 	{/if}
 {:else if step == 3}
+   {#if subStep === 0}
+			<div class="mx-auto mt-16 text-center">
+				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.birthYear')}</pre>
+				<Dropdown values={Array.from({ length: 82 }, (_, i) => i + 1931).reverse()}
+									bind:option={selectedOption} placeholder={$t('surveys.birthYear')}
+									funct={() => selectAnswer(selectedOption)}></Dropdown>
+			</div>
+	 {:else if subStep === 1}
+			<div class="mx-auto mt-16 text-center">
+				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.gender')}</pre>
+				<div class="flex flex-col items-center space-y-4">
+					{#each [$t('surveys.genders.male'), $t('surveys.genders.female'), $t('surveys.genders.other'), $t('surveys.genders.na')] as op}
+						<label class="radio-label flex items-center space-x-2">
+							<input
+								type="radio"
+								name="gender"
+								value={op}
+								on:change={() => selectAnswer(op)}
+								required
+								class="radio-button"
+							/>
+							<span>{op}</span>
+						</label>
+					{/each}
+				</div>
+			</div>
+	 {:else if subStep === 2}
+		 <div class="mx-auto mt-16 text-center">
+			 <pre class="text-center font-bold py-4 px-6 m-auto">{$t('register.homeLanguage')}</pre>
+			 <Dropdown values={ Object.entries(config.PRIMARY_LANGUAGE).map(([key, value]) => value)}
+								 bind:option={selectedOption} placeholder={$t('register.homeLanguage')}
+								 funct={() => selectAnswer(selectedOption)}></Dropdown>
+		 </div>
+	 {/if}
+{:else if step == 4}
 	<div class="mx-auto mt-16 text-center">
 		<h1>{$t('surveys.complete')}</h1>
 		{#if finalScore !== null}

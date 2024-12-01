@@ -202,7 +202,9 @@
 		</div>
 	{/if}
 	{#if current_step == 1}
-		<Consent introText={$t('register.consent.intro')} />
+		<Consent introText={$t('register.consent.intro')} participation={$t('register.consent.participation')}
+						 participationD={$t('register.consent.participationD')} privacy={$t('register.consent.privacy')}
+						 privacyD={$t('register.consent.privacyD')} rights={$t('register.consent.rights')} />
 		<div class="form-control">
 			<button class="button mt-4" on:click={() => current_step++}>
 				{$t('register.consent.ok')}

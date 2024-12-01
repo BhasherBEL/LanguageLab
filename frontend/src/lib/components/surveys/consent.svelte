@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { locale, t } from '$lib/services/i18n';
 	export let introText: string;
+	export let participation: string;
+	export let participationD: string;
+	export let privacy: string;
+	export let privacyD: string;
+	export let rights: string;
 </script>
 
 <div class="join join-vertical w-full">
@@ -10,17 +15,17 @@
 	</div>
 	<div class="collapse collapse-arrow join-item border border-base-300">
 		<input type="radio" name="consent-accordion" checked="checked" />
-		<div class="collapse-title font-medium">{$t('register.consent.participation')}</div>
-		<div class="collapse-content"><p>{@html $t('register.consent.participationD')}</p></div>
+		<div class="collapse-title font-medium">{participation}</div>
+		<div class="collapse-content"><p>{@html participationD}</p></div>
 	</div>
 	<div class="collapse collapse-arrow join-item border border-base-300">
 		<input type="radio" name="consent-accordion" />
-		<div class="collapse-title font-medium">{$t('register.consent.privacy')}</div>
-		<div class="collapse-content"><p>{@html $t('register.consent.privacyD')}</p></div>
+		<div class="collapse-title font-medium">{privacy}</div>
+		<div class="collapse-content"><p>{@html privacyD}</p></div>
 	</div>
 	<div class="collapse collapse-arrow join-item border border-base-300">
 		<input type="radio" name="consent-accordion" />
-		<div class="collapse-title font-medium">{$t('register.consent.rights')}</div>
+		<div class="collapse-title font-medium">{rights}</div>
 		<div class="collapse-content">
 			<p>
 				{$t('register.consent.rightsD')}
