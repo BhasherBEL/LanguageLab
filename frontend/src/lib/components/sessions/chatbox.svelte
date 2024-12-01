@@ -14,36 +14,35 @@
 	let messages = get(session.messages);
 
 	session.messages.subscribe((newMessages) => {
-    let news = newMessages
-        .filter((m) => !messages.find((m2) => m2.message_id === m.message_id))
-        .at(-1);
-    messages = newMessages;
-    if (!news) return;
+		let news = newMessages
+			.filter((m) => !messages.find((m2) => m2.message_id === m.message_id))
+			.at(-1);
+		messages = newMessages;
+		if (!news) return;
 
-    if (document.hidden) {
-        // Handle notifications
-        if (Notification.permission === 'granted') {
-            try {
-                new Notification(news.user.nickname, {
-                    body: news.content,
-                    icon: '/favicon.ico',
-                });
-            } catch (error) {
-                console.warn('Notification creation failed:', error);
-            }
-        }
-        // Handle audio playback
-		(async () => {
-			try {
-				const audio = new Audio('/notification.wav');
-				await audio.play();
-			} catch (error) {
-				console.warn('Audio playback failed:', error);
+		if (document.hidden) {
+			// Handle notifications
+			if (Notification.permission === 'granted') {
+				try {
+					new Notification(news.user.nickname, {
+						body: news.content,
+						icon: '/favicon.ico'
+					});
+				} catch (error) {
+					console.warn('Notification creation failed:', error);
+				}
 			}
-		})();
-    }
-});
-
+			// Handle audio playback
+			(async () => {
+				try {
+					const audio = new Audio('/notification.wav');
+					await audio.play();
+				} catch (error) {
+					console.warn('Audio playback failed:', error);
+				}
+			})();
+		}
+	});
 
 	let wsConnected = true;
 	let timeout: number;

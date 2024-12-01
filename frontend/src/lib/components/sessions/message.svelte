@@ -115,7 +115,11 @@
 		data-is-sender={isSender}
 	>
 		{#if replyToMessage}
-			<button class="replying-to-text" on:click={() => scrollToMessage(replyToMessage?.id)} aria-label="Scroll to replied message">
+			<button
+				class="replying-to-text"
+				on:click={() => scrollToMessage(replyToMessage?.id)}
+				aria-label="Scroll to replied message"
+			>
 				{$t('chatbox.replyingTo')}
 				<span class="replying-to-content">{truncateMessage(replyToMessage?.content)}</span>
 			</button>
@@ -269,6 +273,4 @@
 			background-color: rgba(255, 255, 0, 0.6);
 		}
 	}
-
-
 </style>
