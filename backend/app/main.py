@@ -1296,15 +1296,28 @@ def get_survey_responses(
     return crud.get_survey_responses(db, survey_id)
 
 
-@surveyRouter.get("/{survey_id}/score", response_model=dict)
-def get_survey_score(
+@surveyRouter.post("/info/{survey_id}", status_code=status.HTTP_201_CREATED)
+def create_survey_info(
     survey_id: int,
+    info: schemas.SurveyResponseInfoCreate,
     db: Session = Depends(get_db),
 ):
     if not crud.get_survey(db, survey_id):
         raise HTTPException(status_code=404, detail="Survey not found")
 
-    responses = crud.get_survey_responses(db, survey_id)
+    return crud.create_survey_response_info(db, info)
+
+
+@surveyRouter.get("/{survey_id}/score/{sid}", response_model=dict)
+def get_survey_score(
+    survey_id: int,
+    sid: str,
+    db: Session = Depends(get_db),
+):
+    if not crud.get_survey(db, survey_id):
+        raise HTTPException(status_code=404, detail="Survey not found")
+
+    responses = crud.get_survey_responses(db, sid)
 
     score = 0
     total = 0
@@ -1316,7 +1329,10 @@ def get_survey_score(
         if response.selected_id == question.correct:
             score += 1
 
-    return {"survey_id": survey_id, "score": round((score / total) * 100, 2)}
+    return {
+        "survey_id": survey_id,
+        "score": round((score / total) * 100 if total > 0 else 0, 2),
+    }
 
 
 v1Router.include_router(authRouter)
