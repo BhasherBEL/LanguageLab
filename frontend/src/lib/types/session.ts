@@ -222,7 +222,7 @@ export default class Session {
 			new Date(),
 			sender,
 			this,
-			json.reply_to 
+			json.reply_to
 		);
 
 		return message;
@@ -240,28 +240,27 @@ export default class Session {
 	private presenceTimer: NodeJS.Timeout | null = null;
 
 	async sendPresence(): Promise<void> {
-    if (this.presenceTimer) {
-        clearTimeout(this.presenceTimer);
-    }
+		if (this.presenceTimer) {
+			clearTimeout(this.presenceTimer);
+		}
 
-    this.presenceTimer = setTimeout(async () => {
-        try {
-            const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
-            if (response.status === 204) {
-                console.log('Presence updated successfully');
-            } else {
-                console.warn('Unexpected presence response:', response.status);
-            }
-        } catch (error) {
-            console.error('Error in sendPresence:', error.message || error);
-        }
-    }, 5000); // Debounce with a 5-second delay
-}
+		this.presenceTimer = setTimeout(async () => {
+			try {
+				const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
+				if (response.status === 204) {
+					console.log('Presence updated successfully');
+				} else {
+					console.warn('Unexpected presence response:', response.status);
+				}
+			} catch (error) {
+				console.error('Error in sendPresence:', error.message || error);
+			}
+		}, 5000); // Debounce with a 5-second delay
+	}
 
 	async sendSatisfy(usefullness: number, easiness: number, remarks: string): Promise<boolean> {
 		return await createSessionSatisfyAPI(this.id, usefullness, easiness, remarks);
 	}
-	
 
 	async changeLanguage(language: string): Promise<boolean> {
 		const res = await patchLanguageAPI(this.id, language);

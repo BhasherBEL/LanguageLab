@@ -5,13 +5,13 @@ import { writable } from 'svelte/store';
 export const replyToMessage: Writable<Message | null> = writable(null);
 
 export function initiateReply(message: Message): void {
-    replyToMessage.set(message);
+	replyToMessage.set(message);
 }
 
 export function clearReplyToMessage(): void {
-    replyToMessage.set(null);
+	replyToMessage.set(null);
 }
 
 replyToMessage.subscribe((value) => {
-    console.log('Updated replyToMessage:', value);
+	console.log('Updated replyToMessage:', value);
 });
