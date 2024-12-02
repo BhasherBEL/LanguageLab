@@ -6,7 +6,7 @@
 </script>
 
 <select
-	class="select select-bordered !ml-0"
+	class="w-full select select-bordered !ml-0"
 	id="dropdown"
 	name="dropdown"
 	bind:value={option}
