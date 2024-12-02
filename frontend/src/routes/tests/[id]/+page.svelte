@@ -280,7 +280,7 @@
 		</div>
 
 		<div class="mx-auto mt-16">
-			<div class="flex justify-around min-w-[600px] space-x-10">
+			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 				{#each displayQuestionOptions as option (option)}
 					{@const type = option.split(':')[0]}
 					{#if type == 'dropdown'}
@@ -354,8 +354,8 @@
 			{ value: 'na', label: $t('surveys.genders.na') }
 		]}
 		{#if subStep === 0}
-			<div class="mx-auto mt-16 text-center">
-				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.birthYear')}</pre>
+			<div class="mx-auto mt-16 text-center px-4">
+				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.birthYear')}</p>
 				<Dropdown
 					values={Array.from({ length: 82 }, (_, i) => {
 						const year = 1931 + i;
@@ -367,8 +367,8 @@
 				></Dropdown>
 			</div>
 		{:else if subStep === 1}
-			<div class="mx-auto mt-16 text-center">
-				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.gender')}</pre>
+			<div class="mx-auto mt-16 text-center px-4">
+				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.gender')}</p>
 				<div class="flex flex-col items-center space-y-4">
 					{#each genderOptions as { value, label }}
 						<label class="radio-label flex items-center space-x-2">
@@ -386,8 +386,8 @@
 				</div>
 			</div>
 		{:else if subStep === 2}
-			<div class="mx-auto mt-16 text-center">
-				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.homeLanguage')}</pre>
+			<div class="mx-auto mt-16 text-center px-4">
+				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.homeLanguage')}</p>
 				<Dropdown
 					values={Object.entries(config.PRIMARY_LANGUAGE).map(([code, name]) => ({
 						value: code,
@@ -399,11 +399,11 @@
 				></Dropdown>
 			</div>
 		{:else if subStep === 3}
-			<div class="mx-auto mt-16 text-center">
-				<pre class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.education.title')}</pre>
+			<div class="mx-auto mt-16 text-center px-4">
+				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.education.title')}</p>
 				<Dropdown
 					values={[
-						{ value: 'na', display: $t('surveys.education.na') },
+						{ value: 'NoEducation', display: $t('surveys.education.NoEducation') },
 						{ value: 'PrimarySchool', display: $t('surveys.education.PrimarySchool') },
 						{ value: 'SecondarySchool', display: $t('surveys.education.SecondarySchool') },
 						{ value: 'NonUni', display: $t('surveys.education.NonUni') },

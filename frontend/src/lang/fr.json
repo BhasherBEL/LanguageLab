@@ -210,7 +210,7 @@
 		"homeLanguage": "Première Langue",
 		"education": {
 			"title": "Quel est le grade, le diplôme ou le niveau d'études le plus élevé que vous ayez obtenu ?",
-			"na": "Aucun",
+			"NoEducation": "Aucun",
 			"PrimarySchool": "École primaire",
 			"SecondarySchool": "École secondaire",
 			"NonUni": "Diplôme non universitaire",
