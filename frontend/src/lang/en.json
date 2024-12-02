@@ -98,7 +98,7 @@
 		"homeLanguage": "First language",
 		"education": {
 			"title": "What is the highest grade, degree or level of education you achieved?",
-			"na": "None",
+			"NoEducation": "None",
 			"PrimarySchool": "Primary school",
 			"SecondarySchool": "Secondary school/High school",
 			"NonUni": "Non-university degree",
