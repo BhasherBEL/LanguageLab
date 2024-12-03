@@ -74,4 +74,4 @@ By default, only one admin is created (and only once), using the email and passw
 
 #### Breaking changes in database
 
-Sometimes, breaking changes are made in the database. In such cases, manual actions are necessary to get the application works again. The easiest way to get the project working again in development is to completely delete the database file (`/backend/languagelab.sqlite`).
+Sometimes, breaking changes are made in the database. In such cases, manual actions are necessary to get the application works again. The easiest way to get the project working again in development is to completely delete the database file (`/backend/languagelab.sqlite`). It may also be necessary to clear the cookies and cache to avoid visual issues.

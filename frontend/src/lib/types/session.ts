@@ -1,4 +1,4 @@
-import { toastAlert, toastWarning } from '$lib/utils/toasts';
+import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import User, { user } from './user';
 import { axiosInstance } from '$lib/api/apiInstance';
@@ -28,7 +28,8 @@ export default class Session {
 	private _token: string;
 	private _is_active: boolean;
 	private _users: User[];
-	private _messages: Writable<Message[]>;
+	private _messages: Writable<(Message | Feedback)[]>;
+
 	private _created_at: Date;
 	private _start_time: Date;
 	private _end_time: Date;
@@ -95,7 +96,7 @@ export default class Session {
 		return this._language;
 	}
 
-	get messages(): Writable<Message[]> {
+	get messages(): Writable<(Message | Feedback)[]> {
 		return this._messages;
 	}
 
@@ -287,10 +288,14 @@ export default class Session {
 					const message = Message.parse(data['data']);
 					if (message) {
 						this._messages.update((messages) => {
-							if (!messages.find((m) => m.message_id === message.message_id)) {
+							if (
+								!messages.find((m) => m instanceof Message && m.message_id === message.message_id)
+							) {
 								return [...messages, message];
 							}
-							return messages.map((m) => (m.message_id === message.message_id ? message : m));
+							return messages.map((m) =>
+								m instanceof Message && m.message_id === message.message_id ? message : m
+							);
 						});
 
 						return;
@@ -298,19 +303,23 @@ export default class Session {
 				} else if (data['action'] === 'update') {
 					const message = Message.parse(data['data']);
 					if (message) {
-						if (get(this._messages).find((m) => m.id === message.id)) {
+						if (get(this._messages).find((m) => m instanceof Message && m.id === message.id)) {
 							this._messages.update((messages) => {
-								const mEdited = messages.find((m) => m.id === message.id);
-								if (!mEdited) return messages;
+								const mEdited = messages.find((m) => m instanceof Message && m.id === message.id);
+								if (!mEdited || !(mEdited instanceof Message)) return messages;
 								mEdited.localUpdate(message.content, true);
 								return messages.map((m) => (m.id === message.id ? mEdited : m));
 							});
 						} else {
 							this._messages.update((messages) => {
-								const mEdited = messages.find((m) => m.message_id === message.message_id);
-								if (!mEdited) return messages;
+								const mEdited = messages.find(
+									(m) => m instanceof Message && m.message_id === message.message_id
+								);
+								if (!mEdited || !(mEdited instanceof Message)) return messages;
 								mEdited.localUpdate(message.content);
-								return messages.map((m) => (m.message_id === message.message_id ? mEdited : m));
+								return messages.map((m) =>
+									m instanceof Message && m.message_id === message.message_id ? mEdited : m
+								);
 							});
 
 							return;
@@ -320,13 +329,24 @@ export default class Session {
 					this._lastTyping.set(new Date());
 					return;
 				} else if (data['action'] == 'feedback') {
-					const message = get(this._messages).find((m) => m.id === data['data']['message_id']);
-					if (message) {
+					const message = get(this._messages).find(
+						(m) => m instanceof Message && m.id === data['data']['message_id']
+					);
+					if (message && message instanceof Message) {
 						const feedback = Feedback.parse(data['data'], message);
 						if (feedback) {
 							feedback.message.localFeedback(feedback);
+							this._messages.update((ms) => [...ms, feedback]);
 							return;
 						}
+					}
+				} else if (data['action'] == 'deleteFeedback') {
+					const message = get(this._messages).find(
+						(m) => m instanceof Message && m.id === data['data']['message_id']
+					);
+					if (message && message instanceof Message) {
+						message.deleteLocalFeedback(data['data']['feedback_id']);
+						return;
 					}
 				}
 			} else if (data['type'] === 'presence') {

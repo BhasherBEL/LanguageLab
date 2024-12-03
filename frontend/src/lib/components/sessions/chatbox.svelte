@@ -7,6 +7,8 @@
 	import { t } from '$lib/services/i18n';
 	import { toastSuccess } from '$lib/utils/toasts';
 	import { Icon, PencilSquare } from 'svelte-hero-icons';
+	import Message from '$lib/types/message';
+	import Feedback from '$lib/types/feedback';
 
 	export let token: string;
 
@@ -15,10 +17,15 @@
 
 	session.messages.subscribe((newMessages) => {
 		let news = newMessages
-			.filter((m) => !messages.find((m2) => m2.message_id === m.message_id))
+			.filter(
+				(m) =>
+					!messages.find(
+						(m2) => m instanceof Message && m2 instanceof Message && m2.message_id === m.message_id
+					)
+			)
 			.at(-1);
 		messages = newMessages;
-		if (!news) return;
+		if (!news || !(news instanceof Message)) return;
 
 		if (document.hidden) {
 			// Handle notifications
@@ -135,13 +142,21 @@
 	});
 </script>
 
-<div class="flex flex-col w-full h-full border-x-2">
+<div class="flex flex-col w-full h-full border-x-2 scroll-smooth">
 	<div class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex mb-2">
 		<div class:hidden={!isTyping}>
 			<span class="loading loading-dots loading-md"></span>
 		</div>
-		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.message_id)}
-			<MessageC {message} />
+		{#each messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.uuid)}
+			{#if message instanceof Message}
+				<MessageC {message} />
+			{:else if message instanceof Feedback}
+				<a class="text-center italic text-gray-500 my-2" href="#{message.message.uuid}">
+					{$t('session.feedbackInline')} "{message.message.content.length > 20
+						? message.message.content.substring(0, 20) + '...'
+						: message.message.content}"
+				</a>
+			{/if}
 		{/each}
 	</div>
 	{#if !wsConnected}

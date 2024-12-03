@@ -154,6 +154,9 @@ class MessageMetadata(Base):
     message = Column(String)
     date = Column(Integer)
 
+    def raw(self):
+        return [self.id, self.message_id, self.message, self.date]
+
 
 class MessageFeedback(Base):
     __tablename__ = "message_feedbacks"
@@ -164,6 +167,9 @@ class MessageFeedback(Base):
     end = Column(Integer)
     content = Column(String, default="")
     date = Column(DateTime, default=datetime_aware)
+
+    def raw(self):
+        return [self.id, self.message_id, self.start, self.end, self.content, self.date]
 
 
 class TestTyping(Base):
@@ -242,8 +248,9 @@ class SurveyResponse(Base):
     __tablename__ = "survey_responses"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(String)
+    code = Column(String)
     sid = Column(String)
+    uid = Column(Integer, ForeignKey("users.id"), default=None)
     created_at = Column(DateTime, default=datetime_aware)
     survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
     group_id = Column(Integer, ForeignKey("survey_groups.id"))
@@ -251,6 +258,17 @@ class SurveyResponse(Base):
     selected_id = Column(Integer)
     response_time = Column(Float)
     text = Column(String)
+
+
+class SurveyResponseInfo(Base):
+    __tablename__ = "survey_response_info"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sid = Column(String)
+    birthyear = Column(Integer)
+    gender = Column(String)
+    primary_language = Column(String)
+    education = Column(String)
 
 
 class Study(Base):

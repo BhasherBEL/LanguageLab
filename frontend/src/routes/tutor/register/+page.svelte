@@ -8,14 +8,10 @@
 	import { get } from 'svelte/store';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import User, { users } from '$lib/types/user';
-	import {
-		getUsersAPI,
-		patchUserAPI,
-		createUserContactAPI,
-		getUserContactsAPI
-	} from '$lib/api/users';
+	import { getUsersAPI, patchUserAPI, getUserContactsAPI } from '$lib/api/users';
 	import { Icon, Envelope, Key, UserCircle, Calendar, QuestionMarkCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
+	import { formatToUTCDate } from '$lib/utils/date';
 
 	let current_step = 0;
 
@@ -57,12 +53,6 @@
 	let calcom_link = '';
 
 	let timeslots = 0n;
-	$: filteredUsers = $users.filter((user) => {
-		if (user.availability === 0n) return false;
-		if (timeslots === 0n) return true;
-
-		return user.availability & timeslots;
-	});
 
 	async function onRegister() {
 		if (nickname == '' || email == '' || password == '' || confirmPassword == '') {
@@ -360,7 +350,7 @@
 					id="birthyear"
 					name="birthyear"
 					required
-					bind:value={birthdate}
+					on:change={(e) => (birthdate = formatToUTCDate(new Date(e.target.value, 1, 1)))}
 				>
 					<option disabled selected value="">{$t('register.birthyear')}</option>
 					{#each Array.from({ length: 82 }, (_, i) => i + 1931).reverse() as year}

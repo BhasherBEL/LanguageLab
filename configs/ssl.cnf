@@ -4,9 +4,18 @@ prompt = no
 encrypt_key = no
 default_md = sha512 
 distinguished_name = dn
+req_extensions = req_ext
 
 [dn]
 C = BE
 L = Louvain-la-Neuve
 O = Universite catholique de Louvain
-CN = languagelab.sipr.ucl.ac.be
+CN = languagelab.be
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = www.languagelab.be
+DNS.2 = api.languagelab.be
+DNS.3 = dev.languagelab.be

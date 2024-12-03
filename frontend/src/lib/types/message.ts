@@ -73,8 +73,8 @@ export default class Message {
 		return this._feedbacks;
 	}
 
-	get replyTo(): any {
-		return this._replyTo;
+	get uuid(): string {
+		return `message-${this._message_id}`;
 	}
 
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
@@ -122,9 +122,12 @@ export default class Message {
 	}
 
 	async localUpdate(content: string, force: boolean = false): Promise<boolean> {
+		if (!force) {
+			this._versions.update((v) => [...v, { content: content, date: new Date() }]);
+			this._edited = true;
+		}
 		this._content = content;
 		this.feedbacks.set([]);
-		if (!force) this._edited = true;
 
 		return true;
 	}
@@ -149,6 +152,18 @@ export default class Message {
 			if (!f.find((fb) => fb.id == feedback.id)) return [...f, feedback];
 			return f.map((fb) => (fb.id == feedback.id ? feedback : fb));
 		});
+	}
+
+	async deleteFeedback(feedback: Feedback): Promise<boolean> {
+		const response = await feedback.delete();
+		if (!response) return false;
+
+		this._feedbacks.update((f) => f.filter((fb) => fb.id != feedback.id));
+		return true;
+	}
+
+	deleteLocalFeedback(feedback_id: number): void {
+		this._feedbacks.update((f) => f.filter((fb) => fb.id != feedback_id));
 	}
 
 	static parse(
@@ -218,7 +233,9 @@ export default class Message {
 
 			if (!m) continue;
 
-			const prev = messages.find((msg) => msg.message_id == m?.message_id);
+			const prev = messages.find(
+				(msg) => msg instanceof Message && msg.message_id == m?.message_id
+			);
 
 			if (!prev) {
 				messages.push(m);

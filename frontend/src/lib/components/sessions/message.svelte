@@ -7,6 +7,7 @@
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
 	import { initiateReply } from '$lib/utils/replyUtils';
+	import CloseIcon from '../icons/closeIcon.svelte';
 
 	export let message: Message;
 
@@ -96,6 +97,13 @@
 	}
 
 	const isSender = message.user.id == $user?.id;
+
+	async function deleteFeedback(feedback: Feedback | null) {
+		if (!feedback) return;
+		if (!confirm($t('chatbox.deleteFeedback'))) return;
+
+		await message.deleteFeedback(feedback);
+	}
 </script>
 
 <!-- Messages Display -->
@@ -134,6 +142,13 @@
 		</button>
 
 		{#if isEdit}
+			<div
+				contenteditable="true"
+				bind:this={contentDiv}
+				class="bg-blue-50 whitespace-pre-wrap min-h-8"
+			>
+				{message.content}
+			</div>
 			<button
 				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
 				on:click={() => endEdit()}
@@ -146,13 +161,47 @@
 			>
 				{$t('button.cancel')}
 			</button>
+		{:else}
+			<div class="whitespace-pre-wrap" bind:this={contentDiv}>
+				{#each parts as part}
+					{#if isEdit || !part.feedback}
+						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
+					{:else}
+						<!-- prettier-ignore -->
+						<span class=""
+							><!--
+						--><span
+								class="underline group/feedback relative decoration-wavy hover:cursor-help"
+								class:decoration-blue-500={part.feedback.content}
+								class:decoration-red-500={!part.feedback.content}
+								><div
+									class="absolute group-hover/feedback:flex hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10"
+								><!--
+									-->{part.feedback.content}<button
+										aria-label="close"
+										class:ml-1={part.feedback.content}
+										class="hover:border-inherit border border-transparent rounded"
+										on:click={() => deleteFeedback(part.feedback)}
+									>
+										<CloseIcon />
+									</button>
+								</div
+								><!--
+						-->{part.text}<!--
+					--></span
+							><!--
+					--></span
+						>
+					{/if}
+				{/each}
+			</div>
 		{/if}
 		{#if isSender}
 			<button
-				class="absolute left-[-1.5rem] mt-2 mr-2 invisible group-hover:visible"
+				class="absolute bottom-0 left-[-1.5rem] invisible group-hover:visible h-full p-0"
 				on:click={() => (isEdit ? endEdit() : startEdit())}
 			>
-				<Icon src={Pencil} class="w-4 h-4 text-gray-800" />
+				<Icon src={Pencil} class="w-5 h-full text-gray-500 hover:text-gray-800" />
 			</button>
 		{/if}
 	</div>
@@ -160,7 +209,9 @@
 		<Icon src={Check} class="w-4 inline" />
 		{displayedTime}
 		{#if message.edited}
-			<span class="italic">Edited</span>
+			<button class="italic cursor-help" on:click={() => historyModal.showModal()}>
+				{$t('chatbox.edited')}
+			</button>
 		{/if}
 	</div>
 </div>

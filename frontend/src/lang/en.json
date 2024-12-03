@@ -78,5 +78,33 @@
 			"true": "Yes",
 			"false": "No"
 		}
+	},
+	"button": {
+		"next": "Next"
+	},
+	"surveys": {
+		"complete": "Thank you for participating!",
+		"score": "You got a score of ",
+		"code": "Your code:",
+		"codeIndication": "The instructor should have given you a personal code. If not, please write your email address.",
+		"invalidCode": "Invalid code",
+		"birthYear": "The year you were born",
+		"gender": "What gender do you identify as?",
+		"genders": {
+			"male": "A man",
+			"female": "A women",
+			"other": "Other",
+			"na": "I prefer not to answer"
+		},
+		"homeLanguage": "First language",
+		"education": {
+			"title": "What is the highest grade, degree or level of education you achieved?",
+			"NoEducation": "None",
+			"PrimarySchool": "Primary school",
+			"SecondarySchool": "Secondary school/High school",
+			"NonUni": "Non-university degree",
+			"Bachelor": "Bachelor's degree",
+			"Master": "Master's degree or above"
+		}
 	}
 }

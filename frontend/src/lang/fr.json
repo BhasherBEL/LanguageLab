@@ -20,13 +20,11 @@
 		"disabled": "Cette session est accessible uniquement en lecture",
 		"edited": "modifié",
 		"history": "Historique",
-		"replyingTo": "En réponse à : "
+		"replyingTo": "En réponse à : ",
+		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible."
 	},
 	"home": {
-		"date": "Date",
-		"participants": "Participants",
 		"email": "E-mail",
-		"actions": "Actions",
 		"add": "Ajouter",
 		"deleteSessionConfirm": "Êtes-vous sûr de vouloir supprimer cette session ? Cette action est irréversible.",
 		"createSession": "Session immédiate",
@@ -43,7 +41,9 @@
 		"pastSessions": "Sessions terminées",
 		"newContact": "Ajouter un contact",
 		"bookingSuccessful": "Session réservée avec succès",
-		"bookingFailed": "Erreur lors de la réservation de la session"
+		"bookingFailed": "Erreur lors de la réservation de la session",
+		"noCurrentOrFutureSessions": "Aucune session en cours ou planifiée",
+		"noSessions": "Aucune session"
 	},
 	"login": {
 		"email": "E-mail",
@@ -184,7 +184,40 @@
 		"loginUser": "Se connecter via un compte utilisateur",
 		"loginEmail": "Utiliser une adresse e-mail",
 		"invalidEmail": "Adresse e-mail invalide",
-		"complete": "Questionnaire complété. Merci pour votre participation !"
+		"complete": "Questionnaire complété. Merci pour votre participation !",
+		"score": "Vous avez obtenu un score de ",
+		"code": "Votre code:",
+		"codeIndication": "L'instructeur devrait vous avoir donné un code personnel. Si ce n'est pas le cas, veuillez indiquer votre adresse électronique.",
+		"invalidCode": "Code invalide",
+		"consent": {
+			"title": "Document d’information et consentement éclairé",
+			"intro": "Vous êtes invité·e à participer à une étude scientifique. L'objectif de cette étude est de comprendre comment les tuteurs et les apprenants de langue étrangère interagissent lors de sessions de tutorat en ligne. Les données collectées seront utilisées pour améliorer les outils de tutorat en ligne et pour mieux comprendre les processus cognitifs de part et d'autre.",
+			"participation": "Qu'implique votre participation ?",
+			"participationD": "Si vous acceptez de participer, vous serez invité·e à participer à des sessions de tutorat en ligne avec un tuteur de langue étrangère. Vous serez également invité à remplir des questionnaires avant et après les sessions de tutorat. Les sessions de tutorat seront enregistrées pour analyse ultérieure.</p><p>Nous vous demandons de prévoir de réaliser un minimum de <strong>8 sessions d'une heure</strong> de tutorat (donc 8 heures au total), au cours d'une période de 1 à 3 mois. Vous pouvez bien sûr en réaliser plus si vous le souhaitez. Vous pouvez cependant arrêter de participer à l'étude à tout moment.",
+			"privacy": "Comment seront traitées et conservées vos données ?",
+			"privacyD": "Les données collectées (par exemple, les transcriptions des conversations, les résultats de tests, les mesures de frappe, les informations sur les participants comme l'age ou le genre) seront traitées de manière confidentielle et anonyme. Elles seront conservées après leur anonymisation intégrale et ne pourront être utilisées qu'à des fins scientifiques ou pédagogiques. Elles pourront éventuellement être partagées avec d'autres chercheurs ou enseignants, mais toujours dans ce cadre strictement de recherche ou d'enseignement.",
+			"rights": "Quels sont vos droits ? Participation volontaire et retrait éventuel",
+			"rightsD": "Votre participation à cette étude est volontaire. Vous pouvez à tout moment décider de ne plus participer à l'étude sans avoir à vous justifier. Vous pouvez également demander à ce que vos données soient supprimées à tout moment. Si vous avez des questions ou des préoccupations concernant cette étude, vous pouvez contacter le responsable de l'étude, Serge Bibauw, à l'adresse suivante :",
+			"ok": "J'accepte de participer à l'étude telle que décrite ci-dessus."
+		},
+		"birthYear": "Votre année de naissance",
+		"gender": "A quel genre vous identifiez vous ?",
+		"genders": {
+			"male": "Un homme",
+			"female": "Une femme",
+			"other": "Autre",
+			"na": "Je préfère ne pas répondre"
+		},
+		"homeLanguage": "Première Langue",
+		"education": {
+			"title": "Quel est le grade, le diplôme ou le niveau d'études le plus élevé que vous ayez obtenu ?",
+			"NoEducation": "Aucun",
+			"PrimarySchool": "École primaire",
+			"SecondarySchool": "École secondaire",
+			"NonUni": "Diplôme non universitaire",
+			"Bachelor": "Bachelier",
+			"Master": "Master ou diplôme supérieur"
+		}
 	},
 	"users": {
 		"nickname": "Nom",
@@ -213,6 +246,7 @@
 		"availability": "Disponibilités"
 	},
 	"session": {
+		"feedbackInline": "Un feedback a été ajouté à",
 		"modal": {
 			"satisfy": {
 				"title": "Questionnaire de satisfaction",
@@ -225,10 +259,10 @@
 				"title": "Questionnaire hebdomadaire",
 				"description": "Au cours des 7 derniers jours...",
 				"questions": [
-					"Combien d'heures de <span class='font-bold'>cours</span> de {TARGET_LANGUAGE} avez vous suivies ?",
-					"Combien d'heures avez-vous <span class='font-bold'>regardé des vidéos</span> en {TARGET_LANGUAGE} (films, séries, Youtube...) ou <span class='font-bold'>écouté des contenus</span> en {TARGET_LANGUAGE} (podcasts, radio, cours universitaires...) ?",
-					"Combien d'heures avez-vous <span class='font-bold'>lu des textes</span> en {TARGET_LANGUAGE} (livre, journal, BD, sites web...) ?",
-					"Combien d'heures avez-vous <span class='font-bold'>parlé</span> en {TARGET_LANGUAGE} (discussions avec amis, famille, collègues...) ?"
+					"Combien d'heures de <span class='font-bold'>cours</span> de {lang} avez vous suivies ?",
+					"Combien d'heures avez-vous <span class='font-bold'>regardé des vidéos</span> en {lang} (films, séries, Youtube...) ou <span class='font-bold'>écouté des contenus</span> en {lang} (podcasts, radio, cours universitaires...) ?",
+					"Combien d'heures avez-vous <span class='font-bold'>lu des textes</span> en {lang} (livre, journal, BD, sites web...) ?",
+					"Combien d'heures avez-vous <span class='font-bold'>parlé</span> en {lang} (discussions avec amis, famille, collègues...) ?"
 				],
 				"answers": {
 					"placeholder": "",
@@ -251,7 +285,10 @@
 				},
 				"success": "Questionnaire envoyé, merci !"
 			}
-		}
+		},
+		"downloadAllMessages": "Télécharger toutes les conversations",
+		"downloadAllMetadata": "Télécharger toutes les métadonnées",
+		"downloadAllFeedbacks": "Télécharger tous les feedbacks"
 	},
 	"button": {
 		"create": "Créer",
@@ -283,6 +320,20 @@
 			"november": "novembre",
 			"december": "décembre"
 		},
+		"shortMonth": {
+			"january": "janv.",
+			"february": "févr.",
+			"march": "mars",
+			"april": "avr.",
+			"may": "mai",
+			"june": "juin",
+			"july": "juil.",
+			"august": "août",
+			"september": "sept.",
+			"october": "oct.",
+			"november": "nov.",
+			"december": "déc."
+		},
 		"days": {
 			"monday": "Lundi",
 			"tuesday": "Mardi",
@@ -299,6 +350,15 @@
 			"5": "Samedi",
 			"6": "Dimanche"
 		},
+		"past": {
+			"year": "Il y a {n, plural, one {# an} other {# ans}}",
+			"month": "Il y a {n, plural, one {# mois} other {# mois}}",
+			"day": "Il y a {n, plural, one {# jour} other {# jours}}",
+			"hour": "Il y a {n, plural, one {# heure} other {# heures}}",
+			"today": "Aujourd'hui",
+			"yesterday": "Hier",
+			"justNow": "Il y a moins d'une heure"
+		},
 		"language": {
 			"fr": "Français",
 			"en": "Anglais",
@@ -312,7 +372,13 @@
 		"words": {
 			"date": "Date",
 			"messages": "Messages",
-			"actions": "Actions"
+			"actions": "Actions",
+			"participants": "Participants",
+			"status": "Statut",
+			"date": "Date",
+			"programed": "Programmée",
+			"inProgress": "En cours",
+			"finished": "Terminée"
 		}
 	},
 	"inputs": {

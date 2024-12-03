@@ -263,8 +263,9 @@ class SurveySurveyAddGroup(BaseModel):
 
 
 class SurveyResponseCreate(BaseModel):
-    uuid: str
+    code: str
     sid: str
+    uid: int | None = None
     survey_id: int
     group_id: int
     question_id: int
@@ -275,8 +276,9 @@ class SurveyResponseCreate(BaseModel):
 
 class SurveyResponse(BaseModel):
     id: int
-    uuid: str
+    code: str
     sid: str
+    uid: int | None = None
     created_at: NaiveDatetime
     survey_id: int
     group_id: int
@@ -284,6 +286,23 @@ class SurveyResponse(BaseModel):
     selected_id: int
     response_time: float
     text: str | None = None
+
+
+class SurveyResponseInfoCreate(BaseModel):
+    sid: str
+    birthyear: int
+    gender: str
+    primary_language: str
+    education: str
+
+
+class SurveyResponseInfo(BaseModel):
+    id: int
+    sid: str
+    birthyear: int
+    gender: str
+    primary_language: str
+    education: str
 
 
 class Study(BaseModel):
