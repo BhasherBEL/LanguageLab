@@ -7,5 +7,4 @@ node_modules
 .env.*
 !.env.example
 vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-.venv/
+vite.config.ts.timestamp-
