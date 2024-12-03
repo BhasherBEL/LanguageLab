@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": true,
-		"types": ["svelte"], 
+		"types": ["svelte"],
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
@@ -12,14 +12,14 @@
 		"strict": true,
 		"baseUrl": "./",
 		"paths": {
-			"$lib/*": ["src/lib/*"], 
-			"$routes/*": ["src/routes/*"] 
+			"$lib/*": ["src/lib/*"],
+			"$routes/*": ["src/routes/*"]
 		},
-		"moduleResolution": "node", 
-		"target": "ESNext", 
-		"module": "ESNext", 
-		"isolatedModules": true 
+		"moduleResolution": "node",
+		"target": "ESNext",
+		"module": "ESNext",
+		"isolatedModules": true
 	},
-	"include": ["src/**/*", "global.d.ts"], 
-	"exclude": ["node_modules", ".svelte-kit/*", "build/*"] 
+	"include": ["src/**/*", "global.d.ts"],
+	"exclude": ["node_modules", ".svelte-kit/*", "build/*"]
 }

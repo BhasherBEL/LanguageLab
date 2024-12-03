@@ -4,5 +4,5 @@ declare module 'svelte-waypoint';
 declare module 'emoji-picker-element';
 
 interface ImportMetaEnv {
-	VITE_API_URL: string; 
+	VITE_API_URL: string;
 }
