@@ -3,18 +3,23 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": true,
-		"types": ["svelte"],
+		"types": ["svelte"], 
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"moduleResolution": "bundler",
-		"target": "ESNext", // Ensure the latest features are supported
-		"module": "ESNext", // Matches Svelte's output
-		"isolatedModules": false // Prevent conflicts with .d.ts files
+		"baseUrl": "./",
+		"paths": {
+			"$lib/*": ["src/lib/*"], 
+			"$routes/*": ["src/routes/*"] 
+		},
+		"moduleResolution": "node", 
+		"target": "ESNext", 
+		"module": "ESNext", 
+		"isolatedModules": true 
 	},
-	"include": ["src/**/*", "global.d.ts"], // Add the global type declaration file
-	"exclude": ["node_modules"] // Optional: exclude unnecessary files
+	"include": ["src/**/*", "global.d.ts"], 
+	"exclude": ["node_modules", ".svelte-kit/*", "build/*"] 
 }

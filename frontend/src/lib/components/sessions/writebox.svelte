@@ -18,7 +18,6 @@
 
 	// State for replying
 	let currentReplyToMessage = null;
-	console.log('Reply To Message2:', replyToMessage); // Debugging
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
 	let message = '';
@@ -27,9 +26,6 @@
 	let textearea: HTMLTextAreaElement;
 
 	$: currentReplyToMessage = $replyToMessage;
-	$: {
-		console.log('Reactive currentReplyToMessage:', currentReplyToMessage);
-	}
 
 	function cancelReply() {
 		clearReplyToMessage();

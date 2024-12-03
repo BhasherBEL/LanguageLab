@@ -92,7 +92,6 @@ export default class Message {
 	async getMessageById(id: number): Promise<Message | null> {
 		try {
 			const response = await getMessagesAPI(this._session.id); // Fetch all messages for the session
-			console.log('Response from API2:', response);
 			if (!response) {
 				toastAlert('Failed to retrieve messages from the server.');
 				return null;
@@ -104,7 +103,6 @@ export default class Message {
 				toastAlert(`Message with ID ${id} not found.`);
 				return null;
 			}
-			console.log('Message data:', messageData);
 
 			// Parse the message object
 			const parsedMessage = Message.parse(messageData, this._user, this._session);
@@ -201,15 +199,6 @@ export default class Message {
 			session,
 			json.reply_to_message_id
 		);
-		// console.log('Parsing message:', json);
-
-		// if (json.reply_to_message_id) {
-		// 	console.log('Parsing reply to:', json.reply_to_message_id);
-		// 	message.replyTo = Message.parse(json.reply_to_message_id);
-		// } else {
-		// 	console.log('No reply to:', json.reply_to_message_id);
-		// 	message.replyTo = null;
-		// }
 		message.feedbacks.set(Feedback.parseAll(json.feedbacks, message));
 
 		return message;

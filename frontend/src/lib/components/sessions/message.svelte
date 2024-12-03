@@ -3,33 +3,30 @@
 	import { displayTime } from '$lib/utils/date';
 	import { Check, Icon, Pencil, ArrowUturnLeft } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
+	import Gravatar from 'svelte-gravatar';
 	import { t } from '$lib/services/i18n';
+	import { onMount } from 'svelte';
+	import SpellCheck from '$lib/components/icons/spellCheck.svelte';
+	import ChatBubble from '../icons/chatBubble.svelte';
+	import type Feedback from '$lib/types/feedback';
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
-	import { initiateReply } from '$lib/utils/replyUtils';
 	import CloseIcon from '../icons/closeIcon.svelte';
+	import { initiateReply } from '$lib/utils/replyUtils';
 
 	export let message: Message;
 
-	let timer: number;
-	$: displayedTime = displayTime(message.created_at);
-	$: {
-		clearInterval(timer);
-		timer = setInterval(() => {
-			displayedTime = displayTime(message.created_at);
-		}, 1000);
-	}
+	let replyTo: string | undefined;
+
+	$: replyTo = message['_replyTo'];
 
 	let replyToMessage: Message | null = null;
 
-	$: if (message.replyTo) {
-		findMessageById(message.replyTo).then((msg) => {
+	$: if (replyTo) {
+		findMessageById(replyTo).then((msg) => {
 			replyToMessage = msg;
 		});
 	}
-
-	let isEdit = false;
-	let contentDiv: HTMLDivElement;
 
 	async function findMessageById(id: string): Promise<Message | null> {
 		try {
@@ -41,10 +38,24 @@
 		}
 	}
 
+	let timer: number;
+	$: displayedTime = displayTime(message.created_at);
+	$: {
+		clearInterval(timer);
+		timer = setInterval(() => {
+			displayedTime = displayTime(message.created_at);
+		}, 1000);
+	}
+	let isEdit = false;
+	let contentDiv: HTMLDivElement;
+	let historyModal: HTMLDialogElement;
+	$: messageVersions = message.versions;
+
 	function startEdit() {
 		isEdit = true;
 		setTimeout(() => {
-			contentDiv?.focus();
+			if (!contentDiv) return;
+			contentDiv.focus();
 		}, 0);
 	}
 
@@ -96,6 +107,109 @@
 		}
 	}
 
+	let hightlight: HTMLDivElement;
+
+	onMount(() => {
+		document.addEventListener('selectionchange', onTextSelect);
+	});
+
+	function getSelectionCharacterOffsetWithin() {
+		var start = 0;
+		var end = 0;
+		var doc = contentDiv.ownerDocument;
+		var win = doc.defaultView;
+		if (!doc || !win) return { start: 0, end: 0 };
+		var sel;
+		if (typeof win.getSelection === 'undefined') {
+			return { start: 0, end: 0 };
+		}
+		sel = win.getSelection();
+		if (!sel) return { start: 0, end: 0 };
+		if (sel.rangeCount <= 0) return { start: 0, end: 0 };
+
+		var range = sel.getRangeAt(0);
+		var preCaretRange = range.cloneRange();
+		preCaretRange.selectNodeContents(contentDiv);
+		preCaretRange.setEnd(range.startContainer, range.startOffset);
+		start = preCaretRange.toString().length;
+		preCaretRange.setEnd(range.endContainer, range.endOffset);
+		end = preCaretRange.toString().length;
+
+		return { start: start, end: end };
+	}
+
+	function onTextSelect() {
+		if (isEdit) return;
+		const selection = window.getSelection();
+		if (!selection || selection.rangeCount < 1 || !hightlight) return;
+		const range = selection.getRangeAt(0);
+		const start = range.startOffset;
+		const end = range.endOffset;
+		if (range.commonAncestorContainer.parentElement === contentDiv && end - start > 0) {
+			const rects = range.getClientRects();
+			if (!rects.length) {
+				hightlight.style.visibility = 'hidden';
+				return;
+			}
+			const rect = rects[rects.length - 1];
+			if (!rect) {
+				hightlight.style.visibility = 'hidden';
+				return;
+			}
+			hightlight.style.top = (rect.top + rect.bottom - hightlight.clientHeight) / 2 + 'px';
+			hightlight.style.left = rect.right + 10 + 'px';
+			hightlight.style.visibility = 'visible';
+		} else {
+			hightlight.style.visibility = 'hidden';
+		}
+	}
+
+	async function onSelect(hasComment: boolean) {
+		const selection = window.getSelection();
+		if (!selection) {
+			if (hightlight) hightlight.style.visibility = 'hidden';
+			return;
+		}
+		const range = getSelectionCharacterOffsetWithin();
+
+		const start = range.start;
+		const end = range.end;
+		let comment: string | null = null;
+
+		if (hasComment) {
+			comment = prompt($t('chatbox.comment'));
+			if (!comment) return;
+		}
+
+		const res = await message.addFeedback(start, end, comment);
+
+		if (res) {
+			selection.removeAllRanges();
+			hightlight.style.visibility = 'hidden';
+		}
+	}
+
+	function getParts(content: string, feedbacks: Feedback[], replyTo: string) {
+		let parts: { text: string; feedback: Feedback | null }[] = [];
+		let current = 0;
+		feedbacks.sort((a: Feedback, b: Feedback) => a.start - b.start);
+		for (const feedback of feedbacks) {
+			if (feedback.start > current) {
+				parts.push({ text: content.slice(current, feedback.start), feedback: null });
+			}
+			parts.push({ text: content.slice(feedback.start, feedback.end), feedback });
+			current = feedback.end;
+		}
+		if (current < content.length) {
+			parts.push({ text: content.slice(current), feedback: null });
+		}
+
+		return parts;
+	}
+
+	$: fbs = message.feedbacks;
+	$: parts = getParts(message.content, $fbs, message['_replyTo']);
+
 	const isSender = message.user.id == $user?.id;
 
 	async function deleteFeedback(feedback: Feedback | null) {
@@ -106,22 +220,22 @@
 	}
 </script>
 
-<!-- Messages Display -->
 <div
+	class="chat group scroll-smooth rounded-xl"
 	id={`message-${message.id}`}
-	class="chat group"
 	class:chat-start={!isSender}
 	class:chat-end={isSender}
 >
-	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}></div>
-	<div
-		class="chat-bubble whitespace-pre-wrap"
-		class:bg-blue-700={isSender}
-		class:bg-gray-300={!isSender}
-		class:text-black={!isSender}
-		class:text-white={isSender}
-		data-is-sender={isSender}
-	>
+	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
+		<Gravatar
+			email={message.user.email}
+			size={64}
+			title={message.user.nickname}
+			class="rounded-full"
+		/>
+	</div>
+
+	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
 		{#if replyToMessage}
 			<button
 				class="replying-to-text"
@@ -132,10 +246,6 @@
 				<span class="replying-to-content">{truncateMessage(replyToMessage?.content)}</span>
 			</button>
 		{/if}
-
-		<div contenteditable={isEdit} bind:this={contentDiv}>
-			{@html linkifyHtml(sanitize(message.content), { className: 'underline', target: '_blank' })}
-		</div>
 
 		<button class="reply-icon" on:click={() => initiateReply(message)}>
 			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
@@ -216,8 +326,46 @@
 	</div>
 </div>
 
+<div
+	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
+	bind:this={hightlight}
+>
+	<button
+		on:click={() => onSelect(false)}
+		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
+	>
+		<SpellCheck />
+	</button><!---
+	--><button
+		on:click={() => onSelect(true)}
+		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
+	>
+		<ChatBubble />
+	</button>
+</div>
+
+<dialog bind:this={historyModal} class="modal">
+	<div class="modal-box">
+		<h3 class="text-xl">{$t('chatbox.history')}</h3>
+		<div>
+			{#each $messageVersions as version}
+				<div class="flex justify-between items-center border-b border-gray-300 py-1">
+					<div>
+						{version.content}
+					</div>
+					<div class="whitespace-nowrap">{displayTime(version.date)}</div>
+				</div>
+			{/each}
+		</div>
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn btn-primary">{$t('button.close')}</button>
+			</form>
+		</div>
+	</div>
+</dialog>
+
 <style>
-	/* General styling for chat bubbles */
 	.chat-bubble {
 		white-space: normal;
 		word-wrap: break-word;
@@ -225,25 +373,6 @@
 		overflow-wrap: break-word;
 	}
 
-	/* Sent (blue) bubble styles */
-	.chat-bubble.bg-blue-700 {
-		background-color: #007bff;
-		color: white;
-	}
-
-	.chat-bubble.bg-blue-700::after {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		right: -8px;
-		width: 0;
-		height: 0;
-		border-style: solid;
-		border-width: 8px 0 8px 8px;
-		border-color: transparent transparent transparent #007bff;
-	}
-
-	/* Received (gray) bubble styles */
 	.chat-bubble.bg-gray-300 {
 		background-color: #f1f1f1;
 		color: #000;
@@ -261,7 +390,6 @@
 		border-color: transparent #f1f1f1 transparent transparent;
 	}
 
-	/* Styling for "Replying to" text */
 	.replying-to-text {
 		cursor: pointer;
 		display: flex;
@@ -281,12 +409,6 @@
 		display: inline-block;
 	}
 
-	/* Sent bubble adjustment for "Replying to" text */
-	.chat-bubble.bg-blue-700 .replying-to-text {
-		color: rgb(196, 229, 240);
-	}
-
-	/* General chat layout adjustments */
 	.chat {
 		margin-bottom: 6px;
 	}
@@ -297,7 +419,6 @@
 		opacity: 0.7;
 	}
 
-	/* Hover effects for reply icon */
 	.reply-icon {
 		position: absolute;
 		right: -1.5rem;
@@ -312,7 +433,6 @@
 		opacity: 1;
 	}
 
-	/* Highlight animation for target messages */
 	.chat:target {
 		animation:
 			highlight 1.5s ease-in-out,
@@ -321,7 +441,10 @@
 
 	@keyframes highlight {
 		0% {
-			background-color: rgba(255, 255, 0, 0.6);
+			background-color: rgba(255, 255, 0, 0.4);
+		}
+		100% {
+			background-color: transparent;
 		}
 	}
 </style>
