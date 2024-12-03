@@ -5,7 +5,6 @@ stages:
 lint_frontend:
   stage: lint
   image: node
-  allow_failure: true 
   script:
     - cd frontend
     - npm install
