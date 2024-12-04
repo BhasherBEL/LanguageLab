@@ -424,7 +424,7 @@
 	<div class="mx-auto mt-16 text-center">
 		<h1>{$t('surveys.complete')}</h1>
 		{#if finalScore !== null}
-			<p>{$t('surveys.score')} {finalScore} %</p>
+			<p>{$t('surveys.score')} <strong>{finalScore} %</strong></p>
 		{/if}
 	</div>
 	{#if user == null}

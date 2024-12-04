@@ -184,7 +184,7 @@
 		"loginEmail": "Utiliser une adresse e-mail",
 		"invalidEmail": "Adresse e-mail invalide",
 		"complete": "Questionnaire complété. Merci pour votre participation !",
-		"score": "Vous avez obtenu un score de ",
+		"score": "Score : ",
 		"code": "Votre code:",
 		"codeIndication": "L'instructeur devrait vous avoir donné un code personnel. Si ce n'est pas le cas, veuillez indiquer votre adresse électronique.",
 		"invalidCode": "Code invalide",
