@@ -183,19 +183,10 @@ export default class Session {
 		return this._users.some((u) => u.equals(user));
 	}
 
-	logMessages(): void {
-		this._messages.subscribe((messages) => {
-			console.log('All Messages in Current Session:', messages);
-		});
-	}
-
 	async loadMessages(): Promise<boolean> {
 		const messagesStr = await getMessagesAPI(this.id);
 
 		this._messages.set(Message.parseAll(messagesStr));
-
-		this.logMessages();
-
 		return true;
 	}
 
@@ -205,17 +196,14 @@ export default class Session {
 		metadata: { message: string; date: number }[],
 		replyTo: number | null
 	): Promise<Message | null> {
-		console.log('ReplyTo being sent:', replyTo);
 
 		const json = await createMessageAPI(this.id, content, metadata, replyTo);
 
-		console.log('Response from API:', json);
 
 		if (!json || !json.id || !json.message_id) {
 			toastAlert('Failed to parse message');
 			return null;
 		}
-		console.log('User:', sender);
 		const message = new Message(
 			json.id,
 			json.message_id,
@@ -240,23 +228,14 @@ export default class Session {
 	}
 	private presenceTimer: NodeJS.Timeout | null = null;
 
-	async sendPresence(): Promise<void> {
-		if (this.presenceTimer) {
-			clearTimeout(this.presenceTimer);
+	async sendPresence(): Promise<boolean> {
+		const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
+		if (response.status !== 204) {
+			console.log('Failed to send presence data', response);
+			return false;
 		}
 
-		this.presenceTimer = setTimeout(async () => {
-			try {
-				const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
-				if (response.status === 204) {
-					console.log('Presence updated successfully');
-				} else {
-					console.warn('Unexpected presence response:', response.status);
-				}
-			} catch (error) {
-				console.error('Error in sendPresence:', error.message || error);
-			}
-		}, 5000); // Debounce with a 5-second delay
+		return true;
 	}
 
 	async sendSatisfy(usefullness: number, easiness: number, remarks: string): Promise<boolean> {
@@ -277,7 +256,6 @@ export default class Session {
 
 		this._ws.onopen = () => {
 			this._ws_connected.set(true);
-			console.log('WS connected');
 		};
 
 		this._ws.onmessage = (event) => {
@@ -384,7 +362,6 @@ export default class Session {
 		this._ws.onclose = () => {
 			this._ws = null;
 			this._ws_connected.set(false);
-			console.log('WS closed, reconnecting in 1s');
 			setTimeout(() => this.wsConnect(jwt), 1000);
 		};
 	}

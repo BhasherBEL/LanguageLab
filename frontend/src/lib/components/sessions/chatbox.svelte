@@ -27,27 +27,12 @@
 		messages = newMessages;
 		if (!news || !(news instanceof Message)) return;
 
-		if (document.hidden) {
-			// Handle notifications
-			if (Notification.permission === 'granted') {
-				try {
-					new Notification(news.user.nickname, {
-						body: news.content,
-						icon: '/favicon.ico'
-					});
-				} catch (error) {
-					console.warn('Notification creation failed:', error);
-				}
-			}
-			// Handle audio playback
-			(async () => {
-				try {
-					const audio = new Audio('/notification.wav');
-					await audio.play();
-				} catch (error) {
-					console.warn('Audio playback failed:', error);
-				}
-			})();
+		if (document.hidden) {	// Fixme: this generate a NOTALLOWED error in the browser console
+			new Notification(news.user.nickname, {
+				body: news.content,
+				icon: '/favicon.ico'
+			});
+			new Audio('/notification.wav').play();
 		}
 	});
 
