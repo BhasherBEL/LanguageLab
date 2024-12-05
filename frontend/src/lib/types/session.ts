@@ -196,9 +196,7 @@ export default class Session {
 		metadata: { message: string; date: number }[],
 		replyTo: number | null
 	): Promise<Message | null> {
-
 		const json = await createMessageAPI(this.id, content, metadata, replyTo);
-
 
 		if (!json || !json.id || !json.message_id) {
 			toastAlert('Failed to parse message');

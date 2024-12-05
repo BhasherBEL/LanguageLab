@@ -27,7 +27,8 @@
 		messages = newMessages;
 		if (!news || !(news instanceof Message)) return;
 
-		if (document.hidden) {	// Fixme: this generate a NOTALLOWED error in the browser console
+		if (document.hidden) {
+			// Fixme: this generate a NOTALLOWED error in the browser console
 			new Notification(news.user.nickname, {
 				body: news.content,
 				icon: '/favicon.ico'

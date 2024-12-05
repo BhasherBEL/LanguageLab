@@ -11,7 +11,3 @@ export function initiateReply(message: Message): void {
 export function clearReplyToMessage(): void {
 	replyToMessage.set(null);
 }
-
-replyToMessage.subscribe((value) => {
-	console.log('Updated replyToMessage:', value);
-});
