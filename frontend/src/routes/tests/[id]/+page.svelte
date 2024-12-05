@@ -34,6 +34,13 @@
 	$: subStep = 0;
 
 	let currentGroupId = 0;
+	survey.groups.sort((a, b) => {
+		//puts the demo questions first
+		if (a.demo === b.demo) {
+			return 0;
+		}
+		return a.demo ? -1 : 1;
+	});
 	let currentGroup = survey.groups[currentGroupId];
 	let questionsRandomized = getSortedQuestions(currentGroup);
 	let currentQuestionId = 0;
@@ -88,7 +95,7 @@
 				sid,
 				uid,
 				survey.id,
-				currentGroupId,
+				currentGroup['_id'],
 				questionsRandomized[currentQuestionId]['_id'],
 				currentQuestion.options.findIndex((o: string) => o === option) + 1,
 				(new Date().getTime() - startTime) / 1000
@@ -117,7 +124,7 @@
 				uuid,
 				sid,
 				survey.id,
-				currentGroupId,
+				currentGroup['_id'],
 				questionsRandomized[currentQuestionId]['_id'],
 				-1,
 				(new Date().getTime() - startTime) / 1000,
@@ -252,6 +259,11 @@
 		</button>
 	</div>
 {:else if step == 2}
+	{#if currentGroup.demo}
+		<div class="mx-auto mt-10 text-center">
+			<p class="text-center font-bold text-xl m-auto">{$t('surveys.example')}</p>
+		</div>
+	{/if}
 	{#if type == 'gap'}
 		<div class="mx-auto mt-16 center flex flex-col">
 			<div>

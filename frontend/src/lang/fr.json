@@ -216,7 +216,8 @@
 			"NonUni": "Diplôme non universitaire",
 			"Bachelor": "Bachelier",
 			"Master": "Master ou diplôme supérieur"
-		}
+		},
+		"example": "Exemple"
 	},
 	"users": {
 		"nickname": "Nom",
