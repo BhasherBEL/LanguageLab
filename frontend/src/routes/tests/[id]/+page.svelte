@@ -95,8 +95,8 @@
 				sid,
 				uid,
 				survey.id,
-				currentGroup['_id'],
-				questionsRandomized[currentQuestionId]['_id'],
+				currentGroup.id,
+				questionsRandomized[currentQuestionId].id,
 				currentQuestion.options.findIndex((o: string) => o === option) + 1,
 				(new Date().getTime() - startTime) / 1000
 			))
@@ -124,8 +124,8 @@
 				uuid,
 				sid,
 				survey.id,
-				currentGroup['_id'],
-				questionsRandomized[currentQuestionId]['_id'],
+				currentGroup.id,
+				questionsRandomized[currentQuestionId].id,
 				-1,
 				(new Date().getTime() - startTime) / 1000,
 				gapTexts

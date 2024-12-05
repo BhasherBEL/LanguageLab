@@ -1328,7 +1328,7 @@ def get_survey_score(
 
         group_id = response.group_id
         group = crud.get_survey_group(db, group_id)
-        if (not group is None) and (group.demo == "1"):
+        if group is not None and group.demo == "1":
             continue
         total += 1
         if response.selected_id == question.correct:
