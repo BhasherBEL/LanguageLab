@@ -165,7 +165,7 @@
 			return;
 		}
 
-		step = 2;
+		step += 1;
 	}
 
 	function checkUUID() {
@@ -217,23 +217,8 @@
 </script>
 
 {#if step == 0}
-	<div class="max-w-screen-md mx-auto p-5">
-		<Consent
-			introText={$t('register.consent.intro')}
-			participation={$t('register.consent.participation')}
-			participationD={$t('register.consent.participationD')}
-			privacy={$t('register.consent.privacy')}
-			privacyD={$t('register.consent.privacyD')}
-			rights={$t('register.consent.rights')}
-		/>
-		<div class="form-control">
-			<button class="button mt-4" on:click={() => step++}>
-				{$t('register.consent.ok')}
-			</button>
-		</div>
-	</div>
-{:else if step == 1}
-	<div class="max-w-screen-md mx-auto p-28 flex flex-col items-center min-h-screen">
+	<div class="max-w-screen-md mx-auto p-20 flex flex-col items-center min-h-screen">
+		<h2 class="mb-10 text-xl text-center">{survey.title}</h2>
 		<p class="mb-4 text-lg font-semibold">{$t('surveys.code')}</p>
 		<p class="mb-6 text-sm text-gray-600 text-center">{$t('surveys.codeIndication')}</p>
 		<input
@@ -250,6 +235,22 @@
 		>
 			{$t('button.next')}
 		</button>
+	</div>
+{:else if step == 1}
+	<div class="max-w-screen-md mx-auto p-5">
+		<Consent
+			introText={$t('register.consent.intro')}
+			participation={$t('register.consent.participation')}
+			participationD={$t('register.consent.participationD')}
+			privacy={$t('register.consent.privacy')}
+			privacyD={$t('register.consent.privacyD')}
+			rights={$t('register.consent.rights')}
+		/>
+		<div class="form-control">
+			<button class="button mt-4" on:click={() => step++}>
+				{$t('register.consent.ok')}
+			</button>
+		</div>
 	</div>
 {:else if step == 2}
 	{#if type == 'gap'}
