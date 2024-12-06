@@ -92,86 +92,88 @@
 </script>
 
 <div class="flex flex-col w-full py-2 relative">
-    {#if currentReplyToMessage}
-        <div class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-1 text-sm text-gray-600">
-            <p class="text-xs text-gray-400">
-                Replying to: <span class="text-xs text-gray-400">{currentReplyToMessage.content}</span>
-            </p>
-            <button class="text-xs text-blue-500 underline ml-4 cursor-pointer" on:click={cancelReply}>
-                Cancel
-            </button>
-        </div>
-    {/if}
+	{#if currentReplyToMessage}
+		<div
+			class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-1 text-sm text-gray-600"
+		>
+			<p class="text-xs text-gray-400">
+				Replying to: <span class="text-xs text-gray-400">{currentReplyToMessage.content}</span>
+			</p>
+			<button class="text-xs text-blue-500 underline ml-4 cursor-pointer" on:click={cancelReply}>
+				Cancel
+			</button>
+		</div>
+	{/if}
 
-    {#if showSpecials}
-        <ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
-            {#each config.SPECIAL_CHARS as char (char)}
-                <button
-                    class="border-none"
-                    on:click={() => {
-                        message += char;
-                        textearea.focus();
-                    }}
-                >
-                    <kbd class="kbd">
-                        {char}
-                    </kbd>
-                </button>
-            {/each}
-        </ul>
-    {/if}
+	{#if showSpecials}
+		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
+			{#each config.SPECIAL_CHARS as char (char)}
+				<button
+					class="border-none"
+					on:click={() => {
+						message += char;
+						textearea.focus();
+					}}
+				>
+					<kbd class="kbd">
+						{char}
+					</kbd>
+				</button>
+			{/each}
+		</ul>
+	{/if}
 
-    <div class="w-full flex relative">
-        <textarea
-            bind:this={textearea}
-            class="flex-grow border border-gray-300 rounded-md p-2 text-base resize-none"
-            placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
-            {disabled}
-            bind:value={message}
-            on:keypress={keyPress}
-        />
+	<div class="w-full flex relative">
+		<textarea
+			bind:this={textearea}
+			class="flex-grow border border-gray-300 rounded-md p-2 text-base resize-none"
+			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+			{disabled}
+			bind:value={message}
+			on:keypress={keyPress}
+		/>
 
-        <div
-            class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
-            on:click={() => (showPicker = !showPicker)}
-            data-tooltip-target="tooltip-emoji"
-            data-tooltip-placement="right"
-            aria-hidden={false}
-            role="button"
-            tabindex="0"
-        >
-            😀
-        </div>
+		<div
+			class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
+			on:click={() => (showPicker = !showPicker)}
+			data-tooltip-target="tooltip-emoji"
+			data-tooltip-placement="right"
+			aria-hidden={false}
+			role="button"
+			tabindex="0"
+		>
+			😀
+		</div>
 
-        <div class="relative">
-            <div
-                id="tooltip-emoji"
-                class:hidden={!showPicker}
-                class="absolute z-10 bottom-16 right-0 lg:left-0 lg:right-auto hidden"
-            >
-                <emoji-picker
-                    class="light"
-                    on:emoji-click={(event) => {
-                        message += event.detail.unicode;
-                        textearea.focus();
-                    }}
-                >
-                </emoji-picker>
-            </div>
-        </div>
+		<div class="relative">
+			<div
+				id="tooltip-emoji"
+				class:hidden={!showPicker}
+				class="absolute z-10 bottom-16 right-0 lg:left-0 lg:right-auto hidden"
+			>
+				<emoji-picker
+					class="light"
+					on:emoji-click={(event) => {
+						message += event.detail.unicode;
+						textearea.focus();
+					}}
+				>
+				</emoji-picker>
+			</div>
+		</div>
 
-        <div
-            class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
-            on:click={() => (showSpecials = !showSpecials)}
-            aria-hidden={false}
-            role="button"
-            tabindex="0"
-        >
-            É
-        </div>
+		<div
+			class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
+			on:click={() => (showSpecials = !showSpecials)}
+			aria-hidden={false}
+			role="button"
+			tabindex="0"
+		>
+			É
+		</div>
 
-        <button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
-            <Icon src={PaperAirplane} />
-        </button>
-    </div>
+		<button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
+			<Icon src={PaperAirplane} />
+		</button>
+	</div>
 </div>

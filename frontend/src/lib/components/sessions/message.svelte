@@ -86,22 +86,21 @@
 	}
 
 	function scrollToMessage(messageId: number | undefined): void {
-	if (!messageId) return;
-	const elementId = `message-${messageId}`;
-	const element = document.getElementById(elementId);
+		if (!messageId) return;
+		const elementId = `message-${messageId}`;
+		const element = document.getElementById(elementId);
 
-	if (element) {
-		element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-		element.classList.add('animate-highlight-scroll');
-		setTimeout(() => {
-			element.classList.remove('animate-highlight-scroll'); 
-		}, 1500); 
-	} else {
-		console.warn(`Message with ID ${messageId} not found in DOM.`);
+			element.classList.add('animate-highlight-scroll');
+			setTimeout(() => {
+				element.classList.remove('animate-highlight-scroll');
+			}, 1500);
+		} else {
+			console.warn(`Message with ID ${messageId} not found in DOM.`);
+		}
 	}
-}
-
 
 	let hightlight: HTMLDivElement;
 
@@ -243,7 +242,9 @@
 				aria-label="Scroll to replied message"
 			>
 				{$t('chatbox.replyingTo')}
-				<span class="italic truncate whitespace-nowrap overflow-hidden max-w-[150px] text-[0.65rem] inline-block">
+				<span
+					class="italic truncate whitespace-nowrap overflow-hidden max-w-[150px] text-[0.65rem] inline-block"
+				>
 					{truncateMessage(replyToMessage?.content)}
 				</span>
 			</button>
