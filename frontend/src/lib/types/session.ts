@@ -224,7 +224,6 @@ export default class Session {
 
 		return true;
 	}
-	private presenceTimer: NodeJS.Timeout | null = null;
 
 	async sendPresence(): Promise<boolean> {
 		const response = await axiosInstance.post(`/sessions/${this.id}/presence`);

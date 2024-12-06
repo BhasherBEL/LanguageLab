@@ -91,144 +91,87 @@
 	}
 </script>
 
-<div class="chat-input-container">
-	<!-- Reply Preview -->
-	{#if currentReplyToMessage}
-		<div class="reply-preview">
-			<p class="replying-to-text">
-				Replying to: <span class="replying-to-content">{currentReplyToMessage.content}</span>
-			</p>
-			<button class="cancel-reply" on:click={cancelReply}>Cancel</button>
-		</div>
-	{/if}
+<div class="flex flex-col w-full py-2 relative">
+    {#if currentReplyToMessage}
+        <div class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-1 text-sm text-gray-600">
+            <p class="text-xs text-gray-400">
+                Replying to: <span class="text-xs text-gray-400">{currentReplyToMessage.content}</span>
+            </p>
+            <button class="text-xs text-blue-500 underline ml-4 cursor-pointer" on:click={cancelReply}>
+                Cancel
+            </button>
+        </div>
+    {/if}
 
-	<!-- Special Characters -->
-	{#if showSpecials}
-		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
-			{#each config.SPECIAL_CHARS as char (char)}
-				<button
-					class="border-none"
-					on:click={() => {
-						message += char;
-						textearea.focus();
-					}}
-				>
-					<kbd class="kbd">
-						{char}
-					</kbd>
-				</button>
-			{/each}
-		</ul>
-	{/if}
+    {#if showSpecials}
+        <ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
+            {#each config.SPECIAL_CHARS as char (char)}
+                <button
+                    class="border-none"
+                    on:click={() => {
+                        message += char;
+                        textearea.focus();
+                    }}
+                >
+                    <kbd class="kbd">
+                        {char}
+                    </kbd>
+                </button>
+            {/each}
+        </ul>
+    {/if}
 
-	<!-- Message Input -->
-	<div class="w-full flex relative">
-		<textarea
-			bind:this={textearea}
-			class="flex-grow p-2 resize-none overflow-y-hidden pr-16"
-			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
-			{disabled}
-			bind:value={message}
-			on:keypress={keyPress}
-		/>
-		<!-- Emoji Picker -->
-		<div
-			class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
-			on:click={() => (showPicker = !showPicker)}
-			data-tooltip-target="tooltip-emoji"
-			data-tooltip-placement="right"
-			aria-hidden={false}
-			role="button"
-			tabindex="0"
-		>
-			😀
-		</div>
-		<div class="relative">
-			<div
-				id="tooltip-emoji"
-				data-tooltip="tooltip-emoji"
-				role="tooltip"
-				class:hidden={!showPicker}
-				class="absolute z-10 tooltip bottom-16 right-0 lg:left-0 lg:right-auto"
-			>
-				<emoji-picker
-					class="light"
-					on:emoji-click={(event) => {
-						message += event.detail.unicode;
-						textearea.focus();
-					}}
-				>
-				</emoji-picker>
-			</div>
-		</div>
+    <div class="w-full flex relative">
+        <textarea
+            bind:this={textearea}
+            class="flex-grow border border-gray-300 rounded-md p-2 text-base resize-none"
+            placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+            {disabled}
+            bind:value={message}
+            on:keypress={keyPress}
+        />
 
-		<!-- Special Characters Button -->
-		<div
-			class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
-			on:click={() => (showSpecials = !showSpecials)}
-			aria-hidden={false}
-			role="button"
-			tabindex="0"
-		>
-			É
-		</div>
+        <div
+            class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
+            on:click={() => (showPicker = !showPicker)}
+            data-tooltip-target="tooltip-emoji"
+            data-tooltip-placement="right"
+            aria-hidden={false}
+            role="button"
+            tabindex="0"
+        >
+            😀
+        </div>
 
-		<!-- Send Button -->
-		<button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
-			<Icon src={PaperAirplane} />
-		</button>
-	</div>
+        <div class="relative">
+            <div
+                id="tooltip-emoji"
+                class:hidden={!showPicker}
+                class="absolute z-10 bottom-16 right-0 lg:left-0 lg:right-auto hidden"
+            >
+                <emoji-picker
+                    class="light"
+                    on:emoji-click={(event) => {
+                        message += event.detail.unicode;
+                        textearea.focus();
+                    }}
+                >
+                </emoji-picker>
+            </div>
+        </div>
+
+        <div
+            class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
+            on:click={() => (showSpecials = !showSpecials)}
+            aria-hidden={false}
+            role="button"
+            tabindex="0"
+        >
+            É
+        </div>
+
+        <button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
+            <Icon src={PaperAirplane} />
+        </button>
+    </div>
 </div>
-
-<style>
-	.chat-input-container {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		padding: 0.5rem 0;
-		position: relative;
-	}
-
-	.reply-preview {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		background: #f8f9fa;
-		padding: 0.5rem;
-		border-radius: 0.25rem;
-		margin-bottom: 0.1rem;
-		font-size: 0.875rem;
-		color: #6c757d;
-	}
-
-	.replying-to-text {
-		margin: 0;
-		font-size: 0.75rem;
-		color: #bbb;
-	}
-
-	.replying-to-content {
-		font-size: 0.75rem;
-		color: #bbb;
-	}
-
-	.cancel-reply {
-		font-size: 0.75rem;
-		color: #007bff;
-		border: none;
-		background: none;
-		text-decoration: underline;
-		cursor: pointer;
-		margin-left: 1rem;
-	}
-
-	textarea {
-		flex-grow: 1;
-		border: 1px solid #ced4da;
-		border-radius: 0.25rem;
-		padding: 0.5rem;
-		font-size: 1rem;
-		resize: none;
-		box-sizing: border-box;
-	}
-</style>

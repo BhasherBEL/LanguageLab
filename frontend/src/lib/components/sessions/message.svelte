@@ -86,26 +86,22 @@
 	}
 
 	function scrollToMessage(messageId: number | undefined): void {
-		if (!messageId) return;
-		const elementId = `message-${messageId}`;
-		const element = document.getElementById(elementId);
+	if (!messageId) return;
+	const elementId = `message-${messageId}`;
+	const element = document.getElementById(elementId);
 
-		if (element) {
-			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+	if (element) {
+		element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-			const currentHash = window.location.hash;
-			if (currentHash === `#${elementId}`) {
-				window.location.hash = '';
-				setTimeout(() => {
-					window.location.hash = elementId;
-				}, 50);
-			} else {
-				window.location.hash = elementId;
-			}
-		} else {
-			console.warn(`Message with ID ${messageId} not found in DOM.`);
-		}
+		element.classList.add('animate-highlight-scroll');
+		setTimeout(() => {
+			element.classList.remove('animate-highlight-scroll'); 
+		}, 1500); 
+	} else {
+		console.warn(`Message with ID ${messageId} not found in DOM.`);
 	}
+}
+
 
 	let hightlight: HTMLDivElement;
 
@@ -226,7 +222,7 @@
 	class:chat-start={!isSender}
 	class:chat-end={isSender}
 >
-	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
+	<div class="rounded-full mx-2">
 		<Gravatar
 			email={message.user.email}
 			size={64}
@@ -235,19 +231,28 @@
 		/>
 	</div>
 
-	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
+	<div
+		class={`relative whitespace-normal break-words overflow-wrap-anywhere rounded-lg p-3 ${
+			isSender ? 'bg-blue-50' : 'bg-gray-300 text-black'
+		}`}
+	>
 		{#if replyToMessage}
 			<button
-				class="replying-to-text"
+				class="flex items-center text-[0.65rem] text-gray-400 mb-1 cursor-pointer"
 				on:click={() => scrollToMessage(replyToMessage?.id)}
 				aria-label="Scroll to replied message"
 			>
 				{$t('chatbox.replyingTo')}
-				<span class="replying-to-content">{truncateMessage(replyToMessage?.content)}</span>
+				<span class="italic truncate whitespace-nowrap overflow-hidden max-w-[150px] text-[0.65rem] inline-block">
+					{truncateMessage(replyToMessage?.content)}
+				</span>
 			</button>
 		{/if}
 
-		<button class="reply-icon" on:click={() => initiateReply(message)}>
+		<button
+			class="absolute -right-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+			on:click={() => initiateReply(message)}
+		>
 			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
 		</button>
 
@@ -255,69 +260,53 @@
 			<div
 				contenteditable="true"
 				bind:this={contentDiv}
-				class="bg-blue-50 whitespace-pre-wrap min-h-8"
+				class="bg-blue-50 whitespace-pre-wrap min-h-8 p-2"
 			>
 				{message.content}
 			</div>
-			<button
-				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
-				on:click={() => endEdit()}
-			>
-				{$t('button.save')}
-			</button>
-			<button
-				class="float-end border rounded-full px-4 py-2 mt-2 mr-2"
-				on:click={() => endEdit(false)}
-			>
-				{$t('button.cancel')}
-			</button>
+			<div class="flex justify-end space-x-2 mt-2">
+				<button
+					class="border rounded-full px-4 py-2 bg-white text-blue-700"
+					on:click={() => endEdit()}
+				>
+					{$t('button.save')}
+				</button>
+				<button
+					class="border rounded-full px-4 py-2 bg-gray-100 text-gray-800"
+					on:click={() => endEdit(false)}
+				>
+					{$t('button.cancel')}
+				</button>
+			</div>
 		{:else}
 			<div class="whitespace-pre-wrap" bind:this={contentDiv}>
 				{#each parts as part}
 					{#if isEdit || !part.feedback}
 						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 					{:else}
-						<!-- prettier-ignore -->
-						<span class=""
-							><!--
-						--><span
-								class="underline group/feedback relative decoration-wavy hover:cursor-help"
-								class:decoration-blue-500={part.feedback.content}
-								class:decoration-red-500={!part.feedback.content}
-								><div
-									class="absolute group-hover/feedback:flex hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10"
-								><!--
-									-->{part.feedback.content}<button
-										aria-label="close"
-										class:ml-1={part.feedback.content}
-										class="hover:border-inherit border border-transparent rounded"
-										on:click={() => deleteFeedback(part.feedback)}
-									>
-										<CloseIcon />
-									</button>
-								</div
-								><!--
-						-->{part.text}<!--
-					--></span
-							><!--
-					--></span
-						>
+						<span class="underline group/feedback relative decoration-wavy hover:cursor-help">
+							<span
+								class="absolute hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10 group-hover:flex"
+							>
+								{part.feedback.content}
+								<button
+									aria-label="close"
+									class="ml-1 hover:border-gray-300 border border-transparent rounded"
+									on:click={() => deleteFeedback(part.feedback)}
+								>
+									<CloseIcon />
+								</button>
+							</span>
+							{part.text}
+						</span>
 					{/if}
 				{/each}
 			</div>
 		{/if}
-		{#if isSender}
-			<button
-				class="absolute bottom-0 left-[-1.5rem] invisible group-hover:visible h-full p-0"
-				on:click={() => (isEdit ? endEdit() : startEdit())}
-			>
-				<Icon src={Pencil} class="w-5 h-full text-gray-500 hover:text-gray-800" />
-			</button>
-		{/if}
 	</div>
-	<div class="chat-footer opacity-50">
-		<Icon src={Check} class="w-4 inline" />
-		{displayedTime}
+	<div class="text-sm mt-1 opacity-70 flex items-center space-x-2">
+		<Icon src={Check} class="w-4" />
+		<span>{displayedTime}</span>
 		{#if message.edited}
 			<button class="italic cursor-help" on:click={() => historyModal.showModal()}>
 				{$t('chatbox.edited')}
@@ -327,18 +316,18 @@
 </div>
 
 <div
-	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
+	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x flex"
 	bind:this={hightlight}
 >
 	<button
 		on:click={() => onSelect(false)}
-		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
+		class="bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
 	>
 		<SpellCheck />
-	</button><!---
-	--><button
+	</button>
+	<button
 		on:click={() => onSelect(true)}
-		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
+		class="bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
 	>
 		<ChatBubble />
 	</button>
@@ -364,87 +353,3 @@
 		</div>
 	</div>
 </dialog>
-
-<style>
-	.chat-bubble {
-		white-space: normal;
-		word-wrap: break-word;
-		word-break: break-word;
-		overflow-wrap: break-word;
-	}
-
-	.chat-bubble.bg-gray-300 {
-		background-color: #f1f1f1;
-		color: #000;
-	}
-
-	.chat-bubble.bg-gray-300::after {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		left: -8px;
-		width: 0;
-		height: 0;
-		border-style: solid;
-		border-width: 8px 8px 8px 0;
-		border-color: transparent #f1f1f1 transparent transparent;
-	}
-
-	.replying-to-text {
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		font-size: 0.65rem;
-		color: #bbb;
-		margin-bottom: 4px;
-	}
-
-	.replying-to-content {
-		font-style: italic;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-		max-width: 150px;
-		font-size: 0.65rem;
-		display: inline-block;
-	}
-
-	.chat {
-		margin-bottom: 6px;
-	}
-
-	.chat-footer {
-		font-size: 0.75rem;
-		margin-top: 2px;
-		opacity: 0.7;
-	}
-
-	.reply-icon {
-		position: absolute;
-		right: -1.5rem;
-		top: 50%;
-		transform: translateY(-50%);
-		cursor: pointer;
-		opacity: 0;
-		transition: opacity 0.2s;
-	}
-
-	.group:hover .reply-icon {
-		opacity: 1;
-	}
-
-	.chat:target {
-		animation:
-			highlight 1.5s ease-in-out,
-			pulse 1.5s infinite;
-	}
-
-	@keyframes highlight {
-		0% {
-			background-color: rgba(255, 255, 0, 0.4);
-		}
-		100% {
-			background-color: transparent;
-		}
-	}
-</style>
