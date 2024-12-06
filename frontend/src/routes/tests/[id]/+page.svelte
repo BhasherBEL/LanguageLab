@@ -89,19 +89,21 @@
 	}
 
 	async function selectOption(option: string) {
-		if (
-			!(await sendSurveyResponseAPI(
-				code,
-				sid,
-				uid,
-				survey.id,
-				currentGroup.id,
-				questionsRandomized[currentQuestionId].id,
-				currentQuestion.options.findIndex((o: string) => o === option) + 1,
-				(new Date().getTime() - startTime) / 1000
-			))
-		) {
-			return;
+		if (!currentGroup.demo) {
+			if (
+				!(await sendSurveyResponseAPI(
+					code,
+					sid,
+					uid,
+					survey.id,
+					currentGroup.id,
+					questionsRandomized[currentQuestionId].id,
+					currentQuestion.options.findIndex((o: string) => o === option) + 1,
+					(new Date().getTime() - startTime) / 1000
+				))
+			) {
+				return;
+			}
 		}
 		if (currentQuestionId < questionsRandomized.length - 1) {
 			setQuestionId(currentQuestionId + 1);
@@ -113,25 +115,26 @@
 
 	async function sendGap() {
 		if (!gaps) return;
+		if (!currentGroup.demo) {
+			const gapTexts = gaps
+				.filter((part) => part.gap !== null)
+				.map((part) => part.gap)
+				.join('|');
 
-		const gapTexts = gaps
-			.filter((part) => part.gap !== null)
-			.map((part) => part.gap)
-			.join('|');
-
-		if (
-			!(await sendSurveyResponseAPI(
-				uuid,
-				sid,
-				survey.id,
-				currentGroup.id,
-				questionsRandomized[currentQuestionId].id,
-				-1,
-				(new Date().getTime() - startTime) / 1000,
-				gapTexts
-			))
-		) {
-			return;
+			if (
+				!(await sendSurveyResponseAPI(
+					uuid,
+					sid,
+					survey.id,
+					currentGroup.id,
+					questionsRandomized[currentQuestionId].id,
+					-1,
+					(new Date().getTime() - startTime) / 1000,
+					gapTexts
+				))
+			) {
+				return;
+			}
 		}
 		if (currentQuestionId < questionsRandomized.length - 1) {
 			setQuestionId(currentQuestionId + 1);
