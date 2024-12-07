@@ -54,7 +54,7 @@ export async function sendSurveyResponseInfoAPI(
 	primary_language: string,
 	education: string
 ) {
-	const response = await fetch(`/surveys/info/${survey_id}`, {
+	const response = await fetch(`/api/surveys/info/${survey_id}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
