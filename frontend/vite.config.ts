@@ -3,12 +3,14 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
-	optimizeDeps: {
-		exclude: ['emoji-picker-element']
-	},
-	server: {
-		proxy: {
-			'/api': 'http://localhost:8000'
+	resolve: {
+		alias: {
+			$lib: '/src/lib',
+			$routes: '/src/routes'
 		}
+	},
+	optimizeDeps: {
+		exclude: ['emoji-picker-element'],
+		include: ['svelte-gravatar', 'svelte-waypoint']
 	}
 });

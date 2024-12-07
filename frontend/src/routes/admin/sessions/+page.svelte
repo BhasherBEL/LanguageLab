@@ -1,17 +1,13 @@
 <script lang="ts">
-	import { getSessionsAPI } from '$lib/api/sessions';
 	import Session from '$lib/types/session';
-	import { onMount } from 'svelte';
 	import { t } from '$lib/services/i18n';
 	import { displayTime } from '$lib/utils/date';
 	import { ArrowDownTray, ArrowRightStartOnRectangle, Icon } from 'svelte-hero-icons';
 	import config from '$lib/config';
+	import type { PageData } from './$types';
 
-	let sessions: Session[] = [];
-
-	onMount(async () => {
-		sessions = Session.parseAll(await getSessionsAPI());
-	});
+	let { data }: { data: PageData } = $props();
+	let sessions: Session[] = data.sessions;
 </script>
 
 <h1 class="text-xl font-bold m-5 text-center">{$t('header.admin.sessions')}</h1>

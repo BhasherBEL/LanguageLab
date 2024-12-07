@@ -20,6 +20,7 @@
 		"disabled": "Cette session est accessible uniquement en lecture",
 		"edited": "modifié",
 		"history": "Historique",
+		"replyingTo": "En réponse à : ",
 		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible."
 	},
 	"home": {
@@ -42,7 +43,9 @@
 		"bookingSuccessful": "Session réservée avec succès",
 		"bookingFailed": "Erreur lors de la réservation de la session",
 		"noCurrentOrFutureSessions": "Aucune session en cours ou planifiée",
-		"noSessions": "Aucune session"
+		"noSessions": "Aucune session",
+		"noContact": "Ajoutez un contact pour commencer",
+		"newFirstContact": "Ajouter un premier contact"
 	},
 	"login": {
 		"email": "E-mail",
@@ -184,7 +187,7 @@
 		"loginEmail": "Utiliser une adresse e-mail",
 		"invalidEmail": "Adresse e-mail invalide",
 		"complete": "Questionnaire complété. Merci pour votre participation !",
-		"score": "Vous avez obtenu un score de ",
+		"score": "Score : ",
 		"code": "Votre code:",
 		"codeIndication": "L'instructeur devrait vous avoir donné un code personnel. Si ce n'est pas le cas, veuillez indiquer votre adresse électronique.",
 		"invalidCode": "Code invalide",
@@ -258,10 +261,10 @@
 				"title": "Questionnaire hebdomadaire",
 				"description": "Au cours des 7 derniers jours...",
 				"questions": [
-					"Combien d'heures de <span class='font-bold'>cours</span> de {lang} avez vous suivies ?",
-					"Combien d'heures avez-vous <span class='font-bold'>regardé des vidéos</span> en {lang} (films, séries, Youtube...) ou <span class='font-bold'>écouté des contenus</span> en {lang} (podcasts, radio, cours universitaires...) ?",
-					"Combien d'heures avez-vous <span class='font-bold'>lu des textes</span> en {lang} (livre, journal, BD, sites web...) ?",
-					"Combien d'heures avez-vous <span class='font-bold'>parlé</span> en {lang} (discussions avec amis, famille, collègues...) ?"
+					"Combien d'heures de <b>cours</b> de {lang} avez vous suivies ?",
+					"Combien d'heures avez-vous <b>regardé des vidéos</b> en {lang} (films, séries, Youtube...) ou <b>écouté des contenus</b> en {lang} (podcasts, radio, cours universitaires...) ?",
+					"Combien d'heures avez-vous <b>lu des textes</b> en {lang} (livre, journal, BD, sites web...) ?",
+					"Combien d'heures avez-vous <b>parlé</b> en {lang} (discussions avec amis, famille, collègues...) ?"
 				],
 				"answers": {
 					"placeholder": "",
@@ -280,14 +283,24 @@
 				},
 				"errors": {
 					"null": "Veuillez répondre à toutes les questions",
-					"submit": "Erreur lors de l'envoi du questionnaire"
+					"submit": "Erreur lors de l'envoi du questionnaire",
+					"toggle": "Erreur lors de l'activation ou de la désactivation de la session"
 				},
 				"success": "Questionnaire envoyé, merci !"
 			}
 		},
 		"downloadAllMessages": "Télécharger toutes les conversations",
 		"downloadAllMetadata": "Télécharger toutes les métadonnées",
-		"downloadAllFeedbacks": "Télécharger tous les feedbacks"
+		"downloadAllFeedbacks": "Télécharger tous les feedbacks",
+		"errors": {
+			"create": "Erreur lors de la création de la session",
+			"delete": "Erreur lors de la suppression de la session",
+			"addUser": "Erreur lors de l'ajout d'un utilisateur à la session",
+			"removeUser": "Erreur lors de la suppression d'un utilisateur de la session",
+			"presence": "Erreur lors de l'envoi de la présence",
+			"typing": "Erreur lors de l'envoi de l'indicateur de saisie"
+		},
+		"noTopic": "Aucun topic disponible"
 	},
 	"button": {
 		"create": "Créer",
@@ -377,7 +390,8 @@
 			"date": "Date",
 			"programed": "Programmée",
 			"inProgress": "En cours",
-			"finished": "Terminée"
+			"finished": "Terminée",
+			"topics": "Topics"
 		}
 	},
 	"inputs": {

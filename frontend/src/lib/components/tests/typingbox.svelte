@@ -102,7 +102,7 @@
 			bind:this={textArea}
 			spellcheck="false"
 			disabled={isDone}
-			on:keyup={(e) => {
+			on:keyup={() => {
 				if (inProgress) {
 					data[data.length - 1].uptime = new Date().getTime() - startTime;
 				}
@@ -134,6 +134,6 @@
 				}
 			}}
 			class="absolute top-0 resize-none font-mono p-4 w-full h-full bg-transparent select-none text-transparent"
-		/>
+		></textarea>
 	</div>
 </div>

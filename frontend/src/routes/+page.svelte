@@ -11,7 +11,7 @@
 		ArrowRightCircle
 	} from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
-	import User, { user } from '$lib/types/user';
+	import User from '$lib/types/user';
 	import {
 		createUserContactFromEmailAPI,
 		getUserContactsAPI,
@@ -21,16 +21,18 @@
 	import { toastAlert, toastSuccess, toastWarning } from '$lib/utils/toasts';
 	import { get } from 'svelte/store';
 
-	let ready = false;
-	$: contacts = [] as User[];
-	$: contact = null as User | null;
-	$: contactSessions = [] as Session[];
-	let modalNew = false;
-	let nickname = '';
+	let { data } = $props();
+	let user = data.user!;
+	let contacts: User[] = $state(data.contacts);
+	let contact: User | undefined = $state(data.contact);
+	let contactSessions: Session[] = $state(data.sessions);
 
-	let showTerminatedSessions = false;
+	let modalNew = $state(false);
+	let nickname = $state('');
 
-	async function selectContact(c: User | null) {
+	let showTerminatedSessions = $state(false);
+
+	async function selectContact(c: User | undefined) {
 		showTerminatedSessions = false;
 		contact = c;
 		if (!contact) {
@@ -38,20 +40,12 @@
 			return;
 		}
 
-		contactSessions = Session.parseAll(await getUserContactSessionsAPI($user!.id, contact.id)).sort(
-			(a, b) => b.start_time.getTime() - a.start_time.getTime()
-		);
+		contactSessions = Session.parseAll(
+			await getUserContactSessionsAPI(fetch, user.id, contact.id)
+		).sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
 	}
 
 	onMount(async () => {
-		if (!$user) return;
-		contacts = User.parseAll(await getUserContactsAPI($user.id));
-		if (contacts.length > 0) {
-			selectContact(contacts[0]);
-		}
-
-		ready = true;
-
 		(function (C: any, A: any, L: any) {
 			let p = function (a: any, ar: any) {
 				a.q.push(ar);
@@ -90,7 +84,7 @@
 		Cal('on', {
 			action: 'bookingSuccessful',
 			callback: async (e: any) => {
-				if (!contact || !$user || !e.detail.data) {
+				if (!contact || !user || !e.detail.data) {
 					toastAlert(get(t)('home.bookingFailed'));
 					return;
 				}
@@ -99,7 +93,8 @@
 				const duration = e.detail.data.duration;
 				const end = new Date(date.getTime() + duration * 60000);
 				const sess_id: number | null = await createSessionFromCalComAPI(
-					$user.id,
+					fetch,
+					user.id,
 					contact.id,
 					date,
 					end
@@ -110,7 +105,7 @@
 				}
 				toastSuccess(get(t)('home.bookingSuccessful'));
 				contactSessions = Session.parseAll(
-					await getUserContactSessionsAPI($user!.id, contact.id)
+					await getUserContactSessionsAPI(fetch, user!.id, contact.id)
 				).sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
 			}
 		});
@@ -127,172 +122,185 @@
 	}
 
 	async function searchNickname() {
-		if (!$user || !nickname || !nickname.includes('@')) {
+		if (!user || !nickname || !nickname.includes('@')) {
 			toastWarning('Please enter a valid email address');
 			return;
 		}
 
-		const res = await createUserContactFromEmailAPI($user.id, nickname);
+		const res = await createUserContactFromEmailAPI(fetch, user.id, nickname);
 		if (!res) return;
 
 		modalNew = false;
-		contacts = User.parseAll(await getUserContactsAPI($user.id));
+		contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
 	}
 </script>
 
-{#if ready}
-	<div class="flex-row h-full flex py-4 flex-grow overflow-y-hidden">
-		<div class="flex flex-col border shadow-[0_0_6px_0_rgba(0,14,156,.2)] min-w-72 rounded-r-xl">
-			<div class="flex-grow">
-				{#each contacts as c (c.id)}
-					<div
-						class="h-24 flex border-gray-300 border-b-2 hover:bg-gray-200 hover:cursor-pointer p-4"
-						class:bg-gray-200={c.id === contact?.id}
-						on:click={() => selectContact(c)}
-						role="button"
-						aria-label={c.nickname}
-						tabindex="0"
-						on:keydown={(e) => e.key === 'Enter' && selectContact(c)}
-					>
-						<div class="w-16 ml-2 mr-4 p-4 bg-gray-300 rounded-2xl">
-							{#if c.type == 0}
-								<Icon src={Sparkles} class="mask mask-squircle" />
-							{:else if c.type == 1}
-								<Icon src={AcademicCap} class="" />
-							{:else}
-								<Icon src={UserIcon} />
-							{/if}
-						</div>
-						<div class="text-lg font-bold capitalize flex items-center">
-							{c.nickname}
-						</div>
-					</div>
-				{/each}
-			</div>
-			<button
-				class="h-20 w-full flex justify-center items-center text-lg border-gray-200 border-t hover:bg-gray-200"
-				on:click={() => (modalNew = true)}
-			>
-				+
-			</button>
-		</div>
-		{#if contact}
-			<div class="flex flex-col xl:mx-auto xl:w-[60rem] m-4">
-				<div>
-					<button on:click|preventDefault={createSession} class="button float-start mr-2">
-						{$t('home.createSession')}
-					</button>
-					<button
-						class="button float-start"
-						class:btn-disabled={!contact || !contact.calcom_link}
-						data-cal-link={`${contact.calcom_link}?email=${$user?.email}&name=${$user?.nickname}`}
-					>
-						{$t('home.bookSession')}
-					</button>
-				</div>
+<div class="flex-row h-full flex py-4 flex-grow overflow-y-hidden">
+	<div class="flex flex-col border shadow-[0_0_6px_0_rgba(0,14,156,.2)] min-w-72 rounded-r-xl">
+		<div class="flex-grow">
+			{#each contacts as c (c.id)}
 				<div
-					class="border p-4 mt-4 rounded-xl shadow-[0_0_6px_0_rgba(0,14,156,.2)] overflow-y-scroll no-scrollbar"
+					class="h-24 flex border-gray-300 border-b-2 hover:bg-gray-200 hover:cursor-pointer p-4"
+					class:bg-gray-200={c.id === contact?.id}
+					onclick={() => selectContact(c)}
+					role="button"
+					aria-label={c.nickname}
+					tabindex="0"
+					onkeydown={(e) => e.key === 'Enter' && selectContact(c)}
 				>
-					<table class="divide-y divide-neutral-300 text-center w-full table-fixed">
-						<thead>
+					<div class="w-16 ml-2 mr-4 p-4 bg-gray-300 rounded-2xl">
+						{#if c.type == 0}
+							<Icon src={Sparkles} class="mask mask-squircle" />
+						{:else if c.type == 1}
+							<Icon src={AcademicCap} class="" />
+						{:else}
+							<Icon src={UserIcon} />
+						{/if}
+					</div>
+					<div class="text-lg font-bold capitalize flex items-center">
+						{c.nickname}
+					</div>
+				</div>
+			{/each}
+		</div>
+		<button
+			class="h-20 w-full flex justify-center items-center text-lg border-gray-200 border-t hover:bg-gray-200"
+			onclick={() => (modalNew = true)}
+		>
+			+
+		</button>
+	</div>
+	{#if contact}
+		<div class="flex flex-col xl:mx-auto xl:w-[60rem] m-4">
+			<div>
+				<button
+					onclick={(e) => {
+						e.preventDefault();
+						createSession();
+					}}
+					class="button float-start mr-2"
+				>
+					{$t('home.createSession')}
+				</button>
+				<button
+					class="button float-start"
+					class:btn-disabled={!contact || !contact.calcom_link}
+					data-cal-link={`${contact.calcom_link}?email=${user?.email}&name=${user?.nickname}`}
+				>
+					{$t('home.bookSession')}
+				</button>
+			</div>
+			<div
+				class="border p-4 mt-4 rounded-xl shadow-[0_0_6px_0_rgba(0,14,156,.2)] overflow-y-scroll no-scrollbar"
+			>
+				<table class="divide-y divide-neutral-300 text-center w-full table-fixed">
+					<thead>
+						<tr>
+							<th scope="col" class="text-left">{$t('utils.words.date')}</th>
+							<th scope="col">{$t('utils.words.status')}</th>
+							<th scope="col"># {$t('utils.words.messages').toLowerCase()}</th>
+							<th scope="col">{$t('utils.words.actions')}</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-neutral-200">
+						{#if contactSessions.length === 0}
 							<tr>
-								<th scope="col" class="text-left">{$t('utils.words.date')}</th>
-								<th scope="col">{$t('utils.words.status')}</th>
-								<th scope="col"># {$t('utils.words.messages').toLowerCase()}</th>
-								<th scope="col">{$t('utils.words.actions')}</th>
+								<td colspan="4" class="py-5 text-gray-500">{$t('home.noSessions')}</td>
 							</tr>
-						</thead>
-						<tbody class="divide-y divide-neutral-200">
-							{#if contactSessions.length === 0}
+						{:else}
+							{#if !showTerminatedSessions && contactSessions.filter((s) => s.end_time >= new Date()).length === 0}
 								<tr>
-									<td colspan="4" class="py-5 text-gray-500">{$t('home.noSessions')}</td>
+									<td colspan="4" class="py-5 text-gray-500"
+										>{$t('home.noCurrentOrFutureSessions')}</td
+									>
 								</tr>
-							{:else}
-								{#if !showTerminatedSessions && contactSessions.filter((s) => s.end_time >= new Date()).length === 0}
+							{/if}
+							{#each contactSessions as s (s.id)}
+								{#if showTerminatedSessions || s.end_time >= new Date()}
 									<tr>
-										<td colspan="4" class="py-5 text-gray-500"
-											>{$t('home.noCurrentOrFutureSessions')}</td
-										>
+										<td class="py-2 text-left space-y-1">
+											<div>
+												{displayShortTime(s.start_time)}
+											</div>
+											<div class="text-sm italic text-gray-600">
+												{displayTimeSince(s.start_time)}
+											</div>
+										</td>
+										<td class="py-2">
+											{#if s.start_time <= new Date() && s.end_time >= new Date()}
+												<span class="bg-green-200 rounded-lg px-2 py-1"
+													>{$t('utils.words.inProgress')}</span
+												>
+											{:else if s.start_time > new Date()}
+												<span class="bg-orange-200 rounded-lg px-2 py-1"
+													>{$t('utils.words.programed')}</span
+												>
+											{:else}
+												<span class="bg-red-200 rounded-lg px-2 py-1"
+													>{$t('utils.words.finished')}</span
+												>
+											{/if}
+										</td>
+										<td class="py-2">{s.length} {$t('utils.words.messages').toLowerCase()}</td>
+										<td class="py-2">
+											<a href="/sessions/{s.id}" class="group">
+												<Icon
+													src={ArrowRightCircle}
+													size="32"
+													class="text-accent mx-auto group-hover:text-white group-hover:bg-accent rounded-full"
+												/>
+											</a>
+										</td>
 									</tr>
 								{/if}
-								{#each contactSessions as s (s.id)}
-									{#if showTerminatedSessions || s.end_time >= new Date()}
-										<tr>
-											<td class="py-2 text-left space-y-1">
-												<div>
-													{displayShortTime(s.start_time)}
-												</div>
-												<div class="text-sm italic text-gray-600">
-													{displayTimeSince(s.start_time)}
-												</div>
-											</td>
-											<td class="py-2">
-												{#if s.start_time <= new Date() && s.end_time >= new Date()}
-													<span class="bg-green-200 rounded-lg px-2 py-1"
-														>{$t('utils.words.inProgress')}</span
-													>
-												{:else if s.start_time > new Date()}
-													<span class="bg-orange-200 rounded-lg px-2 py-1"
-														>{$t('utils.words.programed')}</span
-													>
-												{:else}
-													<span class="bg-red-200 rounded-lg px-2 py-1"
-														>{$t('utils.words.finished')}</span
-													>
-												{/if}
-											</td>
-											<td class="py-2">{s.length} {$t('utils.words.messages').toLowerCase()}</td>
-											<td class="py-2">
-												<a href="/session?id={s.id}" class="group">
-													<Icon
-														src={ArrowRightCircle}
-														size="32"
-														class="text-accent mx-auto group-hover:text-white group-hover:bg-accent rounded-full"
-													/>
-												</a>
-											</td>
-										</tr>
-									{/if}
-								{/each}
-								<tr>
-									<td
-										class="py-2 hover:cursor-pointer"
-										colspan="4"
-										on:click={() => (showTerminatedSessions = !showTerminatedSessions)}
-									>
-										<button aria-label={showTerminatedSessions ? 'Hide' : 'Show'}>
-											<svg
-												class="size-3 ms-3"
-												aria-hidden="true"
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 10 6"
-												class:rotate-180={showTerminatedSessions}
-											>
-												<path
-													stroke="currentColor"
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="m1 1 4 4 4-4"
-												/>
-											</svg>
-										</button>
-									</td>
-								</tr>
-							{/if}
-						</tbody>
-					</table>
-				</div>
+							{/each}
+							<tr>
+								<td
+									class="py-2 hover:cursor-pointer"
+									colspan="4"
+									onclick={() => (showTerminatedSessions = !showTerminatedSessions)}
+								>
+									<button aria-label={showTerminatedSessions ? 'Hide' : 'Show'}>
+										<svg
+											class="size-3 ms-3"
+											aria-hidden="true"
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 10 6"
+											class:rotate-180={showTerminatedSessions}
+										>
+											<path
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="m1 1 4 4 4-4"
+											/>
+										</svg>
+									</button>
+								</td>
+							</tr>
+						{/if}
+					</tbody>
+				</table>
 			</div>
-		{/if}
-	</div>
-{/if}
+		</div>
+	{:else}
+		<div class="flex-grow text-center mt-16">
+			<div class="text-lg text-gray-500 pt-4 italic">{$t('home.noContact')}</div>
+			<div>
+				<button class="mx-auto mt-8 button" onclick={() => (modalNew = true)}>
+					+ {$t('home.newFirstContact')}
+				</button>
+			</div>
+		</div>
+	{/if}
+</div>
 
 <dialog
 	class="modal bg-black bg-opacity-50"
 	open={modalNew}
-	on:close={() => (modalNew = false)}
+	onclose={() => (modalNew = false)}
 	tabindex="-1"
 >
 	<div class="modal-box">
@@ -303,9 +311,9 @@
 				placeholder={$t('home.email')}
 				bind:value={nickname}
 				class="input flex-grow mr-2"
-				on:keydown={(e) => e.key === 'Escape' && (modalNew = false)}
+				onkeydown={(e) => e.key === 'Escape' && (modalNew = false)}
 			/>
-			<button class="button w-16" on:click={searchNickname}>
+			<button class="button w-16" onclick={searchNickname}>
 				<Icon src={MagnifyingGlass} />
 			</button>
 		</div>
