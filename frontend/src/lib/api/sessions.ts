@@ -44,9 +44,14 @@ export async function getMessagesAPI(id: number) {
 export async function createMessageAPI(
 	id: number,
 	content: string,
-	metadata: { message: string; date: number }[]
+	metadata: { message: string; date: number }[],
+	replyTo: number | null
 ): Promise<any | null> {
-	const response = await axiosInstance.post(`/sessions/${id}/messages`, { content, metadata });
+	const response = await axiosInstance.post(`/sessions/${id}/messages`, {
+		content,
+		metadata,
+		reply_to_message_id: replyTo
+	});
 
 	if (response.status !== 201) {
 		toastAlert('Failed to send message');

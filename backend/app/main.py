@@ -19,6 +19,7 @@ from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
 import json
 from jose import jwt
+from jose import ExpiredSignatureError
 from io import StringIO
 import csv
 
@@ -787,7 +788,11 @@ def create_message(
         action,
     )
 
-    return {"id": message.id, "message_id": message.message_id}
+    return {
+        "id": message.id,
+        "message_id": message.message_id,
+        "reply_to": message.reply_to_message_id,
+    }
 
 
 @sessionsRouter.post(
@@ -947,16 +952,21 @@ def study_create(
 
 @websocketRouter.websocket("/sessions/{session_id}")
 async def websocket_session(
-    session_id: int,
-    token: str,
-    websocket: WebSocket,
-    db: Session = Depends(get_db),
+    session_id: int, token: str, websocket: WebSocket, db: Session = Depends(get_db)
 ):
-    payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"])
+    try:
+        payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"])
+    except ExpiredSignatureError:
+        await websocket.close(code=1008, reason="Token expired")
+        return
+    except jwt.JWTError:
+        await websocket.close(code=1008, reason="Invalid token")
+        return
 
     current_user = crud.get_user(db, user_id=payload["subject"]["uid"])
     if current_user is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        await websocket.close(code=1008, reason="Invalid user")
+        return
 
     db_session = crud.get_session(db, session_id)
     if db_session is None:
