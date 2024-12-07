@@ -6,7 +6,8 @@
 	},
 	"chatbox": {
 		"placeholder": "Type your message here...",
-		"sendError": "Failed to send message"
+		"sendError": "Failed to send message",
+		"replyingTo": "Replying to: "
 	},
 	"home": {
 		"date": "Date",

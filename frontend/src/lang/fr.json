@@ -20,6 +20,7 @@
 		"disabled": "Cette session est accessible uniquement en lecture",
 		"edited": "modifié",
 		"history": "Historique",
+		"replyingTo": "En réponse à : ",
 		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible."
 	},
 	"home": {

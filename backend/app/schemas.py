@@ -142,6 +142,7 @@ class Message(BaseModel):
     user_id: int
     session_id: int
     created_at: NaiveDatetime
+    reply_to_message_id: int | None = None
     feedbacks: list[MessageFeedback]
 
     class Config:
@@ -155,6 +156,7 @@ class Message(BaseModel):
             "user_id": self.user_id,
             "session_id": self.session_id,
             "created_at": self.created_at.isoformat(),
+            "reply_to_message_id": self.reply_to_message_id,
             "feedbacks": [feedback.to_dict() for feedback in self.feedbacks],
         }
 
@@ -170,6 +172,7 @@ class MessageMetadataCreate(BaseModel):
 class MessageCreate(BaseModel):
     message_id: str | None = None
     content: str
+    reply_to_message_id: int | None = None
     metadata: list[MessageMetadataCreate]
 
     class Config:

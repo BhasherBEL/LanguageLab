@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type Message from '$lib/types/message';
 	import { displayTime } from '$lib/utils/date';
-	import { Check, Icon, Pencil } from 'svelte-hero-icons';
+	import { Pencil, Check, Icon, ArrowUturnLeft } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
 	import Gravatar from 'svelte-gravatar';
 	import { t } from '$lib/services/i18n';
@@ -12,8 +12,31 @@
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
 	import CloseIcon from '../icons/closeIcon.svelte';
+	import { initiateReply } from '$lib/utils/replyUtils';
 
 	export let message: Message;
+
+	let replyTo: string | undefined;
+
+	$: replyTo = message['_replyTo'];
+
+	let replyToMessage: Message | null = null;
+
+	$: if (replyTo) {
+		findMessageById(replyTo).then((msg) => {
+			replyToMessage = msg;
+		});
+	}
+
+	async function findMessageById(id: string): Promise<Message | null> {
+		try {
+			const resolvedMessage = await message.getMessageById(Number(id));
+			return resolvedMessage;
+		} catch (error) {
+			console.error(`Error resolving message ID ${id}:`, error);
+			return null;
+		}
+	}
 
 	let timer: number;
 	$: displayedTime = displayTime(message.created_at);
@@ -55,6 +78,12 @@
 		}
 	}
 
+	function truncateMessage(content: string, maxLength: number = 20): string {
+		if (content.length > maxLength) {
+			return content.slice(0, maxLength) + '...';
+		}
+		return content;
+	}
 	let hightlight: HTMLDivElement;
 
 	onMount(() => {
@@ -151,6 +180,7 @@
 		if (current < content.length) {
 			parts.push({ text: content.slice(current), feedback: null });
 		}
+
 		return parts;
 	}
 
@@ -181,12 +211,35 @@
 			class="rounded-full"
 		/>
 	</div>
+
 	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
+		{#if replyToMessage}
+			<a
+				href={`#${replyToMessage.uuid}`}
+				class="flex items-center text-[0.65rem] text-gray-400 mb-1 cursor-pointer"
+				aria-label="Scroll to replied message"
+			>
+				{$t('chatbox.replyingTo')}
+				<span
+					class="italic truncate whitespace-nowrap overflow-hidden max-w-[150px] text-[0.65rem] inline-block"
+				>
+					{truncateMessage(replyToMessage?.content)}
+				</span>
+			</a>
+		{/if}
+
+		<button
+			class="absolute -right-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+			on:click={() => initiateReply(message)}
+		>
+			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
+		</button>
+
 		{#if isEdit}
 			<div
 				contenteditable="true"
 				bind:this={contentDiv}
-				class="bg-blue-50 whitespace-pre-wrap min-h-8"
+				class="bg-blue-50 whitespace-pre-wrap min-h-8 p-2"
 			>
 				{message.content}
 			</div>
