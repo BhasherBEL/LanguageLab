@@ -2,31 +2,31 @@
 	import { createWeeklySurveyAPI } from '$lib/api/users';
 	import config from '$lib/config';
 	import { t } from '$lib/services/i18n';
-	import { user } from '$lib/types/user';
+	import type User from '$lib/types/user';
 	import { formatToUTCDate } from '$lib/utils/date';
 	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
 
-	let open =
-		!$user?.is_tutor &&
-		!$user?.is_admin &&
-		(!$user?.last_survey ||
-			$user.last_survey.getTime() + config.WEEKLY_SURVEY_INTERVAL < Date.now());
+	let { user }: { user: User } = $props();
+
+	let open = $state(
+		!user.is_tutor &&
+			!user.is_admin &&
+			(!user.last_survey || user.last_survey.getTime() + config.WEEKLY_SURVEY_INTERVAL < Date.now())
+	);
 
 	async function send() {
-		if (!$user) return;
-
 		const data = Array.from({ length: 4 }, (_, i) => {
 			const value = (document.getElementById('questions-' + i) as HTMLSelectElement).value;
 			return value === '-1' ? null : parseFloat(value);
 		});
 
-		const res = await createWeeklySurveyAPI($user.id, data[0]!, data[1]!, data[2]!, data[3]!);
+		const res = await createWeeklySurveyAPI(fetch, user.id, data[0]!, data[1]!, data[2]!, data[3]!);
 
 		if (!res) {
 			toastAlert($t('session.modal.weekly.errors.submit'));
 		}
 
-		await $user.patch({ last_survey: formatToUTCDate(new Date()) });
+		await user.patch({ last_survey: formatToUTCDate(new Date()) });
 
 		open = false;
 
@@ -34,14 +34,7 @@
 	}
 </script>
 
-<dialog
-	class="modal bg-black bg-opacity-50"
-	{open}
-	on:close={() => (open = false)}
-	on:keydown={(e) => e.key === 'Escape' && (open = false)}
-	tabindex="0"
-	aria-modal="true"
->
+<dialog class="modal bg-black bg-opacity-50" {open} aria-modal="true">
 	<div class="modal-box max-w-[800px]">
 		<h2 class="text-xl font-bold mb-4">{$t('session.modal.weekly.title')}</h2>
 		<p>{@html $t('session.modal.weekly.description')}</p>
@@ -50,7 +43,7 @@
 				<div class="label">
 					<span class="label-text"
 						>{@html $t('session.modal.weekly.questions.' + i, {
-							lang: $t('utils.language.' + $user?.target_language).toLowerCase()
+							lang: $t('utils.language.' + user.target_language).toLowerCase()
 						})}</span
 					>
 				</div>
@@ -73,6 +66,6 @@
 				</select>
 			</label>
 		{/each}
-		<button class="btn btn-primary w-full mt-10" on:click={send}>{$t('button.submit')}</button>
+		<button class="btn btn-primary w-full mt-10" onclick={send}>{$t('button.submit')}</button>
 	</div>
 </dialog>

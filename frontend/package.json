@@ -3,12 +3,13 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "VITE_API_URL=http://127.0.0.1:8000/api/v1 VITE_APP_URL=http://127.0.0.1:5173 VITE_WS_URL=ws://127.0.0.1:8000/api/v1/ws vite dev --host 127.0.0.1",
+		"dev": "VITE_API_URL=http://127.0.0.1:5173/api VITE_APP_URL=http://127.0.0.1:5173 VITE_WS_URL=ws://127.0.0.1:8000/api/v1/ws vite dev --host 127.0.0.1",
 		"build": "vite build",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check .",
-		"format": "prettier --write . --log-level warn"
+		"lint": "prettier --check . && tsc --noEmit",
+		"format": "prettier --write . --log-level warn",
+		"tsc": "tsc"
 	},
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^28.0.1",
@@ -22,6 +23,7 @@
 		"@tsconfig/svelte": "^5.0.4",
 		"@types/eslint": "^9.6.1",
 		"@types/js-cookie": "^3.0.6",
+		"@types/sanitize-html": "^2.13.0",
 		"@typescript-eslint/eslint-plugin": "^8.14.0",
 		"@typescript-eslint/parser": "^8.14.0",
 		"@zerodevx/svelte-toast": "^0.9.6",
@@ -54,10 +56,11 @@
 		"@sveltekit-i18n/parser-icu": "^1.0.8",
 		"dayjs": "^1.11.13",
 		"emoji-picker-element": "^1.23.0",
+		"js-sha256": "^0.11.0",
 		"linkify-html": "^4.1.3",
 		"linkifyjs": "^4.1.3",
 		"sanitize-html": "^2.13.1",
-		"svelte-gravatar": "^1.0.3",
+		"svelte-autosize": "^1.1.5",
 		"svelte-i18n": "^4.0.1",
 		"svelte-select": "^5.8.3"
 	}

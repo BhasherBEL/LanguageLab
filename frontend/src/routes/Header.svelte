@@ -1,30 +1,22 @@
 <script lang="ts">
-	import LocalSelector from './header/localSelector.svelte';
+	import LocalSelector from '$lib/components/header/localSelector.svelte';
 	import { t } from '$lib/services/i18n';
-	import {
-		ExclamationTriangle,
-		Icon,
-		Bars3,
-		UserCircle,
-		Language,
-		Cog6Tooth
-	} from 'svelte-hero-icons';
-	import { onMount } from 'svelte';
-	import { user } from '$lib/types/user';
+	import { ExclamationTriangle, Icon, Bars3, Language, Cog6Tooth } from 'svelte-hero-icons';
 	import { page } from '$app/stores';
+	import type User from '$lib/types/user';
 
-	$: displayMetadataWarning = false;
+	let { user }: { user: User | null } = $props();
 
-	onMount(async () => {
-		if ($user) {
-			if (!$user.home_language || !$user.target_language || !$user.birthdate || !$user.gender) {
-				displayMetadataWarning = true;
-			}
+	let displayMetadataWarning = $state(false);
+
+	if (user) {
+		if (!user.home_language || !user.target_language || !user.birthdate || !user.gender) {
+			displayMetadataWarning = true;
 		}
-	});
+	}
 </script>
 
-<header class="navbar shadow">
+<header class="navbar shadow bg-gray-200">
 	<div class="navbar-start">
 		<div class="dropdown sm:hidden p-0">
 			<div tabindex="0" role="button" class="btn btn-ghost">
@@ -34,7 +26,7 @@
 				tabindex="-1"
 				class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 			>
-				{#if $user}
+				{#if user}
 					<li><a href="/">Item 1</a></li>
 					<li>
 						<a href="/">Parent</a>
@@ -58,29 +50,19 @@
 		</h1>
 	</div>
 	<div class="navbar-end hidden sm:flex">
-		<ul class="menu menu-horizontal p-0">
-			{#if $user}
+		<ul class="menu menu-horizontal p-0 flex items-center">
+			{#if user}
 				<li>
 					<details>
-						<summary class="p-3">
-							<Icon src={UserCircle} class="h-5 w-5" />
-							{$user.nickname}
+						<summary class="px-3">
+							<img
+								src={`https://gravatar.com/avatar/${user.emailHash}?d=identicon`}
+								alt={''}
+								class="rounded-full border text-sm size-8 border-neutral-400"
+							/>
+							{user.nickname}
 						</summary>
 						<ul class="menu menu-sm dropdown-content absolute right-0">
-							{#if $user?.type === 0 || $user?.type === 1}
-								<li>
-									<a data-sveltekit-reload href="/tutor/timeslots">
-										{$t('header.availability')}
-									</a>
-								</li>
-							{/if}
-							{#if $user?.type === 2}
-								<li>
-									<a data-sveltekit-reload href="/timeslots">
-										{$t('header.tutorSelection')}
-									</a>
-								</li>
-							{/if}
 							<li>
 								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
 									{$t('header.signout')}
@@ -89,7 +71,7 @@
 						</ul>
 					</details>
 				</li>
-				{#if $user?.type === 0}
+				{#if user?.type === 0}
 					<li>
 						<details>
 							<summary class="p-3">

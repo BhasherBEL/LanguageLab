@@ -1,21 +1,42 @@
-import type { Handle } from '@sveltejs/kit';
+import { type Handle, type RequestEvent } from '@sveltejs/kit';
 import { jwtDecode } from 'jwt-decode';
 import { type JWTContent } from '$lib/utils/login';
-import { getUserAPI } from '$lib/api/users';
-import User from '$lib/types/user';
-import { access_cookie } from '$lib/api/apiInstance';
+
+const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+const PROXY_PATH = '/api';
+
+const handleApiProxy = async (event: RequestEvent, cookies: { name: string; value: string }[]) => {
+	const strippedPath = event.url.pathname.substring(PROXY_PATH.length);
+
+	const urlPath = `${API_BASE_URL}${strippedPath}${event.url.search}`;
+	const proxiedUrl = new URL(urlPath);
+
+	event.request.headers.delete('connection');
+	event.request.headers.set('cookie', cookies.map((c) => `${c.name}=${c.value}`).join('; '));
+
+	return event.fetch(proxiedUrl.toString(), event.request).catch((err: any) => {
+		console.log('Could not proxy API request: ', err);
+		throw err;
+	});
+};
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;
-	event.locals.session = null;
+	event.locals.jwt = null;
 	event.locals.locale = 'fr';
 
-	const session = event.cookies.get('access_token_cookie');
-	if (!session) {
+	const cookies = event.cookies.getAll();
+
+	if (event.url.pathname.startsWith(PROXY_PATH)) {
+		return await handleApiProxy(event, cookies);
+	}
+
+	const jwt = event.cookies.get('access_token_cookie');
+	if (!jwt) {
 		return resolve(event);
 	}
 
-	const decoded = jwtDecode<JWTContent>(session);
+	const decoded = jwtDecode<JWTContent>(jwt);
 	if (!decoded) {
 		return resolve(event);
 	}
@@ -25,8 +46,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	access_cookie.set(session);
-	const user = User.parse(await getUserAPI(id));
+	const response = await event.fetch(`/api/users/${id}`);
+	if (!response.ok) {
+		return resolve(event);
+	}
+
+	const user = await response.json();
 	if (!user) {
 		return resolve(event);
 	}
@@ -34,8 +59,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const localeCookie = event.cookies.get('locale');
 	const initLocale = localeCookie || event.locals.locale;
 
-	event.locals.user = user.toJson();
-	event.locals.session = session;
+	event.locals.user = user;
+	event.locals.jwt = jwt;
 	event.locals.locale = initLocale;
 	return resolve(event);
 };

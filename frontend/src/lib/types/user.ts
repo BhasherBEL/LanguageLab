@@ -1,11 +1,10 @@
 import { createUserAPI, getUsersAPI, patchUserAPI } from '$lib/api/users';
 import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
+import { sha256 } from 'js-sha256';
 import { get, writable } from 'svelte/store';
 
 const { subscribe, set, update } = writable<User[]>([]);
-
-export const user = writable<User | null>(null);
 
 export const users = {
 	subscribe,
@@ -15,7 +14,7 @@ export const users = {
 	add: (user: User) => update((users) => [...users, user]),
 	delete: (id: number) => update((users) => users.filter((user) => user.id !== id)),
 	search: (email: string) => get(users).find((user) => user.email.includes(email)),
-	fetch: async () => User.parseAll(await getUsersAPI())
+	fetch: async () => User.parseAll(await getUsersAPI(fetch))
 };
 
 export default class User {
@@ -23,7 +22,6 @@ export default class User {
 	private _email: string;
 	private _nickname: string;
 	private _type: number;
-	private _availability: bigint;
 	private _is_active: boolean;
 	private _ui_language: string | null;
 	private _home_language: string | null;
@@ -39,7 +37,6 @@ export default class User {
 		email: string,
 		nickname: string,
 		type: number,
-		availability: bigint,
 		is_active: boolean,
 		ui_language: string | null,
 		home_language: string | null,
@@ -54,7 +51,6 @@ export default class User {
 		this._email = email;
 		this._nickname = nickname;
 		this._type = type;
-		this._availability = availability;
 		this._is_active = is_active;
 		this._ui_language = ui_language;
 		this._home_language = home_language;
@@ -72,6 +68,10 @@ export default class User {
 
 	get email(): string {
 		return this._email;
+	}
+
+	get emailHash(): string {
+		return sha256(this._email.toLowerCase());
 	}
 
 	get nickname(): string {
@@ -92,10 +92,6 @@ export default class User {
 
 	get is_tutor(): boolean {
 		return this._type === 1;
-	}
-
-	get availability(): bigint {
-		return this._availability;
 	}
 
 	get ui_language(): string | null {
@@ -139,7 +135,7 @@ export default class User {
 	}
 
 	async setAvailability(availability: bigint, calcom_link: string): Promise<boolean> {
-		return await patchUserAPI(this.id, {
+		return await patchUserAPI(fetch, this.id, {
 			availability: availability.toString(),
 			calcom_link: calcom_link
 		});
@@ -155,7 +151,6 @@ export default class User {
 			email: this.email,
 			nickname: this.nickname,
 			type: this.type,
-			availability: this.availability.toString(),
 			is_active: this.is_active,
 			ui_language: this.ui_language,
 			home_language: this.home_language,
@@ -169,12 +164,11 @@ export default class User {
 	}
 
 	async patch(data: any): Promise<boolean> {
-		const res = await patchUserAPI(this.id, data);
+		const res = await patchUserAPI(fetch, this.id, data);
 		if (res) {
 			if (data.email) this._email = data.email;
 			if (data.nickname) this._nickname = data.nickname;
 			if (data.type) this._type = data.type;
-			if (data.availability) this._availability = BigInt(data.availability);
 			if (data.is_active) this._is_active = data.is_active;
 			if (data.ui_language) this._ui_language = data.ui_language;
 			if (data.home_language) this._home_language = data.home_language;
@@ -199,7 +193,7 @@ export default class User {
 		type: number,
 		is_active: boolean
 	): Promise<User | null> {
-		const id = await createUserAPI(nickname, email, password, type, is_active);
+		const id = await createUserAPI(fetch, nickname, email, password, type, is_active);
 		if (id == null) return null;
 
 		const user = new User(
@@ -207,7 +201,6 @@ export default class User {
 			email,
 			nickname,
 			type,
-			BigInt(0),
 			is_active,
 			null,
 			null,
@@ -232,8 +225,6 @@ export default class User {
 		const userFinal = User.parse(userObject);
 		if (userFinal == null || userFinal.id == null || userFinal.id == undefined) return null;
 
-		user.set(userFinal);
-
 		return userFinal;
 	}
 
@@ -249,7 +240,6 @@ export default class User {
 			json.email,
 			json.nickname,
 			json.type,
-			BigInt(json.availability),
 			json.is_active,
 			json.ui_language,
 			json.home_language,
