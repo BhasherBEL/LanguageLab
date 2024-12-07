@@ -10,9 +10,11 @@
 	import Consent from '$lib/components/surveys/consent.svelte';
 	import Dropdown from '$lib/components/surveys/dropdown.svelte';
 	import config from '$lib/config';
-	import { formatToUTCDate } from '$lib/utils/date';
+	import type User from '$lib/types/user';
+	import type Survey from '$lib/types/survey';
 
-	let { user, survey }: { data: PageData } = $props();
+	let { data }: { data: PageData } = $props();
+	let { user, survey }: { user: User | null; survey: Survey } = data;
 
 	let sid =
 		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -72,7 +74,6 @@
 		if (
 			!(await sendSurveyResponseAPI(
 				fetch,
-				uuid,
 				code,
 				sid,
 				uid,
@@ -104,8 +105,9 @@
 		if (
 			!(await sendSurveyResponseAPI(
 				fetch,
-				uuid,
+				code,
 				sid,
+				uid,
 				survey.id,
 				currentGroupId,
 				questionsRandomized[currentQuestionId]['_id'],
@@ -129,7 +131,7 @@
 			setGroupId(currentGroupId + 1);
 			//special group id for end of survey questions
 			if (currentGroup.id >= 1100) {
-				const scoreData = await getSurveyScoreAPI(survey.id, sid);
+				const scoreData = await getSurveyScoreAPI(fetch, survey.id, sid);
 				if (scoreData) {
 					finalScore = scoreData.score;
 				}
@@ -137,7 +139,7 @@
 				return;
 			}
 		} else {
-			const scoreData = await getSurveyScoreAPI(survey.id, sid);
+			const scoreData = await getSurveyScoreAPI(fetch, survey.id, sid);
 			if (scoreData) {
 				finalScore = scoreData.score;
 			}
@@ -156,19 +158,6 @@
 		}
 
 		step += 1;
-	}
-
-	function checkUUID() {
-		if (!uuid) {
-			toastWarning(get(t)('surveys.invalidEmail'));
-			return;
-		}
-		if (!uuid.includes('@')) {
-			toastWarning(get(t)('surveys.invalidEmail'));
-			return;
-		}
-
-		step = 1;
 	}
 
 	function gapParts(question: string): { text: string; gap: string | null }[] {
@@ -192,6 +181,7 @@
 		subStep += 1;
 		if (subStep == 4) {
 			await sendSurveyResponseInfoAPI(
+				fetch,
 				survey.id,
 				sid,
 				endSurveyAnswers.birthYear,
@@ -215,12 +205,12 @@
 			type="text"
 			placeholder="Code"
 			class="input block mx-auto w-full max-w-xs border border-gray-300 rounded-md py-2 px-3 text-center"
-			on:keydown={(e) => e.key === 'Enter' && checkCode()}
+			onkeydown={(e) => e.key === 'Enter' && checkCode()}
 			bind:value={code}
 		/>
 		<button
 			class="button mt-4 block bg-yellow-500 text-white rounded-md py-2 px-6 hover:bg-yellow-600 transition"
-			on:click={checkCode}
+			onclick={checkCode}
 		>
 			{$t('button.next')}
 		</button>
@@ -236,7 +226,7 @@
 			rights={$t('register.consent.rights')}
 		/>
 		<div class="form-control">
-			<button class="button mt-4" on:click={() => step++}>
+			<button class="button mt-4" onclick={() => step++}>
 				{$t('register.consent.ok')}
 			</button>
 		</div>
@@ -280,7 +270,7 @@
 							id="dropdown"
 							name="dropdown"
 							bind:value={displayQuestionOptions[i]}
-							on:change={() => selectOption(option)}
+							onchange={() => selectOption(option)}
 							required
 						>
 							{#each value as op}
@@ -295,7 +285,7 @@
 									type="radio"
 									name="dropdown"
 									value={op}
-									on:change={() => selectOption(op)}
+									onchange={() => selectOption(op)}
 									required
 									class="radio-button"
 								/>
@@ -306,9 +296,9 @@
 						{@const value = option.split(':').slice(1).join(':')}
 						<div
 							class="h-48 w-48 overflow-hidden rounded-lg border border-black"
-							on:click={() => selectOption(option)}
+							onclick={() => selectOption(option)}
 							role="button"
-							on:keydown={() => selectOption(option)}
+							onkeydown={() => selectOption(option)}
 							tabindex="0"
 						>
 							{#if type === 'text'}
@@ -324,7 +314,14 @@
 									class="object-cover h-full w-full transition-transform duration-200 ease-in-out transform hover:scale-105"
 								/>
 							{:else if type == 'audio'}
-								<audio controls class="w-full" on:click|preventDefault|stopPropagation>
+								<audio
+									controls
+									class="w-full"
+									onclick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+								>
 									<source src={value} type="audio/mpeg" />
 									Your browser does not support the audio element.
 								</audio>
@@ -366,7 +363,7 @@
 								type="radio"
 								name="gender"
 								{value}
-								on:change={() => selectAnswer('gender', value)}
+								onchange={() => selectAnswer('gender', value)}
 								required
 								class="radio-button"
 							/>

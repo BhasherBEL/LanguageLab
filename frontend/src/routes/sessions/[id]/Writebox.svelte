@@ -7,15 +7,19 @@
 	import autosize from 'svelte-autosize';
 	import type User from '$lib/types/user';
 
-	import { replyToMessage, clearReplyToMessage } from '$lib/utils/replyUtils';
+	import type Session from '$lib/types/session';
+	import type Message from '$lib/types/message';
 
 	onMount(async () => {
 		await import('emoji-picker-element');
 	});
 
-	const { user, session } = $props();
+	let {
+		user,
+		session,
+		replyTo = $bindable()
+	}: { user: User; session: Session; replyTo: Message | undefined } = $props();
 
-	let currentReplyToMessage = $state($replyToMessage);
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
 	let message = $state('');
@@ -24,7 +28,7 @@
 	let textearea: HTMLTextAreaElement;
 
 	function cancelReply() {
-		clearReplyToMessage();
+		replyTo = undefined;
 	}
 
 	let disabled =
@@ -37,12 +41,7 @@
 		if (message.length == 0) return;
 
 		try {
-			const m = await session.sendMessage(
-				structuredClone($user),
-				message,
-				[...metadata],
-				$replyToMessage?.id || null
-			);
+			const m = await session.sendMessage(user, message, [...metadata], replyTo?.id || null);
 
 			if (m === null) {
 				toastAlert($t('chatbox.sendError'));
@@ -54,7 +53,7 @@
 			setTimeout(() => {
 				autosize.update(textearea);
 			}, 10);
-			clearReplyToMessage();
+			cancelReply();
 		} catch (error) {
 			console.error('Failed to send message:', error);
 			toastAlert($t('chatbox.sendError'));
@@ -79,12 +78,12 @@
 </script>
 
 <div class="flex flex-col w-full py-2 relative mb-2">
-	{#if currentReplyToMessage}
+	{#if replyTo}
 		<div
 			class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-1 text-sm text-gray-600"
 		>
 			<p class="text-xs text-gray-400">
-				Replying to: <span class="text-xs text-gray-400">{currentReplyToMessage.content}</span>
+				Replying to: <span class="text-xs text-gray-400">{replyTo.content}</span>
 			</p>
 			<button class="text-xs text-blue-500 underline ml-4 cursor-pointer" onclick={cancelReply}>
 				Cancel

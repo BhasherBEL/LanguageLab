@@ -16,7 +16,7 @@ export default class Message {
 	private _edited: boolean = false;
 	private _versions = writable([] as { content: string; date: Date }[]);
 	private _feedbacks = writable([] as Feedback[]);
-	private _replyTo: string;
+	private _replyTo: number;
 
 	public constructor(
 		id: number,
@@ -25,7 +25,7 @@ export default class Message {
 		created_at: Date,
 		user: User,
 		session: Session,
-		replyTo: string
+		replyTo: number
 	) {
 		this._id = id;
 		this._message_id = message_id;
@@ -75,6 +75,18 @@ export default class Message {
 
 	get uuid(): string {
 		return `message-${this._message_id}`;
+	}
+
+	get replyTo(): number {
+		return this._replyTo;
+	}
+
+	get replyToMessage(): Message | undefined {
+		if (this._replyTo == null) return undefined;
+
+		return get(this._session.messages).find(
+			(m) => m instanceof Message && m.id == this._replyTo
+		) as Message | undefined;
 	}
 
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {

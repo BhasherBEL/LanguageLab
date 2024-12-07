@@ -6,7 +6,6 @@
 
 	let { data }: { data: PageData } = $props();
 	let user = data.user!;
-	console.log(user);
 
 	let { session, jwt } = data;
 	let { onlineUsers } = session;

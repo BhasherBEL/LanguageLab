@@ -9,10 +9,15 @@
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
 	import CloseIcon from '$lib/components/icons/closeIcon.svelte';
-	import { initiateReply } from '$lib/utils/replyUtils';
-	import type Message from '$lib/types/message';
+	import Message from '$lib/types/message';
+	import type User from '$lib/types/user';
+	import { get } from 'svelte/store';
 
-	const { user, message } = $props();
+	let {
+		user,
+		message,
+		replyTo = $bindable()
+	}: { user: User; message: Message; replyTo: Message | undefined } = $props();
 
 	let displayedTime = $state(displayTime(message.created_at));
 
@@ -22,29 +27,9 @@
 
 	let isEdit = $state(false);
 
-	let replyTo: string | undefined = $state(message['_replyTo']);
+	let replyToMessage: Message | undefined = $state(message.replyToMessage);
 
-	let replyToMessage: Message | null = $state(null);
-
-	$effect(() => {
-		if (replyTo) {
-			findMessageById(replyTo).then((msg) => {
-				replyToMessage = msg;
-			});
-		}
-	});
-
-	async function findMessageById(id: string): Promise<Message | null> {
-		try {
-			const resolvedMessage = await message.getMessageById(Number(id));
-			return resolvedMessage;
-		} catch (error) {
-			console.error(`Error resolving message ID ${id}:`, error);
-			return null;
-		}
-	}
-
-	let contentDiv: HTMLDivElement;
+	let contentDiv: HTMLDivElement | null = $state(null);
 	let historyModal: HTMLDialogElement;
 	let messageVersions = $state(message.versions);
 
@@ -57,6 +42,8 @@
 	}
 
 	async function endEdit(validate = true) {
+		if (!contentDiv) return;
+
 		if (!validate) {
 			contentDiv.innerText = message.content;
 			isEdit = false;
@@ -76,10 +63,8 @@
 	}
 
 	function truncateMessage(content: string, maxLength: number = 20): string {
-		if (content.length > maxLength) {
-			return content.slice(0, maxLength) + '...';
-		}
-		return content;
+		if (content.length <= maxLength) return content;
+		return content.slice(0, maxLength) + '...';
 	}
 	let hightlight: HTMLDivElement;
 
@@ -88,6 +73,8 @@
 	});
 
 	function getSelectionCharacterOffsetWithin() {
+		if (!contentDiv) return { start: 0, end: 0 };
+
 		var start = 0;
 		var end = 0;
 		var doc = contentDiv.ownerDocument;
@@ -181,8 +168,13 @@
 		return parts;
 	}
 
-	let fbs = $state(message.feedbacks);
-	let parts = $state(getParts(message.content, $fbs));
+	let fbs = $state([] as Feedback[]);
+	let parts = $state([] as { text: string; feedback: Feedback | null }[]);
+	fbs = get(message.feedbacks);
+	message.feedbacks.subscribe((value) => {
+		fbs = value;
+		parts = getParts(message.content, fbs);
+	});
 
 	const isSender = message.user.id == user.id;
 
@@ -224,18 +216,11 @@
 			</a>
 		{/if}
 
-		<button
-			class="absolute -right-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
-			onclick={() => initiateReply(message)}
-		>
-			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
-		</button>
-
 		{#if isEdit}
 			<div
 				contenteditable="true"
 				bind:this={contentDiv}
-				class="bg-blue-50 whitespace-pre-wrap min-h-8 p-2"
+				class="bg-blue-50 whitespace-pre-wrap min-h-8 p-2 text-lg"
 			>
 				{message.content}
 			</div>
@@ -294,6 +279,12 @@
 				<Icon src={Pencil} class="w-5 h-full text-gray-500 hover:text-gray-800" />
 			</button>
 		{/if}
+		<button
+			class="absolute bottom-0 left-[-3.5rem] invisible group-hover:visible h-full p-0"
+			onclick={() => (replyTo = message)}
+		>
+			<Icon src={ArrowUturnLeft} class="w-5 h-full text-gray-500 hover:text-gray-800" />
+		</button>
 	</div>
 	<div class="chat-footer opacity-50">
 		<Icon src={Check} class="w-4 inline" />

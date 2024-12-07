@@ -15,6 +15,8 @@
 
 	const { messages } = session;
 
+	let replyTo: Message | undefined = $state();
+
 	messages.subscribe((newMessages) => {
 		let news = newMessages
 			.filter(
@@ -132,7 +134,7 @@
 		</div>
 		{#each $messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.uuid)}
 			{#if message instanceof Message}
-				<MessageC {user} {message} />
+				<MessageC {user} {message} bind:replyTo />
 			{:else if message instanceof Feedback}
 				<a class="text-center italic text-gray-500 my-2" href="#{message.message.uuid}">
 					{$t('session.feedbackInline')} "{message.message.content.length > 20
@@ -150,7 +152,7 @@
 		</div>
 	{/if}
 	<div class="flex flex-row">
-		<Writebox {user} {session} />
+		<Writebox {user} {session} bind:replyTo />
 	</div>
 </div>
 
