@@ -10,11 +10,6 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"baseUrl": "./",
-		"paths": {
-			"$lib/*": ["src/lib/*"],
-			"$routes/*": ["src/routes/*"]
-		},
 		"moduleResolution": "node",
 		"target": "ESNext",
 		"module": "ESNext",

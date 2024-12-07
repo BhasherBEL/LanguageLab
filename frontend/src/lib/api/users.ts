@@ -1,168 +1,118 @@
-import { toastAlert } from '$lib/utils/toasts';
-import { axiosInstance, access_cookie } from './apiInstance';
-import { get } from 'svelte/store';
+import type { fetchType } from '$lib/utils/types';
 
-export async function getUsersAPI() {
-	const response = await axiosInstance.get(`/users`);
+export async function getUsersAPI(fetch: fetchType): Promise<any[]> {
+	const response = await fetch(`/api/users`);
+	if (!response.ok) return [];
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get users');
-		return [];
-	}
-
-	return response.data;
+	return await response.json();
 }
 
-export async function getUserAPI(user_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserAPI(fetch: fetchType, user_id: number): Promise<any | null> {
+	const response = await fetch(`/api/users/${user_id}`);
+	if (!response.ok) return null;
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get user');
-		return null;
-	}
-
-	return response.data;
+	return await response.json();
 }
 
-export async function createUserContactAPI(user_id: number, contact_id: number) {
-	const response = await axiosInstance.post(`/users/${user_id}/contacts/${contact_id}`);
+export async function createUserContactAPI(
+	fetch: fetchType,
+	user_id: number,
+	contact_id: number
+): Promise<any | null> {
+	const response = await fetch(`/api/users/${user_id}/contacts/${contact_id}`);
+	if (!response.ok) return null;
 
-	if (response.status !== 201) {
-		toastAlert('Failed to create user contact');
-		return null;
-	}
-
-	return response.data;
+	return await response.json();
 }
 
-export async function createUserContactFromEmailAPI(user_id: number, email: string) {
-	const response = await axiosInstance.post(`/users/${user_id}/contacts-email/${email}`);
+export async function createUserContactFromEmailAPI(
+	fetch: fetchType,
+	user_id: number,
+	email: string
+): Promise<any | null> {
+	const response = await fetch(`/api/users/${user_id}/contacts-email/${email}`, { method: 'POST' });
+	if (!response.ok) return null;
 
-	if (response.status === 404) {
-		toastAlert('User not found');
-		return null;
-	}
-
-	if (response.status === 400) {
-		toastAlert('User already has this contact');
-		return null;
-	}
-
-	if (response.status !== 201) {
-		toastAlert('Failed to create user contact');
-		return null;
-	}
-
-	return response.data;
+	return await response.json();
 }
 
-export async function getUserContactsAPI(user_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}/contacts`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserContactsAPI(fetch: fetchType, user_id: number): Promise<any[]> {
+	const response = await fetch(`/api/users/${user_id}/contacts`);
+	if (!response.ok) return [];
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get user contacts');
-		return [];
-	}
-
-	return response.data;
+	return await response.json();
 }
 
-export async function getUserContactSessionsAPI(user_id: number, contact_id: number) {
-	const response = await axiosInstance.get(`/users/${user_id}/contacts/${contact_id}/sessions`, {
-		headers: {
-			Authorization: `Bearer ${get(access_cookie)}`
-		}
-	});
+export async function getUserContactSessionsAPI(
+	fetch: fetchType,
+	user_id: number,
+	contact_id: number
+): Promise<any[]> {
+	const response = await fetch(`/api/users/${user_id}/contacts/${contact_id}/sessions`);
+	if (!response.ok) return [];
 
-	if (response.status !== 200) {
-		toastAlert('Failed to get user contact sessions');
-		return [];
-	}
-
-	return response.data;
+	return await response.json();
 }
 
 export async function createUserAPI(
+	fetch: fetchType,
 	nickname: string,
 	email: string,
 	password: string,
 	type: number,
 	is_active: boolean
 ): Promise<number | null> {
-	const response = await axiosInstance.post(`/users`, {
-		nickname,
-		email,
-		password,
-		type,
-		is_active
+	const response = await fetch(`/api/users`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ nickname, email, password, type, is_active })
 	});
 
-	if (response.status !== 201) {
-		toastAlert('Failed to create user');
-		return null;
-	}
+	if (!response.ok) return null;
 
-	return response.data;
+	return parseInt(await response.text());
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function patchUserAPI(user_id: number, data: any): Promise<boolean> {
-	try {
-		const response = await axiosInstance.patch(`/users/${user_id}`, data);
-
-		if (response.status !== 204) {
-			toastAlert('Failed to update user');
-			return false;
-		}
-
-		return true;
-	} catch (e) {
-		console.error(e);
-		toastAlert('Failed to update user due to unknown error');
-		return false;
-	}
+export async function patchUserAPI(fetch: fetchType, user_id: number, data: any) {
+	const response = await fetch(`/api/users/${user_id}`, {
+		method: 'PATCH',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data)
+	});
+	return response.ok;
 }
 
 export async function createTestTypingAPI(
+	fetch: fetchType,
 	user_id: number,
 	entries: typingEntry[]
 ): Promise<number | null> {
-	const response = await axiosInstance.post(`/users/${user_id}/tests/typing`, {
-		entries
+	const response = await fetch(`/api/users/${user_id}/tests/typing`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ entries })
 	});
 
-	if (response.status !== 201) {
-		toastAlert('Failed to create test');
-		return null;
-	}
+	if (!response.ok) return null;
 
-	return response.data;
+	return parseInt(await response.text());
 }
 
 export async function createWeeklySurveyAPI(
+	fetch: fetchType,
 	user_id: number,
 	q1: number,
 	q2: number,
 	q3: number,
 	q4: number
 ): Promise<number | null> {
-	const response = await axiosInstance.post(`/users/${user_id}/surveys/weekly`, {
-		q1,
-		q2,
-		q3,
-		q4
+	const response = await fetch(`/api/users/${user_id}/surveys/weekly`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ q1, q2, q3, q4 })
 	});
-	if (response.status !== 201) {
-		toastAlert('Failed to create weekly survey');
-		return null;
-	}
-	return response.data;
+
+	if (!response.ok) return null;
+
+	return parseInt(await response.text());
 }

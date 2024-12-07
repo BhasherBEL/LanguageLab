@@ -1,23 +1,20 @@
 <script lang="ts">
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import Header from '$lib/components/header.svelte';
 	import '../app.css';
 	import { t } from '$lib/services/i18n';
-	import User from '$lib/types/user.js';
+	import Header from './Header.svelte';
+	import type { PageData } from './$types';
 
-	export let data;
-
-	User.parseFromServer(data);
-
-	console.log(2);
+	let { data, children }: { data: PageData; children: any } = $props();
+	let user = data.user;
 </script>
 
 <svelte:head>
 	<title>{$t('header.appName')}</title>
 </svelte:head>
 
-<Header />
+<Header {user} />
 
-<slot />
+{@render children()}
 
 <SvelteToast />

@@ -16,7 +16,7 @@ export default class Message {
 	private _edited: boolean = false;
 	private _versions = writable([] as { content: string; date: Date }[]);
 	private _feedbacks = writable([] as Feedback[]);
-	private _replyTo: string;
+	private _replyTo: number;
 
 	public constructor(
 		id: number,
@@ -25,7 +25,7 @@ export default class Message {
 		created_at: Date,
 		user: User,
 		session: Session,
-		replyTo: string
+		replyTo: number
 	) {
 		this._id = id;
 		this._message_id = message_id;
@@ -77,8 +77,26 @@ export default class Message {
 		return `message-${this._message_id}`;
 	}
 
+	get replyTo(): number {
+		return this._replyTo;
+	}
+
+	get replyToMessage(): Message | undefined {
+		if (this._replyTo == null) return undefined;
+
+		return get(this._session.messages).find(
+			(m) => m instanceof Message && m.id == this._replyTo
+		) as Message | undefined;
+	}
+
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
-		const response = await updateMessageAPI(this._session.id, this._message_id, content, metadata);
+		const response = await updateMessageAPI(
+			fetch,
+			this._session.id,
+			this._message_id,
+			content,
+			metadata
+		);
 		if (response == null || response.id == null) return false;
 
 		this._versions.update((v) => [...v, { content: content, date: new Date() }]);
@@ -91,7 +109,7 @@ export default class Message {
 
 	async getMessageById(id: number): Promise<Message | null> {
 		try {
-			const response = await getMessagesAPI(this._session.id); // Fetch all messages for the session
+			const response = await getMessagesAPI(fetch, this._session.id); // Fetch all messages for the session
 			if (!response) {
 				toastAlert('Failed to retrieve messages from the server.');
 				return null;
@@ -132,13 +150,17 @@ export default class Message {
 
 	async addFeedback(start: number, end: number, content: string | null = null): Promise<boolean> {
 		const response = await createMessageFeedbackAPI(
+			fetch,
 			this._session.id,
 			this._id,
 			start,
 			end,
 			content
 		);
-		if (response == -1) return false;
+		if (!response) {
+			toastAlert('Failed to create feedback');
+			return false;
+		}
 
 		const feedback = new Feedback(response, this, start, end, content);
 		this.localFeedback(feedback);

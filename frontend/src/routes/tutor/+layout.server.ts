@@ -5,7 +5,7 @@ export const load: ServerLoad = async ({ locals, url }) => {
 		if (url.pathname.startsWith('/tutor/register')) {
 			return {};
 		}
-		redirect(307, '/login');
+		redirect(303, '/login');
 	}
 
 	const user = JSON.parse(locals.user);

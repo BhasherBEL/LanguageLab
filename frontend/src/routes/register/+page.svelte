@@ -1,178 +1,48 @@
 <script lang="ts">
-	import { loginAPI, registerAPI } from '$lib/api/auth';
 	import config from '$lib/config';
-	import { locale, t } from '$lib/services/i18n';
-	import { user } from '$lib/types/user';
-	import { toastAlert } from '$lib/utils/toasts';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
-	import Timeslots from '$lib/components/users/timeslots.svelte';
-	import User, { users } from '$lib/types/user';
-	import {
-		getUsersAPI,
-		patchUserAPI,
-		createUserContactAPI,
-		getUserContactsAPI
-	} from '$lib/api/users';
+	import { t } from '$lib/services/i18n';
 	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
-	import AvailableTutors from '$lib/components/users/availableTutors.svelte';
 	import { browser } from '$app/environment';
+	import type { PageData } from './$types';
 	import { formatToUTCDate } from '$lib/utils/date';
 	import Consent from '$lib/components/surveys/consent.svelte';
 
-	let current_step = 0;
+	let { data, form }: { data: PageData; form: FormData } = $props();
+	let user = $state(data.user);
+	let message = $state('');
 
-	$: message = '';
+	let current_step = $state(
+		(() => {
+			if (user == null) {
+				if (form?.message) return 2;
+				return 1;
+			} else if (!user.home_language || !user.target_language || !user.birthdate || !user.gender) {
+				return 3;
+			} else {
+				return 5;
+			}
+		})()
+	);
 
-	onMount(async () => {
-		const u = get(user);
-
-		if (u == null) {
-			current_step = 1;
-			return;
-		}
-		User.parseAll(await getUsersAPI());
-
-		if (!u.home_language || !u.target_language || !u.birthdate || !u.gender) {
-			current_step = 3;
-			return;
-		}
-
-		const contacts = User.parseAll(await getUserContactsAPI(u.id));
-
-		if (contacts.length == 0) {
-			current_step = 4;
-			return;
-		}
-
-		current_step = 5;
-	});
-
-	let nickname = '';
-	let email = '';
-	let password = '';
-	let confirmPassword = '';
-
-	let ui_language: string = $locale;
-	let home_language: string;
-	let target_language: string;
-	let birthdate: string;
-	let gender: string;
 	let study_id: number | null = (() => {
 		if (!browser) return null;
 		let study_id_str = new URLSearchParams(window.location.search).get('study');
 		if (!study_id_str) return null;
 		return parseInt(study_id_str) || null;
 	})();
-
-	let timeslots = 0n;
-	$: filteredUsers = $users.filter((user) => {
-		if (user.availability === 0n) return false;
-		if (timeslots === 0n) return true;
-
-		return user.availability & timeslots;
-	});
-
-	async function onRegister() {
-		if (nickname == '' || email == '' || password == '' || confirmPassword == '') {
-			message = $t('register.error.emptyFields');
-			return;
-		}
-		if (password.length < 8) {
-			message = $t('register.error.passwordRules');
-			return;
-		}
-		if (password != confirmPassword) {
-			message = $t('register.error.differentPasswords');
-			return;
-		}
-		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-		if (!emailRegex.test(email)) {
-			message = $t('register.error.emailRules');
-			return;
-		}
-		message = '';
-
-		const registerRes = await registerAPI(email, password, nickname);
-
-		if (registerRes !== 'OK') {
-			message = registerRes;
-			return;
-		}
-
-		const loginRes = await loginAPI(email, password);
-
-		if (loginRes !== 'OK') {
-			toastAlert('Failed to login: ' + loginRes);
-			document.location.href = '/login';
-			return;
-		}
-
-		if (study_id === null) document.location.href = '/register';
-		else document.location.href = `/register?study=${study_id}`;
-
-		message = 'OK';
-	}
-
-	async function onData() {
-		const user_id = get(user)?.id;
-
-		if (!user_id) {
-			toastAlert('Failed to get current user ID');
-			return;
-		}
-
-		if (!ui_language || !home_language || !target_language || !birthdate || !gender) {
-			message = $t('register.error.emptyFields');
-			return;
-		}
-
-		const res = await patchUserAPI(user_id, {
-			ui_language,
-			home_language,
-			target_language,
-			birthdate,
-			gender,
-			study_id
-		});
-
-		if (!res) {
-			message = $t('register.error.metadata');
-			return;
-		}
-
-		current_step++;
-	}
-
-	async function onTutor(tutor: User) {
-		const user_id = get(user)?.id;
-
-		if (!user_id) {
-			toastAlert('Failed to get current user ID');
-			return;
-		}
-
-		if (confirm($t('register.confirmTutor').replaceAll('{NAME}', tutor.nickname)) === false) return;
-
-		const res = await createUserContactAPI(user_id, tutor.id);
-
-		if (!res) {
-			message = $t('register.error.tutor');
-			return;
-		}
-		current_step++;
-	}
-
-	async function onTyping() {
-		current_step++;
-	}
 </script>
 
 <div class="header mx-auto my-5">
 	<ul class="steps text-xs">
 		<li class="step" class:step-primary={current_step >= 1}>
-			{$t('register.tab.consent')}
+			{#if current_step >= 1 && current_step <= 2}
+				<button onclick={() => (current_step = 1)}>
+					{$t('register.tab.consent')}
+				</button>
+			{:else}
+				{$t('register.tab.consent')}
+			{/if}
 		</li>
 		<li class="step" class:step-primary={current_step >= 2}>
 			{$t('register.tab.signup')}
@@ -196,7 +66,11 @@
 </div>
 
 <div class="max-w-screen-md mx-auto p-5">
-	{#if message}
+	{#if form?.message}
+		<div class="alert alert-error text-content text-base-100 py-2 mb-4">
+			{form.message}
+		</div>
+	{:else if message}
 		<div class="alert alert-error text-content text-base-100 py-2 mb-4">
 			{message}
 		</div>
@@ -211,74 +85,80 @@
 			rights={$t('register.consent.rights')}
 		/>
 		<div class="form-control">
-			<button class="button mt-4" on:click={() => current_step++}>
+			<button class="button mt-4" onclick={() => current_step++}>
 				{$t('register.consent.ok')}
 			</button>
 		</div>
 	{:else if current_step == 2}
 		<div class="space-y-2">
-			<label for="email" class="form-control">
-				<div class="label">
-					<span class="label-text">{$t('register.email')}</span>
-					<span class="label-text-alt">{$t('register.email.note')}</span>
+			<form method="POST" action="?/register">
+				<label for="email" class="form-control">
+					<div class="label">
+						<span class="label-text">{$t('register.email')}</span>
+						<span class="label-text-alt">{$t('register.email.note')}</span>
+					</div>
+					<div class="input flex items-center">
+						<Icon src={Envelope} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="email"
+							name="email"
+							class="grow"
+							placeholder={$t('register.email.ph')}
+							required
+						/>
+					</div>
+				</label>
+				<label for="nickname" class="form-control">
+					<div class="label">
+						<span class="label-text">{$t('register.nickname')}</span>
+						<span class="label-text-alt">{$t('register.nickname.note')}</span>
+					</div>
+					<div class="input flex items-center">
+						<Icon src={UserCircle} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="text"
+							name="nickname"
+							class="grow"
+							placeholder={$t('register.nickname.ph')}
+							required
+						/>
+					</div>
+				</label>
+				<label for="password" class="form-control">
+					<div class="label">
+						<span class="label-text">{$t('register.password')}</span>
+						<span class="label-text-alt">{$t('register.password.note')}</span>
+					</div>
+					<div class="input flex items-center">
+						<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="password"
+							name="password"
+							class="grow"
+							placeholder={$t('register.password')}
+							required
+						/>
+					</div>
+				</label>
+				<label for="confirmPassword" class="form-control">
+					<div class="input flex items-center">
+						<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="password"
+							name="confirmPassword"
+							class="grow"
+							placeholder={$t('register.confirmPassword')}
+							required
+						/>
+					</div>
+				</label>
+				<div class="form-control">
+					<button class="button mt-2">{$t('register.signup')}</button>
 				</div>
-				<div class="input flex items-center">
-					<Icon src={Envelope} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="text"
-						class="grow"
-						bind:value={email}
-						placeholder={$t('register.email.ph')}
-					/>
-				</div>
-			</label>
-			<label for="nickname" class="form-control">
-				<div class="label">
-					<span class="label-text">{$t('register.nickname')}</span>
-					<span class="label-text-alt">{$t('register.nickname.note')}</span>
-				</div>
-				<div class="input flex items-center">
-					<Icon src={UserCircle} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="text"
-						class="grow"
-						bind:value={nickname}
-						placeholder={$t('register.nickname.ph')}
-					/>
-				</div>
-			</label>
-			<label for="password" class="form-control">
-				<div class="label">
-					<span class="label-text">{$t('register.password')}</span>
-					<span class="label-text-alt">{$t('register.password.note')}</span>
-				</div>
-				<div class="input flex items-center">
-					<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="password"
-						class="grow"
-						bind:value={password}
-						placeholder={$t('register.password')}
-					/>
-				</div>
-			</label>
-			<label for="confirmPassword" class="form-control">
-				<div class="input flex items-center">
-					<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="password"
-						class="grow"
-						bind:value={confirmPassword}
-						placeholder={$t('register.confirmPassword')}
-					/>
-				</div>
-			</label>
-			<div class="form-control">
-				<button class="button mt-2" on:click={onRegister}>{$t('register.signup')}</button>
-			</div>
+			</form>
 		</div>
 	{:else if current_step == 3}
-		<div class="space-y-2">
+		<form class="space-y-2" method="POST" action="?/data">
 			<div class="p-5 text-sm text-prose">
 				{@html $t('register.welcome')}
 			</div>
@@ -287,13 +167,7 @@
 					<span class="label-text">{$t('register.homeLanguage')}</span>
 					<span class="label-text-alt">{$t('register.homeLanguage.note')}</span>
 				</label>
-				<select
-					class="select select-bordered"
-					id="homeLanguage"
-					name="homeLanguage"
-					required
-					bind:value={home_language}
-				>
+				<select class="select select-bordered" id="homeLanguage" name="homeLanguage" required>
 					<option disabled selected value="">{$t('register.homeLanguage')}</option>
 					{#each Object.entries(config.PRIMARY_LANGUAGE) as [code, name]}
 						<option value={code}>{name}</option>
@@ -305,13 +179,7 @@
 					<span class="label-text">{$t('register.targetLanguage')}</span>
 					<span class="label-text-alt">{$t('register.targetLanguage.note')}</span>
 				</label>
-				<select
-					class="select select-bordered"
-					id="targetLanguage"
-					name="targetLanguage"
-					required
-					bind:value={target_language}
-				>
+				<select class="select select-bordered" id="targetLanguage" name="targetLanguage" required>
 					{#each Object.entries(config.LEARNING_LANGUAGES) as [code, name]}
 						<option value={code}>{name}</option>
 					{/each}
@@ -321,15 +189,9 @@
 				<label for="birthyear" class="label">
 					<span class="label-text">{$t('register.birthyear')}</span>
 				</label>
-				<select
-					class="select select-bordered"
-					id="birthyear"
-					name="birthyear"
-					required
-					on:change={(e) => (birthdate = formatToUTCDate(new Date(e.target.value, 1, 1)))}
-				>
+				<select class="select select-bordered" id="birthyear" name="birthyear" required>
 					<option disabled selected value="">{$t('register.birthyear')}</option>
-					{#each Array.from({ length: 82 }, (_, i) => i + 1931).reverse() as year}
+					{#each Array.from({ length: 90 }, (_, i) => i + 1931).reverse() as year}
 						<option value={year}>{year}</option>
 					{/each}
 				</select>
@@ -340,87 +202,59 @@
 					<span class="label-text-alt">{$t('register.gender.note')}</span>
 				</label>
 				<div class="label justify-normal gap-2 py-0">
-					<input
-						type="radio"
-						class="radio"
-						id="male"
-						name="gender"
-						value="male"
-						on:change={() => (gender = 'male')}
-					/>
+					<input type="radio" class="radio" id="male" name="gender" value="male" required />
 					<label for="male" class="label-text cursor-pointer">
 						{$t('register.genders.male')}
 					</label>
 				</div>
 				<div class="label justify-normal gap-2 py-0">
-					<input
-						type="radio"
-						class="radio"
-						id="female"
-						name="gender"
-						value="female"
-						on:change={() => (gender = 'female')}
-					/>
+					<input type="radio" class="radio" id="female" name="gender" value="female" required />
 					<label for="female" class="label-text cursor-pointer">
 						{$t('register.genders.female')}
 					</label>
 				</div>
 				<div class="label justify-normal gap-2 py-0">
-					<input
-						type="radio"
-						class="radio"
-						id="other"
-						name="gender"
-						value="other"
-						on:change={() => (gender = 'other')}
-					/>
+					<input type="radio" class="radio" id="other" name="gender" value="other" required />
 					<label for="other" class="label-text cursor-pointer">
 						{$t('register.genders.other')}
 					</label>
 				</div>
 				<div class="label justify-normal gap-2 py-0">
-					<input
-						type="radio"
-						class="radio"
-						id="na"
-						name="gender"
-						value="na"
-						on:change={() => (gender = 'na')}
-					/>
+					<input type="radio" class="radio" id="na" name="gender" value="na" required />
 					<label for="na" class="label-text cursor-pointer">
 						{$t('register.genders.na')}
 					</label>
 				</div>
 			</div>
 			<div class="form-control">
-				<button class="button mt-4" on:click={onData}>{$t('button.submit')}</button>
+				<button class="button mt-4">{$t('button.submit')}</button>
 			</div>
-		</div>
+		</form>
 	{:else if current_step == 4}
-		<!--{#if get(user)}-->
-		<h2 class="my-4 text-xl">{$t('timeslots.availabilities')}</h2>
-		<Timeslots bind:timeslots />
-		<AvailableTutors users={filteredUsers} {timeslots} onSelect={onTutor} />
+		<h2 class="my-4 text-xl">This page is disabled. Please continue.</h2>
+		<button onclick={() => current_step++}>{$t('button.continue')}</button>
 	{:else if current_step == 5}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.continue')}
 			</p>
-			<button class="button mt-4 w-full" on:click={() => (current_step = 6)}>
+			<button class="button mt-4 w-full" onclick={() => (current_step = 6)}>
 				{$t('register.continueButton')}
 			</button>
-			<button class="button mt-4 w-full" on:click={() => (document.location.href = '/')}>
+			<button class="button mt-4 w-full" onclick={() => (document.location.href = '/')}>
 				{$t('register.startFastButton')}
 			</button>
 		</div>
 	{:else if current_step == 6}
-		<Typingtest onFinish={onTyping} />
+		{#if user}
+			<Typingtest onFinish={() => current_step++} {user} />
+		{/if}
 	{:else if current_step == 7}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.start')}
 			</p>
-			<button class="button mt-4 m-auto" on:click={() => (document.location.href = '/')}>
+			<button class="button mt-4 m-auto" onclick={() => (document.location.href = '/')}>
 				{$t('register.startButton')}
 			</button>
 		</div>

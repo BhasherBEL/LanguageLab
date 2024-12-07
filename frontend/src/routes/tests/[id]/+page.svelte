@@ -1,23 +1,20 @@
 <script lang="ts">
 	import { sendSurveyResponseAPI, sendSurveyResponseInfoAPI } from '$lib/api/survey';
 	import { getSurveyScoreAPI } from '$lib/api/survey';
-
-	import Survey from '$lib/types/survey.js';
 	import { t } from '$lib/services/i18n';
 	import { toastWarning } from '$lib/utils/toasts.js';
 	import { get } from 'svelte/store';
-	import User from '$lib/types/user.js';
 	import type SurveyGroup from '$lib/types/surveyGroup';
 	import Gapfill from '$lib/components/surveys/gapfill.svelte';
+	import type { PageData } from './$types';
 	import Consent from '$lib/components/surveys/consent.svelte';
 	import Dropdown from '$lib/components/surveys/dropdown.svelte';
 	import config from '$lib/config';
-	import { formatToUTCDate } from '$lib/utils/date';
+	import type User from '$lib/types/user';
+	import type Survey from '$lib/types/survey';
 
-	export let data;
-
-	const survey: Survey = data.survey!;
-	const user = data.user ? User.parse(JSON.parse(data.user)) : null;
+	let { data }: { data: PageData } = $props();
+	let { user, survey }: { user: User | null; survey: Survey } = data;
 
 	let sid =
 		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -27,24 +24,24 @@
 		return group.questions.sort(() => Math.random() - 0.5);
 	}
 
-	$: step = user ? 1 : 0;
-	$: uuid = user?.email || '';
-	$: uid = user?.id || null;
-	$: code = '';
-	$: subStep = 0;
+	let step = $state(user ? 2 : 0);
+	let uuid = $state(user?.email || '');
+	let uid = $state(user?.id || null);
+	let code = $state('');
+	let subStep = $state(0);
 
-	let currentGroupId = 0;
-	let currentGroup = survey.groups[currentGroupId];
-	let questionsRandomized = getSortedQuestions(currentGroup);
-	let currentQuestionId = 0;
-	let currentQuestion = questionsRandomized[currentQuestionId];
-	let type = currentQuestion.question.split(':')[0];
-	let value = currentQuestion.question.split(':').slice(1).join(':');
-	let gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
+	let currentGroupId = $state(0);
+	let currentGroup = $derived(survey.groups[currentGroupId]);
+	let questionsRandomized = $derived(getSortedQuestions(currentGroup));
+	let currentQuestionId = $state(0);
+	let currentQuestion = $derived(questionsRandomized[currentQuestionId]);
+	let type = $derived(currentQuestion.question.split(':')[0]);
+	let value = $derived(currentQuestion.question.split(':').slice(1).join(':'));
+	let gaps = $derived(type === 'gap' ? gapParts(currentQuestion.question) : null);
 	let soundPlayer: HTMLAudioElement;
-	let displayQuestionOptions: string[] = [...(currentQuestion.options ?? [])];
-	shuffle(displayQuestionOptions);
-	let finalScore: number | null = null;
+	let displayQuestionOptions: string[] = $derived([...(currentQuestion.options ?? [])]);
+	$effect(() => shuffle(displayQuestionOptions));
+	let finalScore: number | null = $state(null);
 	let selectedOption: string;
 	let endSurveyAnswers: { [key: string]: any } = {};
 
@@ -63,27 +60,20 @@
 
 	function setGroupId(id: number) {
 		currentGroupId = id;
-		currentGroup = survey.groups[currentGroupId];
 		if (currentGroup.id < 1100) {
-			questionsRandomized = getSortedQuestions(currentGroup);
 			setQuestionId(0);
 		}
 	}
 
 	function setQuestionId(id: number) {
 		currentQuestionId = id;
-		currentQuestion = questionsRandomized[currentQuestionId];
-		type = currentQuestion.question.split(':')[0];
-		value = currentQuestion.question.split(':').slice(1).join(':');
-		gaps = type === 'gap' ? gapParts(currentQuestion.question) : null;
-		displayQuestionOptions = [...(currentQuestion.options ?? [])];
-		shuffle(displayQuestionOptions);
 		if (soundPlayer) soundPlayer.load();
 	}
 
 	async function selectOption(option: string) {
 		if (
 			!(await sendSurveyResponseAPI(
+				fetch,
 				code,
 				sid,
 				uid,
@@ -114,8 +104,10 @@
 
 		if (
 			!(await sendSurveyResponseAPI(
-				uuid,
+				fetch,
+				code,
 				sid,
+				uid,
 				survey.id,
 				currentGroupId,
 				questionsRandomized[currentQuestionId]['_id'],
@@ -139,7 +131,7 @@
 			setGroupId(currentGroupId + 1);
 			//special group id for end of survey questions
 			if (currentGroup.id >= 1100) {
-				const scoreData = await getSurveyScoreAPI(survey.id, sid);
+				const scoreData = await getSurveyScoreAPI(fetch, survey.id, sid);
 				if (scoreData) {
 					finalScore = scoreData.score;
 				}
@@ -147,7 +139,7 @@
 				return;
 			}
 		} else {
-			const scoreData = await getSurveyScoreAPI(survey.id, sid);
+			const scoreData = await getSurveyScoreAPI(fetch, survey.id, sid);
 			if (scoreData) {
 				finalScore = scoreData.score;
 			}
@@ -166,19 +158,6 @@
 		}
 
 		step += 1;
-	}
-
-	function checkUUID() {
-		if (!uuid) {
-			toastWarning(get(t)('surveys.invalidEmail'));
-			return;
-		}
-		if (!uuid.includes('@')) {
-			toastWarning(get(t)('surveys.invalidEmail'));
-			return;
-		}
-
-		step = 1;
 	}
 
 	function gapParts(question: string): { text: string; gap: string | null }[] {
@@ -202,6 +181,7 @@
 		subStep += 1;
 		if (subStep == 4) {
 			await sendSurveyResponseInfoAPI(
+				fetch,
 				survey.id,
 				sid,
 				endSurveyAnswers.birthYear,
@@ -225,13 +205,12 @@
 			type="text"
 			placeholder="Code"
 			class="input block mx-auto w-full max-w-xs border border-gray-300 rounded-md py-2 px-3 text-center"
-			on:keydown={(e) => e.key === 'Enter' && checkCode()}
+			onkeydown={(e) => e.key === 'Enter' && checkCode()}
 			bind:value={code}
 		/>
-		<!-- Button -->
 		<button
 			class="button mt-4 block bg-yellow-500 text-white rounded-md py-2 px-6 hover:bg-yellow-600 transition"
-			on:click={checkCode}
+			onclick={checkCode}
 		>
 			{$t('button.next')}
 		</button>
@@ -247,13 +226,13 @@
 			rights={$t('register.consent.rights')}
 		/>
 		<div class="form-control">
-			<button class="button mt-4" on:click={() => step++}>
+			<button class="button mt-4" onclick={() => step++}>
 				{$t('register.consent.ok')}
 			</button>
 		</div>
 	</div>
 {:else if step == 2}
-	{#if type == 'gap'}
+	{#if type == 'gap' && gaps}
 		<div class="mx-auto mt-16 center flex flex-col">
 			<div>
 				{#each gaps as part}
@@ -264,7 +243,7 @@
 					{/if}
 				{/each}
 			</div>
-			<button class="button mt-8" on:click={sendGap}>{$t('button.next')}</button>
+			<button class="button mt-8" onclick={sendGap}>{$t('button.next')}</button>
 		</div>
 	{:else}
 		<div class="mx-auto mt-16 text-center">
@@ -282,7 +261,7 @@
 
 		<div class="mx-auto mt-16">
 			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-				{#each displayQuestionOptions as option (option)}
+				{#each displayQuestionOptions as option, i (option)}
 					{@const type = option.split(':')[0]}
 					{#if type == 'dropdown'}
 						{@const value = option.split(':')[1].split(', ')}
@@ -290,8 +269,8 @@
 							class="select select-bordered !ml-0"
 							id="dropdown"
 							name="dropdown"
-							bind:value={option}
-							on:change={() => selectOption(option)}
+							bind:value={displayQuestionOptions[i]}
+							onchange={() => selectOption(option)}
 							required
 						>
 							{#each value as op}
@@ -306,7 +285,7 @@
 									type="radio"
 									name="dropdown"
 									value={op}
-									on:change={() => selectOption(op)}
+									onchange={() => selectOption(op)}
 									required
 									class="radio-button"
 								/>
@@ -317,9 +296,9 @@
 						{@const value = option.split(':').slice(1).join(':')}
 						<div
 							class="h-48 w-48 overflow-hidden rounded-lg border border-black"
-							on:click={() => selectOption(option)}
+							onclick={() => selectOption(option)}
 							role="button"
-							on:keydown={() => selectOption(option)}
+							onkeydown={() => selectOption(option)}
 							tabindex="0"
 						>
 							{#if type === 'text'}
@@ -335,7 +314,14 @@
 									class="object-cover h-full w-full transition-transform duration-200 ease-in-out transform hover:scale-105"
 								/>
 							{:else if type == 'audio'}
-								<audio controls class="w-full" on:click|preventDefault|stopPropagation>
+								<audio
+									controls
+									class="w-full"
+									onclick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+								>
 									<source src={value} type="audio/mpeg" />
 									Your browser does not support the audio element.
 								</audio>
@@ -377,7 +363,7 @@
 								type="radio"
 								name="gender"
 								{value}
-								on:change={() => selectAnswer('gender', value)}
+								onchange={() => selectAnswer('gender', value)}
 								required
 								class="radio-button"
 							/>
@@ -418,7 +404,6 @@
 			</div>
 		{/if}
 	{:else}
-		<!--In case special id received not defined, can still keep going-->
 		{(step += 1)}
 	{/if}
 {:else if step == 4}

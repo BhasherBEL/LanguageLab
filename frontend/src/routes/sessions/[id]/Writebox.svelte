@@ -1,39 +1,38 @@
 <script lang="ts">
 	import config from '$lib/config';
 	import { t } from '$lib/services/i18n';
-	import type Session from '$lib/types/session';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { Icon, PaperAirplane } from 'svelte-hero-icons';
-	import { user } from '$lib/types/user';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
+	import autosize from 'svelte-autosize';
+	import type User from '$lib/types/user';
 
-	import { replyToMessage, clearReplyToMessage } from '$lib/utils/replyUtils';
+	import type Session from '$lib/types/session';
+	import type Message from '$lib/types/message';
 
 	onMount(async () => {
 		await import('emoji-picker-element');
 	});
 
-	export let session: Session;
+	let {
+		user,
+		session,
+		replyTo = $bindable()
+	}: { user: User; session: Session; replyTo: Message | undefined } = $props();
 
-	let currentReplyToMessage = null;
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
-	let message = '';
-	let showPicker = false;
-	let showSpecials = false;
+	let message = $state('');
+	let showPicker = $state(false);
+	let showSpecials = $state(false);
 	let textearea: HTMLTextAreaElement;
 
-	$: currentReplyToMessage = $replyToMessage;
-
 	function cancelReply() {
-		clearReplyToMessage();
+		replyTo = undefined;
 	}
 
-	let us = get(user);
 	let disabled =
-		us == null ||
-		session.users.find((u) => us.id === u.id) === undefined ||
+		session.users.find((u: User) => user.id === u.id) === undefined ||
 		new Date().getTime() > session.end_time.getTime() + 3600000 ||
 		new Date().getTime() < session.start_time.getTime() - 3600000;
 
@@ -41,28 +40,20 @@
 		message = message.trim();
 		if (message.length == 0) return;
 
-		if ($user === null) {
-			toastAlert($t('chatbox.sendError'));
-			return;
-		}
-
 		try {
-			const m = await session.sendMessage(
-				structuredClone($user),
-				message,
-				[...metadata],
-				$replyToMessage?.id || null
-			);
+			const m = await session.sendMessage(user, message, [...metadata], replyTo?.id || null);
 
 			if (m === null) {
 				toastAlert($t('chatbox.sendError'));
 				return;
 			}
 
-			// Reset after sending
 			message = '';
 			metadata = [];
-			clearReplyToMessage();
+			setTimeout(() => {
+				autosize.update(textearea);
+			}, 10);
+			cancelReply();
 		} catch (error) {
 			console.error('Failed to send message:', error);
 			toastAlert($t('chatbox.sendError'));
@@ -86,15 +77,15 @@
 	}
 </script>
 
-<div class="flex flex-col w-full py-2 relative">
-	{#if currentReplyToMessage}
+<div class="flex flex-col w-full py-2 relative mb-2">
+	{#if replyTo}
 		<div
 			class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-1 text-sm text-gray-600"
 		>
 			<p class="text-xs text-gray-400">
-				Replying to: <span class="text-xs text-gray-400">{currentReplyToMessage.content}</span>
+				Replying to: <span class="text-xs text-gray-400">{replyTo.content}</span>
 			</p>
-			<button class="text-xs text-blue-500 underline ml-4 cursor-pointer" on:click={cancelReply}>
+			<button class="text-xs text-blue-500 underline ml-4 cursor-pointer" onclick={cancelReply}>
 				Cancel
 			</button>
 		</div>
@@ -105,7 +96,7 @@
 			{#each config.SPECIAL_CHARS as char (char)}
 				<button
 					class="border-none"
-					on:click={() => {
+					onclick={() => {
 						message += char;
 						textearea.focus();
 					}}
@@ -117,38 +108,30 @@
 			{/each}
 		</ul>
 	{/if}
-
-	<div class="w-full flex relative">
-		<textarea
-			bind:this={textearea}
-			class="flex-grow border border-gray-300 rounded-md p-2 text-base resize-none"
-			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
-			{disabled}
-			bind:value={message}
-			on:keypress={keyPress}
-		/>
-
+	<div class="w-full flex items-center relative">
 		<div
-			class="absolute top-1/2 right-20 transform -translate-y-1/2 text-lg select-none cursor-pointer"
-			on:click={() => (showPicker = !showPicker)}
+			class="text-2xl select-none cursor-pointer mx-4"
+			onclick={() => (showPicker = !showPicker)}
 			data-tooltip-target="tooltip-emoji"
 			data-tooltip-placement="right"
+			data-riple-light="true"
 			aria-hidden={false}
 			role="button"
 			tabindex="0"
 		>
 			😀
 		</div>
-
 		<div class="relative">
 			<div
 				id="tooltip-emoji"
+				data-tooltip="tooltip-emoji"
+				role="tooltip"
 				class:hidden={!showPicker}
-				class="absolute z-10 bottom-16 right-0 lg:left-0 lg:right-auto hidden"
+				class="absolute z-10 tooltip bottom-16 right-0 lg:left-0 lg:right-auto"
 			>
 				<emoji-picker
 					class="light"
-					on:emoji-click={(event) => {
+					onemoji-click={(event) => {
 						message += event.detail.unicode;
 						textearea.focus();
 					}}
@@ -156,18 +139,26 @@
 				</emoji-picker>
 			</div>
 		</div>
-
+		<textarea
+			bind:this={textearea}
+			class="flex-grow p-2 resize-none overflow-hidden py-4 pr-12 border rounded-[32px]"
+			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+			{disabled}
+			bind:value={message}
+			use:autosize
+			rows={1}
+			onkeypress={keyPress}
+		></textarea>
 		<div
-			class="absolute top-1/2 right-28 kbd transform -translate-y-1/2 text-sm select-none cursor-pointer"
-			on:click={() => (showSpecials = !showSpecials)}
+			class="absolute right-28 kbd text-sm select-none cursor-pointer"
+			onclick={() => (showSpecials = !showSpecials)}
 			aria-hidden={false}
 			role="button"
 			tabindex="0"
 		>
 			É
 		</div>
-
-		<button class="btn btn-primary rounded-none size-16" on:click={sendMessage}>
+		<button class="btn btn-primary rounded-full size-14 mx-4" onclick={sendMessage}>
 			<Icon src={PaperAirplane} />
 		</button>
 	</div>

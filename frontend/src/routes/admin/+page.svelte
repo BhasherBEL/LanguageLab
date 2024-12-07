@@ -1,24 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import User, { users } from '$lib/types/user';
-	import { getUsersAPI } from '$lib/api/users';
+	import User from '$lib/types/user';
 	import { t } from '$lib/services/i18n';
 	import UserItem from '$lib/components/users/userItem.svelte';
+	import type { PageData } from './$types';
 
-	let ready = false;
+	let { data }: { data: PageData } = $props();
+	let users = data.users;
 
-	onMount(async () => {
-		User.parseAll(await getUsersAPI());
+	let nickname = $state('');
+	let email = $state('');
+	let type = $state('2');
+	let is_active = $state(true);
 
-		ready = true;
-	});
-
-	$: nickname = '';
-	$: email = '';
-	$: type = '2';
-	$: is_active = true;
-
-	$: canCreate = nickname !== '' && email !== '' && type !== '';
+	let canCreate = $derived(nickname !== '' && email !== '' && type !== '');
 
 	async function createUser() {
 		if (!canCreate) return;
@@ -40,54 +34,45 @@
 	}
 </script>
 
-{#if ready}
-	<div class="min-w-fit max-w-3xl mx-auto">
-		<h1 class="text-xl font-bold m-5 text-center">Users</h1>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>{$t('users.nickname')}</th>
-					<th>{$t('users.email')}</th>
-					<th>{$t('users.category')}</th>
-					<th>{$t('users.isActive')}</th>
-					<th>{$t('admin.actions')}</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each $users as user (user.id)}
-					<UserItem {user} />
-				{/each}
-			</tbody>
-			<tfoot class="">
-				<tr class="">
-					<td>+</td>
-					<td><input type="text" class="input input-sm" bind:value={nickname} /></td>
-					<td><input type="text" class="input input-sm" bind:value={email} /></td>
-					<td>
-						<select class="select select-sm select-bordered" bind:value={type}>
-							<option value="2">{$t('users.type.student')}</option>
-							<option value="1">{$t('users.type.tutor')}</option>
-							<option value="0">{$t('users.type.admin')}</option>
-						</select>
-					</td>
-					<td>
-						<input type="checkbox" class="checkbox" bind:value={is_active} checked />
-					</td>
-					<td>
-						<button class="btn btn-sm" disabled={!canCreate} on:click={createUser}>
-							{$t('button.create')}
-						</button>
-					</td>
-				</tr>
-			</tfoot>
-		</table>
-	</div>
-{/if}
-
-<style lang="postcss">
-	/* input,
-	select {
-		@apply w-full border-2 h-8 text-center border-gray-400 rounded bg-transparent;
-	} */
-</style>
+<div class="min-w-fit max-w-3xl mx-auto">
+	<h1 class="text-xl font-bold m-5 text-center">Users</h1>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>{$t('users.nickname')}</th>
+				<th>{$t('users.email')}</th>
+				<th>{$t('users.category')}</th>
+				<th>{$t('users.isActive')}</th>
+				<th>{$t('admin.actions')}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each users as user (user.id)}
+				<UserItem {user} />
+			{/each}
+		</tbody>
+		<tfoot class="">
+			<tr class="">
+				<td>+</td>
+				<td><input type="text" class="input input-sm" bind:value={nickname} /></td>
+				<td><input type="text" class="input input-sm" bind:value={email} /></td>
+				<td>
+					<select class="select select-sm select-bordered" bind:value={type}>
+						<option value="2">{$t('users.type.student')}</option>
+						<option value="1">{$t('users.type.tutor')}</option>
+						<option value="0">{$t('users.type.admin')}</option>
+					</select>
+				</td>
+				<td>
+					<input type="checkbox" class="checkbox" bind:checked={is_active} />
+				</td>
+				<td>
+					<button class="btn btn-sm" disabled={!canCreate} onclick={createUser}>
+						{$t('button.create')}
+					</button>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>

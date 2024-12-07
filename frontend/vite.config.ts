@@ -12,14 +12,5 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: ['emoji-picker-element'],
 		include: ['svelte-gravatar', 'svelte-waypoint']
-	},
-	server: {
-		proxy: {
-			'/api': {
-				target: 'http://localhost:8000',
-				changeOrigin: true,
-				secure: false
-			}
-		}
 	}
 });
