@@ -1,17 +1,25 @@
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
-import User, { user } from './user';
-import { axiosInstance } from '$lib/api/apiInstance';
+import User from './user';
 import {
+	addUserToSessionAPI,
 	createMessageAPI,
+	createSessionAPI,
 	createSessionSatisfyAPI,
+	deleteSessionAPI,
 	getMessagesAPI,
-	patchLanguageAPI
+	patchLanguageAPI,
+	patchSessionAPI,
+	removeUserFromSessionAPI,
+	sendPresenceAPI,
+	sendTypingAPI
 } from '$lib/api/sessions';
 import Message from './message';
 import config from '$lib/config';
 import Feedback from './feedback';
 import { parseToLocalDate } from '$lib/utils/date';
+import { t } from '$lib/services/i18n';
+import type { fetchType } from '$lib/utils/types';
 
 const { subscribe, set, update } = writable<Session[]>([]);
 
@@ -40,6 +48,7 @@ export default class Session {
 	private _onlineUsers: Writable<Set<number>> = writable(new Set());
 	private _onlineTimers: Map<number, number> = new Map();
 	private _length: number;
+	private _user: User | null = null;
 
 	private constructor(
 		id: number,
@@ -118,7 +127,7 @@ export default class Session {
 
 	usersList(maxLength = 30): string {
 		const users = this._users
-			.filter((u) => u.id != get(user)?.id)
+			.filter((u) => u.id != this._user?.id)
 			.map((user) => user.nickname)
 			.join(', ');
 		if (users.length < maxLength) {
@@ -129,7 +138,7 @@ export default class Session {
 
 	otherUsersList(maxLength = 30): string {
 		const users = this._users
-			.filter((u) => u.id != get(user)?.id)
+			.filter((u) => u.id != this._user?.id)
 			.map((user) => user.nickname)
 			.join(', ');
 		if (users.length < maxLength) {
@@ -139,10 +148,9 @@ export default class Session {
 	}
 
 	async delete(): Promise<boolean> {
-		const response = await axiosInstance.delete(`/sessions/${this.id}`);
-
-		if (response.status !== 204) {
-			toastAlert('Failed to delete session');
+		const response = await deleteSessionAPI(fetch, this.id);
+		if (!response) {
+			toastAlert(get(t)('session.errors.delete'));
 			return false;
 		}
 
@@ -151,12 +159,12 @@ export default class Session {
 	}
 
 	async toggleDisable(): Promise<boolean> {
-		const response = await axiosInstance.patch(`/sessions/${this.id}`, {
+		const response = await patchSessionAPI(fetch, this.id, {
 			is_active: !this.is_active
 		});
 
-		if (response.status !== 204) {
-			toastAlert('Failed to toggle activite session');
+		if (!response) {
+			toastAlert(get(t)('session.errors.toggle'));
 			return false;
 		}
 
@@ -166,10 +174,9 @@ export default class Session {
 	}
 
 	async addUser(user: User): Promise<boolean> {
-		const response = await axiosInstance.post(`/sessions/${this.id}/users/${user.id}`);
-
-		if (response.status !== 201) {
-			toastAlert('Failed to add user to session');
+		const response = await addUserToSessionAPI(fetch, this.id, user.id);
+		if (!response) {
+			toastAlert(get(t)('session.errors.addUser'));
 			return false;
 		}
 
@@ -183,43 +190,41 @@ export default class Session {
 		return this._users.some((u) => u.equals(user));
 	}
 
-	async loadMessages(): Promise<boolean> {
-		const messagesStr = await getMessagesAPI(this.id);
+	async loadMessages(f: fetchType = fetch): Promise<boolean> {
+		const messagesStr = await getMessagesAPI(f, this.id);
 
 		this._messages.set(Message.parseAll(messagesStr));
-
 		return true;
 	}
 
 	async sendMessage(
 		sender: User,
 		content: string,
-		metadata: { message: string; date: number }[]
+		metadata: { message: string; date: number }[],
+		replyTo: number | null
 	): Promise<Message | null> {
-		const json = await createMessageAPI(this.id, content, metadata);
+		const json = await createMessageAPI(fetch, this.id, content, metadata, replyTo);
 		if (json == null || json.id == null || json.message_id == null) {
 			toastAlert('Failed to parse message');
 			return null;
 		}
-
-		const message = new Message(json.id, json.message_id, content, new Date(), sender, this);
-
-		this._messages.update((messages) => {
-			if (!messages.find((m) => m instanceof Message && m.message_id === message.message_id)) {
-				return [...messages, message];
-			}
-			return messages.map((m) =>
-				m instanceof Message && m.message_id === message.message_id ? message : m
-			);
-		});
+		const message = new Message(
+			json.id,
+			json.message_id,
+			content,
+			new Date(),
+			sender,
+			this,
+			json.reply_to
+		);
 
 		return message;
 	}
 
 	async sendTyping(): Promise<boolean> {
-		const response = await axiosInstance.post(`/sessions/${this.id}/typing`);
-		if (response.status !== 204) {
-			console.log('Failed to send typing data', response);
+		const response = await sendTypingAPI(fetch, this.id);
+		if (!response) {
+			toastAlert(get(t)('session.errors.typing'));
 			return false;
 		}
 
@@ -227,9 +232,9 @@ export default class Session {
 	}
 
 	async sendPresence(): Promise<boolean> {
-		const response = await axiosInstance.post(`/sessions/${this.id}/presence`);
-		if (response.status !== 204) {
-			console.log('Failed to send presence data', response);
+		const response = await sendPresenceAPI(fetch, this.id);
+		if (!response) {
+			toastAlert(get(t)('session.errors.presence'));
 			return false;
 		}
 
@@ -237,11 +242,11 @@ export default class Session {
 	}
 
 	async sendSatisfy(usefullness: number, easiness: number, remarks: string): Promise<boolean> {
-		return await createSessionSatisfyAPI(this.id, usefullness, easiness, remarks);
+		return await createSessionSatisfyAPI(fetch, this.id, usefullness, easiness, remarks);
 	}
 
 	async changeLanguage(language: string): Promise<boolean> {
-		const res = await patchLanguageAPI(this.id, language);
+		const res = await patchLanguageAPI(fetch, this.id, language);
 		if (!res) return false;
 		this._language = language;
 		return true;
@@ -254,7 +259,6 @@ export default class Session {
 
 		this._ws.onopen = () => {
 			this._ws_connected.set(true);
-			console.log('WS connected');
 		};
 
 		this._ws.onmessage = (event) => {
@@ -350,7 +354,7 @@ export default class Session {
 							users.delete(user_id);
 							return users;
 						});
-					}, 30000)
+					}, 30000) as unknown as number
 				);
 
 				return;
@@ -361,7 +365,6 @@ export default class Session {
 		this._ws.onclose = () => {
 			this._ws = null;
 			this._ws_connected.set(false);
-			console.log('WS closed, reconnecting in 1s');
 			setTimeout(() => this.wsConnect(jwt), 1000);
 		};
 	}
@@ -371,10 +374,9 @@ export default class Session {
 	}
 
 	async removeUser(user: User): Promise<boolean> {
-		const response = await axiosInstance.delete(`/sessions/${this.id}/users/${user.id}`);
-
-		if (response.status !== 204) {
-			toastAlert('Failed to remove user from session');
+		const response = await removeUserFromSessionAPI(fetch, this.id, user.id);
+		if (!response) {
+			toastAlert(get(t)('session.errors.removeUser'));
 			return false;
 		}
 
@@ -438,13 +440,12 @@ export default class Session {
 	}
 
 	static async create(): Promise<Session | null> {
-		const response = await axiosInstance.post('/sessions');
-
-		if (response.status !== 200) {
-			toastAlert('Failed to create session');
+		const response = await createSessionAPI(fetch);
+		if (!response) {
+			toastAlert(get(t)('session.errors.create'));
 			return null;
 		}
 
-		return Session.parse(response.data);
+		return Session.parse(response);
 	}
 }

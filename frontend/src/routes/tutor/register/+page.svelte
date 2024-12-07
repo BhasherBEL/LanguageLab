@@ -1,37 +1,36 @@
 <script lang="ts">
-	import { loginAPI, registerAPI } from '$lib/api/auth';
 	import config from '$lib/config';
 	import { locale, t } from '$lib/services/i18n';
-	import { user } from '$lib/types/user';
 	import { toastAlert, toastWarning } from '$lib/utils/toasts';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
-	import User, { users } from '$lib/types/user';
+	import User from '$lib/types/user';
 	import { getUsersAPI, patchUserAPI, getUserContactsAPI } from '$lib/api/users';
 	import { Icon, Envelope, Key, UserCircle, Calendar, QuestionMarkCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import { formatToUTCDate } from '$lib/utils/date';
+	import type { PageData } from './$types';
 
-	let current_step = 0;
+	let { data }: { data: PageData } = $props();
+	let user = data.user;
 
-	$: message = '';
+	let current_step = $state(0);
+
+	let message = $state('');
 
 	onMount(async () => {
-		const u = get(user);
-
-		if (u == null) {
+		if (user == null) {
 			current_step = 1;
 			return;
 		}
-		User.parseAll(await getUsersAPI());
+		User.parseAll(await getUsersAPI(fetch));
 
-		if (!u.home_language || !u.target_language || !u.birthdate || !u.gender) {
+		if (!user.home_language || !user.target_language || !user.birthdate || !user.gender) {
 			current_step = 3;
 			return;
 		}
 
-		const contacts = User.parseAll(await getUserContactsAPI(u.id));
+		const contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
 
 		if (contacts.length == 0) {
 			current_step = 4;
@@ -95,7 +94,7 @@
 	}
 
 	async function onData() {
-		const user_id = get(user)?.id;
+		const user_id = user.id;
 
 		if (!user_id) {
 			toastAlert('Failed to get current user ID');
@@ -107,7 +106,7 @@
 			return;
 		}
 
-		const res = await patchUserAPI(user_id, {
+		const res = await patchUserAPI(fetch, user_id, {
 			ui_language,
 			home_language,
 			birthdate,
@@ -128,7 +127,7 @@
 			return;
 		}
 
-		const res = $user?.setAvailability(timeslots, calcom_link);
+		const res = user.setAvailability(timeslots, calcom_link);
 
 		if (!res) return;
 
