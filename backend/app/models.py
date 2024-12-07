@@ -127,8 +127,10 @@ class Message(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     session_id = Column(Integer, ForeignKey("sessions.id"))
     created_at = Column(DateTime, default=datetime_aware)
+    reply_to_message_id = Column(Integer, ForeignKey("messages.id"), nullable=True)
 
     feedbacks = relationship("MessageFeedback", backref="message")
+    replies = relationship("Message", backref="parent_message", remote_side=[id])
 
     def raw(self):
         return [
@@ -137,6 +139,7 @@ class Message(Base):
             self.content,
             self.user_id,
             self.session_id,
+            self.reply_to_message_id,
             self.created_at,
         ]
 
@@ -245,8 +248,9 @@ class SurveyResponse(Base):
     __tablename__ = "survey_responses"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(String)
+    code = Column(String)
     sid = Column(String)
+    uid = Column(Integer, ForeignKey("users.id"), default=None)
     created_at = Column(DateTime, default=datetime_aware)
     survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
     group_id = Column(Integer, ForeignKey("survey_groups.id"))
@@ -254,6 +258,17 @@ class SurveyResponse(Base):
     selected_id = Column(Integer)
     response_time = Column(Float)
     text = Column(String)
+
+
+class SurveyResponseInfo(Base):
+    __tablename__ = "survey_response_info"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sid = Column(String)
+    birthyear = Column(Integer)
+    gender = Column(String)
+    primary_language = Column(String)
+    education = Column(String)
 
 
 class Study(Base):

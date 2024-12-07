@@ -9,8 +9,9 @@ export async function getSurveyAPI(fetch: fetchType, survey_id: number) {
 
 export async function sendSurveyResponseAPI(
 	fetch: fetchType,
-	uuid: string,
+	code: string,
 	sid: string,
+	uid: number | null,
 	survey_id: number,
 	group_id: number,
 	question_id: number,
@@ -22,8 +23,9 @@ export async function sendSurveyResponseAPI(
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
-			uuid,
+			code,
 			sid,
+			uid,
 			survey_id,
 			question_id,
 			group_id,
@@ -36,9 +38,33 @@ export async function sendSurveyResponseAPI(
 	return response.ok;
 }
 
-export async function getSurveyScoreAPI(survey_id: number) {
-	const response = await fetch(`/api/surveys/${survey_id}/score`);
+export async function getSurveyScoreAPI(fetch: fetchType, survey_id: number, sid: string) {
+	const response = await fetch(`/api/surveys/${survey_id}/score/${sid}`);
 	if (!response.ok) return null;
 
 	return await response.json();
+}
+
+export async function sendSurveyResponseInfoAPI(
+	fetch: fetchType,
+	survey_id: number,
+	sid: string,
+	birthyear: number,
+	gender: string,
+	primary_language: string,
+	education: string
+) {
+	const response = await fetch(`/surveys/info/${survey_id}`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			sid,
+			birthyear,
+			gender,
+			primary_language,
+			education
+		})
+	});
+
+	return response.ok;
 }

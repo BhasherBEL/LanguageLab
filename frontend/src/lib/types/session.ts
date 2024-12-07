@@ -194,31 +194,29 @@ export default class Session {
 		const messagesStr = await getMessagesAPI(f, this.id);
 
 		this._messages.set(Message.parseAll(messagesStr));
-
 		return true;
 	}
 
 	async sendMessage(
 		sender: User,
 		content: string,
-		metadata: { message: string; date: number }[]
+		metadata: { message: string; date: number }[],
+		replyTo: number | null
 	): Promise<Message | null> {
-		const json = await createMessageAPI(fetch, this.id, content, metadata);
+		const json = await createMessageAPI(fetch, this.id, content, metadata, replyTo);
 		if (json == null || json.id == null || json.message_id == null) {
 			toastAlert('Failed to parse message');
 			return null;
 		}
-
-		const message = new Message(json.id, json.message_id, content, new Date(), sender, this);
-
-		this._messages.update((messages) => {
-			if (!messages.find((m) => m instanceof Message && m.message_id === message.message_id)) {
-				return [...messages, message];
-			}
-			return messages.map((m) =>
-				m instanceof Message && m.message_id === message.message_id ? message : m
-			);
-		});
+		const message = new Message(
+			json.id,
+			json.message_id,
+			content,
+			new Date(),
+			sender,
+			this,
+			json.reply_to
+		);
 
 		return message;
 	}
@@ -261,7 +259,6 @@ export default class Session {
 
 		this._ws.onopen = () => {
 			this._ws_connected.set(true);
-			console.log('WS connected');
 		};
 
 		this._ws.onmessage = (event) => {
@@ -357,7 +354,7 @@ export default class Session {
 							users.delete(user_id);
 							return users;
 						});
-					}, 30000)
+					}, 30000) as unknown as number
 				);
 
 				return;
@@ -368,7 +365,6 @@ export default class Session {
 		this._ws.onclose = () => {
 			this._ws = null;
 			this._ws_connected.set(false);
-			console.log('WS closed, reconnecting in 1s');
 			setTimeout(() => this.wsConnect(jwt), 1000);
 		};
 	}

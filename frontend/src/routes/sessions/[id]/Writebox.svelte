@@ -7,18 +7,25 @@
 	import autosize from 'svelte-autosize';
 	import type User from '$lib/types/user';
 
+	import { replyToMessage, clearReplyToMessage } from '$lib/utils/replyUtils';
+
 	onMount(async () => {
 		await import('emoji-picker-element');
 	});
 
 	const { user, session } = $props();
 
+	let currentReplyToMessage = $state($replyToMessage);
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
 	let message = $state('');
 	let showPicker = $state(false);
 	let showSpecials = $state(false);
 	let textearea: HTMLTextAreaElement;
+
+	function cancelReply() {
+		clearReplyToMessage();
+	}
 
 	let disabled =
 		session.users.find((u: User) => user.id === u.id) === undefined ||
@@ -29,31 +36,62 @@
 		message = message.trim();
 		if (message.length == 0) return;
 
-		const m = await session.sendMessage(user, message, metadata);
+		try {
+			const m = await session.sendMessage(
+				structuredClone($user),
+				message,
+				[...metadata],
+				$replyToMessage?.id || null
+			);
 
-		if (m === null) {
+			if (m === null) {
+				toastAlert($t('chatbox.sendError'));
+				return;
+			}
+
+			message = '';
+			metadata = [];
+			setTimeout(() => {
+				autosize.update(textearea);
+			}, 10);
+			clearReplyToMessage();
+		} catch (error) {
+			console.error('Failed to send message:', error);
 			toastAlert($t('chatbox.sendError'));
-			return;
 		}
-
-		message = '';
-		metadata = [];
-		setTimeout(() => {
-			autosize.update(textearea);
-		}, 10);
 	}
 
-	function keyPress() {
+	function keyPress(event: KeyboardEvent) {
 		if (message === lastMessage) return;
 
-		metadata.push({ message: message, date: new Date().getTime() });
+		if (metadata.length === 0 || metadata[metadata.length - 1].message !== message) {
+			metadata.push({ message: message, date: new Date().getTime() });
+		}
 		lastMessage = message;
 
-		session.sendTyping();
+		if (event.key === 'Enter' && !event.shiftKey) {
+			event.preventDefault();
+			sendMessage();
+		} else {
+			session.sendTyping();
+		}
 	}
 </script>
 
-<div class="w-full mb-2">
+<div class="flex flex-col w-full py-2 relative mb-2">
+	{#if currentReplyToMessage}
+		<div
+			class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-1 text-sm text-gray-600"
+		>
+			<p class="text-xs text-gray-400">
+				Replying to: <span class="text-xs text-gray-400">{currentReplyToMessage.content}</span>
+			</p>
+			<button class="text-xs text-blue-500 underline ml-4 cursor-pointer" onclick={cancelReply}>
+				Cancel
+			</button>
+		</div>
+	{/if}
+
 	{#if showSpecials}
 		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
 			{#each config.SPECIAL_CHARS as char (char)}
@@ -84,7 +122,7 @@
 		>
 			😀
 		</div>
-		<div>
+		<div class="relative">
 			<div
 				id="tooltip-emoji"
 				data-tooltip="tooltip-emoji"
@@ -94,7 +132,7 @@
 			>
 				<emoji-picker
 					class="light"
-					onemoji-click={(event: any) => {
+					onemoji-click={(event) => {
 						message += event.detail.unicode;
 						textearea.focus();
 					}}
@@ -107,17 +145,10 @@
 			class="flex-grow p-2 resize-none overflow-hidden py-4 pr-12 border rounded-[32px]"
 			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
 			{disabled}
-			use:autosize
 			bind:value={message}
+			use:autosize
 			rows={1}
-			onkeypress={async (e) => {
-				console.log(e);
-				if (e.key === 'Enter' && !e.shiftKey) {
-					await sendMessage();
-				} else {
-					keyPress();
-				}
-			}}
+			onkeypress={keyPress}
 		></textarea>
 		<div
 			class="absolute right-28 kbd text-sm select-none cursor-pointer"

@@ -214,6 +214,7 @@ def create_message(
         user_id=user.id,
         session_id=session.id,
         message_id=message.message_id,
+        reply_to_message_id=message.reply_to_message_id,
     )
     db.add(db_message)
     db.commit()
@@ -429,10 +430,20 @@ def create_survey_response(db: Session, survey_response: schemas.SurveyResponseC
     return db_survey_response
 
 
-def get_survey_responses(db: Session, survey_id: int, skip: int = 0):
+def get_survey_responses(db: Session, sid: str, skip: int = 0):
     return (
         db.query(models.SurveyResponse)
-        .filter(models.SurveyResponse.survey_id == survey_id)
+        .filter(models.SurveyResponse.sid == sid)
         .offset(skip)
         .all()
     )
+
+
+def create_survey_response_info(
+    db: Session, survey_response_info: schemas.SurveyResponseInfoCreate
+):
+    db_survey_response_info = models.SurveyResponseInfo(**survey_response_info.dict())
+    db.add(db_survey_response_info)
+    db.commit()
+    db.refresh(db_survey_response_info)
+    return db_survey_response_info

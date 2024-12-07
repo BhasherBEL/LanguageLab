@@ -154,6 +154,7 @@ class Message(BaseModel):
     user_id: int
     session_id: int
     created_at: NaiveDatetime
+    reply_to_message_id: int | None = None
     feedbacks: list[MessageFeedback]
 
     class Config:
@@ -167,6 +168,7 @@ class Message(BaseModel):
             "user_id": self.user_id,
             "session_id": self.session_id,
             "created_at": self.created_at.isoformat(),
+            "reply_to_message_id": self.reply_to_message_id,
             "feedbacks": [feedback.to_dict() for feedback in self.feedbacks],
         }
 
@@ -182,6 +184,7 @@ class MessageMetadataCreate(BaseModel):
 class MessageCreate(BaseModel):
     message_id: str | None = None
     content: str
+    reply_to_message_id: int | None = None
     metadata: list[MessageMetadataCreate]
 
     class Config:
@@ -272,8 +275,9 @@ class SurveySurveyAddGroup(BaseModel):
 
 
 class SurveyResponseCreate(BaseModel):
-    uuid: str
+    code: str
     sid: str
+    uid: int | None = None
     survey_id: int
     group_id: int
     question_id: int
@@ -284,8 +288,9 @@ class SurveyResponseCreate(BaseModel):
 
 class SurveyResponse(BaseModel):
     id: int
-    uuid: str
+    code: str
     sid: str
+    uid: int | None = None
     created_at: NaiveDatetime
     survey_id: int
     group_id: int
@@ -293,6 +298,23 @@ class SurveyResponse(BaseModel):
     selected_id: int
     response_time: float
     text: str | None = None
+
+
+class SurveyResponseInfoCreate(BaseModel):
+    sid: str
+    birthyear: int
+    gender: str
+    primary_language: str
+    education: str
+
+
+class SurveyResponseInfo(BaseModel):
+    id: int
+    sid: str
+    birthyear: int
+    gender: str
+    primary_language: str
+    education: str
 
 
 class Study(BaseModel):

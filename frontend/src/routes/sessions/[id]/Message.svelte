@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { displayTime } from '$lib/utils/date';
-	import { Check, Icon, Pencil } from 'svelte-hero-icons';
+	import { ArrowUturnLeft, Check, Icon, Pencil } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
 	import { onMount } from 'svelte';
 	import SpellCheck from '$lib/components/icons/spellCheck.svelte';
@@ -9,6 +9,8 @@
 	import linkifyHtml from 'linkify-html';
 	import { sanitize } from '$lib/utils/sanitize';
 	import CloseIcon from '$lib/components/icons/closeIcon.svelte';
+	import { initiateReply } from '$lib/utils/replyUtils';
+	import type Message from '$lib/types/message';
 
 	const { user, message } = $props();
 
@@ -19,6 +21,29 @@
 	}, 1000);
 
 	let isEdit = $state(false);
+
+	let replyTo: string | undefined = $state(message['_replyTo']);
+
+	let replyToMessage: Message | null = $state(null);
+
+	$effect(() => {
+		if (replyTo) {
+			findMessageById(replyTo).then((msg) => {
+				replyToMessage = msg;
+			});
+		}
+	});
+
+	async function findMessageById(id: string): Promise<Message | null> {
+		try {
+			const resolvedMessage = await message.getMessageById(Number(id));
+			return resolvedMessage;
+		} catch (error) {
+			console.error(`Error resolving message ID ${id}:`, error);
+			return null;
+		}
+	}
+
 	let contentDiv: HTMLDivElement;
 	let historyModal: HTMLDialogElement;
 	let messageVersions = $state(message.versions);
@@ -50,6 +75,12 @@
 		}
 	}
 
+	function truncateMessage(content: string, maxLength: number = 20): string {
+		if (content.length > maxLength) {
+			return content.slice(0, maxLength) + '...';
+		}
+		return content;
+	}
 	let hightlight: HTMLDivElement;
 
 	onMount(() => {
@@ -146,6 +177,7 @@
 		if (current < content.length) {
 			parts.push({ text: content.slice(current), feedback: null });
 		}
+
 		return parts;
 	}
 
@@ -175,12 +207,35 @@
 			class="rounded-full border border-neutral-400 text-sm"
 		/>
 	</div>
-	<div class="chat-bubble text-black" class:bg-blue-200={isSender} class:bg-gray-300={!isSender}>
+
+	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
+		{#if replyToMessage}
+			<a
+				href={`#${replyToMessage.uuid}`}
+				class="flex items-center text-[0.65rem] text-gray-400 mb-1 cursor-pointer"
+				aria-label="Scroll to replied message"
+			>
+				{$t('chatbox.replyingTo')}
+				<span
+					class="italic truncate whitespace-nowrap overflow-hidden max-w-[150px] text-[0.65rem] inline-block"
+				>
+					{truncateMessage(replyToMessage?.content)}
+				</span>
+			</a>
+		{/if}
+
+		<button
+			class="absolute -right-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+			onclick={() => initiateReply(message)}
+		>
+			<Icon src={ArrowUturnLeft} class="w-4 h-4 text-gray-800" />
+		</button>
+
 		{#if isEdit}
 			<div
 				contenteditable="true"
 				bind:this={contentDiv}
-				class="bg-blue-200 whitespace-pre-wrap min-h-8"
+				class="bg-blue-50 whitespace-pre-wrap min-h-8 p-2"
 			>
 				{message.content}
 			</div>

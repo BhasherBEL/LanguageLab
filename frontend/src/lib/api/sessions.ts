@@ -40,12 +40,13 @@ export async function createMessageAPI(
 	fetch: fetchType,
 	id: number,
 	content: string,
-	metadata: { message: string; date: number }[]
+	metadata: { message: string; date: number }[],
+	replyTo: number | null
 ): Promise<any | null> {
 	const response = await fetch(`/api/sessions/${id}/messages`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ content, metadata })
+		body: JSON.stringify({ content, metadata, reply_to_message_id: replyTo })
 	});
 	if (!response.ok) return null;
 

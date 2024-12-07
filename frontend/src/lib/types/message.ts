@@ -1,6 +1,6 @@
 import Session from './session';
 import User from './user';
-import { updateMessageAPI, createMessageFeedbackAPI } from '$lib/api/sessions';
+import { updateMessageAPI, createMessageFeedbackAPI, getMessagesAPI } from '$lib/api/sessions';
 import { toastAlert } from '$lib/utils/toasts';
 import { get, writable, type Writable } from 'svelte/store';
 import Feedback from './feedback';
@@ -16,6 +16,7 @@ export default class Message {
 	private _edited: boolean = false;
 	private _versions = writable([] as { content: string; date: Date }[]);
 	private _feedbacks = writable([] as Feedback[]);
+	private _replyTo: string;
 
 	public constructor(
 		id: number,
@@ -23,7 +24,8 @@ export default class Message {
 		content: string,
 		created_at: Date,
 		user: User,
-		session: Session
+		session: Session,
+		replyTo: string
 	) {
 		this._id = id;
 		this._message_id = message_id;
@@ -32,6 +34,7 @@ export default class Message {
 		this._user = user;
 		this._session = session;
 		this._versions.set([{ content: content, date: created_at }]);
+		this._replyTo = replyTo;
 	}
 
 	get id(): number {
@@ -92,6 +95,36 @@ export default class Message {
 		return true;
 	}
 
+	async getMessageById(id: number): Promise<Message | null> {
+		try {
+			const response = await getMessagesAPI(fetch, this._session.id); // Fetch all messages for the session
+			if (!response) {
+				toastAlert('Failed to retrieve messages from the server.');
+				return null;
+			}
+
+			// Locate the message by ID in the response
+			const messageData = response.find((msg: any) => msg.id === id);
+			if (!messageData) {
+				toastAlert(`Message with ID ${id} not found.`);
+				return null;
+			}
+
+			// Parse the message object
+			const parsedMessage = Message.parse(messageData, this._user, this._session);
+			if (!parsedMessage) {
+				toastAlert(`Failed to parse message with ID ${id}`);
+				return null;
+			}
+
+			return parsedMessage;
+		} catch (error) {
+			console.error(`Error while fetching message by ID ${id}:`, error);
+			toastAlert(`Unexpected error while retrieving message.`);
+			return null;
+		}
+	}
+
 	async localUpdate(content: string, force: boolean = false): Promise<boolean> {
 		if (!force) {
 			this._versions.update((v) => [...v, { content: content, date: new Date() }]);
@@ -142,7 +175,6 @@ export default class Message {
 	}
 
 	static parse(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		json: any,
 		user: User | null | undefined = null,
 		session: Session | null | undefined = null
@@ -174,9 +206,9 @@ export default class Message {
 			json.content,
 			parseToLocalDate(json.created_at),
 			user,
-			session
+			session,
+			json.reply_to_message_id
 		);
-
 		message.feedbacks.set(Feedback.parseAll(json.feedbacks, message));
 
 		return message;
