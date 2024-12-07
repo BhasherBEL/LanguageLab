@@ -65,7 +65,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-apiRouter = APIRouter(prefix="/api")
+apiRouter = APIRouter(prefix="/tmp-api")
 v1Router = APIRouter(prefix="/v1")
 authRouter = APIRouter(prefix="/auth", tags=["auth"])
 usersRouter = APIRouter(prefix="/users", tags=["users"])

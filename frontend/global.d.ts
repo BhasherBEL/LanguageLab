@@ -6,3 +6,9 @@ declare module 'emoji-picker-element';
 interface ImportMetaEnv {
 	VITE_API_URL: string;
 }
+
+declare global {
+	interface RequestInit {
+		duplex?: string;
+	}
+}

@@ -1,20 +1,27 @@
 import { type Handle, type RequestEvent } from '@sveltejs/kit';
 import { jwtDecode } from 'jwt-decode';
 import { type JWTContent } from '$lib/utils/login';
+import config from '$lib/config';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
 const PROXY_PATH = '/api';
 
 const handleApiProxy = async (event: RequestEvent, cookies: { name: string; value: string }[]) => {
 	const strippedPath = event.url.pathname.substring(PROXY_PATH.length);
 
-	const urlPath = `${API_BASE_URL}${strippedPath}${event.url.search}`;
+	console.log('redirect to ', `${config.API_URL}/v1${strippedPath}${event.url.search}`);
+	const urlPath = `${config.API_URL}/v1${strippedPath}${event.url.search}`;
 	const proxiedUrl = new URL(urlPath);
 
 	event.request.headers.delete('connection');
 	event.request.headers.set('cookie', cookies.map((c) => `${c.name}=${c.value}`).join('; '));
 
-	return event.fetch(proxiedUrl.toString(), event.request).catch((err: any) => {
+	return fetch(proxiedUrl.toString(), {
+		body: event.request.body,
+		method: event.request.method,
+		headers: event.request.headers,
+		// @ts-ignore: Duplex is missing
+		duplex: 'half'
+	}).catch((err: any) => {
 		console.log('Could not proxy API request: ', err);
 		throw err;
 	});
@@ -28,6 +35,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const cookies = event.cookies.getAll();
 
 	if (event.url.pathname.startsWith(PROXY_PATH)) {
+		console.log(event.url.pathname);
 		return await handleApiProxy(event, cookies);
 	}
 
