@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type Message from '$lib/types/message';
 	import { displayTime } from '$lib/utils/date';
-	import { Check, Icon, Pencil, ArrowUturnLeft } from 'svelte-hero-icons';
+	import { Pencil, Check, Icon, ArrowUturnLeft } from 'svelte-hero-icons';
 	import { user } from '$lib/types/user';
 	import Gravatar from 'svelte-gravatar';
 	import { t } from '$lib/services/i18n';
@@ -84,24 +84,6 @@
 		}
 		return content;
 	}
-
-	function scrollToMessage(messageId: number | undefined): void {
-		if (!messageId) return;
-		const elementId = `message-${messageId}`;
-		const element = document.getElementById(elementId);
-
-		if (element) {
-			element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-			element.classList.add('animate-highlight-scroll');
-			setTimeout(() => {
-				element.classList.remove('animate-highlight-scroll');
-			}, 1500);
-		} else {
-			console.warn(`Message with ID ${messageId} not found in DOM.`);
-		}
-	}
-
 	let hightlight: HTMLDivElement;
 
 	onMount(() => {
@@ -184,7 +166,7 @@
 		}
 	}
 
-	function getParts(content: string, feedbacks: Feedback[], replyTo: string) {
+	function getParts(content: string, feedbacks: Feedback[]) {
 		let parts: { text: string; feedback: Feedback | null }[] = [];
 		let current = 0;
 		feedbacks.sort((a: Feedback, b: Feedback) => a.start - b.start);
@@ -203,7 +185,7 @@
 	}
 
 	$: fbs = message.feedbacks;
-	$: parts = getParts(message.content, $fbs, message['_replyTo']);
+	$: parts = getParts(message.content, $fbs);
 
 	const isSender = message.user.id == $user?.id;
 
@@ -216,12 +198,12 @@
 </script>
 
 <div
-	class="chat group scroll-smooth rounded-xl"
-	id={`message-${message.id}`}
+	class="chat group scroll-smooth target:bg-gray-200 rounded-xl"
+	id={message.uuid}
 	class:chat-start={!isSender}
 	class:chat-end={isSender}
 >
-	<div class="rounded-full mx-2">
+	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
 		<Gravatar
 			email={message.user.email}
 			size={64}
@@ -230,15 +212,11 @@
 		/>
 	</div>
 
-	<div
-		class={`relative whitespace-normal break-words overflow-wrap-anywhere rounded-lg p-3 ${
-			isSender ? 'bg-blue-50' : 'bg-gray-300 text-black'
-		}`}
-	>
+	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
 		{#if replyToMessage}
-			<button
+			<a
+				href={`#${replyToMessage.uuid}`}
 				class="flex items-center text-[0.65rem] text-gray-400 mb-1 cursor-pointer"
-				on:click={() => scrollToMessage(replyToMessage?.id)}
 				aria-label="Scroll to replied message"
 			>
 				{$t('chatbox.replyingTo')}
@@ -247,7 +225,7 @@
 				>
 					{truncateMessage(replyToMessage?.content)}
 				</span>
-			</button>
+			</a>
 		{/if}
 
 		<button
@@ -265,49 +243,65 @@
 			>
 				{message.content}
 			</div>
-			<div class="flex justify-end space-x-2 mt-2">
-				<button
-					class="border rounded-full px-4 py-2 bg-white text-blue-700"
-					on:click={() => endEdit()}
-				>
-					{$t('button.save')}
-				</button>
-				<button
-					class="border rounded-full px-4 py-2 bg-gray-100 text-gray-800"
-					on:click={() => endEdit(false)}
-				>
-					{$t('button.cancel')}
-				</button>
-			</div>
+			<button
+				class="float-end border rounded-full px-4 py-2 mt-2 bg-white text-blue-700"
+				on:click={() => endEdit()}
+			>
+				{$t('button.save')}
+			</button>
+			<button
+				class="float-end border rounded-full px-4 py-2 mt-2 mr-2"
+				on:click={() => endEdit(false)}
+			>
+				{$t('button.cancel')}
+			</button>
 		{:else}
 			<div class="whitespace-pre-wrap" bind:this={contentDiv}>
 				{#each parts as part}
 					{#if isEdit || !part.feedback}
 						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 					{:else}
-						<span class="underline group/feedback relative decoration-wavy hover:cursor-help">
-							<span
-								class="absolute hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10 group-hover:flex"
-							>
-								{part.feedback.content}
-								<button
-									aria-label="close"
-									class="ml-1 hover:border-gray-300 border border-transparent rounded"
-									on:click={() => deleteFeedback(part.feedback)}
-								>
-									<CloseIcon />
-								</button>
-							</span>
-							{part.text}
-						</span>
+						<!-- prettier-ignore -->
+						<span class=""
+							><!--
+						--><span
+								class="underline group/feedback relative decoration-wavy hover:cursor-help"
+								class:decoration-blue-500={part.feedback.content}
+								class:decoration-red-500={!part.feedback.content}
+								><div
+									class="absolute group-hover/feedback:flex hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10"
+								><!--
+									-->{part.feedback.content}<button
+										aria-label="close"
+										class:ml-1={part.feedback.content}
+										class="hover:border-inherit border border-transparent rounded"
+										on:click={() => deleteFeedback(part.feedback)}
+									>
+										<CloseIcon />
+									</button>
+								</div
+								><!--
+						-->{part.text}<!--
+					--></span
+							><!--
+					--></span
+						>
 					{/if}
 				{/each}
 			</div>
 		{/if}
+		{#if isSender}
+			<button
+				class="absolute bottom-0 left-[-1.5rem] invisible group-hover:visible h-full p-0"
+				on:click={() => (isEdit ? endEdit() : startEdit())}
+			>
+				<Icon src={Pencil} class="w-5 h-full text-gray-500 hover:text-gray-800" />
+			</button>
+		{/if}
 	</div>
-	<div class="text-sm mt-1 opacity-70 flex items-center space-x-2">
-		<Icon src={Check} class="w-4" />
-		<span>{displayedTime}</span>
+	<div class="chat-footer opacity-50">
+		<Icon src={Check} class="w-4 inline" />
+		{displayedTime}
 		{#if message.edited}
 			<button class="italic cursor-help" on:click={() => historyModal.showModal()}>
 				{$t('chatbox.edited')}
@@ -317,18 +311,18 @@
 </div>
 
 <div
-	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x flex"
+	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
 	bind:this={hightlight}
 >
 	<button
 		on:click={() => onSelect(false)}
-		class="bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
+		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
 	>
 		<SpellCheck />
-	</button>
-	<button
+	</button><!---
+	--><button
 		on:click={() => onSelect(true)}
-		class="bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
+		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
 	>
 		<ChatBubble />
 	</button>

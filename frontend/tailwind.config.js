@@ -3,15 +3,8 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		extend: {
-			animation: {
-				'highlight-scroll': 'highlight-scroll 1.5s ease-in-out'
-			},
-			keyframes: {
-				'highlight-scroll': {
-					'0%': { backgroundColor: 'rgba(255, 255, 0, 0.4)' },
-					'50%': { backgroundColor: 'rgba(255, 255, 0, 0.2)' },
-					'100%': { backgroundColor: 'transparent' }
-				}
+			textUnderlineOffset: {
+				6: '6px'
 			}
 		}
 	},

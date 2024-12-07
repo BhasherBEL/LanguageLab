@@ -16,7 +16,6 @@
 
 	export let session: Session;
 
-	// State for replying
 	let currentReplyToMessage = null;
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
@@ -31,7 +30,6 @@
 		clearReplyToMessage();
 	}
 
-	// User and disabled checks
 	let us = get(user);
 	let disabled =
 		us == null ||
@@ -39,18 +37,16 @@
 		new Date().getTime() > session.end_time.getTime() + 3600000 ||
 		new Date().getTime() < session.start_time.getTime() - 3600000;
 
-	// Send message logic
 	async function sendMessage() {
 		message = message.trim();
 		if (message.length == 0) return;
 
 		if ($user === null) {
-			toastAlert('You must be logged in to send a message.');
+			toastAlert($t('chatbox.sendError'));
 			return;
 		}
 
 		try {
-			// Clone objects to avoid readonly issues
 			const m = await session.sendMessage(
 				structuredClone($user),
 				message,
@@ -69,14 +65,13 @@
 			clearReplyToMessage();
 		} catch (error) {
 			console.error('Failed to send message:', error);
-			toastAlert('Failed to send your message. Please try again.');
+			toastAlert($t('chatbox.sendError'));
 		}
 	}
 
 	function keyPress(event: KeyboardEvent) {
 		if (message === lastMessage) return;
 
-		// Add metadata only if unique
 		if (metadata.length === 0 || metadata[metadata.length - 1].message !== message) {
 			metadata.push({ message: message, date: new Date().getTime() });
 		}

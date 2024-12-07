@@ -46,14 +46,12 @@ export async function createMessageAPI(
 	content: string,
 	metadata: { message: string; date: number }[],
 	replyTo: number | null
-): Promise<number | null> {
-	console.log('Payload sent to API:', { content, metadata, reply_to: replyTo });
+): Promise<any | null> {
 	const response = await axiosInstance.post(`/sessions/${id}/messages`, {
 		content,
 		metadata,
 		reply_to_message_id: replyTo
 	});
-	console.log('Response from API:', response);
 
 	if (response.status !== 201) {
 		toastAlert('Failed to send message');
