@@ -194,7 +194,7 @@
 >
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
 		<img
-			src={`https://gravatar.com/avatar/${user.emailHash}?d=identicon`}
+			src={`https://gravatar.com/avatar/${message.user.emailHash}?d=identicon`}
 			alt={user.nickname}
 			class="rounded-full border border-neutral-400 text-sm"
 		/>
@@ -280,7 +280,9 @@
 			</button>
 		{/if}
 		<button
-			class="absolute bottom-0 left-[-3.5rem] invisible group-hover:visible h-full p-0"
+			class="absolute bottom-0 invisible group-hover:visible h-full p-0"
+			class:right-[-1.5rem]={!isSender}
+			class:left-[-3.5rem]={isSender}
 			onclick={() => (replyTo = message)}
 		>
 			<Icon src={ArrowUturnLeft} class="w-5 h-full text-gray-500 hover:text-gray-800" />
@@ -296,7 +298,6 @@
 		{/if}
 	</div>
 </div>
-
 <div
 	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
 	bind:this={hightlight}
