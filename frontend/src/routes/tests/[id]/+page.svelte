@@ -102,26 +102,22 @@
 				.map((part) => part.gap)
 				.join('|');
 
-		const gapTexts = gaps
-			.filter((part) => part.gap !== null)
-			.map((part) => part.gap)
-			.join('|');
-
-		if (
-			!(await sendSurveyResponseAPI(
-				fetch,
-				code,
-				sid,
-				uid,
-				survey.id,
-				currentGroupId,
-				questionsRandomized[currentQuestionId]['_id'],
-				-1,
-				(new Date().getTime() - startTime) / 1000,
-				gapTexts
-			))
-		) {
-			return;
+			if (
+				!(await sendSurveyResponseAPI(
+					fetch,
+					code,
+					sid,
+					uid,
+					survey.id,
+					currentGroupId,
+					questionsRandomized[currentQuestionId]['_id'],
+					-1,
+					(new Date().getTime() - startTime) / 1000,
+					gapTexts
+				))
+			) {
+				return;
+			}
 		}
 		if (currentQuestionId < questionsRandomized.length - 1) {
 			setQuestionId(currentQuestionId + 1);
@@ -242,7 +238,7 @@
 			<p class="text-center font-bold text-xl m-auto">{$t('surveys.example')}</p>
 		</div>
 	{/if}
-	{#if type == 'gap'}
+	{#if type == 'gap' && gaps}
 		<div class="mx-auto mt-16 center flex flex-col">
 			<div>
 				{#each gaps as part}
