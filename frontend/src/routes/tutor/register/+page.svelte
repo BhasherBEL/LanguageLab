@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import User from '$lib/types/user';
-	import { getUsersAPI, patchUserAPI, getUserContactsAPI,  createUserAPI} from '$lib/api/users';
+	import { getUsersAPI, patchUserAPI, getUserContactsAPI, createUserAPI } from '$lib/api/users';
 	import { Icon, Envelope, Key, UserCircle, Calendar, QuestionMarkCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import { formatToUTCDate } from '$lib/utils/date';
@@ -54,57 +54,56 @@
 	let timeslots = 0n;
 
 	async function onRegister() {
-    // Basic validation
-    if (nickname == '' || email == '' || password == '' || confirmPassword == '') {
-        message = $t('register.error.emptyFields');
-        return;
-    }
-    if (password.length < 8) {
-        message = $t('register.error.passwordRules');
-        return;
-    }
-    if (password != confirmPassword) {
-        message = $t('register.error.differentPasswords');
-        return;
-    }
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailRegex.test(email)) {
-        message = $t('register.error.emailRules');
-        return;
-    }
-    message = '';
-
-    try {
-        const response = await fetch('http://127.0.0.1:8000/tmp-api/v1/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                email,
-                password,
-                nickname,
-                is_tutor: true
-            })
-        });
-
-        if (response.status === 201) {
-            const userId = await response.text(); 
-            console.log('User created successfully with ID:', userId);
-            message = $t('register.success');
+		// Basic validation
+		if (nickname == '' || email == '' || password == '' || confirmPassword == '') {
+			message = $t('register.error.emptyFields');
 			return;
-        } else {
-            const errorData = await response.json();
-            console.error('Registration failed:', errorData);
-            message = errorData.detail || $t('register.error.generic');
-        }
-    } catch (error) {
-        console.error('Error during registration:', error);
-        message = $t('register.error.generic');
-    }
-}
+		}
+		if (password.length < 8) {
+			message = $t('register.error.passwordRules');
+			return;
+		}
+		if (password != confirmPassword) {
+			message = $t('register.error.differentPasswords');
+			return;
+		}
+		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+		if (!emailRegex.test(email)) {
+			message = $t('register.error.emailRules');
+			return;
+		}
+		message = '';
 
+		try {
+			const response = await fetch('http://127.0.0.1:8000/tmp-api/v1/auth/register', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json'
+				},
+				body: JSON.stringify({
+					email,
+					password,
+					nickname,
+					is_tutor: true
+				})
+			});
+
+			if (response.status === 201) {
+				const userId = await response.text();
+				console.log('User created successfully with ID:', userId);
+				message = $t('register.success');
+				return;
+			} else {
+				const errorData = await response.json();
+				console.error('Registration failed:', errorData);
+				message = errorData.detail || $t('register.error.generic');
+			}
+		} catch (error) {
+			console.error('Error during registration:', error);
+			message = $t('register.error.generic');
+		}
+	}
 
 	async function onData() {
 		const user_id = user.id;
