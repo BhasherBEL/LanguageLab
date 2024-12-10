@@ -39,8 +39,13 @@
 	let value = $derived(currentQuestion.question.split(':').slice(1).join(':'));
 	let gaps = $derived(type === 'gap' ? gapParts(currentQuestion.question) : null);
 	let soundPlayer: HTMLAudioElement;
-	let displayQuestionOptions: string[] = $derived([...(currentQuestion.options ?? [])]);
-	$effect(() => shuffle(displayQuestionOptions));
+	let displayQuestionOptions: string[] = $derived(
+		(() => {
+			let d = [...(currentQuestion.options ?? [])];
+			shuffle(d);
+			return d;
+		})()
+	);
 	let finalScore: number | null = $state(null);
 	let selectedOption: string;
 	let endSurveyAnswers: { [key: string]: any } = {};
