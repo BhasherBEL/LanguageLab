@@ -5,12 +5,20 @@ export default class SurveyGroup {
 	private _id: number;
 	private _survey_id: number;
 	private _title: string;
+	private _demo: boolean;
 	private _questions: SurveyQuestion[];
 
-	constructor(id: number, survey_id: number, title: string, questions: SurveyQuestion[]) {
+	constructor(
+		id: number,
+		survey_id: number,
+		title: string,
+		demo: boolean,
+		questions: SurveyQuestion[]
+	) {
 		this._id = id;
 		this._survey_id = survey_id;
 		this._title = title;
+		this._demo = demo;
 		this._questions = questions;
 	}
 
@@ -26,6 +34,10 @@ export default class SurveyGroup {
 		return this._title;
 	}
 
+	get demo(): boolean {
+		return this._demo;
+	}
+
 	get questions(): SurveyQuestion[] {
 		return this._questions;
 	}
@@ -38,7 +50,7 @@ export default class SurveyGroup {
 
 		const questions = SurveyQuestion.parseAll(data.questions);
 
-		return new SurveyGroup(data.id, data.survey_id, data.title, questions);
+		return new SurveyGroup(data.id, data.survey_id, data.title, data.demo, questions);
 	}
 
 	static parseAll(data: any): SurveyGroup[] {
