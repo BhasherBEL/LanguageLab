@@ -222,6 +222,7 @@ class SurveyGroup(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
+    demo = Column(String, default=False)
     questions = relationship(
         "SurveyQuestion", secondary="survey_group_questions", backref="group"
     )

@@ -245,12 +245,14 @@ class SurveyQuestion(BaseModel):
 class SurveyGroupCreate(BaseModel):
     id: int | None = None
     title: str
+    demo: bool
     questions: list[SurveyQuestionCreate] = []
 
 
 class SurveyGroup(BaseModel):
     id: int
     title: str
+    demo: bool
     questions: list[SurveyQuestion]
 
 
