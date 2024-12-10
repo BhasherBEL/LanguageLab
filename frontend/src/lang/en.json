@@ -2,12 +2,26 @@
 	"header": {
 		"appName": "LanguageLab",
 		"connectedAs": "Connected as",
-		"metadataWarning": "Please complete the post-registration form before using the application."
+		"metadataWarning": "Please complete the post-registration form before using the application.",
+		"admin": {
+			"sessions": "Sessions",
+			"users": "Users"
+		},
+		"availability": "Availability",
+		"language": "Language",
+		"register": "Sign up",
+		"signin": "Log in",
+		"signout": "Log out",
+		"tutorSelection": "Tutor"
 	},
 	"chatbox": {
 		"placeholder": "Type your message here...",
 		"sendError": "Failed to send message",
-		"replyingTo": "Replying to: "
+		"replyingTo": "Replying to: ",
+		"deleteFeedback": "Are you sure you want to delete this feedback? \nThis action is irreversible.",
+		"disabled": "This session is only visible as an archive.",
+		"edited": "edited",
+		"history": "History"
 	},
 	"home": {
 		"date": "Date",
@@ -23,7 +37,17 @@
 		"learningLanguage": "Target language",
 		"confirm": "Confirm",
 		"sessionEnded": "Ended",
-		"noSessions": "No current session"
+		"noSessions": "No session",
+		"bookSession": "Book a session",
+		"bookingFailed": "Error reserving the session",
+		"bookingSuccessful": "Session booked successfully",
+		"currentSessions": "Live sessions",
+		"newContact": "Add a contact",
+		"newFirstContact": "Add a first contact",
+		"noContact": "Add a contact to get started",
+		"noCurrentOrFutureSessions": "No session in progress or planned",
+		"pastSessions": "Completed sessions",
+		"plannedSessions": "Scheduled sessions"
 	},
 	"signup": {
 		"title": "Register",
@@ -34,7 +58,14 @@
 		"confirmPassword": "Confirm password",
 		"signup": "Sign up"
 	},
-	"login": { "email": "Email", "password": "Password", "login": "Login" },
+	"login": {
+		"email": "Email",
+		"password": "Password",
+		"login": "Login",
+		"noAccountLink": "Register here",
+		"noAccountText": "No account yet?",
+		"title": "Log in"
+	},
 	"admin": {
 		"actions": "Actions",
 		"passwordPrompt": "Enter the password. Please note: it will no longer be recoverable."
@@ -55,32 +86,80 @@
 			"december": "December"
 		},
 		"days": {
-			"monday": "Monday",
-			"tuesday": "Tuesday",
-			"wednesday": "Wednesday",
-			"thursday": "Thursday",
-			"friday": "Friday",
-			"saturday": "Saturday",
-			"sunday": "Sunday",
 			"0": "Monday",
 			"1": "Tuesday",
 			"2": "Wednesday",
 			"3": "Thursday",
 			"4": "Friday",
 			"5": "Saturday",
-			"6": "Sunday"
+			"6": "Sunday",
+			"monday": "Monday",
+			"tuesday": "Tuesday",
+			"wednesday": "Wednesday",
+			"thursday": "Thursday",
+			"friday": "Friday",
+			"saturday": "Saturday",
+			"sunday": "Sunday"
 		},
 		"language": {
 			"fr": "Français",
-			"en": "English"
+			"en": "English",
+			"eng": "English",
+			"fra": "French"
 		},
 		"bool": {
 			"true": "Yes",
 			"false": "No"
+		},
+		"past": {
+			"day": "There is {n, plural, one {",
+			"hour": "There is {n, plural, one {",
+			"justNow": "Less than an hour ago",
+			"month": "There is {n, plural, one {",
+			"today": "Today",
+			"year": "There is {n, plural, one {",
+			"yesterday": "Yesterday"
+		},
+		"shortMonth": {
+			"april": "apr.",
+			"august": "august",
+			"december": "dec.",
+			"february": "Feb.",
+			"january": "Jan.",
+			"july": "jul.",
+			"june": "June",
+			"march": "March",
+			"may": "may",
+			"november": "nov.",
+			"october": "oct.",
+			"september": "seven."
+		},
+		"words": {
+			"actions": "Actions",
+			"date": "Date",
+			"finished": "Completed",
+			"inProgress": "In progress",
+			"messages": "Messages",
+			"participants": "Participants",
+			"programed": "Scheduled",
+			"status": "Status",
+			"topics": "Topics"
 		}
 	},
 	"button": {
-		"next": "Next"
+		"next": "Next",
+		"sent": "Sent !",
+		"start": "Start",
+		"submit": "Send",
+		"thank-you": "Thanks!",
+		"tryit": "Try",
+		"cancel": "Cancel",
+		"close": "Close",
+		"create": "Create",
+		"login": "Log in",
+		"save": "Save",
+		"update": "Update",
+		"updated": "Updated!"
 	},
 	"surveys": {
 		"complete": "Thank you for participating!",
@@ -92,7 +171,7 @@
 		"gender": "What gender do you identify as?",
 		"genders": {
 			"male": "A man",
-			"female": "A women",
+			"female": "A woman",
 			"other": "Other",
 			"na": "I prefer not to answer"
 		},
@@ -101,11 +180,205 @@
 			"title": "What is the highest grade, degree or level of education you achieved?",
 			"NoEducation": "None",
 			"PrimarySchool": "Primary school",
-			"SecondarySchool": "Secondary school/High school",
-			"NonUni": "Non-university degree",
+			"SecondarySchool": "High school/Secondary school",
+			"NonUni": "College",
 			"Bachelor": "Bachelor's degree",
 			"Master": "Master's degree or above"
 		},
-		"example": "Sample"
+		"example": "Example",
+		"consent": {
+			"intro": "You are invited to participate in a scientific study to design, validate and apply vocabulary tests.",
+			"ok": "I agree to participate in the study as described above.",
+			"participation": "What does your participation entail?",
+			"participationD": "If you agree to participate, you will only need to complete this questionnaire and possibly another test, if indicated by the person administering the test.",
+			"privacy": "How will your data be processed and stored?",
+			"privacyD": "The data collected (your answers to the various questions) will be treated confidentially and anonymously. \nThey will be kept after their complete anonymization and can only be used for scientific or educational purposes. \nThey may possibly be shared with other researchers or teachers, but always within this strictly research or teaching framework.",
+			"rights": "What are your rights? \nVoluntary participation and possible withdrawal",
+			"rightsD": "Your participation in this study is voluntary. \nYou can decide to no longer participate in the study at any time without having to give a reason. \nYou can also request that your data be deleted at any time. \nIf you have any questions or concerns regarding this study, you can contact the study leader, Serge Bibauw, at the following address:",
+			"title": "Information document and informed consent"
+		},
+		"introduction": "This is a questionnaire.",
+		"invalidEmail": "Invalid email address",
+		"loginEmail": "Use an email address",
+		"loginUser": "Log in via a user account",
+		"loginWarning": "In order to remember your progress, you need to be authenticated to access this questionnaire. \nIf you have a user account, please log in. \nOtherwise, you can either <a class=\"link\" href=\"/register\">register</a> or continue with an email address."
+	},
+	"inputs": {
+		"range": {
+			"1": "No way",
+			"2": "A little",
+			"3": "Moderately",
+			"4": "A lot",
+			"5": "Enormously"
+		}
+	},
+	"register": {
+		"birthyear": "Year of birth",
+		"confirmPassword": "Confirm password",
+		"confirmTutor": "Do you confirm selecting “{NAME}” as your guardian?",
+		"consent": {
+			"intro": "You are invited to participate in a scientific study. \nThe objective of this study is to understand how tutors and foreign language learners interact during online tutoring sessions. \nThe data collected will be used to improve online tutoring tools and to better understand cognitive processes on both sides.",
+			"ok": "I agree to participate in the study as described above.",
+			"participation": "What does your participation entail?",
+			"participationD": "If you agree to participate, you will be invited to participate in online tutoring sessions with a foreign language tutor. \nYou will also be asked to complete questionnaires before and after the tutoring sessions. \nTutoring sessions will be recorded for later analysis.</p><p>We ask that you plan to complete a minimum of <strong>8 one-hour sessions</strong> of tutoring (so 8 hours in total), \nover a period of 1 to 3 months. \nYou can of course make more if you wish. \nHowever, you can stop participating in the study at any time.",
+			"privacy": "How will your data be processed and stored?",
+			"privacyD": "Data collected (e.g., conversation transcripts, test results, typing metrics, participant information such as age or gender) will be treated confidentially and anonymously. \nThey will be kept after their complete anonymization and can only be used for scientific or educational purposes. \nThey may possibly be shared with other researchers or teachers, but always within this strictly research or teaching framework.",
+			"rights": "What are your rights? \nVoluntary participation and possible withdrawal",
+			"rightsD": "Your participation in this study is voluntary. \nYou can decide to no longer participate in the study at any time without having to give a reason. \nYou can also request that your data be deleted at any time. \nIf you have any questions or concerns regarding this study, you can contact the study leader, Serge Bibauw, at the following address:",
+			"studyData": {
+				"address": "Address",
+				"addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve",
+				"email": "E-mail",
+				"emailD": "serge.bibauw@uclouvain.be",
+				"person": "Study leader",
+				"personD": "Serge Bibauw",
+				"project": "Research project",
+				"projectD": "AI Tutoring in Language Learning (FNRS CDR 2024-2026)",
+				"study": "Study title",
+				"studyD": "Longitudinal study of foreign language tutoring",
+				"title": "Study information",
+				"university": "University",
+				"universityD": "Catholic University of Louvain (UCLouvain)"
+			},
+			"title": "Information document and informed consent"
+		},
+		"consentTutor": {
+			"intro": "You are invited to participate in a scientific study. \nThe objective of this study is to understand how tutors and foreign language learners interact during online tutoring sessions. \nThe data collected will be used to improve online tutoring tools and to better understand cognitive processes on both sides.",
+			"ok": "I agree to participate in the study as described above.",
+			"participation": "What does your participation entail?",
+			"participationD": "If you agree to participate, you will be invited to participate in online tutoring sessions with a foreign language tutor. \nYou will also be asked to complete questionnaires before and after the tutoring sessions. \nTutoring sessions will be recorded for later analysis.</p><p>We ask that you plan to complete a minimum of <strong>8 one-hour sessions</strong> of tutoring (so 8 hours in total), \nover a period of 1 to 3 months. \nYou can of course make more if you wish. \nHowever, you can stop participating in the study at any time.",
+			"privacy": "How will your data be processed and stored?",
+			"privacyD": "Data collected (e.g., conversation transcripts, test results, typing metrics, participant information such as age or gender) will be treated confidentially and anonymously. \nThey will be kept after their complete anonymization and can only be used for scientific or educational purposes. \nThey may possibly be shared with other researchers or teachers, but always within this strictly research or teaching framework.",
+			"rights": "What are your rights? \nVoluntary participation and possible withdrawal",
+			"rightsD": "Your participation in this study is voluntary. \nYou can decide to no longer participate in the study at any time without having to give a reason. \nYou can also request that your data be deleted at any time. \nIf you have any questions or concerns regarding this study, you can contact the study leader, Serge Bibauw, at the following address:",
+			"studyData": {
+				"address": "Address",
+				"addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve",
+				"email": "E-mail",
+				"emailD": "serge.bibauw@uclouvain.be",
+				"person": "Study leader",
+				"personD": "Serge Bibauw",
+				"project": "Research project",
+				"projectD": "AI Tutoring in Language Learning (FNRS CDR 2024-2026)",
+				"study": "Study title",
+				"studyD": "Longitudinal study of foreign language tutoring",
+				"title": "Study information",
+				"university": "University",
+				"universityD": "Catholic University of Louvain (UCLouvain)"
+			},
+			"title": "Information document and informed consent"
+		},
+		"continue": "Aut sint sint et nihil aut. \nQuia nihil eos rerum neque exercitationem molestiae. \nAut ab accusantium consequatur rerum architecto voluptas. \nRepudiandae minima nemo vitae tempore. \nMolestiae rerum aliquid ut fugit eligendi. \nTempore eum id nobis sunt deleniti et non ducimus. \nMaiores perferendis non consequuntur neque nostrum. \nOdio itaque fugiat no. \nLaboriosam sint voluptatem aut placeat et perferendis. \nSed quam voluptatem necessitatibus quia dolorum. \nEius est nihil natus modi natus quisquam ut impedit. \nTempore enim autem laboriosam sequi ipsum quo. \n<bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
+		"error": {
+			"emailRules": "Please enter a valid email address",
+			"emptyFields": "Please complete all fields",
+			"humanity": "Please confirm that you are not a robot",
+			"metadata": "Please check that you have completed all fields correctly",
+			"passwordRules": "Password must contain at least 8 characters"
+		},
+		"signup": "Register",
+		"start": "Aut sint sint et nihil aut. \nQuia nihil eos rerum neque exercitationem molestiae. \nAut ab accusantium consequatur rerum architecto voluptas. \nRepudiandae minima nemo vitae tempore. \nMolestiae rerum aliquid ut fugit eligendi. \nAlias ​​dolorum quia voluptatum veniam harum aut qui et. \nVoluptatibus adipisci il velit assumenda. \nAsperiores accusemus deserunt eveniet adipisci reprehenderit. \nDucimus placeat sit reprehenderit ea eos quam. \nUt facilis quia suscipit officiis odit unde temporibus error. \nNeque sapiente ut similique. \nEius ut sapiente maxime dolor est voluptatem eum. \nVeniam aut sit quo. \nQuibusdam sed numquam et rem. \nTempore eum id nobis sunt deleniti et non ducimus. \nMaiores perferendis non consequuntur neque nostrum. \nOdio itaque fugiat no. \nLaboriosam sint voluptatem aut placeat et perferendis. \nSed quam voluptatem necessitatibus quia dolorum. \nEius est nihil natus modi natus quisquam ut impedit. \nTempore enim autem laboriosam sequi ipsum quo. \n<bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
+		"startButton": "To start",
+		"startFastButton": "Start using the app directly",
+		"tab": {
+			"availabilities": "Availability",
+			"consent": "Consent",
+			"continue": "Continue",
+			"information": "Information",
+			"signup": "Registration",
+			"start": "To start"
+		}
+	},
+	"session": {
+		"downloadAllFeedbacks": "Download all feedback",
+		"downloadAllMessages": "Download all conversations",
+		"downloadAllMetadata": "Download all metadata",
+		"errors": {
+			"addUser": "Error adding user to session",
+			"create": "Error creating session",
+			"delete": "Error deleting session",
+			"presence": "Error sending attendance",
+			"removeUser": "Error removing a user from session",
+			"typing": "Error sending input indicator"
+		},
+		"feedbackInline": "Feedback was added to",
+		"modal": {
+			"satisfy": {
+				"q1": "How useful is this app?",
+				"q2": "How easy is this app to use?",
+				"q3": "Possible remarks",
+				"success": "Your responses have been recorded. \nThank you for your participation!",
+				"title": "Satisfaction questionnaire"
+			},
+			"weekly": {
+				"answers": {
+					"0": "None",
+					"1": "1 hour",
+					"2": "2 hours",
+					"3": "3 hours",
+					"4": "4 hours",
+					"5": "5 hours",
+					"6": "6 hours",
+					"7": "7 hours",
+					"8": "8 hours",
+					"9": "9 hours",
+					"10": "10 hours or more",
+					"05": "30 minutes or less",
+					"placeholder": ""
+				},
+				"description": "Over the past 7 days...",
+				"errors": {
+					"null": "Please answer all questions",
+					"submit": "Error sending questionnaire",
+					"toggle": "Error activating or deactivating session"
+				},
+				"questions[0]": "How many hours of <b>course</b> in {lang} have you taken?",
+				"questions[1]": "How many hours have you <b>watched videos</b> in {lang} (films, series, Youtube...) or <b>listened to content</b> in {lang} (podcasts, radio \n, university courses, etc.)?",
+				"questions[2]": "How many hours have you <b>read texts</b> in {lang} (book, newspaper, comics, websites, etc.)?",
+				"questions[3]": "How many hours have you <b>spoken</b> in {lang} (discussions with friends, family, colleagues, etc.)?",
+				"success": "Questionnaire sent, thank you!",
+				"title": "Weekly questionnaire"
+			}
+		},
+		"noTopic": "No topics available"
+	},
+	"tests": {
+		"sendResults": "Send",
+		"sendResultsDone": "Sent"
+	},
+	"timeslots": {
+		"availabilities": "Select your availability to filter available tutors",
+		"availableTutors": "Tutors available",
+		"calcom": "Link to calendar reservation",
+		"calcomWarning": "Invalid cal.com link",
+		"cesttime": "CET time (Brussels)",
+		"noTutors": "No tutor available. \nPlease select other availabilities.",
+		"setAvailabilities": "Select your availability"
+	},
+	"users": {
+		"actions": "Actions",
+		"availability": "Availability",
+		"category": "Category",
+		"email": "E-mail",
+		"gender": "Gender",
+		"genders": {
+			"female": "Woman",
+			"male": "Man",
+			"na": "I prefer not to answer",
+			"other": "Other"
+		},
+		"isActive": "Active",
+		"nickname": "Name",
+		"type": {
+			"0": "Admin",
+			"1": "Tutor",
+			"2": "Learner",
+			"admin": "Admin",
+			"admins": "Admin(s)",
+			"student": "Learner",
+			"students": "Learner(s)",
+			"tutor": "Tutor",
+			"tutors": "Tutor(s)"
+		}
 	}
 }
