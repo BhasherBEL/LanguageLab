@@ -60,10 +60,11 @@ with open("groups.csv") as file:
     for line in file.read().split("\n"):
         if not line:
             continue
-        id_, title, *its = line.split(",")
+        id_, title, demo_, *its = line.split(",")
         id_ = int(id_)
+        demo_ = True if demo_.lower() == "true" else False
         its = [int(x) for x in its]
-        groups.append({"id": id_, "title": title, "items_id": its})
+        groups.append({"id": id_, "title": title, "demo": demo_, "items_id": its})
 
 # PARSE SURVEYS
 

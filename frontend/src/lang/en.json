@@ -105,6 +105,7 @@
 			"NonUni": "Non-university degree",
 			"Bachelor": "Bachelor's degree",
 			"Master": "Master's degree or above"
-		}
+		},
+		"example": "Sample"
 	}
 }
