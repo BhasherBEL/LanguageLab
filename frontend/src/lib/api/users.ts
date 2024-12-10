@@ -15,37 +15,39 @@ export async function getUserAPI(fetch: fetchType, user_id: number): Promise<any
 }
 
 export async function loginAPI(
-    fetch: fetchType,
-    email: string,
-    password: string
+	fetch: fetchType,
+	email: string,
+	password: string
 ): Promise<{ accessToken: string | null; refreshToken: string | null }> {
-    const response = await fetch(`/tmp-api/v1/auth/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-        },
-        credentials: 'include', 
-        body: JSON.stringify({ email, password }),
-    });
+	const response = await fetch(`/tmp-api/v1/auth/login`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		},
+		credentials: 'include',
+		body: JSON.stringify({ email, password })
+	});
 
-    if (!response.ok) {
-        console.error(`Login failed:`, await response.json());
-        return { accessToken: null, refreshToken: null };
-    }
+	if (!response.ok) {
+		console.error(`Login failed:`, await response.json());
+		return { accessToken: null, refreshToken: null };
+	}
 
-    const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
-        const [key, value] = cookie.split('=');
-        acc[key] = decodeURIComponent(value);
-        return acc;
-    }, {} as Record<string, string>);
+	const cookies = document.cookie.split('; ').reduce(
+		(acc, cookie) => {
+			const [key, value] = cookie.split('=');
+			acc[key] = decodeURIComponent(value);
+			return acc;
+		},
+		{} as Record<string, string>
+	);
 
-    return {
-        accessToken: cookies['access_token'] || null,
-        refreshToken: cookies['refresh_token'] || null,
-    };
+	return {
+		accessToken: cookies['access_token'] || null,
+		refreshToken: cookies['refresh_token'] || null
+	};
 }
-
 
 export async function createUserContactAPI(
 	fetch: fetchType,
