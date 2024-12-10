@@ -5,13 +5,14 @@
 	import { onMount } from 'svelte';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
 	import User from '$lib/types/user';
-	import { getUsersAPI, patchUserAPI, getUserContactsAPI, createUserAPI } from '$lib/api/users';
+	import { getUsersAPI, patchUserAPI, getUserContactsAPI, getUserAPI, loginAPI } from '$lib/api/users';
 	import { Icon, Envelope, Key, UserCircle, Calendar, QuestionMarkCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import { formatToUTCDate } from '$lib/utils/date';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	console.log('Data:', data);
 	let user = data.user;
 
 	let current_step = $state(0);
@@ -24,6 +25,7 @@
 			return;
 		}
 		User.parseAll(await getUsersAPI(fetch));
+		console.log('User:', user);
 
 		if (!user.home_language || !user.target_language || !user.birthdate || !user.gender) {
 			current_step = 3;
@@ -54,59 +56,73 @@
 	let timeslots = 0n;
 
 	async function onRegister() {
-		// Basic validation
-		if (nickname == '' || email == '' || password == '' || confirmPassword == '') {
-			message = $t('register.error.emptyFields');
-			return;
-		}
-		if (password.length < 8) {
-			message = $t('register.error.passwordRules');
-			return;
-		}
-		if (password != confirmPassword) {
-			message = $t('register.error.differentPasswords');
-			return;
-		}
-		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-		if (!emailRegex.test(email)) {
-			message = $t('register.error.emailRules');
-			return;
-		}
-		message = '';
+    if (nickname === '' || email === '' || password === '' || confirmPassword === '') {
+        message = $t('register.error.emptyFields');
+        return;
+    }
+    if (password.length < 8) {
+        message = $t('register.error.passwordRules');
+        return;
+    }
+    if (password !== confirmPassword) {
+        message = $t('register.error.differentPasswords');
+        return;
+    }
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(email)) {
+        message = $t('register.error.emailRules');
+        return;
+    }
+    message = '';
 
-		try {
-			const response = await fetch('http://127.0.0.1:8000/tmp-api/v1/auth/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Accept: 'application/json'
-				},
-				body: JSON.stringify({
-					email,
-					password,
-					nickname,
-					is_tutor: true
-				})
-			});
+    try {
+        const response = await fetch('http://127.0.0.1:8000/tmp-api/v1/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                password,
+                nickname,
+                is_tutor: true
+            })
+        });
 
-			if (response.status === 201) {
-				const userId = await response.text();
-				console.log('User created successfully with ID:', userId);
-				message = $t('register.success');
-				return;
-			} else {
-				const errorData = await response.json();
-				console.error('Registration failed:', errorData);
-				message = errorData.detail || $t('register.error.generic');
-			}
-		} catch (error) {
-			console.error('Error during registration:', error);
-			message = $t('register.error.generic');
-		}
-	}
+        if (response.status === 201) {
+            const userId = await response.text(); 
+            console.log('User created successfully with ID:', userId);
+			console.log('response:', response);
+			const result = await loginAPI(fetch, email, password);
+			console.log('result:', result);
+
+
+            user = await getUserAPI(fetch, parseInt(userId));
+            if (user) {
+                console.log('User details fetched successfully:', user);
+                message = $t('register.success');
+                current_step++; // Move to the next step
+            } else {
+                console.error('Failed to fetch user details');
+                toastAlert('Failed to fetch user details. Please try again.');
+            }
+        } else {
+            const errorData = await response.json();
+            console.error('Registration failed:', errorData);
+            message = errorData.detail || $t('register.error.generic');
+        }
+    } catch (error) {
+        console.error('Error during registration:', error);
+        message = $t('register.error.generic');
+    }
+}
+
+
 
 	async function onData() {
-		const user_id = user.id;
+		console.log('onData: ', user);
+		const user_id = user?.id;
 
 		if (!user_id) {
 			toastAlert('Failed to get current user ID');
