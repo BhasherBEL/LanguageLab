@@ -62,6 +62,7 @@
 		"sanitize-html": "^2.13.1",
 		"svelte-autosize": "^1.1.5",
 		"svelte-i18n": "^4.0.1",
+		"svelte-multiselect": "^11.0.0-rc.1",
 		"svelte-select": "^5.8.3"
 	}
 }
