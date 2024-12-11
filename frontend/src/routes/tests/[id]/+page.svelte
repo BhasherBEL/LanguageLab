@@ -31,6 +31,13 @@
 	let subStep = $state(0);
 
 	let currentGroupId = $state(0);
+	survey.groups.sort((a, b) => {
+		//puts the demo questions first
+		if (a.demo === b.demo) {
+			return 0;
+		}
+		return a.demo ? -1 : 1;
+	});
 	let currentGroup = $derived(survey.groups[currentGroupId]);
 	let questionsRandomized = $derived(getSortedQuestions(currentGroup));
 	let currentQuestionId = $state(0);
@@ -76,20 +83,22 @@
 	}
 
 	async function selectOption(option: string) {
-		if (
-			!(await sendSurveyResponseAPI(
-				fetch,
-				code,
-				sid,
-				uid,
-				survey.id,
-				currentGroupId,
-				questionsRandomized[currentQuestionId]['_id'],
-				currentQuestion.options.findIndex((o: string) => o === option) + 1,
-				(new Date().getTime() - startTime) / 1000
-			))
-		) {
-			return;
+		if (!currentGroup.demo) {
+			if (
+				!(await sendSurveyResponseAPI(
+					fetch,
+					code,
+					sid,
+					uid,
+					survey.id,
+					currentGroup.id,
+					questionsRandomized[currentQuestionId].id,
+					currentQuestion.options.findIndex((o: string) => o === option) + 1,
+					(new Date().getTime() - startTime) / 1000
+				))
+			) {
+				return;
+			}
 		}
 		if (currentQuestionId < questionsRandomized.length - 1) {
 			setQuestionId(currentQuestionId + 1);
@@ -114,8 +123,8 @@
 					sid,
 					uid,
 					survey.id,
-					currentGroupId,
-					questionsRandomized[currentQuestionId]['_id'],
+					currentGroup.id,
+					questionsRandomized[currentQuestionId].id,
 					-1,
 					(new Date().getTime() - startTime) / 1000,
 					gapTexts
