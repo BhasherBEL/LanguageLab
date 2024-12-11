@@ -17,8 +17,9 @@
 	let {
 		user,
 		session,
-		replyTo = $bindable()
-	}: { user: User; session: Session; replyTo: Message | undefined } = $props();
+		replyTo = $bindable(),
+		chatClosed = false
+	}: { user: User; session: Session; replyTo: Message | undefined; chatClosed: boolean } = $props();
 
 	let metadata: { message: string; date: number }[] = [];
 	let lastMessage = '';
@@ -30,11 +31,6 @@
 	function cancelReply() {
 		replyTo = undefined;
 	}
-
-	let disabled =
-		session.users.find((u: User) => user.id === u.id) === undefined ||
-		new Date().getTime() > session.end_time.getTime() + 3600000 ||
-		new Date().getTime() < session.start_time.getTime() - 3600000;
 
 	async function sendMessage() {
 		message = message.trim();
@@ -142,8 +138,8 @@
 		<textarea
 			bind:this={textearea}
 			class="flex-grow p-2 resize-none overflow-hidden py-4 pr-12 border rounded-[32px]"
-			placeholder={disabled ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
-			{disabled}
+			placeholder={chatClosed ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+			disabled={chatClosed}
 			bind:value={message}
 			use:autosize
 			rows={1}

@@ -125,6 +125,11 @@
 	onDestroy(() => {
 		clearInterval(presenceTimeout);
 	});
+
+	let chatClosed =
+		session.users.find((u: User) => user.id === u.id) === undefined ||
+		new Date().getTime() > session.end_time.getTime() + 3600000 ||
+		new Date().getTime() < session.start_time.getTime() - 3600000;
 </script>
 
 <div class="flex flex-col w-full max-w-5xl mx-auto h-full scroll-smooth">
@@ -134,7 +139,7 @@
 		</div>
 		{#each $messages.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()) as message (message.uuid)}
 			{#if message instanceof Message}
-				<MessageC {user} {message} bind:replyTo />
+				<MessageC {user} {message} bind:replyTo {chatClosed} />
 			{:else if message instanceof Feedback}
 				<a class="text-center italic text-gray-500 my-2" href="#{message.message.uuid}">
 					{$t('session.feedbackInline')} "{message.message.content.length > 20
@@ -152,7 +157,7 @@
 		</div>
 	{/if}
 	<div class="flex flex-row">
-		<Writebox {user} {session} bind:replyTo />
+		<Writebox {user} {session} {chatClosed} bind:replyTo />
 	</div>
 </div>
 

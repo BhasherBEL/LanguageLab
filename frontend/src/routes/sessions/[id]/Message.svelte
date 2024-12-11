@@ -16,8 +16,9 @@
 	let {
 		user,
 		message,
-		replyTo = $bindable()
-	}: { user: User; message: Message; replyTo: Message | undefined } = $props();
+		replyTo = $bindable(),
+		chatClosed = false
+	}: { user: User; message: Message; replyTo: Message | undefined; chatClosed: boolean } = $props();
 
 	let displayedTime = $state(displayTime(message.created_at));
 
@@ -100,7 +101,7 @@
 	}
 
 	function onTextSelect() {
-		if (isEdit) return;
+		if (isEdit || chatClosed) return;
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount < 1 || !hightlight) return;
 		const range = selection.getRangeAt(0);
@@ -271,22 +272,24 @@
 				{/each}
 			</div>
 		{/if}
-		{#if isSender}
+		{#if !chatClosed}
+			{#if isSender}
+				<button
+					class="absolute bottom-0 left-[-1.5rem] invisible group-hover:visible h-full p-0"
+					onclick={() => (isEdit ? endEdit() : startEdit())}
+				>
+					<Icon src={Pencil} class="w-5 h-full text-gray-500 hover:text-gray-800" />
+				</button>
+			{/if}
 			<button
-				class="absolute bottom-0 left-[-1.5rem] invisible group-hover:visible h-full p-0"
-				onclick={() => (isEdit ? endEdit() : startEdit())}
+				class="absolute bottom-0 invisible group-hover:visible h-full p-0"
+				class:right-[-1.5rem]={!isSender}
+				class:left-[-3.5rem]={isSender}
+				onclick={() => (replyTo = message)}
 			>
-				<Icon src={Pencil} class="w-5 h-full text-gray-500 hover:text-gray-800" />
+				<Icon src={ArrowUturnLeft} class="w-5 h-full text-gray-500 hover:text-gray-800" />
 			</button>
 		{/if}
-		<button
-			class="absolute bottom-0 invisible group-hover:visible h-full p-0"
-			class:right-[-1.5rem]={!isSender}
-			class:left-[-3.5rem]={isSender}
-			onclick={() => (replyTo = message)}
-		>
-			<Icon src={ArrowUturnLeft} class="w-5 h-full text-gray-500 hover:text-gray-800" />
-		</button>
 	</div>
 	<div class="chat-footer opacity-50">
 		<Icon src={Check} class="w-4 inline" />
