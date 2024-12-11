@@ -39,6 +39,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return await handleApiProxy(event, cookies);
 	}
 
+	const localeCookie = event.cookies.get('locale');
+	const initLocale = localeCookie || event.locals.locale;
+	event.locals.locale = initLocale;
+
 	const jwt = event.cookies.get('access_token_cookie');
 	if (!jwt) {
 		return resolve(event);
@@ -64,11 +68,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	const localeCookie = event.cookies.get('locale');
-	const initLocale = localeCookie || event.locals.locale;
-
 	event.locals.user = user;
 	event.locals.jwt = jwt;
-	event.locals.locale = initLocale;
 	return resolve(event);
 };
