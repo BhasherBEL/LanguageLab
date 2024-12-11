@@ -224,16 +224,16 @@
 {:else if step == 1}
 	<div class="max-w-screen-md mx-auto p-5">
 		<Consent
-			introText={$t('register.consent.intro')}
-			participation={$t('register.consent.participation')}
-			participationD={$t('register.consent.participationD')}
-			privacy={$t('register.consent.privacy')}
-			privacyD={$t('register.consent.privacyD')}
-			rights={$t('register.consent.rights')}
+			introText={$t('surveys.consent.intro')}
+			participation={$t('surveys.consent.participation')}
+			participationD={$t('surveys.consent.participationD')}
+			privacy={$t('surveys.consent.privacy')}
+			privacyD={$t('surveys.consent.privacyD')}
+			rights={$t('surveys.consent.rights')}
 		/>
 		<div class="form-control">
 			<button class="button mt-4" onclick={() => step++}>
-				{$t('register.consent.ok')}
+				{$t('surveys.consent.ok')}
 			</button>
 		</div>
 	</div>
