@@ -28,7 +28,7 @@
 			.at(-1);
 		if (!news || !(news instanceof Message)) return;
 
-		if (document.hidden) {
+		if (!document.hasFocus() && Notification.permission === 'granted') {
 			new Notification(news.user.nickname, {
 				body: news.content,
 				icon: '/favicon.ico'
