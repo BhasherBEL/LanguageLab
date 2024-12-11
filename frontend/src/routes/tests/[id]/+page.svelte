@@ -46,8 +46,13 @@
 	let value = $derived(currentQuestion.question.split(':').slice(1).join(':'));
 	let gaps = $derived(type === 'gap' ? gapParts(currentQuestion.question) : null);
 	let soundPlayer: HTMLAudioElement;
-	let displayQuestionOptions: string[] = $derived([...(currentQuestion.options ?? [])]);
-	$effect(() => shuffle(displayQuestionOptions));
+	let displayQuestionOptions: string[] = $derived(
+		(() => {
+			let d = [...(currentQuestion.options ?? [])];
+			shuffle(d);
+			return d;
+		})()
+	);
 	let finalScore: number | null = $state(null);
 	let selectedOption: string;
 	let endSurveyAnswers: { [key: string]: any } = {};
@@ -228,16 +233,16 @@
 {:else if step == 1}
 	<div class="max-w-screen-md mx-auto p-5">
 		<Consent
-			introText={$t('register.consent.intro')}
-			participation={$t('register.consent.participation')}
-			participationD={$t('register.consent.participationD')}
-			privacy={$t('register.consent.privacy')}
-			privacyD={$t('register.consent.privacyD')}
-			rights={$t('register.consent.rights')}
+			introText={$t('surveys.consent.intro')}
+			participation={$t('surveys.consent.participation')}
+			participationD={$t('surveys.consent.participationD')}
+			privacy={$t('surveys.consent.privacy')}
+			privacyD={$t('surveys.consent.privacyD')}
+			rights={$t('surveys.consent.rights')}
 		/>
 		<div class="form-control">
 			<button class="button mt-4" onclick={() => step++}>
-				{$t('register.consent.ok')}
+				{$t('surveys.consent.ok')}
 			</button>
 		</div>
 	</div>
@@ -247,7 +252,7 @@
 			<p class="text-center font-bold text-xl m-auto">{$t('surveys.example')}</p>
 		</div>
 	{/if}
-	{#if type == 'gap'}
+	{#if type == 'gap' && gaps}
 		<div class="mx-auto mt-16 center flex flex-col">
 			<div>
 				{#each gaps as part}

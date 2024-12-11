@@ -17,7 +17,7 @@
 	"chatbox": {
 		"placeholder": "Écrivez votre message ici...",
 		"sendError": "Erreur lors de l'envoi du message",
-		"disabled": "Cette session est accessible uniquement en lecture",
+		"disabled": "Cette session est seulement visible pour mémoire.",
 		"edited": "modifié",
 		"history": "Historique",
 		"replyingTo": "En réponse à : ",
@@ -34,7 +34,7 @@
 		"learningLanguage": "Langue cible",
 		"confirm": "Confirmer",
 		"sessionEnded": "Terminée",
-		"noSessions": "Aucune session en cours",
+		"noSessions": "Aucune session",
 		"bookSession": "Réserver une session",
 		"currentSessions": "Sessions en cours",
 		"plannedSessions": "Sessions planifiées",
@@ -43,9 +43,11 @@
 		"bookingSuccessful": "Session réservée avec succès",
 		"bookingFailed": "Erreur lors de la réservation de la session",
 		"noCurrentOrFutureSessions": "Aucune session en cours ou planifiée",
-		"noSessions": "Aucune session",
 		"noContact": "Ajoutez un contact pour commencer",
-		"newFirstContact": "Ajouter un premier contact"
+		"newFirstContact": "Ajouter un premier contact",
+		"actions": "Actions",
+		"date": "Date",
+		"participants": "Participants"
 	},
 	"login": {
 		"email": "E-mail",
@@ -56,12 +58,63 @@
 		"title": "Se connecter"
 	},
 	"session": {
-		"participants": "Participants",
-		"title": "Session avec "
+		"feedbackInline": "Un feedback a été ajouté à",
+		"modal": {
+			"satisfy": {
+				"title": "Questionnaire de satisfaction",
+				"success": "Vos réponses ont été enregistrées. Merci pour votre participation !",
+				"q1": "À quel point cette application est-elle utile ?",
+				"q2": "À quel point cette application est-elle facile à utiliser ?",
+				"q3": "Remarques éventuelles"
+			},
+			"weekly": {
+				"title": "Questionnaire hebdomadaire",
+				"description": "Au cours des 7 derniers jours...",
+				"questions": [
+					"Combien d'heures de <b>cours</b> de {lang} avez vous suivies ?",
+					"Combien d'heures avez-vous <b>regardé des vidéos</b> en {lang} (films, séries, Youtube...) ou <b>écouté des contenus</b> en {lang} (podcasts, radio, cours universitaires...) ?",
+					"Combien d'heures avez-vous <b>lu des textes</b> en {lang} (livre, journal, BD, sites web...) ?",
+					"Combien d'heures avez-vous <b>parlé</b> en {lang} (discussions avec amis, famille, collègues...) ?"
+				],
+				"answers": {
+					"0": "Aucune",
+					"1": "1 heure",
+					"2": "2 heures",
+					"3": "3 heures",
+					"4": "4 heures",
+					"5": "5 heures",
+					"6": "6 heures",
+					"7": "7 heures",
+					"8": "8 heures",
+					"9": "9 heures",
+					"10": "10 heures ou plus",
+					"placeholder": "",
+					"05": "30 minutes ou moins"
+				},
+				"errors": {
+					"null": "Veuillez répondre à toutes les questions",
+					"submit": "Erreur lors de l'envoi du questionnaire",
+					"toggle": "Erreur lors de l'activation ou de la désactivation de la session"
+				},
+				"success": "Questionnaire envoyé, merci !"
+			}
+		},
+		"downloadAllMessages": "Télécharger toutes les conversations",
+		"downloadAllMetadata": "Télécharger toutes les métadonnées",
+		"downloadAllFeedbacks": "Télécharger tous les feedbacks",
+		"errors": {
+			"create": "Erreur lors de la création de la session",
+			"delete": "Erreur lors de la suppression de la session",
+			"addUser": "Erreur lors de l'ajout d'un utilisateur à la session",
+			"removeUser": "Erreur lors de la suppression d'un utilisateur de la session",
+			"presence": "Erreur lors de l'envoi de la présence",
+			"typing": "Erreur lors de l'envoi de l'indicateur de saisie"
+		},
+		"noTopic": "Aucun topic disponible"
 	},
 	"admin": {
 		"actions": "Actions",
-		"passwordPrompt": "Entrez le mot de passe. Attention, celui ci ne sera plus récupérable."
+		"passwordPrompt": "Entrez le mot de passe. Attention, celui-ci ne sera plus récupérable."
 	},
 	"register": {
 		"email": "E-mail",
@@ -160,6 +213,7 @@
 			"na": "Je préfère ne pas répondre"
 		},
 		"birthyear": "Année de naissance",
+		"birthyear.note": "En quelle année êtes-vous né·e ?",
 		"confirmTutor": "Confirmez-vous sélectionner \"{NAME}\" comme tuteur ?",
 		"continue": "Aut sint sint et nihil aut. Quia nihil eos rerum neque exercitationem molestiae. Aut ab accusantium consequatur rerum architecto voluptas. Repudiandae minima nemo vitae tempore. Molestiae rerum aliquid ut fugit eligendi. Tempore eum id nobis sunt deleniti et non ducimus. Maiores perferendis non consequuntur neque nostrum. Odio itaque fugiat non. Laboriosam sint voluptatem aut placeat et perferendis. Sed quam voluptatem necessitatibus quia dolorum. Eius est nihil natus modi natus quisquam ut impedit. Tempore enim autem laboriosam sequi ipsum quo. <bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
 		"continueButton": "Continuer vers les tests",
@@ -181,42 +235,42 @@
 		"sendResultsDone": "Envoyé"
 	},
 	"surveys": {
-		"introduction": "Aut sint sint et nihil aut. Quia nihil eos rerum neque exercitationem molestiae. Aut ab accusantium consequatur rerum architecto voluptas. Repudiandae minima nemo vitae tempore. Molestiae rerum aliquid ut fugit eligendi. Alias dolorum quia voluptatum veniam harum aut qui et. Voluptatibus adipisci illo velit assumenda. Asperiores accusamus deserunt eveniet adipisci reprehenderit. Ducimus placeat sit reprehenderit ea eos quam. Ut facilis quia suscipit officiis odit unde temporibus error. Neque sapiente ut similique. Eius ut sapiente maxime dolor est voluptatem eum. Veniam aut sit quo. Quibusdam sed numquam et rem. Tempore eum id nobis sunt deleniti et non ducimus. Maiores perferendis non consequuntur neque nostrum. Odio itaque fugiat non. Laboriosam sint voluptatem aut placeat et perferendis. Sed quam voluptatem necessitatibus quia dolorum. Eius est nihil natus modi natus quisquam ut impedit. Tempore enim autem laboriosam sequi ipsum quo. <bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
-		"loginWarning": "Afin d'évaluer votre progression, vous avez besoin d'être authentifié pour acceder à ce questionnaire. Si vous possedez un compte utilisateur, veuillez vous connecter. Sinon, vous pouvez soit vous <a class=\"link\" href=\"/register\">inscrire</a>, soit continuer avec une adresse e-mail.",
+		"introduction": "Ceci est un questionnaire.",
+		"loginWarning": "Afin de mémoriser votre progression, vous avez besoin d'être authentifié pour accéder à ce questionnaire. Si vous possédez un compte utilisateur, veuillez vous connecter. Sinon, vous pouvez soit vous <a class=\"link\" href=\"/register\">inscrire</a>, soit continuer avec une adresse e-mail.",
 		"loginUser": "Se connecter via un compte utilisateur",
 		"loginEmail": "Utiliser une adresse e-mail",
 		"invalidEmail": "Adresse e-mail invalide",
-		"complete": "Questionnaire complété. Merci pour votre participation !",
+		"complete": "Merci pour votre participation !",
 		"score": "Score : ",
-		"code": "Votre code:",
+		"code": "Votre code :",
 		"codeIndication": "L'instructeur devrait vous avoir donné un code personnel. Si ce n'est pas le cas, veuillez indiquer votre adresse électronique.",
 		"invalidCode": "Code invalide",
 		"consent": {
 			"title": "Document d’information et consentement éclairé",
-			"intro": "Vous êtes invité·e à participer à une étude scientifique. L'objectif de cette étude est de comprendre comment les tuteurs et les apprenants de langue étrangère interagissent lors de sessions de tutorat en ligne. Les données collectées seront utilisées pour améliorer les outils de tutorat en ligne et pour mieux comprendre les processus cognitifs de part et d'autre.",
+			"intro": "Vous êtes invité·e à participer à une étude scientifique pour concevoir, valider et appliquer des tests de vocabulaire.",
 			"participation": "Qu'implique votre participation ?",
-			"participationD": "Si vous acceptez de participer, vous serez invité·e à participer à des sessions de tutorat en ligne avec un tuteur de langue étrangère. Vous serez également invité à remplir des questionnaires avant et après les sessions de tutorat. Les sessions de tutorat seront enregistrées pour analyse ultérieure.</p><p>Nous vous demandons de prévoir de réaliser un minimum de <strong>8 sessions d'une heure</strong> de tutorat (donc 8 heures au total), au cours d'une période de 1 à 3 mois. Vous pouvez bien sûr en réaliser plus si vous le souhaitez. Vous pouvez cependant arrêter de participer à l'étude à tout moment.",
+			"participationD": "Si vous acceptez de participer, vous devrez seulement répondre à ce questionnaire et éventuellement à un autre test, si indiqué par la personne qui administre le test.",
 			"privacy": "Comment seront traitées et conservées vos données ?",
-			"privacyD": "Les données collectées (par exemple, les transcriptions des conversations, les résultats de tests, les mesures de frappe, les informations sur les participants comme l'age ou le genre) seront traitées de manière confidentielle et anonyme. Elles seront conservées après leur anonymisation intégrale et ne pourront être utilisées qu'à des fins scientifiques ou pédagogiques. Elles pourront éventuellement être partagées avec d'autres chercheurs ou enseignants, mais toujours dans ce cadre strictement de recherche ou d'enseignement.",
+			"privacyD": "Les données collectées (vos réponses aux différentes questions) seront traitées de manière confidentielle et anonyme. Elles seront conservées après leur anonymisation intégrale et ne pourront être utilisées qu'à des fins scientifiques ou pédagogiques. Elles pourront éventuellement être partagées avec d'autres chercheurs ou enseignants, mais toujours dans ce cadre strictement de recherche ou d'enseignement.",
 			"rights": "Quels sont vos droits ? Participation volontaire et retrait éventuel",
 			"rightsD": "Votre participation à cette étude est volontaire. Vous pouvez à tout moment décider de ne plus participer à l'étude sans avoir à vous justifier. Vous pouvez également demander à ce que vos données soient supprimées à tout moment. Si vous avez des questions ou des préoccupations concernant cette étude, vous pouvez contacter le responsable de l'étude, Serge Bibauw, à l'adresse suivante :",
 			"ok": "J'accepte de participer à l'étude telle que décrite ci-dessus."
 		},
-		"birthYear": "Votre année de naissance",
-		"gender": "A quel genre vous identifiez vous ?",
+		"birthYear": "Quelle est votre année de naissance ?",
+		"gender": "À quel genre vous identifiez-vous ?",
 		"genders": {
 			"male": "Un homme",
 			"female": "Une femme",
 			"other": "Autre",
 			"na": "Je préfère ne pas répondre"
 		},
-		"homeLanguage": "Première Langue",
+		"homeLanguage": "Première langue",
 		"education": {
 			"title": "Quel est le grade, le diplôme ou le niveau d'études le plus élevé que vous ayez obtenu ?",
 			"NoEducation": "Aucun",
 			"PrimarySchool": "École primaire",
 			"SecondarySchool": "École secondaire",
-			"NonUni": "Diplôme non universitaire",
+			"NonUni": "Supérieur non universitaire",
 			"Bachelor": "Bachelier",
 			"Master": "Master ou diplôme supérieur"
 		},
@@ -229,79 +283,24 @@
 		"isActive": "Actif",
 		"actions": "Actions",
 		"type": {
-			"admin": "Admin",
-			"tutor": "Tuteur",
-			"student": "Étudiant",
-			"admins": "Admin(s)",
-			"tutors": "Tuteur(s)",
-			"students": "Étudiant(s)",
 			"0": "Admin",
 			"1": "Tuteur",
-			"2": "Étudiant"
+			"2": "Apprenant",
+			"admin": "Admin",
+			"tutor": "Tuteur",
+			"student": "Apprenant",
+			"admins": "Admin(s)",
+			"tutors": "Tuteur(s)",
+			"students": "Apprenant(s)"
 		},
 		"gender": "Genre",
 		"genders": {
 			"male": "Homme",
 			"female": "Femme",
 			"other": "Autre",
-			"na": "N/A"
+			"na": "Je préfère ne pas répondre"
 		},
 		"availability": "Disponibilités"
-	},
-	"session": {
-		"feedbackInline": "Un feedback a été ajouté à",
-		"modal": {
-			"satisfy": {
-				"title": "Questionnaire de satisfaction",
-				"success": "Vos réponses ont été enregistrées. Merci pour votre participation !",
-				"q1": "À quel point cette application est-elle utile ?",
-				"q2": "À quel point cette application est-elle facile à utiliser ?",
-				"q3": "Remarques éventuelles"
-			},
-			"weekly": {
-				"title": "Questionnaire hebdomadaire",
-				"description": "Au cours des 7 derniers jours...",
-				"questions": [
-					"Combien d'heures de <b>cours</b> de {lang} avez vous suivies ?",
-					"Combien d'heures avez-vous <b>regardé des vidéos</b> en {lang} (films, séries, Youtube...) ou <b>écouté des contenus</b> en {lang} (podcasts, radio, cours universitaires...) ?",
-					"Combien d'heures avez-vous <b>lu des textes</b> en {lang} (livre, journal, BD, sites web...) ?",
-					"Combien d'heures avez-vous <b>parlé</b> en {lang} (discussions avec amis, famille, collègues...) ?"
-				],
-				"answers": {
-					"placeholder": "",
-					"0": "Aucune",
-					"05": "30 minutes ou moins",
-					"1": "1 heure",
-					"2": "2 heures",
-					"3": "3 heures",
-					"4": "4 heures",
-					"5": "5 heures",
-					"6": "6 heures",
-					"7": "7 heures",
-					"8": "8 heures",
-					"9": "9 heures",
-					"10": "10 heures ou plus"
-				},
-				"errors": {
-					"null": "Veuillez répondre à toutes les questions",
-					"submit": "Erreur lors de l'envoi du questionnaire",
-					"toggle": "Erreur lors de l'activation ou de la désactivation de la session"
-				},
-				"success": "Questionnaire envoyé, merci !"
-			}
-		},
-		"downloadAllMessages": "Télécharger toutes les conversations",
-		"downloadAllMetadata": "Télécharger toutes les métadonnées",
-		"downloadAllFeedbacks": "Télécharger tous les feedbacks",
-		"errors": {
-			"create": "Erreur lors de la création de la session",
-			"delete": "Erreur lors de la suppression de la session",
-			"addUser": "Erreur lors de l'ajout d'un utilisateur à la session",
-			"removeUser": "Erreur lors de la suppression d'un utilisateur de la session",
-			"presence": "Erreur lors de l'envoi de la présence",
-			"typing": "Erreur lors de l'envoi de l'indicateur de saisie"
-		},
-		"noTopic": "Aucun topic disponible"
 	},
 	"button": {
 		"create": "Créer",
@@ -316,7 +315,7 @@
 		"close": "Fermer",
 		"tryit": "Essayer",
 		"update": "Mettre à jour",
-		"updated": "Mis à jour!"
+		"updated": "Mis à jour !"
 	},
 	"utils": {
 		"month": {
@@ -327,7 +326,7 @@
 			"may": "mai",
 			"june": "juin",
 			"july": "juillet",
-			"august": "août",
+			"august": "aout",
 			"september": "septembre",
 			"october": "octobre",
 			"november": "novembre",
@@ -341,27 +340,27 @@
 			"may": "mai",
 			"june": "juin",
 			"july": "juil.",
-			"august": "août",
+			"august": "aout",
 			"september": "sept.",
 			"october": "oct.",
 			"november": "nov.",
 			"december": "déc."
 		},
 		"days": {
-			"monday": "Lundi",
-			"tuesday": "Mardi",
-			"wednesday": "Mercredi",
-			"thursday": "Jeudi",
-			"friday": "Vendredi",
-			"saturday": "Samedi",
-			"sunday": "Dimanche",
 			"0": "Lundi",
 			"1": "Mardi",
 			"2": "Mercredi",
 			"3": "Jeudi",
 			"4": "Vendredi",
 			"5": "Samedi",
-			"6": "Dimanche"
+			"6": "Dimanche",
+			"monday": "Lundi",
+			"tuesday": "Mardi",
+			"wednesday": "Mercredi",
+			"thursday": "Jeudi",
+			"friday": "Vendredi",
+			"saturday": "Samedi",
+			"sunday": "Dimanche"
 		},
 		"past": {
 			"year": "Il y a {n, plural, one {# an} other {# ans}}",
@@ -388,7 +387,6 @@
 			"actions": "Actions",
 			"participants": "Participants",
 			"status": "Statut",
-			"date": "Date",
 			"programed": "Programmée",
 			"inProgress": "En cours",
 			"finished": "Terminée",

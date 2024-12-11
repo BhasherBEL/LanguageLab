@@ -188,6 +188,7 @@
 			<div class="form-control">
 				<label for="birthyear" class="label">
 					<span class="label-text">{$t('register.birthyear')}</span>
+					<span class="label-text-alt">{$t('register.birthyear.note')}</span>
 				</label>
 				<select class="select select-bordered" id="birthyear" name="birthyear" required>
 					<option disabled selected value="">{$t('register.birthyear')}</option>

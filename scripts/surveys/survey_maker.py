@@ -3,6 +3,7 @@ import requests
 import os
 
 API_URL = input("APP (API) URL: ")
+API_PATH = "/tmp-api/v1"
 LOCAL_ITEMS_FOLDER = "../../frontend/static/surveys/items"
 REMOTE_ITEMS_FOLDER = "/surveys/items"
 
@@ -63,7 +64,7 @@ with open("groups.csv") as file:
         id_, title, demo_, *its = line.split(",")
         id_ = int(id_)
         demo_ = True if demo_.lower() == "true" else False
-        its = [int(x) for x in its]
+        its = [int(x) for x in its if x]
         groups.append({"id": id_, "title": title, "demo": demo_, "items_id": its})
 
 # PARSE SURVEYS
@@ -76,7 +77,7 @@ with open("surveys.csv") as file:
             continue
         id_, title, *gps = line.split(",")
         id_ = int(id_)
-        gps = [int(x) for x in gps]
+        gps = [int(x) for x in gps if x]
         surveys.append({"id": id_, "title": title, "groups_id": gps})
 
 # SESSION DATA
@@ -86,84 +87,99 @@ password = input("Password: ")
 
 session = requests.session()
 
+response_code = session.post(
+    f"{API_URL}{API_PATH}/auth/login", json={"email": username, "password": password}
+).status_code
+
 assert (
-    session.post(
-        API_URL + "/api/v1/auth/login", data={"email": username, "password": password}
-    ).status_code
-    == 200
-), "Wrong username or password"
+    response_code == 200
+), f"Probably wrong username or password. Status code: {response_code}"
 
 # CREATE ITEMS
 
+n_items = 0
+
 for item in items:
     assert session.delete(
-        f'{API_URL}/api/v1/surveys/items/{item["id"]}'
+        f'{API_URL}{API_PATH}/surveys/items/{item["id"]}'
     ).status_code in [404, 204], f'Failed to delete item {item["id"]}'
-    r = session.post(f"{API_URL}/api/v1/surveys/items", json=item)
+    r = session.post(f"{API_URL}{API_PATH}/surveys/items", json=item)
     if r.status_code not in [201]:
         print(f'Failed to create item {item["id"]}: {r.text}')
-        break
+        continue
+    else:
+        n_items += 1
 else:
-    print(f"Successfully created {len(items)} items")
+    print(f"Successfully created {n_items}/{len(items)} items")
 
 # CREATE GROUPS
+
+n_groups = 0
 
 for group in groups:
     group = group.copy()
     its = group.pop("items_id")
     assert session.delete(
-        f'{API_URL}/api/v1/surveys/groups/{group["id"]}'
+        f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}'
     ).status_code in [404, 204], f'Failed to delete group {group["id"]}'
-    r = session.post(f"{API_URL}/api/v1/surveys/groups", json=group)
+    r = session.post(f"{API_URL}{API_PATH}/surveys/groups", json=group)
     if r.status_code not in [201]:
         print(f'Failed to create group {group["id"]}: {r.text}')
-        break
+        continue
+    else:
+        n_groups += 1
 
     for it in its:
         assert session.delete(
-            f'{API_URL}/api/v1/surveys/groups/{group["id"]}/items/{it}'
+            f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}/items/{it}'
         ).status_code in [
             404,
             204,
         ], f'Failed to delete item {it} from group {group["id"]}'
         r = session.post(
-            f'{API_URL}/api/v1/surveys/groups/{group["id"]}/items',
+            f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}/items',
             json={"question_id": it},
         )
         if r.status_code not in [201]:
             print(f'Failed to add item {it} to group {group["id"]}: {r.text}')
-            break
+            continue
 
 else:
-    print(f"Successfully created {len(groups)} groups")
+    print(f"Successfully created {n_groups}/{len(groups)} groups")
 
 # CREATE SURVEYS
+
+n_surveys = 0
 
 for survey in surveys:
     survey = survey.copy()
     gps = survey.pop("groups_id")
-    assert session.delete(f'{API_URL}/api/v1/surveys/{survey["id"]}').status_code in [
+    assert session.delete(
+        f'{API_URL}{API_PATH}/surveys/{survey["id"]}'
+    ).status_code in [
         404,
         204,
     ], f'Failed to delete survey {survey["id"]}'
-    r = session.post(f"{API_URL}/api/v1/surveys", json=survey)
+    r = session.post(f"{API_URL}{API_PATH}/surveys", json=survey)
     if r.status_code not in [201]:
         print(f'Failed to create suvey {survey["id"]}: {r.text}')
-        break
+        continue
+    else:
+        n_surveys += 1
 
     for gp in gps:
         assert session.delete(
-            f'{API_URL}/api/v1/surveys/{survey["id"]}/groups/{gp}'
+            f'{API_URL}{API_PATH}/surveys/{survey["id"]}/groups/{gp}'
         ).status_code in [
             404,
             204,
         ], f'Failed to delete gp {gp} from survey {survey["id"]}'
         r = session.post(
-            f'{API_URL}/api/v1/surveys/{survey["id"]}/groups', json={"group_id": gp}
+            f'{API_URL}{API_PATH}/surveys/{survey["id"]}/groups', json={"group_id": gp}
         )
         if r.status_code not in [201]:
             print(f'Failed to add group {gp} to survey {survey["id"]}: {r.text}')
             break
 
 else:
-    print(f"Successfully created {len(groups)} surveys")
+    print(f"Successfully created {n_surveys}/{len(surveys)} surveys")
