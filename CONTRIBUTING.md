@@ -66,12 +66,27 @@ pip install -r ../requirements.txt
 - Frontend: `cd frontend && npm run dev`
 - Backend: `cd backend/app && sh backend.sh`
 
+#### Pre-Commit hooks
+
+The CI run `npm run lint` and `black --check --verbose` on every commit, on every branch. To prevent a failing CI, there is a pre-commit hook ([docs](https://git-scm.com/book/ms/v2/Customizing-Git-Git-Hooks)). To use it, you can configure the local repository to use the hooks available directly on the repository:
+```sh
+git config --local core.hooksPath .githooks
+```
+
 ## Useful tips
 
 #### Users
 
-By default, only one admin is created (and only once), using the email and password specified in the environment variables. To create more users, you should use the student register page `/register` and the tutor register page `/tutor/register`. You can also change the type of a user in `/admin`.
+By default, only one admin is created (and only once), using the email and password specified in the environment variables. To create more users, you should use the student register page `/register` and the tutor register page `/tutor/register`. You can also change the type of user in `/admin`.
 
 #### Breaking changes in database
 
 Sometimes, breaking changes are made in the database. In such cases, manual actions are necessary to get the application works again. The easiest way to get the project working again in development is to completely delete the database file (`/backend/languagelab.sqlite`). It may also be necessary to clear the cookies and cache to avoid visual issues.
+
+#### Dependencies update
+
+After an update, it may happen that the dependencies have changed. In such case, many "Missing Packages" errors would appear when running the frontend. In that case, running `npm run install` before `npm run dev` should fix the issue.
+
+#### API documentation
+
+To use, try and explore the backend's API, both production and development's server have the `/docs` endpoint. Using the interface, it's possible to register, login, get, create, update, ...
