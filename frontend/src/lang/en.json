@@ -176,6 +176,7 @@
 			"na": "I prefer not to answer"
 		},
 		"homeLanguage": "First language",
+		"secondLanguage": "Which other languages do you speak or understand partially or more?",
 		"education": {
 			"title": "What is the highest grade, degree or level of education you achieved?",
 			"NoEducation": "None",

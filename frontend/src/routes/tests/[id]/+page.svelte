@@ -12,6 +12,7 @@
 	import config from '$lib/config';
 	import type User from '$lib/types/user';
 	import type Survey from '$lib/types/survey';
+	import MultiSelect from 'svelte-multiselect';
 
 	let { data }: { data: PageData } = $props();
 	let { user, survey }: { user: User | null; survey: Survey } = data;
@@ -55,6 +56,7 @@
 	);
 	let finalScore: number | null = $state(null);
 	let selectedOption: string;
+	let selectedOptions: any[] = [];
 	let endSurveyAnswers: { [key: string]: any } = {};
 
 	//source: shuffle function code taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array/18650169#18650169
@@ -194,7 +196,7 @@
 	async function selectAnswer(selection: string, option: string) {
 		endSurveyAnswers[selection] = option;
 		subStep += 1;
-		if (subStep == 4) {
+		if (subStep == 5) {
 			await sendSurveyResponseInfoAPI(
 				fetch,
 				survey.id,
@@ -406,6 +408,34 @@
 				></Dropdown>
 			</div>
 		{:else if subStep === 3}
+			<div class="mx-auto mt-16 text-center px-4">
+				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.secondLanguage')}</p>
+				<MultiSelect
+					options={Object.entries(config.PRIMARY_LANGUAGE).map(([code, name]) => ({
+						value: code,
+						label: name
+					}))}
+					on:add={(event) => {
+						selectedOptions = [...selectedOptions, event.detail.option.value];
+						console.log(selectedOptions);
+					}}
+					on:remove={(event) => {
+						selectedOptions = selectedOptions.filter(
+							(option) => option !== event.detail.option.value
+						);
+						console.log(selectedOptions);
+					}}
+				></MultiSelect>
+				<button
+					class="button mt-4 block bg-yellow-500 text-white rounded-md py-2 px-6 hover:bg-yellow-600 transition"
+					onclick={() => {
+						subStep += 1;
+					}}
+				>
+					{$t('button.next')}
+				</button>
+			</div>
+		{:else if subStep === 4}
 			<div class="mx-auto mt-16 text-center px-4">
 				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.education.title')}</p>
 				<Dropdown

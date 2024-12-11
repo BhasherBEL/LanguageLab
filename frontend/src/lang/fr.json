@@ -265,6 +265,7 @@
 			"na": "Je préfère ne pas répondre"
 		},
 		"homeLanguage": "Première langue",
+		"secondLanguage": "Quelles autres langues parlez-vous ou comprenez-vous partiellement ou davantage ?",
 		"education": {
 			"title": "Quel est le grade, le diplôme ou le niveau d'études le plus élevé que vous ayez obtenu ?",
 			"NoEducation": "Aucun",
