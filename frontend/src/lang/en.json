@@ -214,6 +214,7 @@
 	},
 	"register": {
 		"birthyear": "Year of birth",
+		"birthyear.note": "In what year were you born?",
 		"confirmPassword": "Confirm password",
 		"confirmTutor": "Do you confirm selecting “{NAME}” as your guardian?",
 		"consent": {
@@ -287,6 +288,19 @@
 			"information": "Information",
 			"signup": "Registration",
 			"start": "To start"
+		},
+		"welcome": "Welcome to LanguageLab! Before you begin, please fill out the following information. This will allow us to get to know you better and tailor the experience to your needs.",
+		"homeLanguage": "First language",
+		"homeLanguage.note": "Native language or primary home language",
+		"targetLanguage": "Target language",
+		"targetLanguage.note": "Language you want to learn",
+		"gender": "Are you...",
+		"gender.note": "Gender identity you mostly identify with",
+		"genders": {
+			"male": "A man",
+			"female": "A woman",
+			"other": "Other",
+			"na": "Prefer not to say"
 		}
 	},
 	"session": {
