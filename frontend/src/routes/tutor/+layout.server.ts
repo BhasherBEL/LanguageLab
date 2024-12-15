@@ -8,7 +8,8 @@ export const load: ServerLoad = async ({ locals, url }) => {
 		redirect(303, '/login');
 	}
 
-	const user = JSON.parse(locals.user);
+	// const user = JSON.parse(locals.user);
+	const user = typeof locals.user === 'string' ? JSON.parse(locals.user) : locals.user;
 	if (user == null || user == undefined || user.type > 1) {
 		error(403, 'Forbidden');
 	}
