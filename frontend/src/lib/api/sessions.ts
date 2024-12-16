@@ -41,7 +41,7 @@ export async function createMessageAPI(
 	id: number,
 	content: string,
 	metadata: { message: string; date: number }[],
-	replyTo: number | null
+	replyTo: string | null
 ): Promise<any | null> {
 	const response = await fetch(`/api/sessions/${id}/messages`, {
 		method: 'POST',

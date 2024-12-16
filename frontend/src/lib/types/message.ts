@@ -16,7 +16,7 @@ export default class Message {
 	private _edited: boolean = false;
 	private _versions = writable([] as { content: string; date: Date }[]);
 	private _feedbacks = writable([] as Feedback[]);
-	private _replyTo: number;
+	private _replyTo: string;
 
 	public constructor(
 		id: number,
@@ -25,7 +25,7 @@ export default class Message {
 		created_at: Date,
 		user: User,
 		session: Session,
-		replyTo: number
+		replyTo: string
 	) {
 		this._id = id;
 		this._message_id = message_id;
@@ -77,7 +77,7 @@ export default class Message {
 		return `message-${this._message_id}`;
 	}
 
-	get replyTo(): number {
+	get replyTo(): string {
 		return this._replyTo;
 	}
 
@@ -85,7 +85,7 @@ export default class Message {
 		if (this._replyTo == null) return undefined;
 
 		return get(this._session.messages).find(
-			(m) => m instanceof Message && m.id == this._replyTo
+			(m) => m instanceof Message && m.message_id == this._replyTo
 		) as Message | undefined;
 	}
 
