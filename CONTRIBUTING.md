@@ -85,7 +85,7 @@ Sometimes, breaking changes are made in the database. In such cases, manual acti
 
 #### Dependencies update
 
-After an update, it may happen that the dependencies have changed. In such case, many "Missing Packages" errors would appear when running the frontend. In that case, running `npm run install` before `npm run dev` should fix the issue.
+After an update, it may happen that the dependencies have changed. In such case, many "Missing Packages" errors would appear when running the frontend. In that case, running `npm install` before `npm run dev` should fix the issue.
 
 #### API documentation
 
