@@ -11,8 +11,8 @@ services:
       - external
     labels:
       - "traefik.enable=true"
-      #- "traefik.http.routers.frontend.rule=Host(`languagelab.be`)"
-      - "traefik.http.routers.frontend.rule=Host(`languagelab.sipr.ucl.ac.be`)"
+      - "traefik.http.routers.frontend.rule=Host(`languagelab.be`)"
+      #- "traefik.http.routers.frontend.rule=Host(`languagelab.sipr.ucl.ac.be`)"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.services.frontend.loadbalancer.server.port=8080"
 
@@ -37,8 +37,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.tls=true"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
-      #- "traefik.http.routers.backend.rule=Host(`languagelab.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
-      - "traefik.http.routers.backend.rule=Host(`languagelab.sipr.ucl.ac.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
+      - "traefik.http.routers.backend.rule=Host(`languagelab.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
+      #- "traefik.http.routers.backend.rule=Host(`languagelab.sipr.ucl.ac.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
 
   traefik:
     container_name: traefik
