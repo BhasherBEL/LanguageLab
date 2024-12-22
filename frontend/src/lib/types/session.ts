@@ -201,7 +201,7 @@ export default class Session {
 		sender: User,
 		content: string,
 		metadata: { message: string; date: number }[],
-		replyTo: number | null
+		replyTo: string | null
 	): Promise<Message | null> {
 		const json = await createMessageAPI(fetch, this.id, content, metadata, replyTo);
 		if (json == null || json.id == null || json.message_id == null) {
