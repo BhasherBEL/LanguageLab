@@ -154,7 +154,7 @@ class Message(BaseModel):
     user_id: int
     session_id: int
     created_at: NaiveDatetime
-    reply_to_message_id: int | None = None
+    reply_to_message_id: str | None = None
     feedbacks: list[MessageFeedback]
 
     class Config:
@@ -184,7 +184,7 @@ class MessageMetadataCreate(BaseModel):
 class MessageCreate(BaseModel):
     message_id: str | None = None
     content: str
-    reply_to_message_id: int | None = None
+    reply_to_message_id: str | None = None
     metadata: list[MessageMetadataCreate]
 
     class Config:
@@ -307,6 +307,7 @@ class SurveyResponseInfoCreate(BaseModel):
     birthyear: int
     gender: str
     primary_language: str
+    other_language: str
     education: str
 
 
@@ -316,6 +317,7 @@ class SurveyResponseInfo(BaseModel):
     birthyear: int
     gender: str
     primary_language: str
+    other_language: str
     education: str
 
 

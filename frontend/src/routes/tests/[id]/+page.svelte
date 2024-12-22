@@ -42,13 +42,13 @@
 	let questionsRandomized = $derived(getSortedQuestions(currentGroup));
 	let currentQuestionId = $state(0);
 	let currentQuestion = $derived(questionsRandomized[currentQuestionId]);
-	let type = $derived(currentQuestion.question.split(':')[0]);
-	let value = $derived(currentQuestion.question.split(':').slice(1).join(':'));
+	let type = $derived(currentQuestion?.question.split(':')[0]);
+	let value = $derived(currentQuestion?.question.split(':').slice(1).join(':'));
 	let gaps = $derived(type === 'gap' ? gapParts(currentQuestion.question) : null);
 	let soundPlayer: HTMLAudioElement;
 	let displayQuestionOptions: string[] = $derived(
 		(() => {
-			let d = [...(currentQuestion.options ?? [])];
+			let d = [...(currentQuestion?.options ?? [])];
 			shuffle(d);
 			return d;
 		})()
@@ -194,7 +194,7 @@
 	async function selectAnswer(selection: string, option: string) {
 		endSurveyAnswers[selection] = option;
 		subStep += 1;
-		if (subStep == 4) {
+		if (subStep == 5) {
 			await sendSurveyResponseInfoAPI(
 				fetch,
 				survey.id,
@@ -202,6 +202,7 @@
 				endSurveyAnswers.birthYear,
 				endSurveyAnswers.gender,
 				endSurveyAnswers.primaryLanguage,
+				endSurveyAnswers.other_language,
 				endSurveyAnswers.education
 			);
 			step += 1;
@@ -407,6 +408,23 @@
 			</div>
 		{:else if subStep === 3}
 			<div class="mx-auto mt-16 text-center px-4">
+				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.otherLanguage')}</p>
+				<p class="mb-6 text-sm text-gray-600 text-center">{$t('surveys.otherLanguageNote')}</p>
+				<Dropdown
+					values={[
+						{ value: 'none', display: '/' },
+						...Object.entries(config.PRIMARY_LANGUAGE).map(([code, name]) => ({
+							value: code,
+							display: name
+						}))
+					]}
+					bind:option={selectedOption}
+					placeholder={$t('surveys.otherLanguage')}
+					funct={() => selectAnswer('other_language', selectedOption)}
+				></Dropdown>
+			</div>
+		{:else if subStep === 4}
+			<div class="mx-auto mt-16 text-center px-4">
 				<p class="text-center font-bold py-4 px-6 m-auto">{$t('surveys.education.title')}</p>
 				<Dropdown
 					values={[
@@ -426,7 +444,7 @@
 	{:else}
 		{(step += 1)}
 	{/if}
-{:else if step == 4}
+{:else if step === 4}
 	<div class="mx-auto mt-16 text-center">
 		<h1>{$t('surveys.complete')}</h1>
 		{#if finalScore !== null}
