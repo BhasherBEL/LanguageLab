@@ -186,6 +186,8 @@
 			"Master": "Master's degree or above"
 		},
 		"example": "Example",
+		"otherLanguage": "Is there any other language you are relatively fluent in?",
+		"otherLanguageNote": "(If you are fluent in multiple other languages, beyond your target language and your first language, please select the one closest to your target language or that seems to help you the most in learning your target language.)",
 		"consent": {
 			"intro": "You are invited to participate in a scientific study to design, validate and apply vocabulary tests.",
 			"ok": "I agree to participate in the study as described above.",

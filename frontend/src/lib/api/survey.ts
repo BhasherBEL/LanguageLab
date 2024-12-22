@@ -52,6 +52,7 @@ export async function sendSurveyResponseInfoAPI(
 	birthyear: number,
 	gender: string,
 	primary_language: string,
+	other_language: string,
 	education: string
 ) {
 	const response = await fetch(`/api/surveys/info/${survey_id}`, {
@@ -62,6 +63,7 @@ export async function sendSurveyResponseInfoAPI(
 			birthyear,
 			gender,
 			primary_language,
+			other_language,
 			education
 		})
 	});
