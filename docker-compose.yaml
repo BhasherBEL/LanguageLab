@@ -66,11 +66,11 @@ services:
         source: /mnt/data/languagelab/repo/configs/traefik.yaml
         target: /etc/traefik/dynamic-config.yaml
       - type: bind
-        source: /mnt/data/languagelab/repo/configs/languagelab_sipr_ucl_ac_be.key
-        target: /etc/traefik/languagelab_sipr_ucl_ac_be.key
+        source: /mnt/data/languagelab/repo/configs/languagelab_be.key
+        target: /etc/traefik/languagelab_be.key
       - type: bind
-        source: /mnt/data/languagelab/repo/configs/languagelab_sipr_ucl_ac_be.pem
-        target: /etc/traefik/languagelab_sipr_ucl_ac_be.pem
+        source: /mnt/data/languagelab/repo/configs/languagelab_be.pem
+        target: /etc/traefik/languagelab_be.pem
     restart: always
     networks:
       - external
