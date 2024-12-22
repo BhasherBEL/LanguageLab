@@ -37,7 +37,12 @@
 		if (message.length == 0) return;
 
 		try {
-			const m = await session.sendMessage(user, message, [...metadata], replyTo?.id || null);
+			const m = await session.sendMessage(
+				user,
+				message,
+				[...metadata],
+				replyTo?.message_id || null
+			);
 
 			if (m === null) {
 				toastAlert($t('chatbox.sendError'));

@@ -2,48 +2,21 @@
 	import config from '$lib/config';
 	import { locale, t } from '$lib/services/i18n';
 	import { toastAlert, toastWarning } from '$lib/utils/toasts';
-	import { onMount } from 'svelte';
 	import Timeslots from '$lib/components/users/timeslots.svelte';
-	import User from '$lib/types/user';
-	import { getUsersAPI, patchUserAPI, getUserContactsAPI } from '$lib/api/users';
+	import { patchUserAPI } from '$lib/api/users';
 	import { Icon, Envelope, Key, UserCircle, Calendar, QuestionMarkCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import { formatToUTCDate } from '$lib/utils/date';
 	import type { PageData } from './$types';
+	import { page } from '$app/stores';
 
 	let { data }: { data: PageData } = $props();
 	let user = data.user;
 
-	let current_step = $state(0);
+	let current_step = $state(user ? 3 : 1);
 
 	let message = $state('');
-
-	onMount(async () => {
-		if (user == null) {
-			current_step = 1;
-			return;
-		}
-		User.parseAll(await getUsersAPI(fetch));
-
-		if (!user.home_language || !user.target_language || !user.birthdate || !user.gender) {
-			current_step = 3;
-			return;
-		}
-
-		const contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
-
-		if (contacts.length == 0) {
-			current_step = 4;
-			return;
-		}
-
-		current_step = 5;
-	});
-
-	let nickname = '';
-	let email = '';
-	let password = '';
-	let confirmPassword = '';
+	let form = $page.form;
 
 	let ui_language: string = $locale;
 	let home_language: string;
@@ -53,60 +26,18 @@
 
 	let timeslots = 0n;
 
-	async function onRegister() {
-		if (nickname == '' || email == '' || password == '' || confirmPassword == '') {
-			message = $t('register.error.emptyFields');
-			return;
-		}
-		if (password.length < 8) {
-			message = $t('register.error.passwordRules');
-			return;
-		}
-		if (password != confirmPassword) {
-			message = $t('register.error.differentPasswords');
-			return;
-		}
-		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-		if (!emailRegex.test(email)) {
-			message = $t('register.error.emailRules');
-			return;
-		}
-		message = '';
-
-		const registerRes = await registerAPI(email, password, nickname, true);
-
-		if (registerRes !== 'OK') {
-			message = registerRes;
-			return;
-		}
-
-		const loginRes = await loginAPI(email, password);
-
-		if (loginRes !== 'OK') {
-			toastAlert('Failed to login: ' + loginRes);
-			document.location.href = '/login';
-			return;
-		}
-
-		document.location.href = '/tutor/register';
-
-		message = 'OK';
-	}
-
 	async function onData() {
-		const user_id = user.id;
-
-		if (!user_id) {
-			toastAlert('Failed to get current user ID');
+		if (!user) {
+			toastAlert('Failed to get current user');
 			return;
 		}
 
-		if (!ui_language || !home_language || !birthdate || !gender) {
+		if (!home_language || !birthdate || !gender) {
 			message = $t('register.error.emptyFields');
 			return;
 		}
 
-		const res = await patchUserAPI(fetch, user_id, {
+		const res = await patchUserAPI(fetch, user.id, {
 			ui_language,
 			home_language,
 			birthdate,
@@ -122,12 +53,17 @@
 	}
 
 	async function onAvailabilities() {
+		if (!user) {
+			toastAlert('Failed to get current user');
+			return;
+		}
 		if (!calcom_link || !calcom_link.startsWith('https://cal.com/')) {
 			toastWarning($t('timeslots.calcomWarning'));
 			return;
 		}
-
-		const res = user.setAvailability(timeslots, calcom_link);
+		const res = await patchUserAPI(fetch, user.id, {
+			calcom_link
+		});
 
 		if (!res) return;
 
@@ -138,6 +74,10 @@
 		current_step++;
 	}
 </script>
+
+{#if form?.message}
+	<div class="alert alert-error">{form.message}</div>
+{/if}
 
 <div class="header mx-auto my-5">
 	<ul class="steps text-xs">
@@ -251,71 +191,91 @@
 			</div>
 		</div>
 		<div class="form-control">
-			<button class="button mt-4" on:click={() => current_step++}>
+			<button class="button mt-4" onclick={() => current_step++}>
 				{$t('register.consentTutor.ok')}
 			</button>
 		</div>
 	{:else if current_step == 2}
-		<div class="space-y-2">
-			<label for="email" class="form-control">
-				<div class="label">
-					<span class="label-text">{$t('register.email')}</span>
-					<span class="label-text-alt">{$t('register.email.note')}</span>
+		<div class="space-y-4">
+			<!-- Step 2: Tutor Registration Form -->
+			<form method="POST" action="?/register">
+				<label for="email" class="form-control">
+					<div class="label">
+						<span class="label-text">{$t('register.email')}</span>
+						<span class="label-text-alt">{$t('register.email.note')}</span>
+					</div>
+					<div class="input flex items-center">
+						<Icon src={Envelope} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="email"
+							name="email"
+							class="grow"
+							placeholder={$t('register.email.ph')}
+							required
+						/>
+					</div>
+				</label>
+				<label for="nickname" class="form-control">
+					<div class="label">
+						<span class="label-text">{$t('register.nickname')}</span>
+						<span class="label-text-alt">{$t('register.nickname.note')}</span>
+					</div>
+					<div class="input flex items-center">
+						<Icon src={UserCircle} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="text"
+							name="nickname"
+							class="grow"
+							placeholder={$t('register.nickname.ph')}
+							required
+						/>
+					</div>
+				</label>
+				<label for="password" class="form-control">
+					<div class="label">
+						<span class="label-text">{$t('register.password')}</span>
+						<span class="label-text-alt">{$t('register.password.note')}</span>
+					</div>
+					<div class="input flex items-center">
+						<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="password"
+							name="password"
+							class="grow"
+							placeholder={$t('register.password')}
+							required
+						/>
+					</div>
+				</label>
+				<label for="confirmPassword" class="form-control">
+					<div class="label">
+						<span class="label-text">{$t('register.confirmPassword')}</span>
+					</div>
+					<div class="input flex items-center">
+						<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
+						<input
+							type="password"
+							name="confirmPassword"
+							class="grow"
+							placeholder={$t('register.confirmPassword')}
+							required
+						/>
+					</div>
+				</label>
+				<input type="hidden" name="is_tutor" value="true" />
+
+				<div class="form-control">
+					<button type="submit" class="button mt-4">
+						{$t('register.signup')}
+					</button>
 				</div>
-				<div class="input flex items-center">
-					<Icon src={Envelope} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="text"
-						class="grow"
-						bind:value={email}
-						placeholder={$t('register.email.ph')}
-					/>
+			</form>
+
+			{#if $page.form?.message}
+				<div class="alert alert-error text-content text-base-100 py-2 mt-4">
+					{$page.form.message}
 				</div>
-			</label>
-			<label for="nickname" class="form-control">
-				<div class="label">
-					<span class="label-text">{$t('register.nickname')}</span>
-					<span class="label-text-alt">{$t('register.nickname.note')}</span>
-				</div>
-				<div class="input flex items-center">
-					<Icon src={UserCircle} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="text"
-						class="grow"
-						bind:value={nickname}
-						placeholder={$t('register.nickname.ph')}
-					/>
-				</div>
-			</label>
-			<label for="password" class="form-control">
-				<div class="label">
-					<span class="label-text">{$t('register.password')}</span>
-					<span class="label-text-alt">{$t('register.password.note')}</span>
-				</div>
-				<div class="input flex items-center">
-					<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="password"
-						class="grow"
-						bind:value={password}
-						placeholder={$t('register.password')}
-					/>
-				</div>
-			</label>
-			<label for="confirmPassword" class="form-control">
-				<div class="input flex items-center">
-					<Icon src={Key} class="w-4 mr-2 opacity-70" solid />
-					<input
-						type="password"
-						class="grow"
-						bind:value={confirmPassword}
-						placeholder={$t('register.confirmPassword')}
-					/>
-				</div>
-			</label>
-			<div class="form-control">
-				<button class="button mt-2" on:click={onRegister}>{$t('register.signup')}</button>
-			</div>
+			{/if}
 		</div>
 	{:else if current_step == 3}
 		<div class="space-y-2">
@@ -349,7 +309,7 @@
 					id="birthyear"
 					name="birthyear"
 					required
-					on:change={(e) => (birthdate = formatToUTCDate(new Date(e.target.value, 1, 1)))}
+					onchange={(e) => (birthdate = formatToUTCDate(new Date(e.target.value, 1, 1)))}
 				>
 					<option disabled selected value="">{$t('register.birthyear')}</option>
 					{#each Array.from({ length: 82 }, (_, i) => i + 1931).reverse() as year}
@@ -369,7 +329,7 @@
 						id="male"
 						name="gender"
 						value="male"
-						on:change={() => (gender = 'male')}
+						onchange={() => (gender = 'male')}
 					/>
 					<label for="male" class="label-text cursor-pointer">
 						{$t('register.genders.male')}
@@ -382,7 +342,7 @@
 						id="female"
 						name="gender"
 						value="female"
-						on:change={() => (gender = 'female')}
+						onchange={() => (gender = 'female')}
 					/>
 					<label for="female" class="label-text cursor-pointer">
 						{$t('register.genders.female')}
@@ -395,7 +355,7 @@
 						id="other"
 						name="gender"
 						value="other"
-						on:change={() => (gender = 'other')}
+						onchange={() => (gender = 'other')}
 					/>
 					<label for="other" class="label-text cursor-pointer">
 						{$t('register.genders.other')}
@@ -408,7 +368,7 @@
 						id="na"
 						name="gender"
 						value="na"
-						on:change={() => (gender = 'na')}
+						onchange={() => (gender = 'na')}
 					/>
 					<label for="na" class="label-text cursor-pointer">
 						{$t('register.genders.na')}
@@ -416,11 +376,10 @@
 				</div>
 			</div>
 			<div class="form-control">
-				<button class="button mt-4" on:click={onData}>{$t('button.submit')}</button>
+				<button class="button mt-4" onclick={onData}>{$t('button.submit')}</button>
 			</div>
 		</div>
 	{:else if current_step == 4}
-		<!--{#if get(user)}-->
 		<h2 class="my-4 text-xl">{$t('timeslots.setAvailabilities')}</h2>
 		<Timeslots bind:timeslots />
 		<div class="form-control mt-4">
@@ -452,28 +411,28 @@
 			</div>
 		</div>
 		<div class="form-control">
-			<button class="button mt-4" on:click={onAvailabilities}>{$t('button.submit')}</button>
+			<button class="button mt-4" onclick={onAvailabilities}>{$t('button.submit')}</button>
 		</div>
 	{:else if current_step == 5}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.continue')}
 			</p>
-			<button class="button mt-4 w-full" on:click={() => (current_step = 6)}>
+			<button class="button mt-4 w-full" onclick={() => (current_step = 6)}>
 				{$t('register.continueButton')}
 			</button>
-			<button class="button mt-4 w-full" on:click={() => (document.location.href = '/')}>
+			<button class="button mt-4 w-full" onclick={() => (document.location.href = '/')}>
 				{$t('register.startFastButton')}
 			</button>
 		</div>
 	{:else if current_step == 6}
-		<Typingtest onFinish={onTyping} />
+		<Typingtest onFinish={onTyping} {user} />
 	{:else if current_step == 7}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.start')}
 			</p>
-			<button class="button mt-4 m-auto" on:click={() => (document.location.href = '/')}>
+			<button class="button mt-4 m-auto" onclick={() => (document.location.href = '/')}>
 				{$t('register.startButton')}
 			</button>
 		</div>
