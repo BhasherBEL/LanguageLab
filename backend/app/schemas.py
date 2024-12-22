@@ -307,6 +307,7 @@ class SurveyResponseInfoCreate(BaseModel):
     birthyear: int
     gender: str
     primary_language: str
+    other_language: str
     education: str
 
 
@@ -316,6 +317,7 @@ class SurveyResponseInfo(BaseModel):
     birthyear: int
     gender: str
     primary_language: str
+    other_language: str
     education: str
 
 

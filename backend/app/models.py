@@ -269,6 +269,7 @@ class SurveyResponseInfo(Base):
     birthyear = Column(Integer)
     gender = Column(String)
     primary_language = Column(String)
+    other_language = Column(String)
     education = Column(String)
 
 
