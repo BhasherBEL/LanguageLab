@@ -1,8 +1,10 @@
 import { createUserAPI, getUsersAPI, patchUserAPI } from '$lib/api/users';
+import config from '$lib/config';
 import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import { sha256 } from 'js-sha256';
-import { get, writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
+import Session from './session';
 
 const { subscribe, set, update } = writable<User[]>([]);
 
@@ -31,6 +33,9 @@ export default class User {
 	private _calcom_link: string | null;
 	private _study_id: number | null;
 	private _last_survey: Date | null;
+	private _ws_connected: boolean = false;
+	private _ws: WebSocket | null = null;
+	private _sessions_added: Writable<Session[]> = writable([]);
 
 	private constructor(
 		id: number,
@@ -124,6 +129,10 @@ export default class User {
 
 	get last_survey(): Date | null {
 		return this._last_survey;
+	}
+
+	get sessions_added(): Writable<Session[]> {
+		return this._sessions_added;
 	}
 
 	equals<T>(obj: T): boolean {
@@ -226,6 +235,43 @@ export default class User {
 		if (userFinal == null || userFinal.id == null || userFinal.id == undefined) return null;
 
 		return userFinal;
+	}
+
+	public wsConnect(jwt: string) {
+		if (this._ws_connected) return;
+
+		this._ws = new WebSocket(`${config.WS_URL}/global?token=${jwt}`);
+
+		this._ws.onopen = () => {
+			this._ws_connected = true;
+		};
+
+		this._ws.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+
+			if (data['type'] === 'session') {
+				if (data['action'] === 'create') {
+					const session = Session.parse(data['data']);
+					if (session) {
+						this._sessions_added.update((sessions) => {
+							if (!sessions.find((s) => s.id === session.id)) {
+								return [...sessions, session];
+							}
+							return sessions.map((s) => (s.id === session.id ? session : s));
+						});
+
+						return;
+					}
+				}
+			}
+			console.error('Failed to parse ws:', data);
+		};
+
+		this._ws.onclose = () => {
+			this._ws = null;
+			this._ws_connected = false;
+			setTimeout(() => this.wsConnect(jwt), 1000);
+		};
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -23,6 +23,7 @@
 
 	let { data } = $props();
 	let user = data.user!;
+	let jwt = data.jwt!;
 	let contacts: User[] = $state(data.contacts);
 	let contact: User | undefined = $state(data.contact);
 	let contactSessions: Session[] = $state(data.sessions);
@@ -31,6 +32,17 @@
 	let nickname = $state('');
 
 	let showTerminatedSessions = $state(false);
+
+	user.sessions_added.subscribe((sessions) => {
+		if (!contact) return;
+
+		sessions = sessions.filter((s) => s.users.some((u) => u.id === contact?.id));
+
+		contactSessions = [
+			...contactSessions,
+			...sessions.filter((s) => !contactSessions.some((cs) => cs.id === s.id))
+		].sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
+	});
 
 	async function selectContact(c: User | undefined) {
 		showTerminatedSessions = false;
@@ -46,6 +58,8 @@
 	}
 
 	onMount(async () => {
+		user.wsConnect(jwt);
+
 		(function (C: any, A: any, L: any) {
 			let p = function (a: any, ar: any) {
 				a.q.push(ar);

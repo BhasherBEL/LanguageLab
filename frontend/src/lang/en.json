@@ -47,7 +47,8 @@
 		"noContact": "Add a contact to get started",
 		"noCurrentOrFutureSessions": "No session in progress or planned",
 		"pastSessions": "Completed sessions",
-		"plannedSessions": "Scheduled sessions"
+		"plannedSessions": "Scheduled sessions",
+		"sessionAdded": "You have been added to a session with {users}"
 	},
 	"signup": {
 		"title": "Register",

@@ -3,8 +3,9 @@ import Session from '$lib/types/session';
 import User from '$lib/types/user';
 import type { Load } from '@sveltejs/kit';
 
-export const load: Load = async ({ parent, fetch }) => {
+export const load: Load = async ({ parent, fetch, data }) => {
 	const { user } = await parent();
+	const jwt = data?.jwt;
 
 	const contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
 
@@ -12,7 +13,8 @@ export const load: Load = async ({ parent, fetch }) => {
 		return {
 			contacts,
 			contact: undefined,
-			sessions: []
+			sessions: [],
+			jwt
 		};
 	}
 
@@ -24,6 +26,7 @@ export const load: Load = async ({ parent, fetch }) => {
 	return {
 		contacts,
 		contact,
-		sessions
+		sessions,
+		jwt
 	};
 };

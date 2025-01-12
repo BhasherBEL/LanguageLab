@@ -4,7 +4,6 @@ from typing import Annotated
 from fastapi import (
     APIRouter,
     FastAPI,
-    Form,
     status,
     Depends,
     HTTPException,
@@ -32,6 +31,7 @@ import config
 from security import jwt_cookie, get_jwt_user
 
 websocket_users = defaultdict(lambda: defaultdict(set))
+websocket_users_global = defaultdict(set)
 
 
 @asynccontextmanager
@@ -442,10 +442,6 @@ def create_session(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    # if not check_user_level(current_user, models.UserType.TUTOR):
-    #    raise HTTPException(
-    #        status_code=401, detail="You do not have permission to create a session"
-    #    )
 
     rep = crud.create_session(db, current_user)
     rep.length = 0
@@ -616,22 +612,43 @@ def download_sessions_feedbacks(
     )
 
 
+async def send_websoket_add_to_session(session: schemas.Session, user_id: int):
+    if user_id in websocket_users_global:
+        for user_websocket in websocket_users_global[user_id]:
+            await user_websocket.send_text(
+                json.dumps(
+                    {
+                        "type": "session",
+                        "action": "create",
+                        "data": session.to_dict(),
+                    }
+                )
+            )
+
+
 @sessionsRouter.post(
     "/{session_id}/users/{user_id}", status_code=status.HTTP_201_CREATED
 )
 def add_user_to_session(
     session_id: int,
     user_id: int,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    # if not check_user_level(current_user, models.UserType.TUTOR):
-    #    raise HTTPException(
-    #        status_code=401,
-    #        detail="You do not have permission to add a user to a session",
-    #    )
-
     db_session = crud.get_session(db, session_id)
+
+    if (
+        db_session is not None
+        and current_user not in db_session.users
+        or db_session is None
+        and not check_user_level(current_user, models.UserType.TUTOR)
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a user to a session",
+        )
+
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
@@ -642,6 +659,12 @@ def add_user_to_session(
     db_session.users.append(db_user)
     db.commit()
     db.refresh(db_session)
+
+    background_tasks.add_task(
+        send_websoket_add_to_session,
+        schemas.Session.model_validate(db_session),
+        schemas.User.model_validate(db_user).id,
+    )
 
 
 @sessionsRouter.delete(
@@ -994,6 +1017,45 @@ async def websocket_session(
                     await user_websocket.send_text(data)
     except:
         websocket_users[session_id][current_user.id].remove(websocket)
+        try:
+            await websocket.close()
+        except:
+            pass
+
+
+@websocketRouter.websocket("/global")
+async def websocket_session(
+    token: str, websocket: WebSocket, db: Session = Depends(get_db)
+):
+    try:
+        payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"])
+    except ExpiredSignatureError:
+        await websocket.close(code=1008, reason="Token expired")
+        return
+    except jwt.JWTError:
+        await websocket.close(code=1008, reason="Invalid token")
+        return
+
+    current_user = crud.get_user(db, user_id=payload["subject"]["uid"])
+    if current_user is None:
+        await websocket.close(code=1008, reason="Invalid user")
+        return
+
+    await websocket.accept()
+
+    websocket_users_global[current_user.id].add(websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            for user_id, user_websockets in websocket_users_global.items():
+                if user_id == current_user.id:
+                    continue
+
+                for user_websocket in user_websockets:
+                    await user_websocket.send_text(data)
+    except:
+        websocket_users_global[current_user.id].remove(websocket)
         try:
             await websocket.close()
         except:

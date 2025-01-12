@@ -47,7 +47,8 @@
 		"newFirstContact": "Ajouter un premier contact",
 		"actions": "Actions",
 		"date": "Date",
-		"participants": "Participants"
+		"participants": "Participants",
+		"sessionAdded": "Vous avez été ajouté à une session avec {users}"
 	},
 	"login": {
 		"email": "E-mail",
