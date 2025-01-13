@@ -68,25 +68,10 @@ export function displayDate(date: Date): string {
 
 	const now = new Date();
 
-	const hours = date.getHours().toString();
-	const minutes = date.getMinutes().toString().padStart(2, '0');
-
-	if (now.getDate() === date.getDate()) {
-		return hours + ':' + minutes;
-	} else if (now.getFullYear() === date.getFullYear()) {
-		return date.getDate() + ' ' + getFullMonth(date.getMonth()) + ' ' + hours + ':' + minutes;
+	if (now.getFullYear() === date.getFullYear()) {
+		return date.getDate() + ' ' + getFullMonth(date.getMonth());
 	} else {
-		return (
-			date.getDate() +
-			' ' +
-			getFullMonth(date.getMonth()) +
-			' ' +
-			date.getFullYear() +
-			' ' +
-			hours +
-			':' +
-			minutes
-		);
+		return date.getDate() + ' ' + getFullMonth(date.getMonth()) + ' ' + date.getFullYear();
 	}
 }
 

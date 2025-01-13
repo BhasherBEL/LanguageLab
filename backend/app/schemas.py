@@ -28,7 +28,6 @@ class User(BaseModel):
     birthdate: NaiveDatetime | None
     gender: str | None = None
     calcom_link: str | None
-    study_id: int | None = None
     last_survey: NaiveDatetime | None = None
 
     class Config:
@@ -62,7 +61,6 @@ class UserCreate(BaseModel):
     birthdate: NaiveDatetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
-    study_id: int | None = None
     last_survey: NaiveDatetime | None = None
 
 
@@ -79,7 +77,6 @@ class UserUpdate(BaseModel):
     birthdate: NaiveDatetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
-    study_id: int | None = None
     last_survey: NaiveDatetime | None = None
 
     class Config:
@@ -354,6 +351,8 @@ class Study(BaseModel):
     start_date: NaiveDatetime
     end_date: NaiveDatetime
     chat_duration: int
+    users: list[User]
+    surveys: list[Survey]
 
 
 class StudyCreate(BaseModel):

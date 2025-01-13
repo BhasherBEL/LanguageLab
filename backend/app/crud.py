@@ -263,14 +263,6 @@ def delete_message_feedback(db: Session, feedback_id: int):
     db.commit()
 
 
-def create_study(db: Session, study: schemas.StudyCreate):
-    db_study = models.Study(**study.dict())
-    db.add(db_study)
-    db.commit()
-    db.refresh(db_study)
-    return db_study
-
-
 def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):
     db_test = models.TestTyping(user_id=user.id)
     db.add(db_test)
@@ -447,3 +439,67 @@ def create_survey_response_info(
     db.commit()
     db.refresh(db_survey_response_info)
     return db_survey_response_info
+
+
+def create_study(db: Session, study: schemas.StudyCreate):
+    db_study = models.Study(**study.dict())
+    db.add(db_study)
+    db.commit()
+    db.refresh(db_study)
+    return db_study
+
+
+def get_study(db: Session, study_id: int):
+    return db.query(models.Study).filter(models.Study.id == study_id).first()
+
+
+def get_studies(db: Session, skip: int = 0):
+    return db.query(models.Study).offset(skip).all()
+
+
+def update_study(db: Session, study: schemas.StudyCreate, study_id: int):
+    db.query(models.Study).filter(models.Study.id == study_id).update(
+        {**study.model_dump(exclude_unset=True)}
+    )
+    db.commit()
+
+
+def delete_study(db: Session, study_id: int):
+    db.query(models.Study).filter(models.Study.id == study_id).delete()
+    db.commit()
+
+
+def add_user_to_study(db: Session, study_id: int, user: schemas.User):
+    db_study = db.query(models.Study).filter(models.Study.id == study_id).first()
+    db_study.users.append(user)
+    db.commit()
+    db.refresh(db_study)
+    return db_study
+
+
+def remove_user_from_study(db: Session, study_id: int, user: schemas.User):
+    study = db.query(models.Study).filter(models.Study.id == study_id).first()
+    user = db.query(models.User).filter(models.User.id == user.id).first()
+    study.users.remove(user)
+    db.commit()
+    return study
+
+
+def add_survey_to_study(db: Session, study_id: int, survey: schemas.Survey):
+    db_study = db.query(models.Study).filter(models.Study.id == study_id).first()
+    db_study.surveys.append(survey)
+    db.commit()
+    db.refresh(db_study)
+    return db_study
+
+
+def remove_survey_from_study(db: Session, study_id: int, survey: schemas.Survey):
+    study = db.query(models.Study).filter(models.Study.id == study_id).first()
+    survey = (
+        db.query(models.SurveySurvey)
+        .filter(models.SurveySurvey.id == survey.id)
+        .first()
+    )
+    study.surveys.remove(survey)
+    db.commit()
+    return study

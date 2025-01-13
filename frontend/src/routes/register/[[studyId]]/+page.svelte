@@ -3,63 +3,66 @@
 	import { t } from '$lib/services/i18n';
 	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
-	import { browser } from '$app/environment';
 	import type { PageData } from './$types';
-	import { formatToUTCDate } from '$lib/utils/date';
 	import Consent from '$lib/components/surveys/consent.svelte';
+	import type Study from '$lib/types/study';
+	import { displayDate } from '$lib/utils/date';
 
 	let { data, form }: { data: PageData; form: FormData } = $props();
+	let study: Study | undefined = $state(data.study);
+	let studies: Study[] | undefined = $state(data.studies);
 	let user = $state(data.user);
 	let message = $state('');
+
+	let selectedStudy: Study | undefined = $state();
 
 	let current_step = $state(
 		(() => {
 			if (user == null) {
-				if (form?.message) return 2;
+				if (form?.message) return 3;
+				if (study) return 2;
 				return 1;
 			} else if (!user.home_language || !user.target_language || !user.birthdate || !user.gender) {
-				return 3;
+				return 4;
 			} else {
-				return 5;
+				return 6;
 			}
 		})()
 	);
-
-	let study_id: number | null = (() => {
-		if (!browser) return null;
-		let study_id_str = new URLSearchParams(window.location.search).get('study');
-		if (!study_id_str) return null;
-		return parseInt(study_id_str) || null;
-	})();
 </script>
 
 <div class="header mx-auto my-5">
 	<ul class="steps text-xs">
 		<li class="step" class:step-primary={current_step >= 1}>
-			{#if current_step >= 1 && current_step <= 2}
-				<button onclick={() => (current_step = 1)}>
+			<a href="/register" data-sveltekit-reload class:btn-disabled={current_step > 3}
+				>{$t('register.tab.study')}</a
+			>
+		</li>
+		<li class="step" class:step-primary={current_step >= 2}>
+			{#if current_step >= 2 && current_step <= 3}
+				<button onclick={() => (current_step = 2)}>
 					{$t('register.tab.consent')}
 				</button>
 			{:else}
 				{$t('register.tab.consent')}
 			{/if}
 		</li>
-		<li class="step" class:step-primary={current_step >= 2}>
+		<li class="step" class:step-primary={current_step >= 3}>
 			{$t('register.tab.signup')}
 		</li>
-		<li class="step" class:step-primary={current_step >= 3}>
+		<li class="step" class:step-primary={current_step >= 4}>
 			{$t('register.tab.information')}
 		</li>
-		<li class="step" class:step-primary={current_step >= 4}>
+		<li class="step" class:step-primary={current_step >= 5}>
 			{$t('register.tab.timeslots')}
 		</li>
-		<li class="step" class:step-primary={current_step >= 5} data-content="?">
+		<li class="step" class:step-primary={current_step >= 6} data-content="?">
 			{$t('register.tab.continue')}
 		</li>
-		<li class="step" class:step-primary={current_step >= 6} data-content="">
+		<li class="step" class:step-primary={current_step >= 7} data-content="">
 			{$t('register.tab.test')}
 		</li>
-		<li class="step" class:step-primary={current_step >= 7} data-content="★">
+		<li class="step" class:step-primary={current_step >= 8} data-content="★">
 			{$t('register.tab.start')}
 		</li>
 	</ul>
@@ -76,6 +79,46 @@
 		</div>
 	{/if}
 	{#if current_step == 1}
+		<div class="form-control">
+			<label for="study" class="label">
+				<span class="label-text">{$t('register.study')}</span>
+				<span class="label-text-alt">{$t('register.study.note')}</span>
+			</label>
+			<select
+				class="select select-bordered"
+				id="study"
+				name="study"
+				required
+				disabled={!!study}
+				bind:value={selectedStudy}
+			>
+				{#if study}
+					<option selected value={study}>
+						{study.title} ({displayDate(study.startDate)} - {displayDate(study.endDate)})
+					</option>
+				{:else if studies}
+					<option disabled selected value="">{$t('register.study.placeholder')}</option>
+					{#each studies as s}
+						<option value={s}>
+							{s.title} ({displayDate(s.startDate)} - {displayDate(s.endDate)})
+						</option>
+					{/each}
+				{:else}
+					<option disabled></option>
+				{/if}
+			</select>
+		</div>
+		<div class="form-control">
+			<a
+				class="button mt-8"
+				class:btn-disabled={!selectedStudy}
+				href="/register/{selectedStudy?.id}"
+				data-sveltekit-reload
+			>
+				{$t('button.continue')}
+			</a>
+		</div>
+	{:else if current_step == 2}
 		<Consent
 			introText={$t('register.consent.intro')}
 			participation={$t('register.consent.participation')}
@@ -89,7 +132,7 @@
 				{$t('register.consent.ok')}
 			</button>
 		</div>
-	{:else if current_step == 2}
+	{:else if current_step == 3}
 		<div class="space-y-2">
 			<form method="POST" action="?/register">
 				<label for="email" class="form-control">
@@ -157,7 +200,7 @@
 				</div>
 			</form>
 		</div>
-	{:else if current_step == 3}
+	{:else if current_step == 4}
 		<form class="space-y-2" method="POST" action="?/data">
 			<div class="p-5 text-sm text-prose">
 				{@html $t('register.welcome')}
@@ -227,14 +270,15 @@
 					</label>
 				</div>
 			</div>
+			<input type="hidden" id="study" name="study" value={study?.id} />
 			<div class="form-control">
 				<button class="button mt-4">{$t('button.submit')}</button>
 			</div>
 		</form>
-	{:else if current_step == 4}
+	{:else if current_step == 5}
 		<h2 class="my-4 text-xl">This page is disabled. Please continue.</h2>
 		<button onclick={() => current_step++}>{$t('button.continue')}</button>
-	{:else if current_step == 5}
+	{:else if current_step == 6}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.continue')}
@@ -246,11 +290,11 @@
 				{$t('register.startFastButton')}
 			</button>
 		</div>
-	{:else if current_step == 6}
+	{:else if current_step == 7}
 		{#if user}
 			<Typingtest onFinish={() => current_step++} {user} />
 		{/if}
-	{:else if current_step == 7}
+	{:else if current_step == 8}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.start')}
