@@ -160,7 +160,8 @@
 		"login": "Log in",
 		"save": "Save",
 		"update": "Update",
-		"updated": "Updated!"
+		"updated": "Updated!",
+		"continue": "Continue"
 	},
 	"surveys": {
 		"complete": "Thank you for participating!",
@@ -285,6 +286,7 @@
 		"startButton": "To start",
 		"startFastButton": "Start using the app directly",
 		"tab": {
+			"study": "Study",
 			"availabilities": "Availability",
 			"consent": "Consent",
 			"continue": "Continue",
