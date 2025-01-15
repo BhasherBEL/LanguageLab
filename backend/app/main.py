@@ -4,7 +4,6 @@ from typing import Annotated
 from fastapi import (
     APIRouter,
     FastAPI,
-    Form,
     status,
     Depends,
     HTTPException,
@@ -32,6 +31,7 @@ import config
 from security import jwt_cookie, get_jwt_user
 
 websocket_users = defaultdict(lambda: defaultdict(set))
+websocket_users_global = defaultdict(set)
 
 
 @asynccontextmanager
@@ -215,6 +215,24 @@ def update_user(
 
     if not crud.update_user(db, user, user_id):
         raise HTTPException(status_code=404, detail="User not found")
+
+
+@usersRouter.get("/by-email/{email}", response_model=schemas.User)
+def read_user_by_email(
+    email: str,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to view this user"
+        )
+
+    db_user = crud.get_user_by_email(db, email)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
 
 
 @usersRouter.get("/{user_id}/sessions", response_model=list[schemas.Session])
@@ -442,10 +460,6 @@ def create_session(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    # if not check_user_level(current_user, models.UserType.TUTOR):
-    #    raise HTTPException(
-    #        status_code=401, detail="You do not have permission to create a session"
-    #    )
 
     rep = crud.create_session(db, current_user)
     rep.length = 0
@@ -616,22 +630,43 @@ def download_sessions_feedbacks(
     )
 
 
+async def send_websoket_add_to_session(session: schemas.Session, user_id: int):
+    if user_id in websocket_users_global:
+        for user_websocket in websocket_users_global[user_id]:
+            await user_websocket.send_text(
+                json.dumps(
+                    {
+                        "type": "session",
+                        "action": "create",
+                        "data": session.to_dict(),
+                    }
+                )
+            )
+
+
 @sessionsRouter.post(
     "/{session_id}/users/{user_id}", status_code=status.HTTP_201_CREATED
 )
 def add_user_to_session(
     session_id: int,
     user_id: int,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
-    # if not check_user_level(current_user, models.UserType.TUTOR):
-    #    raise HTTPException(
-    #        status_code=401,
-    #        detail="You do not have permission to add a user to a session",
-    #    )
-
     db_session = crud.get_session(db, session_id)
+
+    if (
+        db_session is not None
+        and current_user not in db_session.users
+        or db_session is None
+        and not check_user_level(current_user, models.UserType.TUTOR)
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a user to a session",
+        )
+
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
@@ -642,6 +677,12 @@ def add_user_to_session(
     db_session.users.append(db_user)
     db.commit()
     db.refresh(db_session)
+
+    background_tasks.add_task(
+        send_websoket_add_to_session,
+        schemas.Session.model_validate(db_session),
+        schemas.User.model_validate(db_user).id,
+    )
 
 
 @sessionsRouter.delete(
@@ -936,7 +977,7 @@ def propagate_presence(
     return
 
 
-@studyRouter.post("/", status_code=status.HTTP_201_CREATED)
+@studyRouter.post("", status_code=status.HTTP_201_CREATED)
 def study_create(
     study: schemas.StudyCreate,
     db: Session = Depends(get_db),
@@ -947,6 +988,177 @@ def study_create(
             status_code=401, detail="You do not have permission to create a study"
         )
     return crud.create_study(db, study).id
+
+
+@studyRouter.get("", response_model=list[schemas.Study])
+def studies_read(
+    db: Session = Depends(get_db),
+):
+    return crud.get_studies(db)
+
+
+@studyRouter.get("/{study_id}", response_model=schemas.Study)
+def study_read(
+    study_id: int,
+    db: Session = Depends(get_db),
+):
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+    return study
+
+
+@studyRouter.patch("/{study_id}", status_code=status.HTTP_204_NO_CONTENT)
+def study_update(
+    study_id: int,
+    studyUpdate: schemas.StudyCreate,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to update a study"
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    crud.update_study(db, studyUpdate, study_id)
+
+
+@studyRouter.delete("/{study_id}", status_code=status.HTTP_204_NO_CONTENT)
+def study_delete(
+    study_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401, detail="You do not have permission to delete a study"
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    crud.delete_study(db, study_id)
+
+
+@studyRouter.post("/{study_id}/users/{user_id}", status_code=status.HTTP_201_CREATED)
+def study_add_user(
+    study_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    user = crud.get_user(db, user_id)
+
+    if user != current_user and not check_user_level(
+        current_user, models.UserType.ADMIN
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a user to a study",
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user in study.users:
+        raise HTTPException(status_code=400, detail="User already exists in this study")
+
+    crud.add_user_to_study(db, study_id, user)
+
+
+@studyRouter.delete(
+    "/{study_id}/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+def study_delete_user(
+    study_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a user to a study",
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    user = crud.get_user(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user not in study.users:
+        raise HTTPException(status_code=400, detail="User does not exist in this study")
+
+    crud.remove_user_from_study(db, study_id, user)
+
+
+@studyRouter.post(
+    "/{study_id}/surveys/{survey_id}", status_code=status.HTTP_201_CREATED
+)
+def study_add_survey(
+    study_id: int,
+    survey_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a survey to a study",
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+    survey = crud.get_survey(db, survey_id)
+    if survey is None:
+        raise HTTPException(status_code=404, detail="Survey not found")
+    if survey in study.surveys:
+        raise HTTPException(
+            status_code=400, detail="Survey already exists in this study"
+        )
+
+    crud.add_survey_to_study(db, study_id, survey)
+
+
+@studyRouter.delete(
+    "/{study_id}/surveys/{survey_id}", status_code=status.HTTP_204_NO_CONTENT
+)
+def study_delete_survey(
+    study_id: int,
+    survey_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    if not check_user_level(current_user, models.UserType.ADMIN):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to add a survey to a study",
+        )
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+    survey = crud.get_survey(db, survey_id)
+    if survey is None:
+        raise HTTPException(status_code=404, detail="Survey not found")
+    if survey not in study.surveys:
+        raise HTTPException(
+            status_code=400, detail="Survey does not exist in this study"
+        )
+
+    crud.remove_survey_from_study(db, study_id, survey)
 
 
 @websocketRouter.websocket("/sessions/{session_id}")
@@ -994,6 +1206,45 @@ async def websocket_session(
                     await user_websocket.send_text(data)
     except:
         websocket_users[session_id][current_user.id].remove(websocket)
+        try:
+            await websocket.close()
+        except:
+            pass
+
+
+@websocketRouter.websocket("/global")
+async def websocket_session(
+    token: str, websocket: WebSocket, db: Session = Depends(get_db)
+):
+    try:
+        payload = jwt.decode(token, config.JWT_SECRET_KEY, algorithms=["HS256"])
+    except ExpiredSignatureError:
+        await websocket.close(code=1008, reason="Token expired")
+        return
+    except jwt.JWTError:
+        await websocket.close(code=1008, reason="Invalid token")
+        return
+
+    current_user = crud.get_user(db, user_id=payload["subject"]["uid"])
+    if current_user is None:
+        await websocket.close(code=1008, reason="Invalid user")
+        return
+
+    await websocket.accept()
+
+    websocket_users_global[current_user.id].add(websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            for user_id, user_websockets in websocket_users_global.items():
+                if user_id == current_user.id:
+                    continue
+
+                for user_websocket in user_websockets:
+                    await user_websocket.send_text(data)
+    except:
+        websocket_users_global[current_user.id].remove(websocket)
         try:
             await websocket.close()
         except:

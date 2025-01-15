@@ -14,6 +14,12 @@ export async function getUserAPI(fetch: fetchType, user_id: number): Promise<any
 	return await response.json();
 }
 
+export async function getUserByEmailAPI(fetch: fetchType, email: string) {
+	const response = await fetch(`/api/users/by-email/${email}`);
+	if (!response.ok) return null;
+	return await response.json();
+}
+
 export async function createUserContactAPI(
 	fetch: fetchType,
 	user_id: number,
@@ -21,7 +27,6 @@ export async function createUserContactAPI(
 ): Promise<any | null> {
 	const response = await fetch(`/api/users/${user_id}/contacts/${contact_id}`);
 	if (!response.ok) return null;
-
 	return await response.json();
 }
 

@@ -11,7 +11,8 @@
 		"availability": "Disponibilités",
 		"admin": {
 			"users": "Utilisateurs",
-			"sessions": "Sessions"
+			"sessions": "Sessions",
+			"studies": "Études"
 		}
 	},
 	"chatbox": {
@@ -47,7 +48,8 @@
 		"newFirstContact": "Ajouter un premier contact",
 		"actions": "Actions",
 		"date": "Date",
-		"participants": "Participants"
+		"participants": "Participants",
+		"sessionAdded": "Vous avez été ajouté à une session avec {users}"
 	},
 	"login": {
 		"email": "E-mail",
@@ -129,6 +131,7 @@
 		"humans": "Je ne suis pas un robot",
 		"signup": "S'inscrire",
 		"tab": {
+			"study": "Étude",
 			"consent": "Consentement",
 			"signup": "Inscription",
 			"information": "Informations",
@@ -219,7 +222,10 @@
 		"continueButton": "Continuer vers les tests",
 		"startFastButton": "Commencer directement à utiliser l'application",
 		"start": "Aut sint sint et nihil aut. Quia nihil eos rerum neque exercitationem molestiae. Aut ab accusantium consequatur rerum architecto voluptas. Repudiandae minima nemo vitae tempore. Molestiae rerum aliquid ut fugit eligendi. Alias dolorum quia voluptatum veniam harum aut qui et. Voluptatibus adipisci illo velit assumenda. Asperiores accusamus deserunt eveniet adipisci reprehenderit. Ducimus placeat sit reprehenderit ea eos quam. Ut facilis quia suscipit officiis odit unde temporibus error. Neque sapiente ut similique. Eius ut sapiente maxime dolor est voluptatem eum. Veniam aut sit quo. Quibusdam sed numquam et rem. Tempore eum id nobis sunt deleniti et non ducimus. Maiores perferendis non consequuntur neque nostrum. Odio itaque fugiat non. Laboriosam sint voluptatem aut placeat et perferendis. Sed quam voluptatem necessitatibus quia dolorum. Eius est nihil natus modi natus quisquam ut impedit. Tempore enim autem laboriosam sequi ipsum quo. <bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
-		"startButton": "Commencer"
+		"startButton": "Commencer",
+		"study": "Étude",
+		"study.note": "Nom de l'étude à laquelle vous participez",
+		"study.placeholder": "Nom de l'étude"
 	},
 	"timeslots": {
 		"cesttime": "Heure CET (Bruxelles)",
@@ -304,6 +310,32 @@
 		},
 		"availability": "Disponibilités"
 	},
+	"studies": {
+		"study": "Étude",
+		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
+		"startDate": "Date de début",
+		"endDate": "Date de fin",
+		"chatDuration": "Durée des sessions (en secondes)",
+		"updated": "Étude mise à jour avec succès",
+		"noChanges": "Aucune modification",
+		"updateError": "Erreur lors de la mise à jour de l'étude",
+		"create": "Créer une nouvelle étude",
+		"createMissing": "Veuillez remplir tous les champs",
+		"created": "Étude créée avec succès",
+		"createError": "Erreur lors de la création de l'étude",
+		"addUserButton": "Ajouter un participant",
+		"newUser": "Nouveau participant",
+		"addUserError": "Erreur lors de l'ajout du participant",
+		"removeUserConfirm": "Êtes-vous sûr de vouloir retirer ce participant de l'étude ?",
+		"removeUserSuccess": "Participant retiré de l'étude",
+		"removeUserError": "Erreur lors de la suppression du participant",
+		"invalidEmail": "Adresse e-mail invalide",
+		"userNotFound": "Utilisateur non trouvé",
+		"addUserError": "Erreur lors de l'ajout de l'utilisateur",
+		"addUserSuccess": "Utilisateur ajouté à l'étude",
+		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
+		"createTitle": "Créer une nouvelle étude"
+	},
 	"button": {
 		"create": "Créer",
 		"submit": "Envoyer",
@@ -317,7 +349,10 @@
 		"close": "Fermer",
 		"tryit": "Essayer",
 		"update": "Mettre à jour",
-		"updated": "Mis à jour !"
+		"updated": "Mis à jour !",
+		"delete": "Supprimer",
+		"remove": "Retirer",
+		"continue": "Continuer"
 	},
 	"utils": {
 		"month": {
@@ -392,7 +427,11 @@
 			"programed": "Programmée",
 			"inProgress": "En cours",
 			"finished": "Terminée",
-			"topics": "Topics"
+			"topics": "Topics",
+			"title": "Titre",
+			"users": "Utilisateurs",
+			"description": "Description",
+			"email": "E-mail"
 		}
 	},
 	"inputs": {

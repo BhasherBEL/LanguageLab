@@ -1,11 +1,14 @@
+import { addUserToStudyAPI } from '$lib/api/studies';
 import { patchUserAPI } from '$lib/api/users';
 import { formatToUTCDate } from '$lib/utils/date';
 import { validateEmail, validatePassword, validateUsername } from '$lib/utils/security';
 import { redirect, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
-	register: async ({ request, fetch }) => {
+	register: async ({ request, fetch, params }) => {
 		const formData = await request.formData();
+		const studyId = params.studyId;
+		if (!studyId) return { message: 'Invalid request' };
 
 		const email = formData.get('email');
 		const nickname = formData.get('nickname');
@@ -47,7 +50,7 @@ export const actions: Actions = {
 		if (response.status === 422) return { message: 'Invalid request' };
 		if (!response.ok) return { message: 'Unknown error occurred' };
 
-		return redirect(303, '/register');
+		return redirect(303, `/register/${studyId}`);
 	},
 	data: async ({ request, fetch, locals }) => {
 		if (!locals.user) {
@@ -60,8 +63,9 @@ export const actions: Actions = {
 		const targetLanguage = formData.get('targetLanguage');
 		const birthyear = formData.get('birthyear');
 		const gender = formData.get('gender');
+		const study = formData.get('study');
 
-		if (!homeLanguage || !targetLanguage || !birthyear || !gender) {
+		if (!homeLanguage || !targetLanguage || !birthyear || !gender || !study) {
 			return { message: 'Invalid request' };
 		}
 
@@ -72,13 +76,23 @@ export const actions: Actions = {
 			return { message: 'Invalid request' };
 		}
 
-		const response = await patchUserAPI(fetch, locals.user.id, {
+		let studyId;
+		try {
+			studyId = parseInt(study.toString());
+		} catch (e) {
+			return { message: 'Invalid request' };
+		}
+
+		let response = await patchUserAPI(fetch, locals.user.id, {
 			home_language: homeLanguage,
 			target_language: targetLanguage,
 			gender,
 			birthdate
 		});
 		if (!response) return { message: 'Unknown error occurred' };
+
+		response = await addUserToStudyAPI(fetch, studyId, locals.user.id);
+		if (!response) return { message: 'Failed to add user to study' };
 
 		redirect(303, '/register');
 	}

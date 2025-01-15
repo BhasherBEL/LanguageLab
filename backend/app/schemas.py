@@ -28,11 +28,24 @@ class User(BaseModel):
     birthdate: NaiveDatetime | None
     gender: str | None = None
     calcom_link: str | None
-    study_id: int | None = None
     last_survey: NaiveDatetime | None = None
 
     class Config:
         from_attributes = True
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "nickname": self.nickname,
+            "type": self.type,
+            "availability": self.availability,
+            "is_active": self.is_active,
+            "ui_language": self.ui_language,
+            "home_language": self.home_language,
+            "target_language": self.target_language,
+            "birthdate": self.birthdate.isoformat() if self.birthdate else None,
+        }
 
 
 class UserCreate(BaseModel):
@@ -48,7 +61,6 @@ class UserCreate(BaseModel):
     birthdate: NaiveDatetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
-    study_id: int | None = None
     last_survey: NaiveDatetime | None = None
 
 
@@ -65,7 +77,6 @@ class UserUpdate(BaseModel):
     birthdate: NaiveDatetime | None = None
     gender: str | None = None
     calcom_link: str | None = None
-    study_id: int | None = None
     last_survey: NaiveDatetime | None = None
 
     class Config:
@@ -98,6 +109,18 @@ class Session(BaseModel):
 
     class Config:
         from_attributes = True
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "created_at": self.created_at.isoformat(),
+            "is_active": self.is_active,
+            "users": [user.to_dict() for user in self.users],
+            "start_time": self.start_time.isoformat(),
+            "end_time": self.end_time.isoformat(),
+            "language": self.language,
+            "length": self.length,
+        }
 
 
 class SessionUpdate(BaseModel):
@@ -328,6 +351,8 @@ class Study(BaseModel):
     start_date: NaiveDatetime
     end_date: NaiveDatetime
     chat_duration: int
+    users: list[User]
+    surveys: list[Survey]
 
 
 class StudyCreate(BaseModel):
