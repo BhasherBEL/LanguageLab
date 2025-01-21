@@ -167,7 +167,7 @@
 		"complete": "Thank you for participating!",
 		"score": "Score: ",
 		"code": "Your code:",
-		"codeIndication": "The instructor should have given you a personal code. If not, please write your email address.",
+		"codeIndication": "The instructor should have given you a personal code.<br>If not, please write your email address.",
 		"invalidCode": "Invalid code",
 		"birthYear": "The year you were born",
 		"gender": "What gender do you identify as?",
@@ -199,7 +199,7 @@
 			"privacyD": "The data collected (your answers to the various questions) will be treated confidentially and anonymously. \nThey will be kept after their complete anonymization and can only be used for scientific or educational purposes. \nThey may possibly be shared with other researchers or teachers, but always within this strictly research or teaching framework.",
 			"rights": "What are your rights? \nVoluntary participation and possible withdrawal",
 			"rightsD": "Your participation in this study is voluntary. \nYou can decide to no longer participate in the study at any time without having to give a reason. \nYou can also request that your data be deleted at any time. \nIf you have any questions or concerns regarding this study, you can contact the study leader, Serge Bibauw, at the following address:",
-			"title": "Information document and informed consent"
+			"title": "Study information and informed consent"
 		},
 		"introduction": "This is a questionnaire.",
 		"invalidEmail": "Invalid email address",
