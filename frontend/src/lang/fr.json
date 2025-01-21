@@ -249,10 +249,10 @@
 		"complete": "Merci pour votre participation !",
 		"score": "Score : ",
 		"code": "Votre code :",
-		"codeIndication": "L'instructeur devrait vous avoir donné un code personnel. Si ce n'est pas le cas, veuillez indiquer votre adresse électronique.",
+		"codeIndication": "L'instructeur devrait vous avoir donné un code personnel.<br>Sinon, indiquez votre adresse e-mail.",
 		"invalidCode": "Code invalide",
 		"consent": {
-			"title": "Document d’information et consentement éclairé",
+			"title": "Informations sur l'étude et consentement éclairé",
 			"intro": "Vous êtes invité·e à participer à une étude scientifique pour concevoir, valider et appliquer des tests de vocabulaire.",
 			"participation": "Qu'implique votre participation ?",
 			"participationD": "Si vous acceptez de participer, vous devrez seulement répondre à ce questionnaire et éventuellement à un autre test, si indiqué par la personne qui administre le test.",
