@@ -1,426 +1,426 @@
 {
-  "admin": {
-    "actions": "Acciones",
-    "passwordPrompt": "Ingrese la contraseña. \nTenga en cuenta que ya no será recuperable."
-  },
-  "button": {
-    "cancel": "Cancelar",
-    "close": "Cerca",
-    "continue": "Continuar",
-    "create": "Crear",
-    "delete": "Borrar",
-    "login": "Acceso",
-    "next": "Siguiente",
-    "remove": "Retirar",
-    "save": "Para salvaguardar",
-    "sent": "Enviado!",
-    "start": "Para empezar",
-    "submit": "Enviar",
-    "thank-you": "¡Gracias!",
-    "tryit": "Para probar",
-    "update": "Para actualizar",
-    "updated": "¡Actualizado!"
-  },
-  "chatbox": {
-    "deleteFeedback": "¿Estás seguro de que quieres eliminar estos comentarios? \nEsta acción es irreversible.",
-    "disabled": "Esta sesión sólo es visible para la memoria.",
-    "edited": "enmendado",
-    "history": "Histórico",
-    "placeholder": "Escribe tu mensaje aquí...",
-    "replyingTo": "En respuesta a:",
-    "sendError": "Error al enviar mensaje"
-  },
-  "header": {
-    "admin": {
-      "sessions": "Sesiones",
-      "studies": "Estudios",
-      "users": "Usuarios"
-    },
-    "appName": "Laboratorio de Idiomas",
-    "availability": "Disponibilidad",
-    "connectedAs": "Conectado como",
-    "language": "Idioma",
-    "metadataWarning": "Complete el formulario de registro antes de usar la solicitud.",
-    "register": "Registro",
-    "signin": "Conectar",
-    "signout": "Finalizar la sesión",
-    "tutorSelection": "Tutor"
-  },
-  "home": {
-    "actions": "Acciones",
-    "add": "Agregar",
-    "bookSession": "Reserva una sesión",
-    "bookingFailed": "Error al reservar la sesión",
-    "bookingSuccessful": "Sesión exitosa",
-    "confirm": "Confirmar",
-    "createSession": "Sesión inmediata",
-    "currentSessions": "Sesiones actuales",
-    "date": "Fecha",
-    "deleteSessionConfirm": "¿Estás seguro de que quieres eliminar esta sesión? \nEsta acción es irreversible.",
-    "email": "Correo electrónico",
-    "learningLanguage": "Lengua de llegada",
-    "newContact": "Agregar contacto",
-    "newFirstContact": "Añadir un primer contacto",
-    "nickname": "Nombre",
-    "noContact": "Agregar contacto para comenzar",
-    "noCurrentOrFutureSessions": "Sin sesión en progreso o planeado",
-    "noSessions": "Sin sesión",
-    "participantPlaceholder": "Elegir",
-    "participants": "Participantes",
-    "pastSessions": "Sesiones completadas",
-    "plannedSessions": "Sesiones programadas",
-    "remainingDuration": "Tiempo restante",
-    "sessionAdded": "Te han agregado a una sesión con {usuarios}",
-    "sessionEnded": "Finalizado"
-  },
-  "inputs": {
-    "range": {
-      "1": "De ninguna manera",
-      "2": "Un poco",
-      "3": "Moderadamente",
-      "4": "Mucho",
-      "5": "Enormemente"
-    }
-  },
-  "login": {
-    "email": "Correo electrónico",
-    "login": "Acceso",
-    "noAccountLink": "Regístrate aquí"
-  },
-  "register": {
-    "confirmPassword": "Confirmar Contraseña",
-    "confirmTutor": "¿Confirmas haber seleccionado “{NAME}” como tu tutor?",
-    "consent": {
-      "intro": "Estás invitado a participar en un estudio científico. \nEl objetivo de este estudio es comprender cómo interactúan los tutores y los estudiantes de lenguas extranjeras durante las sesiones de tutoría en línea. \nLos datos recopilados se utilizarán para mejorar las herramientas de tutoría en línea y comprender mejor los procesos cognitivos en ambos lados.",
-      "ok": "Acepto participar en el estudio como se describe anteriormente.",
-      "participation": "¿Qué implica tu participación?",
-      "participationD": "Si acepta participar, se le invitará a participar en sesiones de tutoriales en línea con un tutor de idiomas extranjeros. \nTambién se le invitará a cumplir cuestionarios antes y después de las sesiones de tutoría. \nLas sesiones tutoriales se registrarán para el análisis posterior. Período de 1 a 3 meses. \nPor supuesto, puede darse cuenta más si lo desea. \nSin embargo, puede dejar de participar en el estudio en cualquier momento.",
-      "privacy": "¿Cómo se procesarán y mantener sus datos?",
-      "privacyD": "Los datos recopilados (por ejemplo, transcripciones de conversaciones, resultados de pruebas, medidas sorprendentes, información sobre participantes como la edad o el género) se procesarán de manera confidencial y anónima. \nSe mantendrán después de su anonimización completa y solo se pueden usar con fines científicos o educativos. \nPosiblemente puedan compartirse con otros investigadores o maestros, pero siempre en este marco estrictamente de investigación o enseñanza.",
-      "rights": "¿Cuáles son sus derechos? \nParticipación voluntaria y posible retiro",
-      "rightsD": "Su participación en este estudio es voluntaria. \nPuede decidir no participar en el estudio en ningún momento sin tener que justificarse. \nTambién puede solicitar que sus datos se eliminen en cualquier momento. \nSi tiene alguna pregunta o inquietud sobre este estudio, puede comunicarse con el gerente de estudio, Serge Bibauw, en la siguiente dirección:",
-      "studyData": {
-        "address": "Dirección",
-        "addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve (Bélgica)",
-        "email": "Correo electrónico",
-        "emailD": "serge.bibauw@uclouvain.be",
-        "person": "Responsable del estudio",
-        "personD": "Serge Bibauw",
-        "project": "Proyecto de investigación",
-        "projectD": "Tutoría de IA en el aprendizaje de idiomas (FNRS CDR 2024-2026)",
-        "study": "Título del estudio",
-        "studyD": "Estudio longitudinal de la tutoría de lenguas extranjeras.",
-        "title": "Información del estudio",
-        "university": "Universidad",
-        "universityD": "Universidad católica de Lovaina (UCLouvain)"
-      },
-      "title": "Información informada y documento de consentimiento"
-    },
-    "consentTutor": {
-      "intro": "Está invitado a participar en un estudio científico. \nEl objetivo de este estudio es comprender cómo interactúan los tutores y estudiantes de idiomas extranjeros durante las sesiones de tutoría en línea. \nLos datos recopilados se utilizarán para mejorar las herramientas de tutoría en línea y para comprender mejor los procesos cognitivos en ambos lados.",
-      "ok": "Estoy de acuerdo en participar en el estudio como se describió anteriormente.",
-      "participation": "¿Qué implica su participación?",
-      "participationD": "Si acepta participar, se le invitará a participar en sesiones de tutoría en línea con un tutor de lengua extranjera. \nTambién se le pedirá que complete cuestionarios antes y después de las sesiones de tutoría. \nLas sesiones de tutoría se grabarán para su posterior análisis.</p><p>Le pedimos que planee completar un mínimo de <strong>8 sesiones de una hora</strong> de tutoría (es decir, 8 horas en total), durante un periodo de 1 a 3 meses. \nPor supuesto, puedes hacer más si lo deseas. \nSin embargo, puede dejar de participar en el estudio en cualquier momento.",
-      "privacy": "¿Cómo se procesarán y almacenarán sus datos?",
-      "privacyD": "Los datos recopilados (por ejemplo, transcripciones de conversaciones, resultados de pruebas, métricas de mecanografía, información de los participantes, como edad o sexo) se tratarán de forma confidencial y anónima. \nSe conservarán tras su completa anonimización y sólo podrán utilizarse con fines científicos o educativos. \nPosiblemente podrán ser compartidos con otros investigadores o docentes, pero siempre dentro de este marco estrictamente investigador o docente.",
-      "rights": "¿Cuáles son sus derechos? \nParticipación voluntaria y posible retiro",
-      "rightsD": "Su participación en este estudio es voluntaria. \nPuede decidir no participar en el estudio en ningún momento sin tener que justificarse. \nTambién puede solicitar que sus datos se eliminen en cualquier momento. \nSi tiene alguna pregunta o inquietud sobre este estudio, puede comunicarse con el gerente de estudio, Serge Bibauw, en la siguiente dirección:",
-      "studyData": {
-        "address": "Dirección",
-        "addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve (Bélgica)",
-        "email": "Correo electrónico",
-        "emailD": "serge.bibauw@uclouvain.be",
-        "person": "Responsable de estudio",
-        "personD": "Serge Bibauw",
-        "project": "Proyecto de investigación",
-        "projectD": "Tutoría de IA en el aprendizaje de idiomas (FNRS CDR 2024-2026)",
-        "study": "Título de estudio",
-        "studyD": "Estudio longitudinal de la tutoría de lenguas extranjeras.",
-        "title": "Información sobre el estudio",
-        "university": "Universidad",
-        "universityD": "Universidad católica de Lovaina (UCLouvain)"
-      },
-      "title": "Documento informativo y consentimiento informado"
-    },
-    "email": {
-      "ph": "",
-      "note": ""
-    },
-    "error": {
-      "differentPasswords": "Las contraseñas no coinciden",
-      "emailRules": "Por favor, introduce una dirección de correo electrónico válida",
-      "emptyFields": "Por favor llene todos los campos",
-      "humanity": "Por favor confirma que no eres un robot.",
-      "metadata": "Verifique que haya llenado correctamente todos los campos"
-    },
-    "genders": {
-      "female": "una mujer",
-      "male": "un hombre",
-      "na": "Prefiero no responder",
-      "other": "Otro"
-    },
-    "homeLanguage": "primer idioma",
-    "tab": {
-      "consent": "Consentir",
-      "continue": "Continuar",
-      "information": "Información",
-      "signup": "Registro",
-      "start": "Para empezar"
-    },
-    "welcome": "¡Bienvenido a Languagelab! \nAntes de comenzar, complete la siguiente información. \nEsto nos permitirá conocerlo mejor y adaptar la experiencia a sus necesidades.",
-    "continue": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
-    "continueButton": "continuar con las pruebas",
-    "signup": "Registro",
-    "start": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nAlias ​​dolorum quia voluptatum veniam harum auth y. \nVoluptatibus adipisci Ilo Velt Asumenda. \nAsperiores acumus deserunt desarrollo adipisci reprehenderit. \nDucimus Placat Sit Reverseit Ea Eos Quam. \nUT Facilis Quia Dégitiis Odit Unde temporibus Error. \nNeque Sapiente Ut similar. \nEius Ut Sapiente Maxime Dolor es Voluptatem Eum. \nVeniam Aut Quo. \nQuibusdam sed numquam y rem. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
-    "startButton": "Para empezar",
-    "startFastButton": "Comience a usar la aplicación directamente",
-    "study": "Estudiar"
-  },
-  "session": {
-    "downloadAllFeedbacks": "Descargar todos los comentarios",
-    "downloadAllMessages": "Descargar todas las conversaciones",
-    "downloadAllMetadata": "Descargar todos los metadatos",
-    "errors": {
-      "addUser": "Error al agregar un usuario a la sesión",
-      "create": "Error al crear la sesión",
-      "delete": "Error al eliminar la sesión",
-      "presence": "Error al enviar asistencia",
-      "removeUser": "Error al eliminar un usuario de la sesión",
-      "typing": "Error al enviar el indicador de entrada"
-    },
-    "feedbackInline": "Se agregó retroalimentación a",
-    "modal": {
-      "satisfy": {
-        "q1": "¿Qué tan útil es esta aplicación?",
-        "q2": "¿Qué tan fácil es usar esta aplicación?",
-        "q3": "Posibles comentarios",
-        "success": "Sus respuestas han sido grabadas. \n¡Gracias por tu participación!",
-        "title": "Cuestionario de satisfacción"
-      },
-      "weekly": {
-        "answers": {
-          "0": "Ninguno",
-          "1": "1 hora",
-          "2": "2 horas",
-          "3": "3 horas",
-          "4": "4 horas",
-          "5": "5 horas",
-          "6": "6 horas",
-          "7": "7 horas",
-          "8": "8 horas",
-          "9": "9 horas",
-          "10": "10 horas o más",
-          "05": "30 minutos o menos",
-          "placeholder": ""
-        },
-        "description": "Durante los últimos 7 días...",
-        "errors": {
-          "null": "Responda todas las preguntas",
-          "submit": "Error al enviar el cuestionario",
-          "toggle": "Error al activar o desactivar sesión"
-        },
-        "questions[0]": "¿Cuántas horas de <b> curso </b> {lang} has seguido?",
-        "questions[1]": "¿Cuántas horas ha visto videos </b> en {lang} (películas, series, youtube ...) o <b> escuchado contenido </b> en {lang} (podcasts, radio radio, cursos universitarios ... .)?",
-        "questions[2]": "¿Cuántas horas has <b>leído textos</b> en {lang} (libros, periódicos, cómics, sitios web, etc.)?",
-        "questions[3]": "¿Cuántas horas has <b>hablado</b> en {lang} (discusiones con amigos, familiares, colegas, etc.)?",
-        "success": "Cuestionario enviado, ¡gracias!",
-        "title": "Cuestionario semanal"
-      }
-    },
-    "noTopic": "No hay temas disponibles"
-  },
-  "signup": {
-    "signup": "",
-    "title": "",
-    "confirmPassword": "",
-    "email": "",
-    "language": ""
-  },
-  "studies": {
-    "addUserButton": "Agregar un participante",
-    "addUserError": "Error al agregar usuario",
-    "addUserSuccess": "Usuario agregado al estudio",
-    "chatDuration": "Duración de la sesión (en segundos)",
-    "create": "Crear un nuevo estudio",
-    "createError": "Error al crear el estudio",
-    "createMissing": "Por favor llene todos los campos",
-    "createTitle": "Crear un nuevo estudio",
-    "created": "Estudio creado exitosamente",
-    "deleteConfirm": "¿Estás seguro de que quieres eliminar este estudio? \nEsta acción es irreversible.",
-    "endDate": "Fecha de finalización",
-    "invalidEmail": "Dirección de correo electrónico no válida",
-    "newUser": "Nuevo participante",
-    "noChanges": "Sin modificación",
-    "removeUserConfirm": "¿Estás seguro de que quieres retirar a este participante del estudio?",
-    "removeUserError": "Error cuando se elimina el participante",
-    "removeUserSuccess": "Participante retirado del estudio",
-    "startDate": "Fecha de inicio",
-    "study": "Estudiar",
-    "updateError": "Error al actualizar el estudio",
-    "updated": "Estudio de actualización exitoso",
-    "userNotFound": "Usuario no encontrado"
-  },
-  "surveys": {
-    "birthYear": "¿Cuál es tu año de nacimiento?",
-    "code": "Tu código:",
-    "codeIndication": "El instructor debería haberle dado un código personal.<br>Si no, proporcione su dirección de correo electrónico.",
-    "complete": "¡Gracias por tu participación!",
-    "consent": {
-      "intro": "Te invitamos a participar en un estudio científico para diseñar, validar y aplicar pruebas de vocabulario.",
-      "ok": "Acepto participar en el estudio como se describe anteriormente.",
-      "participation": "¿Qué implica su participación?",
-      "participationD": "Si acepta participar, solo necesitará completar este cuestionario y posiblemente otra prueba, si así lo indica la persona que administra la prueba.",
-      "privacy": "¿Cómo se procesarán y mantener sus datos?",
-      "privacyD": "Los datos recopilados (sus respuestas a las diversas preguntas) se procesarán de manera confidencial y anónima. \nSe mantendrán después de su anonimización completa y solo se pueden usar con fines científicos o educativos. \nPosiblemente puedan compartirse con otros investigadores o maestros, pero siempre en este marco estrictamente de investigación o enseñanza.",
-      "rights": "¿Cuales son tus derechos? \nParticipación voluntaria y posible retiro",
-      "rightsD": "Su participación en este estudio es voluntaria. \nPuede decidir no participar más en el estudio en cualquier momento sin tener que dar ningún motivo. \nTambién puedes solicitar que tus datos sean eliminados en cualquier momento. \nSi tiene alguna pregunta o inquietud sobre este estudio, puede comunicarse con el líder del estudio, Serge Bibauw, en la siguiente dirección:",
-      "title": "Información informada de estudio y consentimiento"
-    },
-    "education": {
-      "Bachelor": "Bachiller",
-      "Master": "Maestría o superior",
-      "NoEducation": "Ninguno",
-      "NonUni": "Superior no académico",
-      "PrimarySchool": "Escuela primaria",
-      "SecondarySchool": "Escuela secundaria",
-      "title": "¿Cuál es el título, diploma o nivel educativo más alto que ha obtenido?"
-    },
-    "example": "Ejemplo",
-    "gender": "¿Con qué género te identificas?",
-    "genders": {
-      "female": "una mujer",
-      "male": "un hombre",
-      "na": "prefiero no contestar",
-      "other": "Otro"
-    },
-    "homeLanguage": "Primer idioma",
-    "introduction": "Este es un cuestionario.",
-    "invalidCode": "Código no válido",
-    "invalidEmail": "Dirección de correo electrónico invalidio",
-    "loginEmail": "Utilice una dirección de correo electrónico",
-    "loginUser": "Iniciar sesión a través de una cuenta de usuario",
-    "loginWarning": "Para recordar su progreso, debe estar autenticado para acceder a este cuestionario. \nSi tiene una cuenta de usuario, inicie sesión. \nDe lo contrario, puede <a class=\"link\" href=\"/register\">registrarse</a> o continuar con una dirección de correo electrónico.",
-    "otherLanguage": "¿Hay algún otro idioma que domines relativamente?",
-    "otherLanguageNote": "(Si tiene fluidez en varios otros idiomas, más allá de su idioma de destino y su primer idioma, seleccione el más cercano a su idioma de destino o eso parece ayudarlo más en aprender su idioma de destino).",
-    "score": "Puntaje :"
-  },
-  "tests": {
-    "sendResults": "Enviar",
-    "sendResultsDone": "Enviado"
-  },
-  "timeslots": {
-    "availabilities": "Selecciona tu disponibilidad para filtrar los profesores disponibles",
-    "availableTutors": "Tutores disponibles",
-    "calcom": "Enlace a la reserva de calendario",
-    "calcomWarning": "CAL.com Enlace Invalidio",
-    "cesttime": "CE Hour (Bruselas)",
-    "noTutors": "No hay tutor disponible. \nPor favor seleccione otras disponibilidades.",
-    "setAvailabilities": "Selecciona tu disponibilidad"
-  },
-  "users": {
-    "actions": "Comportamiento",
-    "availability": "Disponibilidad",
-    "category": "Categoría",
-    "email": "Correo electrónico",
-    "gender": "Género",
-    "genders": {
-      "female": "Mujer",
-      "male": "Hombre",
-      "na": "prefiero no contestar",
-      "other": "Otro"
-    },
-    "isActive": "Activo",
-    "nickname": "Nombre",
-    "type": {
-      "0": "Administración",
-      "1": "Tutor",
-      "2": "Aprendiz",
-      "admin": "Administración",
-      "admins": "Administrador(es)",
-      "student": "Aprendiz",
-      "students": "Aprendices",
-      "tutor": "Tutor",
-      "tutors": "Tutor(es)"
-    }
-  },
-  "utils": {
-    "bool": {
-      "false": "No",
-      "true": "Sí"
-    },
-    "days": {
-      "0": "lunes",
-      "1": "martes",
-      "2": "miércoles",
-      "3": "jueves",
-      "4": "viernes",
-      "5": "sábado",
-      "6": "domingo",
-      "monday": "lunes",
-      "friday": "viernes",
-      "saturday": "sábado",
-      "sunday": "domingo",
-      "thursday": "jueves",
-      "tuesday": "martes",
-      "wednesday": "miércoles"
-    },
-    "language": {
-      "en": "Inglés",
-      "eng": "Inglés",
-      "fr": "Francés",
-      "fra": "Francés"
-    },
-    "month": {
-      "april": "abril",
-      "august": "agosto",
-      "december": "diciembre",
-      "february": "febrero",
-      "january": "enero",
-      "july": "julio",
-      "june": "junio",
-      "march": "marzo",
-      "may": "mayo",
-      "november": "noviembre",
-      "october": "octubre",
-      "september": "septiembre"
-    },
-    "past": {
-      "day": "Hay {n, plural, one {",
-      "hour": "Hay {n, plural, one {",
-      "justNow": "Hace menos de una hora",
-      "month": "Hay {n, plural, one {",
-      "today": "Hoy",
-      "year": "Hay {n, plural, one {",
-      "yesterday": "Ayer"
-    },
-    "shortMonth": {
-      "april": "abr.",
-      "august": "ago.",
-      "december": "dic.",
-      "february": "feb.",
-      "january": "ene.",
-      "july": "jul.",
-      "june": "jun.",
-      "march": "mar.",
-      "may": "may.",
-      "november": "nov.",
-      "october": "oct.",
-      "september": "sep."
-    },
-    "words": {
-      "actions": "Comportamiento",
-      "date": "Fecha",
-      "description": "Descripción",
-      "email": "Correo electrónico",
-      "finished": "Terminado",
-      "inProgress": "En curso",
-      "messages": "Mensajes",
-      "participants": "Participantes",
-      "programed": "Programado",
-      "status": "Estado",
-      "title": "Título",
-      "topics": "Temas",
-      "users": "Usuarios"
-    }
-  }
+	"admin": {
+		"actions": "Acciones",
+		"passwordPrompt": "Ingrese la contraseña. \nTenga en cuenta que ya no será recuperable."
+	},
+	"button": {
+		"cancel": "Cancelar",
+		"close": "Cerca",
+		"continue": "Continuar",
+		"create": "Crear",
+		"delete": "Borrar",
+		"login": "Acceso",
+		"next": "Siguiente",
+		"remove": "Retirar",
+		"save": "Para salvaguardar",
+		"sent": "Enviado!",
+		"start": "Para empezar",
+		"submit": "Enviar",
+		"thank-you": "¡Gracias!",
+		"tryit": "Para probar",
+		"update": "Para actualizar",
+		"updated": "¡Actualizado!"
+	},
+	"chatbox": {
+		"deleteFeedback": "¿Estás seguro de que quieres eliminar estos comentarios? \nEsta acción es irreversible.",
+		"disabled": "Esta sesión sólo es visible para la memoria.",
+		"edited": "enmendado",
+		"history": "Histórico",
+		"placeholder": "Escribe tu mensaje aquí...",
+		"replyingTo": "En respuesta a:",
+		"sendError": "Error al enviar mensaje"
+	},
+	"header": {
+		"admin": {
+			"sessions": "Sesiones",
+			"studies": "Estudios",
+			"users": "Usuarios"
+		},
+		"appName": "Laboratorio de Idiomas",
+		"availability": "Disponibilidad",
+		"connectedAs": "Conectado como",
+		"language": "Idioma",
+		"metadataWarning": "Complete el formulario de registro antes de usar la solicitud.",
+		"register": "Registro",
+		"signin": "Conectar",
+		"signout": "Finalizar la sesión",
+		"tutorSelection": "Tutor"
+	},
+	"home": {
+		"actions": "Acciones",
+		"add": "Agregar",
+		"bookSession": "Reserva una sesión",
+		"bookingFailed": "Error al reservar la sesión",
+		"bookingSuccessful": "Sesión exitosa",
+		"confirm": "Confirmar",
+		"createSession": "Sesión inmediata",
+		"currentSessions": "Sesiones actuales",
+		"date": "Fecha",
+		"deleteSessionConfirm": "¿Estás seguro de que quieres eliminar esta sesión? \nEsta acción es irreversible.",
+		"email": "Correo electrónico",
+		"learningLanguage": "Lengua de llegada",
+		"newContact": "Agregar contacto",
+		"newFirstContact": "Añadir un primer contacto",
+		"nickname": "Nombre",
+		"noContact": "Agregar contacto para comenzar",
+		"noCurrentOrFutureSessions": "Sin sesión en progreso o planeado",
+		"noSessions": "Sin sesión",
+		"participantPlaceholder": "Elegir",
+		"participants": "Participantes",
+		"pastSessions": "Sesiones completadas",
+		"plannedSessions": "Sesiones programadas",
+		"remainingDuration": "Tiempo restante",
+		"sessionAdded": "Te han agregado a una sesión con {usuarios}",
+		"sessionEnded": "Finalizado"
+	},
+	"inputs": {
+		"range": {
+			"1": "De ninguna manera",
+			"2": "Un poco",
+			"3": "Moderadamente",
+			"4": "Mucho",
+			"5": "Enormemente"
+		}
+	},
+	"login": {
+		"email": "Correo electrónico",
+		"login": "Acceso",
+		"noAccountLink": "Regístrate aquí"
+	},
+	"register": {
+		"confirmPassword": "Confirmar Contraseña",
+		"confirmTutor": "¿Confirmas haber seleccionado “{NAME}” como tu tutor?",
+		"consent": {
+			"intro": "Estás invitado a participar en un estudio científico. \nEl objetivo de este estudio es comprender cómo interactúan los tutores y los estudiantes de lenguas extranjeras durante las sesiones de tutoría en línea. \nLos datos recopilados se utilizarán para mejorar las herramientas de tutoría en línea y comprender mejor los procesos cognitivos en ambos lados.",
+			"ok": "Acepto participar en el estudio como se describe anteriormente.",
+			"participation": "¿Qué implica tu participación?",
+			"participationD": "Si acepta participar, se le invitará a participar en sesiones de tutoriales en línea con un tutor de idiomas extranjeros. \nTambién se le invitará a cumplir cuestionarios antes y después de las sesiones de tutoría. \nLas sesiones tutoriales se registrarán para el análisis posterior. Período de 1 a 3 meses. \nPor supuesto, puede darse cuenta más si lo desea. \nSin embargo, puede dejar de participar en el estudio en cualquier momento.",
+			"privacy": "¿Cómo se procesarán y mantener sus datos?",
+			"privacyD": "Los datos recopilados (por ejemplo, transcripciones de conversaciones, resultados de pruebas, medidas sorprendentes, información sobre participantes como la edad o el género) se procesarán de manera confidencial y anónima. \nSe mantendrán después de su anonimización completa y solo se pueden usar con fines científicos o educativos. \nPosiblemente puedan compartirse con otros investigadores o maestros, pero siempre en este marco estrictamente de investigación o enseñanza.",
+			"rights": "¿Cuáles son sus derechos? \nParticipación voluntaria y posible retiro",
+			"rightsD": "Su participación en este estudio es voluntaria. \nPuede decidir no participar en el estudio en ningún momento sin tener que justificarse. \nTambién puede solicitar que sus datos se eliminen en cualquier momento. \nSi tiene alguna pregunta o inquietud sobre este estudio, puede comunicarse con el gerente de estudio, Serge Bibauw, en la siguiente dirección:",
+			"studyData": {
+				"address": "Dirección",
+				"addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve (Bélgica)",
+				"email": "Correo electrónico",
+				"emailD": "serge.bibauw@uclouvain.be",
+				"person": "Responsable del estudio",
+				"personD": "Serge Bibauw",
+				"project": "Proyecto de investigación",
+				"projectD": "Tutoría de IA en el aprendizaje de idiomas (FNRS CDR 2024-2026)",
+				"study": "Título del estudio",
+				"studyD": "Estudio longitudinal de la tutoría de lenguas extranjeras.",
+				"title": "Información del estudio",
+				"university": "Universidad",
+				"universityD": "Universidad católica de Lovaina (UCLouvain)"
+			},
+			"title": "Información informada y documento de consentimiento"
+		},
+		"consentTutor": {
+			"intro": "Está invitado a participar en un estudio científico. \nEl objetivo de este estudio es comprender cómo interactúan los tutores y estudiantes de idiomas extranjeros durante las sesiones de tutoría en línea. \nLos datos recopilados se utilizarán para mejorar las herramientas de tutoría en línea y para comprender mejor los procesos cognitivos en ambos lados.",
+			"ok": "Estoy de acuerdo en participar en el estudio como se describió anteriormente.",
+			"participation": "¿Qué implica su participación?",
+			"participationD": "Si acepta participar, se le invitará a participar en sesiones de tutoría en línea con un tutor de lengua extranjera. \nTambién se le pedirá que complete cuestionarios antes y después de las sesiones de tutoría. \nLas sesiones de tutoría se grabarán para su posterior análisis.</p><p>Le pedimos que planee completar un mínimo de <strong>8 sesiones de una hora</strong> de tutoría (es decir, 8 horas en total), durante un periodo de 1 a 3 meses. \nPor supuesto, puedes hacer más si lo deseas. \nSin embargo, puede dejar de participar en el estudio en cualquier momento.",
+			"privacy": "¿Cómo se procesarán y almacenarán sus datos?",
+			"privacyD": "Los datos recopilados (por ejemplo, transcripciones de conversaciones, resultados de pruebas, métricas de mecanografía, información de los participantes, como edad o sexo) se tratarán de forma confidencial y anónima. \nSe conservarán tras su completa anonimización y sólo podrán utilizarse con fines científicos o educativos. \nPosiblemente podrán ser compartidos con otros investigadores o docentes, pero siempre dentro de este marco estrictamente investigador o docente.",
+			"rights": "¿Cuáles son sus derechos? \nParticipación voluntaria y posible retiro",
+			"rightsD": "Su participación en este estudio es voluntaria. \nPuede decidir no participar en el estudio en ningún momento sin tener que justificarse. \nTambién puede solicitar que sus datos se eliminen en cualquier momento. \nSi tiene alguna pregunta o inquietud sobre este estudio, puede comunicarse con el gerente de estudio, Serge Bibauw, en la siguiente dirección:",
+			"studyData": {
+				"address": "Dirección",
+				"addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve (Bélgica)",
+				"email": "Correo electrónico",
+				"emailD": "serge.bibauw@uclouvain.be",
+				"person": "Responsable de estudio",
+				"personD": "Serge Bibauw",
+				"project": "Proyecto de investigación",
+				"projectD": "Tutoría de IA en el aprendizaje de idiomas (FNRS CDR 2024-2026)",
+				"study": "Título de estudio",
+				"studyD": "Estudio longitudinal de la tutoría de lenguas extranjeras.",
+				"title": "Información sobre el estudio",
+				"university": "Universidad",
+				"universityD": "Universidad católica de Lovaina (UCLouvain)"
+			},
+			"title": "Documento informativo y consentimiento informado"
+		},
+		"email": {
+			"ph": "",
+			"note": ""
+		},
+		"error": {
+			"differentPasswords": "Las contraseñas no coinciden",
+			"emailRules": "Por favor, introduce una dirección de correo electrónico válida",
+			"emptyFields": "Por favor llene todos los campos",
+			"humanity": "Por favor confirma que no eres un robot.",
+			"metadata": "Verifique que haya llenado correctamente todos los campos"
+		},
+		"genders": {
+			"female": "una mujer",
+			"male": "un hombre",
+			"na": "Prefiero no responder",
+			"other": "Otro"
+		},
+		"homeLanguage": "primer idioma",
+		"tab": {
+			"consent": "Consentir",
+			"continue": "Continuar",
+			"information": "Información",
+			"signup": "Registro",
+			"start": "Para empezar"
+		},
+		"welcome": "¡Bienvenido a Languagelab! \nAntes de comenzar, complete la siguiente información. \nEsto nos permitirá conocerlo mejor y adaptar la experiencia a sus necesidades.",
+		"continue": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
+		"continueButton": "continuar con las pruebas",
+		"signup": "Registro",
+		"start": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nAlias ​​dolorum quia voluptatum veniam harum auth y. \nVoluptatibus adipisci Ilo Velt Asumenda. \nAsperiores acumus deserunt desarrollo adipisci reprehenderit. \nDucimus Placat Sit Reverseit Ea Eos Quam. \nUT Facilis Quia Dégitiis Odit Unde temporibus Error. \nNeque Sapiente Ut similar. \nEius Ut Sapiente Maxime Dolor es Voluptatem Eum. \nVeniam Aut Quo. \nQuibusdam sed numquam y rem. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
+		"startButton": "Para empezar",
+		"startFastButton": "Comience a usar la aplicación directamente",
+		"study": "Estudiar"
+	},
+	"session": {
+		"downloadAllFeedbacks": "Descargar todos los comentarios",
+		"downloadAllMessages": "Descargar todas las conversaciones",
+		"downloadAllMetadata": "Descargar todos los metadatos",
+		"errors": {
+			"addUser": "Error al agregar un usuario a la sesión",
+			"create": "Error al crear la sesión",
+			"delete": "Error al eliminar la sesión",
+			"presence": "Error al enviar asistencia",
+			"removeUser": "Error al eliminar un usuario de la sesión",
+			"typing": "Error al enviar el indicador de entrada"
+		},
+		"feedbackInline": "Se agregó retroalimentación a",
+		"modal": {
+			"satisfy": {
+				"q1": "¿Qué tan útil es esta aplicación?",
+				"q2": "¿Qué tan fácil es usar esta aplicación?",
+				"q3": "Posibles comentarios",
+				"success": "Sus respuestas han sido grabadas. \n¡Gracias por tu participación!",
+				"title": "Cuestionario de satisfacción"
+			},
+			"weekly": {
+				"answers": {
+					"0": "Ninguno",
+					"1": "1 hora",
+					"2": "2 horas",
+					"3": "3 horas",
+					"4": "4 horas",
+					"5": "5 horas",
+					"6": "6 horas",
+					"7": "7 horas",
+					"8": "8 horas",
+					"9": "9 horas",
+					"10": "10 horas o más",
+					"05": "30 minutos o menos",
+					"placeholder": ""
+				},
+				"description": "Durante los últimos 7 días...",
+				"errors": {
+					"null": "Responda todas las preguntas",
+					"submit": "Error al enviar el cuestionario",
+					"toggle": "Error al activar o desactivar sesión"
+				},
+				"questions[0]": "¿Cuántas horas de <b> curso </b> {lang} has seguido?",
+				"questions[1]": "¿Cuántas horas ha visto videos </b> en {lang} (películas, series, youtube ...) o <b> escuchado contenido </b> en {lang} (podcasts, radio radio, cursos universitarios ... .)?",
+				"questions[2]": "¿Cuántas horas has <b>leído textos</b> en {lang} (libros, periódicos, cómics, sitios web, etc.)?",
+				"questions[3]": "¿Cuántas horas has <b>hablado</b> en {lang} (discusiones con amigos, familiares, colegas, etc.)?",
+				"success": "Cuestionario enviado, ¡gracias!",
+				"title": "Cuestionario semanal"
+			}
+		},
+		"noTopic": "No hay temas disponibles"
+	},
+	"signup": {
+		"signup": "",
+		"title": "",
+		"confirmPassword": "",
+		"email": "",
+		"language": ""
+	},
+	"studies": {
+		"addUserButton": "Agregar un participante",
+		"addUserError": "Error al agregar usuario",
+		"addUserSuccess": "Usuario agregado al estudio",
+		"chatDuration": "Duración de la sesión (en segundos)",
+		"create": "Crear un nuevo estudio",
+		"createError": "Error al crear el estudio",
+		"createMissing": "Por favor llene todos los campos",
+		"createTitle": "Crear un nuevo estudio",
+		"created": "Estudio creado exitosamente",
+		"deleteConfirm": "¿Estás seguro de que quieres eliminar este estudio? \nEsta acción es irreversible.",
+		"endDate": "Fecha de finalización",
+		"invalidEmail": "Dirección de correo electrónico no válida",
+		"newUser": "Nuevo participante",
+		"noChanges": "Sin modificación",
+		"removeUserConfirm": "¿Estás seguro de que quieres retirar a este participante del estudio?",
+		"removeUserError": "Error cuando se elimina el participante",
+		"removeUserSuccess": "Participante retirado del estudio",
+		"startDate": "Fecha de inicio",
+		"study": "Estudiar",
+		"updateError": "Error al actualizar el estudio",
+		"updated": "Estudio de actualización exitoso",
+		"userNotFound": "Usuario no encontrado"
+	},
+	"surveys": {
+		"birthYear": "¿Cuál es tu año de nacimiento?",
+		"code": "Tu código:",
+		"codeIndication": "El instructor debería haberle dado un código personal.<br>Si no, proporcione su dirección de correo electrónico.",
+		"complete": "¡Gracias por tu participación!",
+		"consent": {
+			"intro": "Te invitamos a participar en un estudio científico para diseñar, validar y aplicar pruebas de vocabulario.",
+			"ok": "Acepto participar en el estudio como se describe anteriormente.",
+			"participation": "¿Qué implica su participación?",
+			"participationD": "Si acepta participar, solo necesitará completar este cuestionario y posiblemente otra prueba, si así lo indica la persona que administra la prueba.",
+			"privacy": "¿Cómo se procesarán y mantener sus datos?",
+			"privacyD": "Los datos recopilados (sus respuestas a las diversas preguntas) se procesarán de manera confidencial y anónima. \nSe mantendrán después de su anonimización completa y solo se pueden usar con fines científicos o educativos. \nPosiblemente puedan compartirse con otros investigadores o maestros, pero siempre en este marco estrictamente de investigación o enseñanza.",
+			"rights": "¿Cuales son tus derechos? \nParticipación voluntaria y posible retiro",
+			"rightsD": "Su participación en este estudio es voluntaria. \nPuede decidir no participar más en el estudio en cualquier momento sin tener que dar ningún motivo. \nTambién puedes solicitar que tus datos sean eliminados en cualquier momento. \nSi tiene alguna pregunta o inquietud sobre este estudio, puede comunicarse con el líder del estudio, Serge Bibauw, en la siguiente dirección:",
+			"title": "Información informada de estudio y consentimiento"
+		},
+		"education": {
+			"Bachelor": "Bachiller",
+			"Master": "Maestría o superior",
+			"NoEducation": "Ninguno",
+			"NonUni": "Superior no académico",
+			"PrimarySchool": "Escuela primaria",
+			"SecondarySchool": "Escuela secundaria",
+			"title": "¿Cuál es el título, diploma o nivel educativo más alto que ha obtenido?"
+		},
+		"example": "Ejemplo",
+		"gender": "¿Con qué género te identificas?",
+		"genders": {
+			"female": "una mujer",
+			"male": "un hombre",
+			"na": "prefiero no contestar",
+			"other": "Otro"
+		},
+		"homeLanguage": "Primer idioma",
+		"introduction": "Este es un cuestionario.",
+		"invalidCode": "Código no válido",
+		"invalidEmail": "Dirección de correo electrónico invalidio",
+		"loginEmail": "Utilice una dirección de correo electrónico",
+		"loginUser": "Iniciar sesión a través de una cuenta de usuario",
+		"loginWarning": "Para recordar su progreso, debe estar autenticado para acceder a este cuestionario. \nSi tiene una cuenta de usuario, inicie sesión. \nDe lo contrario, puede <a class=\"link\" href=\"/register\">registrarse</a> o continuar con una dirección de correo electrónico.",
+		"otherLanguage": "¿Hay algún otro idioma que domines relativamente?",
+		"otherLanguageNote": "(Si tiene fluidez en varios otros idiomas, más allá de su idioma de destino y su primer idioma, seleccione el más cercano a su idioma de destino o eso parece ayudarlo más en aprender su idioma de destino).",
+		"score": "Puntaje :"
+	},
+	"tests": {
+		"sendResults": "Enviar",
+		"sendResultsDone": "Enviado"
+	},
+	"timeslots": {
+		"availabilities": "Selecciona tu disponibilidad para filtrar los profesores disponibles",
+		"availableTutors": "Tutores disponibles",
+		"calcom": "Enlace a la reserva de calendario",
+		"calcomWarning": "CAL.com Enlace Invalidio",
+		"cesttime": "CE Hour (Bruselas)",
+		"noTutors": "No hay tutor disponible. \nPor favor seleccione otras disponibilidades.",
+		"setAvailabilities": "Selecciona tu disponibilidad"
+	},
+	"users": {
+		"actions": "Comportamiento",
+		"availability": "Disponibilidad",
+		"category": "Categoría",
+		"email": "Correo electrónico",
+		"gender": "Género",
+		"genders": {
+			"female": "Mujer",
+			"male": "Hombre",
+			"na": "prefiero no contestar",
+			"other": "Otro"
+		},
+		"isActive": "Activo",
+		"nickname": "Nombre",
+		"type": {
+			"0": "Administración",
+			"1": "Tutor",
+			"2": "Aprendiz",
+			"admin": "Administración",
+			"admins": "Administrador(es)",
+			"student": "Aprendiz",
+			"students": "Aprendices",
+			"tutor": "Tutor",
+			"tutors": "Tutor(es)"
+		}
+	},
+	"utils": {
+		"bool": {
+			"false": "No",
+			"true": "Sí"
+		},
+		"days": {
+			"0": "lunes",
+			"1": "martes",
+			"2": "miércoles",
+			"3": "jueves",
+			"4": "viernes",
+			"5": "sábado",
+			"6": "domingo",
+			"monday": "lunes",
+			"friday": "viernes",
+			"saturday": "sábado",
+			"sunday": "domingo",
+			"thursday": "jueves",
+			"tuesday": "martes",
+			"wednesday": "miércoles"
+		},
+		"language": {
+			"en": "Inglés",
+			"eng": "Inglés",
+			"fr": "Francés",
+			"fra": "Francés"
+		},
+		"month": {
+			"april": "abril",
+			"august": "agosto",
+			"december": "diciembre",
+			"february": "febrero",
+			"january": "enero",
+			"july": "julio",
+			"june": "junio",
+			"march": "marzo",
+			"may": "mayo",
+			"november": "noviembre",
+			"october": "octubre",
+			"september": "septiembre"
+		},
+		"past": {
+			"day": "Hay {n, plural, one {",
+			"hour": "Hay {n, plural, one {",
+			"justNow": "Hace menos de una hora",
+			"month": "Hay {n, plural, one {",
+			"today": "Hoy",
+			"year": "Hay {n, plural, one {",
+			"yesterday": "Ayer"
+		},
+		"shortMonth": {
+			"april": "abr.",
+			"august": "ago.",
+			"december": "dic.",
+			"february": "feb.",
+			"january": "ene.",
+			"july": "jul.",
+			"june": "jun.",
+			"march": "mar.",
+			"may": "may.",
+			"november": "nov.",
+			"october": "oct.",
+			"september": "sep."
+		},
+		"words": {
+			"actions": "Comportamiento",
+			"date": "Fecha",
+			"description": "Descripción",
+			"email": "Correo electrónico",
+			"finished": "Terminado",
+			"inProgress": "En curso",
+			"messages": "Mensajes",
+			"participants": "Participantes",
+			"programed": "Programado",
+			"status": "Estado",
+			"title": "Título",
+			"topics": "Temas",
+			"users": "Usuarios"
+		}
+	}
 }

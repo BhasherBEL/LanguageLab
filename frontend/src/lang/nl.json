@@ -1,239 +1,222 @@
 {
-  "admin": {
-    "actions": "Acties",
-    "passwordPrompt": "Voer het wachtwoord in. \nHoud er rekening mee dat dit niet meer kan worden verhaald."
-  },
-  "button": {
-    "cancel": "Annuleren",
-    "close": "Dichtbij",
-    "continue": "Doorgaan",
-    "create": "Creëren",
-    "delete": "VERWIJDEREN",
-    "login": "Inloggen",
-    "next": "Volgende",
-    "remove": "Terugtrekken",
-    "save": "Om te beschermen",
-    "sent": "Verstuurd !",
-    "start": "Om te beginnen",
-    "submit": "Versturen",
-    "thank-you": "BEDANKT !",
-    "tryit": "Om te proberen",
-    "update": "Om bij te werken",
-    "updated": "Bijgewerkt!"
-  },
-  "chatbox": {
-    "deleteFeedback": "Weet je zeker dat je deze feedback wilt verwijderen? \nDeze actie is onomkeerbaar.",
-    "disabled": "Deze sessie is alleen voor de goede orde zichtbaar.",
-    "edited": "gewijzigd",
-    "history": "Historisch",
-    "placeholder": "Schrijf hier uw bericht...",
-    "replyingTo": "In reactie op:",
-    "sendError": "Fout bij het verzenden van het bericht"
-  },
-  "header": {
-    "admin": {
-      "sessions": "Sessies",
-      "studies": "Studies",
-      "users": "Gebruikers"
-    },
-    "appName": "Languagelab",
-    "availability": "Beschikbaarheid",
-    "connectedAs": "Verbonden als",
-    "language": "Taal",
-    "metadataWarning": "Vul het registratieformulier in voordat u de applicatie gebruikt.",
-    "register": "Register",
-    "signin": "Inloggen",
-    "signout": "Loskoppelen",
-    "tutorSelection": "Onderwijzer"
-  },
-  "home": {
-    "actions": "Acties",
-    "add": "Toevoegen",
-    "bookSession": "Reserveer een sessie",
-    "bookingFailed": "Fout bij het boeken van de sessie",
-    "bookingSuccessful": "Sessie succesvol geboekt",
-    "confirm": "Bevestigen",
-    "createSession": "Onmiddellijke sessie",
-    "currentSessions": "Huidige sessies",
-    "date": "Datum",
-    "deleteSessionConfirm": "Weet u zeker dat u deze sessie wilt verwijderen? \nDeze actie is onomkeerbaar.",
-    "email": "E-mail",
-    "learningLanguage": "Doeltaal",
-    "newContact": "Voeg een contactpersoon toe",
-    "newFirstContact": "Voeg een eerste contact toe",
-    "nickname": "Naam",
-    "noContact": "Voeg contact toe om te starten",
-    "noCurrentOrFutureSessions": "Er zijn geen sessies gaande of gepland",
-    "noSessions": "Geen sessie",
-    "participantPlaceholder": "Kiezen",
-    "participants": "Deelnemers",
-    "pastSessions": "Voltooide sessies",
-    "plannedSessions": "Geplande sessies",
-    "remainingDuration": "Resterende tijd",
-    "sessionAdded": "Je bent toegevoegd aan een sessie met {users}",
-    "sessionEnded": "Afgerond"
-  },
-  "inputs": {
-    "range": {
-      "1": "Geen manier",
-      "2": "Een beetje",
-      "3": "Matig",
-      "4": "Veel",
-      "5": "Enorm"
-    }
-  },
-  "login": {
-    "email": "E-mail",
-    "login": "Inloggen",
-    "noAccountLink": "Registreer hier"
-  },
-  "register": {
-    "confirmPassword": "Bevestig wachtwoord",
-    "confirmTutor": "Bevestig je dat je '{NAME}' als je voogd hebt geselecteerd?",
-    "consent": {
-      "intro": "U wordt uitgenodigd om deel te nemen aan een wetenschappelijk onderzoek. \nHet doel van deze studie is om te begrijpen hoe docenten en leerlingen in vreemde talen communiceren tijdens online tutorssessies. \nDe verzamelde gegevens zullen worden gebruikt om online tutoring -tools te verbeteren en om de cognitieve processen aan beide zijden beter te begrijpen.",
-      "ok": "Ik ga akkoord met deelname aan het onderzoek zoals hierboven beschreven.",
-      "participation": "Wat betreft uw deelname?",
-      "participationD": "Als u akkoord gaat met deelname, wordt u uitgenodigd om deel te nemen aan online bijlessessies met een docent vreemde talen. \nOok wordt u gevraagd om voor en na de bijlessessies vragenlijsten in te vullen. \nBegeleidingssessies worden opgenomen voor latere analyse.</p><p>We vragen dat je van plan bent om minimaal <strong>8 sessies van een uur</strong> bijles te geven (dus 8 uur in totaal), over een periode van periode van 1 tot 3 maanden. \nAls je wilt, kun je er uiteraard meer maken. \nU kunt echter op ieder moment stoppen met deelname aan het onderzoek.",
-      "privacy": "Hoe worden uw gegevens verwerkt en opgeslagen?",
-      "privacyD": "De verzamelde gegevens (bijvoorbeeld transcripties van gesprekken, testresultaten, opvallende maatregelen, informatie over deelnemers zoals leeftijd of geslacht) zullen op een vertrouwelijke en anonieme manier worden verwerkt. \nZe zullen worden bewaard na hun volledige anonimisering en kunnen alleen worden gebruikt voor wetenschappelijke of educatieve doeleinden. \nZe kunnen mogelijk worden gedeeld met andere onderzoekers of leraren, maar altijd in dit strikt onderzoeks- of onderwijskader.",
-      "rights": "Wat zijn uw rechten? \nVrijwillige deelname en mogelijke terugtrekking",
-      "rightsD": "Uw deelname aan dit onderzoek is vrijwillig. \nU kunt besluiten om niet op elk gewenst moment deel te nemen aan het onderzoek zonder uzelf te rechtvaardigen. \nU kunt ook vragen om uw gegevens op elk gewenst moment te verwijderen. \nAls u vragen of zorgen over deze studie hebt, kunt u contact opnemen met de studiemanager, Serge Bibauw, op het volgende adres:",
-      "studyData": {
-        "address": "Adres",
-        "addressD": "Plaats kardinaal Mercier 14, 1348 Louvain-la-neuve",
-        "email": "E-mail",
-        "emailD": "serge.bibauw@uclouvain.be",
-        "person": "Studie leider",
-        "personD": "Serge Bibauw",
-        "project": "Onderzoeksproject",
-        "projectD": "AI Tutoring in Language Learning (FNRS CDR 2024-2026)",
-        "study": "Titel van de studie",
-        "studyD": "Longitudinale studie van begeleiding in vreemde taal",
-        "title": "Bestudeerinformatie",
-        "university": "Universiteit",
-        "universityD": "Katholieke Universiteit van Louvain (Uclouvain)"
-      },
-      "title": "Geïnformeerde informatie- en toestemmingsdocument"
-    },
-    "consentTutor": {
-      "intro": "U wordt uitgenodigd om deel te nemen aan een wetenschappelijk onderzoek. \nHet doel van dit onderzoek is om te begrijpen hoe docenten en studenten van vreemde talen met elkaar omgaan tijdens online bijlessessies. \nDe verzamelde gegevens zullen worden gebruikt om online bijlestools te verbeteren en om cognitieve processen aan beide kanten beter te begrijpen.",
-      "ok": "Ik ga akkoord met deelname aan het onderzoek zoals hierboven beschreven.",
-      "participation": "Wat betreft uw deelname?",
-      "participationD": "Als u akkoord gaat met deelname, wordt u uitgenodigd om deel te nemen aan online bijlessessies met een docent vreemde talen. \nOok wordt u gevraagd om voor en na de bijlessessies vragenlijsten in te vullen. \nBegeleidingssessies worden opgenomen voor latere analyse.</p><p>We vragen dat je van plan bent om minimaal <strong>8 sessies van een uur</strong> bijles te geven (dus 8 uur in totaal), over een periode van periode van 1 tot 3 maanden. \nAls je wilt, kun je er uiteraard meer maken. \nU kunt echter op ieder moment stoppen met deelname aan het onderzoek.",
-      "privacy": "Hoe worden uw gegevens verwerkt en bewaard?",
-      "privacyD": "De verzamelde gegevens (bijvoorbeeld transcripties van gesprekken, testresultaten, opvallende maatregelen, informatie over deelnemers zoals leeftijd of geslacht) zullen op een vertrouwelijke en anonieme manier worden verwerkt. \nZe zullen worden bewaard na hun volledige anonimisering en kunnen alleen worden gebruikt voor wetenschappelijke of educatieve doeleinden. \nZe kunnen mogelijk worden gedeeld met andere onderzoekers of leraren, maar altijd in dit strikt onderzoeks- of onderwijskader.",
-      "rights": "Wat zijn uw rechten? \nVrijwillige deelname en mogelijke terugtrekking",
-      "rightsD": "Uw deelname aan dit onderzoek is vrijwillig. \nU kunt op ieder moment besluiten om niet meer deel te nemen aan het onderzoek, zonder dat u hiervoor een reden hoeft op te geven. \nDaarnaast kunt u op ieder moment verzoeken om uw gegevens te verwijderen. \nAls u vragen of opmerkingen heeft over dit onderzoek, kunt u contact opnemen met de onderzoeksleider, Serge Bibauw, op het volgende adres:",
-      "studyData": {
-        "address": "Adres",
-        "addressD": "Plaats kardinaal Mercier 14, 1348 Louvain-la-Neuve",
-        "email": "E-mail",
-        "emailD": "serge.bibauw@uclouvain.be",
-        "person": "Studie leider",
-        "personD": "Serge Bibauw",
-        "project": "Onderzoeksproject",
-        "projectD": "AI-begeleiding bij het leren van talen (FNRS CDR 2024-2026)",
-        "study": "Studietitel",
-        "studyD": "Longitudinaal onderzoek naar bijles in vreemde talen",
-        "title": "Bestudeerinformatie",
-        "university": "Universiteit",
-        "universityD": "Katholieke Universiteit van Louvain (Uclouvain)"
-      },
-      "title": "Informatiedocument en geïnformeerde toestemming"
-    },
-    "continue": "Auts Sint en Nihil Aut. \nQuia nihil eos rerum neque oefeningem molestiae. \nAut Ab Accidentium consequatur Rerum Architecto Voluptas. \nRefudiandae minima nemo vitae tempore. \nMoletiae Rerum aliquid UT Fugit eligendi. \nTempore Eum Id Nobis Sunt Deleniti en niet Ducimus. \nMaiRes Perferendis was niet overeengekomen Nostrum. \nOdio itaque Fugiat nr. \nLabriosam Sint Voluptatem Aut Placeat en Perferendis. \nSed quam voluptatem nodigatiBus quia dolorum. \nEius is Nihil Natus Modi Natus Quisquam Ut Impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold Class = \"Font-Bold\"> Aut Voluptatum Debitis en Aliquam Vel Rerum Facere.",
-    "continueButton": "Ga verder naar testen",
-    "email": {
-      "note": "",
-      "ph": ""
-    },
-    "error": {
-      "differentPasswords": "Wachtwoorden komen niet overeen",
-      "emailRules": "Voer een geldig e-mailadres in",
-      "emptyFields": "Vul alle velden in",
-      "humanity": "Bevestig dat u geen robot bent",
-      "metadata": "Controleer of u alle velden correct hebt gevuld"
-    },
-    "password": {
-      "note": ""
-    },
-    "signup": "Register",
-    "start": "Auts Sint en Nihil Aut. \nQuia nihil eos rerum neque oefeningem molestiae. \nAut Ab Accidentium consequatur Rerum Architecto Voluptas. \nRefudiandae minima nemo vitae tempore. \nMoletiae Rerum aliquid UT Fugit eligendi. \nAlias ​​Dolorum Quia Voluptatum Veniam Harum Aut welke en. \nVoluptatibus adipisci illo velt Apportenda. \nAsperiores accumus deserunt ontwikkeling adipisci expreesit. \nDucimus placeat zit Reversereit ea eos quam. \nUt facilis quia dégitiis odit unde temporibus error. \nNeque Sapiente UT vergelijkbaar. \nEius ut sapiente maxime dolor is Voluptatem Eum. \nVeniam Aut Quo. \nQuibusdam sed Numquam en Rem. \nTempore Eum Id Nobis Sunt Deleniti en niet Ducimus. \nMaiRes Perferendis was niet overeengekomen Nostrum. \nOdio itaque Fugiat nr. \nLabriosam Sint Voluptatem Aut Placeat en Perferendis. \nSed quam voluptatem nodigatiBus quia dolorum. \nEius is Nihil Natus Modi Natus Quisquam Ut Impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold Class = \"Font-Bold\"> Aut Voluptatum Debitis en Aliquam Vel Rerum Facere.",
-    "startButton": "Om te beginnen",
-    "startFastButton": "Begin direct met het gebruiken van de app",
-    "tab": {
-      "continue": "Doorgaan",
-      "information": "Informatie",
-      "signup": "Registratie",
-      "start": "Om te beginnen",
-      "study": "Studie"
-    }
-  },
-  "session": {
-    "downloadAllFeedbacks": "Download alle feedbacks",
-    "downloadAllMessages": "Download alle gesprekken",
-    "downloadAllMetadata": "Download alle metadata",
-    "errors": {
-      "addUser": "Fout bij toevoegen van gebruiker aan sessie",
-      "create": "Fout bij het maken van de sessie",
-      "delete": "Fout bij verwijderen van sessie",
-      "presence": "Fout bij het verzenden van de aanwezigheid",
-      "removeUser": "Fout bij het verwijderen van een gebruiker uit de sessie",
-      "typing": "Fout bij het verzenden van de invoerindicator"
-    },
-    "feedbackInline": "Feedback is toegevoegd aan",
-    "modal": {
-      "satisfy": {
-        "q1": "Hoe nuttig is deze toepassing?",
-        "q2": "Hoe gemakkelijk is deze toepassing gemakkelijk te gebruiken?",
-        "q3": "Mogelijke opmerkingen",
-        "success": "Uw antwoorden zijn opgenomen. \nBedankt voor je deelname!",
-        "title": "Tevredenheidsvragenlijst"
-      },
-      "weekly": {
-        "answers": {
-          "0": "Geen",
-          "1": "1 uur",
-          "2": "2 uur",
-          "3": "3 uur",
-          "4": "4 uur",
-          "5": "5 uur",
-          "6": "6 uur",
-          "7": "7 uur",
-          "8": "8 uur",
-          "9": "9 uur",
-          "10": "10 uur of meer",
-          "05": "30 minuten of minder",
-          "placeholder": ""
-        },
-        "description": "In de laatste 7 dagen ...",
-        "errors": {
-          "null": "Beantwoord alle vragen",
-          "submit": "Fout bij verzenden vragenlijst",
-          "toggle": "Fout bij het activeren of deactiveren van de sessie"
-        },
-        "questions[0]": "Hoeveel uur <b>cursus</b> in het {lang} heeft u gevolgd?",
-        "questions[1]": "Hoeveel uur heb je video's bekeken </b> in {lang} (films, serie, youtube ...) of <b> luisterde naar inhoud </b> in {lang} (podcasts, radio -radio, universitaire cursussen .. .)?",
-        "questions[2]": "Hoeveel uur heeft u <b>teksten gelezen</b> in het {lang} (boek, krant, strips, websites, enz.)?"
-      }
-    }
-  },
-  "signup": {
-    "email": "",
-    "language": "",
-    "nickname": "",
-    "password": "",
-    "signup": ""
-  }
-}
-uccess": "Vragenlijst verzonden, bedankt!",
-        "title": "Wekelijkse vragenlijst"
-      }
-    },
-    "noTopic": "Geen onderwerp beschikbaar"
-  },
-  "signup": {
-    "confirmPassword": ""
-  }
+	"admin": {
+		"actions": "Acties",
+		"passwordPrompt": "Voer het wachtwoord in. \nHoud er rekening mee dat dit niet meer kan worden verhaald."
+	},
+	"button": {
+		"cancel": "Annuleren",
+		"close": "Dichtbij",
+		"continue": "Doorgaan",
+		"create": "Creëren",
+		"delete": "VERWIJDEREN",
+		"login": "Inloggen",
+		"next": "Volgende",
+		"remove": "Terugtrekken",
+		"save": "Om te beschermen",
+		"sent": "Verstuurd !",
+		"start": "Om te beginnen",
+		"submit": "Versturen",
+		"thank-you": "BEDANKT !",
+		"tryit": "Om te proberen",
+		"update": "Om bij te werken",
+		"updated": "Bijgewerkt!"
+	},
+	"chatbox": {
+		"deleteFeedback": "Weet je zeker dat je deze feedback wilt verwijderen? \nDeze actie is onomkeerbaar.",
+		"disabled": "Deze sessie is alleen voor de goede orde zichtbaar.",
+		"edited": "gewijzigd",
+		"history": "Historisch",
+		"placeholder": "Schrijf hier uw bericht...",
+		"replyingTo": "In reactie op:",
+		"sendError": "Fout bij het verzenden van het bericht"
+	},
+	"header": {
+		"admin": {
+			"sessions": "Sessies",
+			"studies": "Studies",
+			"users": "Gebruikers"
+		},
+		"appName": "Languagelab",
+		"availability": "Beschikbaarheid",
+		"connectedAs": "Verbonden als",
+		"language": "Taal",
+		"metadataWarning": "Vul het registratieformulier in voordat u de applicatie gebruikt.",
+		"register": "Register",
+		"signin": "Inloggen",
+		"signout": "Loskoppelen",
+		"tutorSelection": "Onderwijzer"
+	},
+	"home": {
+		"actions": "Acties",
+		"add": "Toevoegen",
+		"bookSession": "Reserveer een sessie",
+		"bookingFailed": "Fout bij het boeken van de sessie",
+		"bookingSuccessful": "Sessie succesvol geboekt",
+		"confirm": "Bevestigen",
+		"createSession": "Onmiddellijke sessie",
+		"currentSessions": "Huidige sessies",
+		"date": "Datum",
+		"deleteSessionConfirm": "Weet u zeker dat u deze sessie wilt verwijderen? \nDeze actie is onomkeerbaar.",
+		"email": "E-mail",
+		"learningLanguage": "Doeltaal",
+		"newContact": "Voeg een contactpersoon toe",
+		"newFirstContact": "Voeg een eerste contact toe",
+		"nickname": "Naam",
+		"noContact": "Voeg contact toe om te starten",
+		"noCurrentOrFutureSessions": "Er zijn geen sessies gaande of gepland",
+		"noSessions": "Geen sessie",
+		"participantPlaceholder": "Kiezen",
+		"participants": "Deelnemers",
+		"pastSessions": "Voltooide sessies",
+		"plannedSessions": "Geplande sessies",
+		"remainingDuration": "Resterende tijd",
+		"sessionAdded": "Je bent toegevoegd aan een sessie met {users}",
+		"sessionEnded": "Afgerond"
+	},
+	"inputs": {
+		"range": {
+			"1": "Geen manier",
+			"2": "Een beetje",
+			"3": "Matig",
+			"4": "Veel",
+			"5": "Enorm"
+		}
+	},
+	"login": {
+		"email": "E-mail",
+		"login": "Inloggen",
+		"noAccountLink": "Registreer hier"
+	},
+	"register": {
+		"confirmPassword": "Bevestig wachtwoord",
+		"confirmTutor": "Bevestig je dat je '{NAME}' als je voogd hebt geselecteerd?",
+		"consent": {
+			"intro": "U wordt uitgenodigd om deel te nemen aan een wetenschappelijk onderzoek. \nHet doel van deze studie is om te begrijpen hoe docenten en leerlingen in vreemde talen communiceren tijdens online tutorssessies. \nDe verzamelde gegevens zullen worden gebruikt om online tutoring -tools te verbeteren en om de cognitieve processen aan beide zijden beter te begrijpen.",
+			"ok": "Ik ga akkoord met deelname aan het onderzoek zoals hierboven beschreven.",
+			"participation": "Wat betreft uw deelname?",
+			"participationD": "Als u akkoord gaat met deelname, wordt u uitgenodigd om deel te nemen aan online bijlessessies met een docent vreemde talen. \nOok wordt u gevraagd om voor en na de bijlessessies vragenlijsten in te vullen. \nBegeleidingssessies worden opgenomen voor latere analyse.</p><p>We vragen dat je van plan bent om minimaal <strong>8 sessies van een uur</strong> bijles te geven (dus 8 uur in totaal), over een periode van periode van 1 tot 3 maanden. \nAls je wilt, kun je er uiteraard meer maken. \nU kunt echter op ieder moment stoppen met deelname aan het onderzoek.",
+			"privacy": "Hoe worden uw gegevens verwerkt en opgeslagen?",
+			"privacyD": "De verzamelde gegevens (bijvoorbeeld transcripties van gesprekken, testresultaten, opvallende maatregelen, informatie over deelnemers zoals leeftijd of geslacht) zullen op een vertrouwelijke en anonieme manier worden verwerkt. \nZe zullen worden bewaard na hun volledige anonimisering en kunnen alleen worden gebruikt voor wetenschappelijke of educatieve doeleinden. \nZe kunnen mogelijk worden gedeeld met andere onderzoekers of leraren, maar altijd in dit strikt onderzoeks- of onderwijskader.",
+			"rights": "Wat zijn uw rechten? \nVrijwillige deelname en mogelijke terugtrekking",
+			"rightsD": "Uw deelname aan dit onderzoek is vrijwillig. \nU kunt besluiten om niet op elk gewenst moment deel te nemen aan het onderzoek zonder uzelf te rechtvaardigen. \nU kunt ook vragen om uw gegevens op elk gewenst moment te verwijderen. \nAls u vragen of zorgen over deze studie hebt, kunt u contact opnemen met de studiemanager, Serge Bibauw, op het volgende adres:",
+			"studyData": {
+				"address": "Adres",
+				"addressD": "Plaats kardinaal Mercier 14, 1348 Louvain-la-neuve",
+				"email": "E-mail",
+				"emailD": "serge.bibauw@uclouvain.be",
+				"person": "Studie leider",
+				"personD": "Serge Bibauw",
+				"project": "Onderzoeksproject",
+				"projectD": "AI Tutoring in Language Learning (FNRS CDR 2024-2026)",
+				"study": "Titel van de studie",
+				"studyD": "Longitudinale studie van begeleiding in vreemde taal",
+				"title": "Bestudeerinformatie",
+				"university": "Universiteit",
+				"universityD": "Katholieke Universiteit van Louvain (Uclouvain)"
+			},
+			"title": "Geïnformeerde informatie- en toestemmingsdocument"
+		},
+		"consentTutor": {
+			"intro": "U wordt uitgenodigd om deel te nemen aan een wetenschappelijk onderzoek. \nHet doel van dit onderzoek is om te begrijpen hoe docenten en studenten van vreemde talen met elkaar omgaan tijdens online bijlessessies. \nDe verzamelde gegevens zullen worden gebruikt om online bijlestools te verbeteren en om cognitieve processen aan beide kanten beter te begrijpen.",
+			"ok": "Ik ga akkoord met deelname aan het onderzoek zoals hierboven beschreven.",
+			"participation": "Wat betreft uw deelname?",
+			"participationD": "Als u akkoord gaat met deelname, wordt u uitgenodigd om deel te nemen aan online bijlessessies met een docent vreemde talen. \nOok wordt u gevraagd om voor en na de bijlessessies vragenlijsten in te vullen. \nBegeleidingssessies worden opgenomen voor latere analyse.</p><p>We vragen dat je van plan bent om minimaal <strong>8 sessies van een uur</strong> bijles te geven (dus 8 uur in totaal), over een periode van periode van 1 tot 3 maanden. \nAls je wilt, kun je er uiteraard meer maken. \nU kunt echter op ieder moment stoppen met deelname aan het onderzoek.",
+			"privacy": "Hoe worden uw gegevens verwerkt en bewaard?",
+			"privacyD": "De verzamelde gegevens (bijvoorbeeld transcripties van gesprekken, testresultaten, opvallende maatregelen, informatie over deelnemers zoals leeftijd of geslacht) zullen op een vertrouwelijke en anonieme manier worden verwerkt. \nZe zullen worden bewaard na hun volledige anonimisering en kunnen alleen worden gebruikt voor wetenschappelijke of educatieve doeleinden. \nZe kunnen mogelijk worden gedeeld met andere onderzoekers of leraren, maar altijd in dit strikt onderzoeks- of onderwijskader.",
+			"rights": "Wat zijn uw rechten? \nVrijwillige deelname en mogelijke terugtrekking",
+			"rightsD": "Uw deelname aan dit onderzoek is vrijwillig. \nU kunt op ieder moment besluiten om niet meer deel te nemen aan het onderzoek, zonder dat u hiervoor een reden hoeft op te geven. \nDaarnaast kunt u op ieder moment verzoeken om uw gegevens te verwijderen. \nAls u vragen of opmerkingen heeft over dit onderzoek, kunt u contact opnemen met de onderzoeksleider, Serge Bibauw, op het volgende adres:",
+			"studyData": {
+				"address": "Adres",
+				"addressD": "Plaats kardinaal Mercier 14, 1348 Louvain-la-Neuve",
+				"email": "E-mail",
+				"emailD": "serge.bibauw@uclouvain.be",
+				"person": "Studie leider",
+				"personD": "Serge Bibauw",
+				"project": "Onderzoeksproject",
+				"projectD": "AI-begeleiding bij het leren van talen (FNRS CDR 2024-2026)",
+				"study": "Studietitel",
+				"studyD": "Longitudinaal onderzoek naar bijles in vreemde talen",
+				"title": "Bestudeerinformatie",
+				"university": "Universiteit",
+				"universityD": "Katholieke Universiteit van Louvain (Uclouvain)"
+			},
+			"title": "Informatiedocument en geïnformeerde toestemming"
+		},
+		"continue": "Auts Sint en Nihil Aut. \nQuia nihil eos rerum neque oefeningem molestiae. \nAut Ab Accidentium consequatur Rerum Architecto Voluptas. \nRefudiandae minima nemo vitae tempore. \nMoletiae Rerum aliquid UT Fugit eligendi. \nTempore Eum Id Nobis Sunt Deleniti en niet Ducimus. \nMaiRes Perferendis was niet overeengekomen Nostrum. \nOdio itaque Fugiat nr. \nLabriosam Sint Voluptatem Aut Placeat en Perferendis. \nSed quam voluptatem nodigatiBus quia dolorum. \nEius is Nihil Natus Modi Natus Quisquam Ut Impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold Class = \"Font-Bold\"> Aut Voluptatum Debitis en Aliquam Vel Rerum Facere.",
+		"continueButton": "Ga verder naar testen",
+		"email": {
+			"note": "",
+			"ph": ""
+		},
+		"error": {
+			"differentPasswords": "Wachtwoorden komen niet overeen",
+			"emailRules": "Voer een geldig e-mailadres in",
+			"emptyFields": "Vul alle velden in",
+			"humanity": "Bevestig dat u geen robot bent",
+			"metadata": "Controleer of u alle velden correct hebt gevuld"
+		},
+		"password": {
+			"note": ""
+		},
+		"signup": "Register",
+		"start": "Auts Sint en Nihil Aut. \nQuia nihil eos rerum neque oefeningem molestiae. \nAut Ab Accidentium consequatur Rerum Architecto Voluptas. \nRefudiandae minima nemo vitae tempore. \nMoletiae Rerum aliquid UT Fugit eligendi. \nAlias ​​Dolorum Quia Voluptatum Veniam Harum Aut welke en. \nVoluptatibus adipisci illo velt Apportenda. \nAsperiores accumus deserunt ontwikkeling adipisci expreesit. \nDucimus placeat zit Reversereit ea eos quam. \nUt facilis quia dégitiis odit unde temporibus error. \nNeque Sapiente UT vergelijkbaar. \nEius ut sapiente maxime dolor is Voluptatem Eum. \nVeniam Aut Quo. \nQuibusdam sed Numquam en Rem. \nTempore Eum Id Nobis Sunt Deleniti en niet Ducimus. \nMaiRes Perferendis was niet overeengekomen Nostrum. \nOdio itaque Fugiat nr. \nLabriosam Sint Voluptatem Aut Placeat en Perferendis. \nSed quam voluptatem nodigatiBus quia dolorum. \nEius is Nihil Natus Modi Natus Quisquam Ut Impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold Class = \"Font-Bold\"> Aut Voluptatum Debitis en Aliquam Vel Rerum Facere.",
+		"startButton": "Om te beginnen",
+		"startFastButton": "Begin direct met het gebruiken van de app",
+		"tab": {
+			"continue": "Doorgaan",
+			"information": "Informatie",
+			"signup": "Registratie",
+			"start": "Om te beginnen",
+			"study": "Studie"
+		}
+	},
+	"session": {
+		"downloadAllFeedbacks": "Download alle feedbacks",
+		"downloadAllMessages": "Download alle gesprekken",
+		"downloadAllMetadata": "Download alle metadata",
+		"errors": {
+			"addUser": "Fout bij toevoegen van gebruiker aan sessie",
+			"create": "Fout bij het maken van de sessie",
+			"delete": "Fout bij verwijderen van sessie",
+			"presence": "Fout bij het verzenden van de aanwezigheid",
+			"removeUser": "Fout bij het verwijderen van een gebruiker uit de sessie",
+			"typing": "Fout bij het verzenden van de invoerindicator"
+		},
+		"feedbackInline": "Feedback is toegevoegd aan",
+		"modal": {
+			"satisfy": {
+				"q1": "Hoe nuttig is deze toepassing?",
+				"q2": "Hoe gemakkelijk is deze toepassing gemakkelijk te gebruiken?",
+				"q3": "Mogelijke opmerkingen",
+				"success": "Uw antwoorden zijn opgenomen. \nBedankt voor je deelname!",
+				"title": "Tevredenheidsvragenlijst"
+			},
+			"weekly": {
+				"answers": {
+					"0": "Geen",
+					"1": "1 uur",
+					"2": "2 uur",
+					"3": "3 uur",
+					"4": "4 uur",
+					"5": "5 uur",
+					"6": "6 uur",
+					"7": "7 uur",
+					"8": "8 uur",
+					"9": "9 uur",
+					"10": "10 uur of meer",
+					"05": "30 minuten of minder",
+					"placeholder": ""
+				},
+				"description": "In de laatste 7 dagen ...",
+				"errors": {
+					"null": "Beantwoord alle vragen",
+					"submit": "Fout bij verzenden vragenlijst",
+					"toggle": "Fout bij het activeren of deactiveren van de sessie"
+				},
+				"questions[0]": "Hoeveel uur <b>cursus</b> in het {lang} heeft u gevolgd?",
+				"questions[1]": "Hoeveel uur heb je video's bekeken </b> in {lang} (films, serie, youtube ...) of <b> luisterde naar inhoud </b> in {lang} (podcasts, radio -radio, universitaire cursussen .. .)?",
+				"questions[2]": "Hoeveel uur heeft u <b>teksten gelezen</b> in het {lang} (boek, krant, strips, websites, enz.)?"
+			}
+		}
+	}
 }
