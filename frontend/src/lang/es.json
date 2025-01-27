@@ -139,16 +139,19 @@
         "title": "Información sobre el estudio",
         "university": "Universidad",
         "universityD": "Universidad católica de Lovaina (UCLouvain)"
-      }
+      },
+      "title": "Documento informativo y consentimiento informado"
     },
     "email": {
-      "ph": ""
+      "ph": "",
+      "note": ""
     },
     "error": {
       "differentPasswords": "Las contraseñas no coinciden",
       "emailRules": "Por favor, introduce una dirección de correo electrónico válida",
       "emptyFields": "Por favor llene todos los campos",
-      "humanity": "Por favor confirma que no eres un robot."
+      "humanity": "Por favor confirma que no eres un robot.",
+      "metadata": "Verifique que haya llenado correctamente todos los campos"
     },
     "genders": {
       "female": "una mujer",
@@ -164,7 +167,14 @@
       "signup": "Registro",
       "start": "Para empezar"
     },
-    "welcome": "¡Bienvenido a Languagelab! \nAntes de comenzar, complete la siguiente información. \nEsto nos permitirá conocerlo mejor y adaptar la experiencia a sus necesidades."
+    "welcome": "¡Bienvenido a Languagelab! \nAntes de comenzar, complete la siguiente información. \nEsto nos permitirá conocerlo mejor y adaptar la experiencia a sus necesidades.",
+    "continue": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
+    "continueButton": "continuar con las pruebas",
+    "signup": "Registro",
+    "start": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nAlias ​​dolorum quia voluptatum veniam harum auth y. \nVoluptatibus adipisci Ilo Velt Asumenda. \nAsperiores acumus deserunt desarrollo adipisci reprehenderit. \nDucimus Placat Sit Reverseit Ea Eos Quam. \nUT Facilis Quia Dégitiis Odit Unde temporibus Error. \nNeque Sapiente Ut similar. \nEius Ut Sapiente Maxime Dolor es Voluptatem Eum. \nVeniam Aut Quo. \nQuibusdam sed numquam y rem. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
+    "startButton": "Para empezar",
+    "startFastButton": "Comience a usar la aplicación directamente",
+    "study": "Estudiar"
   },
   "session": {
     "downloadAllFeedbacks": "Descargar todos los comentarios",
@@ -211,8 +221,8 @@
         },
         "questions[0]": "¿Cuántas horas de <b> curso </b> {lang} has seguido?",
         "questions[1]": "¿Cuántas horas ha visto videos </b> en {lang} (películas, series, youtube ...) o <b> escuchado contenido </b> en {lang} (podcasts, radio radio, cursos universitarios ... .)?",
-        "questions[2]": "¿Cuántas horas ha leído <b> textos </b> en {lang} (libro, periódico, cómics, sitios web ...)?",
-        "questions[3]": "¿Cuántas horas ha hablado </b> en {lang} (discusiones con amigos, familiares, colegas ...)?",
+        "questions[2]": "¿Cuántas horas has <b>leído textos</b> en {lang} (libros, periódicos, cómics, sitios web, etc.)?",
+        "questions[3]": "¿Cuántas horas has <b>hablado</b> en {lang} (discusiones con amigos, familiares, colegas, etc.)?",
         "success": "Cuestionario enviado, ¡gracias!",
         "title": "Cuestionario semanal"
       }
@@ -221,7 +231,10 @@
   },
   "signup": {
     "signup": "",
-    "title": ""
+    "title": "",
+    "confirmPassword": "",
+    "email": "",
+    "language": ""
   },
   "studies": {
     "addUserButton": "Agregar un participante",
