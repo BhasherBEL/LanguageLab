@@ -1,8 +1,9 @@
 import pandas as pd
 import requests
 import os
+import re
 
-API_URL = input("APP (API) URL: ")
+API_URL = os.getenv("API_URL") or input("APP (API) URL: ")
 API_PATH = "/tmp-api/v1"
 LOCAL_ITEMS_FOLDER = "../../frontend/static/surveys/items"
 REMOTE_ITEMS_FOLDER = "/surveys/items"
@@ -20,7 +21,10 @@ for i, row in df_items.iterrows():
     items.append(o)
 
     if "question" in row:
-        o["question"] = f'text:{row["question"]}'
+        if re.search(r"<.*?>", str(row["question"])):
+            o["question"] = f'gap:{row["question"]}'
+        else:
+            o["question"] = f'text:{row["question"]}'
     elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.mp3"):
         o["question"] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/q.mp3"
     elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.jpeg"):
@@ -82,8 +86,8 @@ with open("surveys.csv") as file:
 
 # SESSION DATA
 
-username = input("Email: ")
-password = input("Password: ")
+username = os.getenv("EMAIL") or input("Email: ")
+password = os.getenv("PASSWORD") or input("Password: ")
 
 session = requests.session()
 
