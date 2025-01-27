@@ -216,7 +216,7 @@
 	<div class="max-w-screen-md mx-auto p-20 flex flex-col items-center min-h-screen">
 		<h2 class="mb-10 text-xl text-center">{survey.title}</h2>
 		<p class="mb-4 text-lg font-semibold">{$t('surveys.code')}</p>
-		<p class="mb-6 text-sm text-gray-600 text-center">{$t('surveys.codeIndication')}</p>
+		<p class="mb-6 text-sm text-gray-600 text-center">{@html $t('surveys.codeIndication')}</p>
 		<input
 			type="text"
 			placeholder="Code"
@@ -256,7 +256,7 @@
 	{#if type == 'gap' && gaps}
 		<div class="mx-auto mt-16 center flex flex-col">
 			<div>
-				{#each gaps as part}
+				{#each gaps as part (part)}
 					{#if part.gap !== null}
 						<Gapfill length={part.text.length} onInput={(text) => (part.gap = text)} />
 					{:else}
