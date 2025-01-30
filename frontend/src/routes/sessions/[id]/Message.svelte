@@ -186,28 +186,20 @@
 		await message.deleteFeedback(feedback);
 	}
 
-	function getUserStatus(user: User, isInConversation: boolean): string {
-		console.log('status', user.is_active);
+	function getUserStatus(user: User | null, isInConversation: boolean): string {
+		if (!user) {
+			return 'red';
+		}
+
 		if (!user.is_active) {
 			return 'red';
 		}
+
 		if (isInConversation) {
 			return 'green';
 		}
-		return 'orange';
-	}
 
-	function getUserStatusTooltip(status: string): string {
-		switch (status) {
-			case 'green':
-				return 'User is in this conversation';
-			case 'orange':
-				return 'User is connected but not in this conversation';
-			case 'red':
-				return 'User is not connected to LL';
-			default:
-				return '';
-		}
+		return 'orange';
 	}
 </script>
 
@@ -229,9 +221,7 @@
 					? 'bg-green-500'
 					: getUserStatus(message.user, false) === 'orange'
 						? 'bg-orange-500'
-						: getUserStatus(message.user, false) === 'red'
-							? 'bg-red-500'
-							: ''
+						: 'bg-red-500'
 			}`}
 		></div>
 	</div>
