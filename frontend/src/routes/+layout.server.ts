@@ -13,7 +13,6 @@ const isPublic = (path: string) => {
 };
 
 export const load: ServerLoad = async ({ locals, url, fetch }) => {
-
 	if (locals.user == null || locals.user == undefined) {
 		if (!isPublic(url.pathname)) {
 			throw redirect(303, `/login`);
