@@ -185,6 +185,32 @@
 
 		await message.deleteFeedback(feedback);
 	}
+
+	function getUserStatus(user: User, isInConversation: boolean): string {
+		console.log("status", user.is_active);
+    if (!user.is_active) {
+        return 'red'; 
+    }
+    if (isInConversation) {
+        return 'green'; 
+    }
+    return 'orange'; 
+}
+
+function getUserStatusTooltip(status: string): string {
+    switch (status) {
+        case 'green':
+            return 'User is in this conversation';
+        case 'orange':
+            return 'User is connected but not in this conversation';
+        case 'red':
+            return 'User is not connected to LL';
+        default:
+            return '';
+    }
+}
+
+
 </script>
 
 <div
@@ -193,13 +219,22 @@
 	class:chat-start={!isSender}
 	class:chat-end={isSender}
 >
-	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
-		<img
-			src={`https://gravatar.com/avatar/${message.user.emailHash}?d=identicon`}
-			alt={user.nickname}
-			class="rounded-full border border-neutral-400 text-sm"
-		/>
-	</div>
+<div class="relative rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
+	<img
+		src={`https://gravatar.com/avatar/${message.user.emailHash}?d=identicon`}
+		alt={user.nickname}
+		class="rounded-full border border-neutral-400 text-sm"
+	/>
+	<div
+	class={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+	  getUserStatus(message.user, true) === 'green' ? 'bg-green-500' :
+	  getUserStatus(message.user, false) === 'orange' ? 'bg-orange-500' :
+	  getUserStatus(message.user, false) === 'red' ? 'bg-red-500' : ''
+	}`}
+	></div>
+</div>
+
+
 
 	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
 		{#if replyToMessage}
