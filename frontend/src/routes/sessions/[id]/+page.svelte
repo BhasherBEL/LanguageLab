@@ -3,12 +3,28 @@
 	import type { PageData } from './$types.js';
 	import WeeklySurvey from './WeeklySurvey.svelte';
 	import Chatbox from './Chatbox.svelte';
+	import type User from '$lib/types/user';
 
 	let { data }: { data: PageData } = $props();
 	let user = data.user!;
 
 	let { session, jwt } = data;
-	let { onlineUsers } = session;
+
+	function getUserStatus(user: User | null, isIn: boolean): string {
+		if (!user) {
+			return 'red';
+		}
+
+		if (!user.is_active) {
+			return 'red';
+		}
+
+		if (isIn) {
+			return 'green';
+		}
+
+		return 'orange';
+	}
 </script>
 
 <div class="h-full flex lg:flex-row flex-col pt-2 lg:pt-0">
@@ -18,22 +34,28 @@
 		<h2 class="text-center font-bold">{$t('utils.words.participants')}</h2>
 		<div class="pb-2 space-y-2">
 			{#each session.users as sessionUser (sessionUser.id)}
-				<div class="flex space-x-2">
-					<div class="rounded-full mx-2 chat-image size-6" title={sessionUser.nickname}>
+				<div class="flex space-x-2 items-center">
+					<div class="relative mx-2 chat-image size-6" title={sessionUser.nickname}>
 						<img
 							src={`https://gravatar.com/avatar/${sessionUser.emailHash}?d=identicon`}
 							alt={sessionUser.nickname}
-							class="rounded-full border-2 text-sm {sessionUser.id == user?.id ||
-							$onlineUsers.has(sessionUser.id)
-								? 'border-green-500'
-								: 'border-red-500'}"
+							class="rounded-full border-2 text-sm size-6"
 						/>
+						<div
+							class={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+								getUserStatus(sessionUser, true) === 'green'
+									? 'bg-green-500'
+									: getUserStatus(sessionUser, false) === 'orange'
+										? 'bg-orange-500'
+										: 'bg-red-500'
+							}`}
+						></div>
 					</div>
-
 					<span class:font-bold={sessionUser === user}>{sessionUser.nickname}</span>
 				</div>
 			{/each}
 		</div>
+
 		<h2 class="text-center font-bold border-t pt-2">{$t('utils.words.topics')}</h2>
 		<p class="text-center text-sm text-neutral-500 italic">{$t('session.noTopic')}</p>
 	</div>

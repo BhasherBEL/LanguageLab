@@ -14,6 +14,22 @@
 			displayMetadataWarning = true;
 		}
 	}
+
+	function getUserStatus(user: User | null, isIn: boolean): string {
+		if (!user) {
+			return 'red';
+		}
+
+		if (!user.is_active) {
+			return 'red';
+		}
+
+		if (isIn) {
+			return 'green';
+		}
+
+		return 'orange';
+	}
 </script>
 
 <header class="navbar shadow bg-gray-200">
@@ -54,14 +70,26 @@
 			{#if user}
 				<li>
 					<details>
-						<summary class="px-3">
-							<img
-								src={`https://gravatar.com/avatar/${user.emailHash}?d=identicon`}
-								alt={''}
-								class="rounded-full border text-sm size-8 border-neutral-400"
-							/>
-							{user.nickname}
+						<summary class="px-3 flex items-center space-x-2">
+							<div class="relative">
+								<img
+									src={`https://gravatar.com/avatar/${user.emailHash}?d=identicon`}
+									alt={''}
+									class="rounded-full border text-sm size-8 border-neutral-400"
+								/>
+								<div
+									class={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+										getUserStatus(user, true) === 'green'
+											? 'bg-green-500'
+											: getUserStatus(user, false) === 'orange'
+												? 'bg-orange-500'
+												: 'bg-red-500'
+									}`}
+								></div>
+							</div>
+							<span>{user.nickname}</span>
 						</summary>
+
 						<ul class="menu menu-sm dropdown-content absolute right-0">
 							<li>
 								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
