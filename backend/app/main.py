@@ -290,28 +290,14 @@ def store_typing_entries(
     pass
 
 
-@usersRouter.post("/{user_id}/tests/typing", status_code=status.HTTP_201_CREATED)
+@studyRouter.post("/typing", status_code=status.HTTP_201_CREATED)
 def create_test_typing(
-    user_id: int,
     test: schemas.TestTypingCreate,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(get_jwt_user),
 ):
-    if (
-        not check_user_level(current_user, models.UserType.ADMIN)
-        and current_user.id != user_id
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="You do not have permission to create a test for this user",
-        )
 
-    db_user = crud.get_user(db, user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    typing_id = crud.create_test_typing(db, test, db_user).id
+    typing_id = crud.create_test_typing(db, test).id
 
     if test.entries:
         background_tasks.add_task(store_typing_entries, db, test.entries, typing_id)

@@ -263,8 +263,8 @@ def delete_message_feedback(db: Session, feedback_id: int):
     db.commit()
 
 
-def create_test_typing(db: Session, test: schemas.TestTypingCreate, user: schemas.User):
-    db_test = models.TestTyping(user_id=user.id)
+def create_test_typing(db: Session, test: schemas.TestTypingCreate):
+    db_test = models.TestTyping(code=test.code)
     db.add(db_test)
     db.commit()
     db.refresh(db_test)
