@@ -1,3 +1,5 @@
+import type { fetchType } from '$lib/utils/types';
+
 export async function sendTestVocabularyAPI(data: any): Promise<boolean> {
 	const response = await fetch(`/api/tests/vocabulary`, {
 		method: 'POST',

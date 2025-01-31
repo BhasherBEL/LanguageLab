@@ -77,3 +77,19 @@ export async function removeUserToStudyAPI(
 	});
 	return response.ok;
 }
+
+export async function createTestTypingAPI(
+	fetch: fetchType,
+	entries: typingEntry[],
+	code: string
+): Promise<number | null> {
+	const response = await fetch(`/api/studies/typing`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ entries, code })
+	});
+
+	if (!response.ok) return null;
+
+	return parseInt(await response.text());
+}

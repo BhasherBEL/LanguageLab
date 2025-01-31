@@ -238,7 +238,8 @@
 	},
 	"tests": {
 		"sendResults": "Envoyer",
-		"sendResultsDone": "Envoyé"
+		"sendResultsDone": "Envoyé",
+		"typing": "Test de frappe"
 	},
 	"surveys": {
 		"introduction": "Ceci est un questionnaire.",

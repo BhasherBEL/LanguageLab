@@ -5,7 +5,7 @@
 	let finished = $state(false);
 
 	let { data } = $props();
-	let user = data.user!;
+	let user = data.user;
 </script>
 
 {#if finished}

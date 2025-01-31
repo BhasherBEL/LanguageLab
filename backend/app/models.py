@@ -181,8 +181,8 @@ class TestTyping(Base):
     __tablename__ = "test_typing"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), index=True)
     created_at = Column(DateTime, default=datetime_aware)
+    code = Column(String)
     entries = relationship("TestTypingEntry", backref="typing")
 
 
