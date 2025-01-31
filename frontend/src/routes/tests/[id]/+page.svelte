@@ -25,14 +25,12 @@
 	}
 
 	let step = $state(user ? 2 : 0);
-	let uuid = $state(user?.email || '');
 	let uid = $state(user?.id || null);
 	let code = $state('');
 	let subStep = $state(0);
 
 	let currentGroupId = $state(0);
 	survey.groups.sort((a, b) => {
-		//puts the demo questions first
 		if (a.demo === b.demo) {
 			return 0;
 		}

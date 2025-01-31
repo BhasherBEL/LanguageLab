@@ -87,22 +87,6 @@ export async function patchUserAPI(fetch: fetchType, user_id: number, data: any)
 	return response.ok;
 }
 
-export async function createTestTypingAPI(
-	fetch: fetchType,
-	user_id: number,
-	entries: typingEntry[]
-): Promise<number | null> {
-	const response = await fetch(`/api/users/${user_id}/tests/typing`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ entries })
-	});
-
-	if (!response.ok) return null;
-
-	return parseInt(await response.text());
-}
-
 export async function createWeeklySurveyAPI(
 	fetch: fetchType,
 	user_id: number,

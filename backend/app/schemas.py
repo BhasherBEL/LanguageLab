@@ -225,6 +225,7 @@ class TestTypingEntryCreate(BaseModel):
 
 class TestTypingCreate(BaseModel):
     entries: list[TestTypingEntryCreate]
+    code: str
 
 
 class TestVocabularyCreate(BaseModel):
