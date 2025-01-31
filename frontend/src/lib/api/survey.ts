@@ -1,5 +1,11 @@
 import type { fetchType } from '$lib/utils/types';
 
+export async function getSurveysAPI(fetch: fetchType) {
+	const response = await fetch('/api/surveys');
+	if (!response.ok) return null;
+	return await response.json();
+}
+
 export async function getSurveyAPI(fetch: fetchType, survey_id: number) {
 	const response = await fetch(`/api/surveys/${survey_id}`);
 	if (!response.ok) return null;

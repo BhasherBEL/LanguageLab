@@ -345,7 +345,7 @@
 		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
 		"startDate": "Date de début",
 		"endDate": "Date de fin",
-		"chatDuration": "Durée des sessions (en secondes)",
+		"chatDuration": "Durée des sessions (en minutes)",
 		"updated": "Étude mise à jour avec succès",
 		"noChanges": "Aucune modification",
 		"updateError": "Erreur lors de la mise à jour de l'étude",
@@ -364,7 +364,8 @@
 		"addUserError": "Erreur lors de l'ajout de l'utilisateur",
 		"addUserSuccess": "Utilisateur ajouté à l'étude",
 		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
-		"createTitle": "Créer une nouvelle étude"
+		"createTitle": "Créer une nouvelle étude",
+		"typingTest": "Activer le test de frappe"
 	},
 	"button": {
 		"create": "Créer",
@@ -462,7 +463,9 @@
 			"users": "Utilisateurs",
 			"description": "Description",
 			"email": "E-mail",
-			"toggle": "Participants"
+			"toggle": "Participants",
+			"groups": "groupes",
+			"questions": "questions"
 		}
 	},
 	"inputs": {

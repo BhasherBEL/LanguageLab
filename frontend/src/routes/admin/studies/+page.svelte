@@ -9,6 +9,8 @@
 	import { Icon, MagnifyingGlass } from 'svelte-hero-icons';
 	import { getUserByEmailAPI } from '$lib/api/users';
 	import type { PageData } from './$types';
+	import Draggable from './Draggable.svelte';
+	import Survey from '$lib/types/survey';
 
 	const { data }: { data: PageData } = $props();
 
@@ -18,10 +20,14 @@
 	let description: string | null = $state(null);
 	let startDate: Date | null = $state(null);
 	let endDate: Date | null = $state(null);
-	let chatDuration: number | null = $state(null);
-	let typingTest: boolean = $state(true);
+	let chatDuration: number = $state(30);
+	let typingTest: boolean = $state(false);
+	let tests: (string | Survey)[] = $state([]);
 
-	let studyCreate: boolean = $state(false);
+	let studyCreate: boolean = $state(true);
+
+	let possibleTests = ['Typing Test', ...data.surveys];
+	let selectedTest: string | Survey | undefined = $state();
 
 	function selectStudy(study: Study | null) {
 		selectedStudy = study;
@@ -30,7 +36,8 @@
 		description = study?.description ?? null;
 		startDate = study?.startDate ?? null;
 		endDate = study?.endDate ?? null;
-		chatDuration = study?.chatDuration ?? null;
+		chatDuration = study?.chatDuration ?? 30;
+		typingTest = study?.typingTest ?? false;
 	}
 
 	async function studyUpdate() {
@@ -51,7 +58,8 @@
 				endDate.getDay() === selectedStudy.endDate.getDay() &&
 				endDate.getMonth() === selectedStudy.endDate.getMonth() &&
 				endDate.getFullYear() === selectedStudy.endDate.getFullYear() &&
-				chatDuration === selectedStudy.chatDuration)
+				chatDuration === selectedStudy.chatDuration &&
+				typingTest === selectedStudy.typingTest)
 		) {
 			selectStudy(null);
 			toastSuccess($t('studies.noChanges'));
@@ -63,7 +71,8 @@
 			description,
 			start_date: formatToUTCDate(startDate),
 			end_date: formatToUTCDate(endDate),
-			chatDuration
+			chat_duration: chatDuration,
+			typing_test: typingTest
 		});
 
 		if (result) {
@@ -88,7 +97,14 @@
 			return;
 		}
 
-		const study = await Study.create(title, description, startDate, endDate, chatDuration);
+		const study = await Study.create(
+			title,
+			description,
+			startDate,
+			endDate,
+			chatDuration,
+			typingTest
+		);
 
 		if (study) {
 			toastSuccess($t('studies.created'));
@@ -212,6 +228,15 @@
 				bind:value={chatDuration}
 				min="0"
 			/>
+			<div class="flex items-center mt-2">
+				<label class="label flex-grow" for="typingTest">{$t('studies.typingTest')} *</label>
+				<input
+					type="checkbox"
+					class="checkbox checkbox-primary size-8"
+					id="typingTest"
+					bind:checked={typingTest}
+				/>
+			</div>
 			<label class="label" for="users">{$t('utils.words.users')}</label>
 			<table class="table">
 				<thead>
@@ -279,18 +304,49 @@
 				bind:value={chatDuration}
 				min="0"
 			/>
-			<label class="label" for="typingTest">{$t('studies.typingTest')} *</label>
-			<input type="checkbox" class="input" id="typingTest" bind:checked={typingTest} />
+			<!--
+			<div class="flex items-center mt-2">
+				<label class="label flex-grow" for="typingTest">{$t('studies.typingTest')} *</label>
+				<input
+					type="checkbox"
+					class="checkbox checkbox-primary size-8"
+					id="typingTest"
+					bind:checked={typingTest}
+				/>
+			</div>
+		-->
+			<h3 class="my-2">{$t('Tests')} *</h3>
+			<Draggable bind:items={tests} />
+			<div class="mt-2 flex">
+				<select class="select select-bordered flex-grow" bind:value={selectedTest}>
+					{#each possibleTests as test}
+						{#if test instanceof Survey}
+							<option value={test}>{test.title}</option>
+						{:else}
+							<option value={test}>{test}</option>
+						{/if}
+					{/each}
+				</select>
+				<button
+					class="ml-2 button"
+					onclick={() => {
+						if (selectedTest === undefined) return;
+						tests = [...tests, selectedTest];
+					}}
+				>
+					+
+				</button>
+			</div>
+			<div class="mt-4">
+				<button class="button" onclick={createStudy}>{$t('button.create')}</button>
+				<button
+					class="btn btn-outline float-end ml-2"
+					onclick={() => (studyCreate = false && selectStudy(null))}
+				>
+					{$t('button.cancel')}
+				</button>
+			</div>
 		</form>
-		<div class="mt-4">
-			<button class="button" onclick={createStudy}>{$t('button.create')}</button>
-			<button
-				class="btn btn-outline float-end ml-2"
-				onclick={() => (studyCreate = false && selectStudy(null))}
-			>
-				{$t('button.cancel')}
-			</button>
-		</div>
 	</div>
 </dialog>
 

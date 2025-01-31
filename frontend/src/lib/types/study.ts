@@ -18,6 +18,7 @@ export default class Study {
 	private _endDate: Date;
 	private _chatDuration: number;
 	private _users: User[];
+	private _typingTest: boolean;
 
 	private constructor(
 		id: number,
@@ -26,7 +27,8 @@ export default class Study {
 		startDate: Date,
 		endDate: Date,
 		chatDuration: number,
-		users: User[]
+		users: User[],
+		typingTest: boolean
 	) {
 		this._id = id;
 		this._title = title;
@@ -35,6 +37,7 @@ export default class Study {
 		this._endDate = endDate;
 		this._chatDuration = chatDuration;
 		this._users = users;
+		this._typingTest = typingTest;
 	}
 
 	get id(): number {
@@ -69,18 +72,23 @@ export default class Study {
 		return this._users.length;
 	}
 
+	get typingTest(): boolean {
+		return this._typingTest;
+	}
+
 	static async create(
 		title: string,
 		description: string,
 		startDate: Date,
 		endDate: Date,
 		chatDuration: number,
+		typingTest: boolean,
 		f: fetchType = fetch
 	): Promise<Study | null> {
 		const id = await createStudyAPI(f, title, description, startDate, endDate, chatDuration);
 
 		if (id) {
-			return new Study(id, title, description, startDate, endDate, chatDuration, []);
+			return new Study(id, title, description, startDate, endDate, chatDuration, [], typingTest);
 		}
 		return null;
 	}
@@ -97,6 +105,7 @@ export default class Study {
 			if (data.start_date) this._startDate = parseToLocalDate(data.start_date);
 			if (data.end_date) this._endDate = parseToLocalDate(data.end_date);
 			if (data.chat_duration) this._chatDuration = data.chat_duration;
+			if (data.typing_test) this._typingTest = data.typing_test;
 			return true;
 		}
 		return false;
@@ -133,7 +142,8 @@ export default class Study {
 			parseToLocalDate(json.start_date),
 			parseToLocalDate(json.end_date),
 			json.chat_duration,
-			[]
+			[],
+			json.typing_test
 		);
 
 		study._users = User.parseAll(json.users);
