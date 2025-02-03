@@ -26,58 +26,42 @@
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'trois heures raisonnables\n'.repeat(6) +
-				'trois heures raisonnables'
+			text: 'trois heures raisonnables\n'.repeat(6) + 'trois heures raisonnables'
 		},
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'huit histoires profondes\n'.repeat(6) +
-				'huit histoires profondes'
+			text: 'huit histoires profondes\n'.repeat(6) + 'huit histoires profondes'
 		},
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'deux besoins fantastiques\n'.repeat(6) +
-				'deux besoins fantastiques'
+			text: 'deux besoins fantastiques\n'.repeat(6) + 'deux besoins fantastiques'
 		},
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'six bijoux bizarres\n'.repeat(6) +
-				'six bijoux bizarres'
+			text: 'six bijoux bizarres\n'.repeat(6) + 'six bijoux bizarres'
 		},
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'four interesting questions\n'.repeat(6) +
-				'four interesting questions'
+			text: 'four interesting questions\n'.repeat(6) + 'four interesting questions'
 		},
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'seven wonderful surprises\n'.repeat(6) +
-				'seven wonderful surprises'
+			text: 'seven wonderful surprises\n'.repeat(6) + 'seven wonderful surprises'
 		},
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'five important behaviours\n'.repeat(6) +
-				'five important behaviours'
+			text: 'five important behaviours\n'.repeat(6) + 'five important behaviours'
 		},
 		{
 			duration: -1,
 			explications: 'Écrivez 7 fois la phrase suivante.',
-			text:
-				'some awkward zigzags\n'.repeat(6) +
-				'some awkward zigzags'
+			text: 'some awkward zigzags\n'.repeat(6) + 'some awkward zigzags'
 		},
 		{
 			duration: -1,
