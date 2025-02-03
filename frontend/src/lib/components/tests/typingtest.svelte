@@ -15,36 +15,74 @@
 	let exercices = [
 		{
 			duration: 30,
-			explications: 'Repetez la phrase suivante autant de fois que possible en 30 secondes.',
-			text: 'une femme folle tenait un verre dans sa main\n'.repeat(20) + '...'
+			explications: 'Répétez la phrase suivante autant de fois que possible en 30 secondes.',
+			text: 'une femme folle tenait un verre dans sa main\n'.repeat(12) + '...'
 		},
 		{
 			duration: 30,
-			explications: 'Repetez la phrase suivante autant de fois que possible en 30 secondes.',
-			text: 'the cat was sleeping under the apple tree\n'.repeat(20) + '...'
+			explications: 'Répétez la phrase suivante autant de fois que possible en 30 secondes.',
+			text: 'the cat was sleeping under the apple tree\n'.repeat(12) + '...'
 		},
 		{
 			duration: -1,
-			explications: 'Repetez 7 fois la phrase suivante le plus rapidement possible.',
+			explications: 'Écrivez 7 fois la phrase suivante.',
 			text:
-				'trois heures raisonnables\nhuit histoires profondes\ndeux besoins fantastiques\nsix bijoux bizarres\n'.repeat(
-					6
-				) +
-				'trois heures raisonnables\nhuit histoires profondes\ndeux besoins fantastiques\nsix bijoux bizarres'
+				'trois heures raisonnables\n'.repeat(6) +
+				'trois heures raisonnables'
 		},
 		{
 			duration: -1,
-			explications: 'Repetez 7 fois la phrase suivante le plus rapidement possible.',
+			explications: 'Écrivez 7 fois la phrase suivante.',
 			text:
-				'four interesting questions\nseven wonderful surprises\nfive important behaviours\nsome awkward zigzags\n'.repeat(
-					6
-				) +
-				'four interesting questions\nseven wonderful surprises\nfive important behaviours\nsome awkward zigzags'
+				'huit histoires profondes\n'.repeat(6) +
+				'huit histoires profondes'
 		},
 		{
 			duration: -1,
-			explications: 'Écrivez aussi vite que possible la suite suivante:',
-			text: 'some awkward zigzags'
+			explications: 'Écrivez 7 fois la phrase suivante.',
+			text:
+				'deux besoins fantastiques\n'.repeat(6) +
+				'deux besoins fantastiques'
+		},
+		{
+			duration: -1,
+			explications: 'Écrivez 7 fois la phrase suivante.',
+			text:
+				'six bijoux bizarres\n'.repeat(6) +
+				'six bijoux bizarres'
+		},
+		{
+			duration: -1,
+			explications: 'Écrivez 7 fois la phrase suivante.',
+			text:
+				'four interesting questions\n'.repeat(6) +
+				'four interesting questions'
+		},
+		{
+			duration: -1,
+			explications: 'Écrivez 7 fois la phrase suivante.',
+			text:
+				'seven wonderful surprises\n'.repeat(6) +
+				'seven wonderful surprises'
+		},
+		{
+			duration: -1,
+			explications: 'Écrivez 7 fois la phrase suivante.',
+			text:
+				'five important behaviours\n'.repeat(6) +
+				'five important behaviours'
+		},
+		{
+			duration: -1,
+			explications: 'Écrivez 7 fois la phrase suivante.',
+			text:
+				'some awkward zigzags\n'.repeat(6) +
+				'some awkward zigzags'
+		},
+		{
+			duration: -1,
+			explications: 'Finalement, écrivez une fois les caractères suivant.',
+			text: 'tjxgfl pgkfkq dtdrgt npwdvf'
 		}
 	];
 
