@@ -12,6 +12,7 @@
 	import Message from '$lib/types/message';
 	import type User from '$lib/types/user';
 	import { get } from 'svelte/store';
+	import { writable } from 'svelte/store';
 
 	let {
 		user,
@@ -33,6 +34,9 @@
 	let contentDiv: HTMLDivElement | null = $state(null);
 	let historyModal: HTMLDialogElement;
 	let messageVersions = $state(message.versions);
+
+	let showReactions = writable(false);
+    const emojiList = ["👍", "❤️", "😂", "😮", "😢", "👎"];
 
 	function startEdit() {
 		isEdit = true;
@@ -185,6 +189,20 @@
 
 		await message.deleteFeedback(feedback);
 	}
+
+	function reactToMessage(emoji: string) {
+    let reactions = get(message.reactions);
+    
+	let currentReaction = reactions.find(r => r.userId === String(user.id));
+    
+    if (currentReaction && currentReaction.emoji === emoji) {
+		message.removeReaction(String(user.id)); 
+    } else {
+		message.addReaction(String(user.id), emoji); 
+    }
+    
+    showReactions.set(false);
+}
 </script>
 
 <div
@@ -201,7 +219,16 @@
 		/>
 	</div>
 
-	<div class="chat-bubble text-black" class:bg-blue-50={isSender} class:bg-gray-300={!isSender}>
+	<div class="relative group chat-bubble text-black"
+     class:bg-blue-50={isSender} 
+     class:bg-gray-300={!isSender}
+	 onmouseover={() => showReactions.set(true)}
+	 onmouseleave={() => showReactions.set(false)}
+	 onfocus={() => showReactions.set(true)}
+	 onblur={() => showReactions.set(false)}
+	 role="button"
+	 tabindex="0"
+>
 		{#if replyToMessage}
 			<a
 				href={`#${replyToMessage.uuid}`}
@@ -290,6 +317,29 @@
 				<Icon src={ArrowUturnLeft} class="w-5 h-full text-gray-500 hover:text-gray-800" />
 			</button>
 		{/if}
+	
+		{#if get(message.reactions).length > 0}
+			<div class="flex items-center space-x-2 mt-2">
+				{#each get(message.reactions) as reaction}
+					<span class="text-lg cursor-pointer" title={`Reacted by ${reaction.userId}`}>
+						{reaction.emoji}
+					</span>
+				{/each}
+			</div>
+		{/if}
+	
+		{#if $showReactions}
+			<div class="absolute bottom-0 left-0 flex space-x-2 p-2 bg-white border rounded-lg shadow-lg">
+				{#each emojiList as emoji}
+					<button type="button" class="cursor-pointer text-lg hover:bg-gray-300 p-1 rounded-lg"
+						onclick={() => reactToMessage(emoji)}
+						onkeydown={(e) => e.key === 'Enter' && reactToMessage(emoji)}
+						aria-label={`React with ${emoji}`}>
+						{emoji}
+					</button>
+				{/each}
+			</div>
+		{/if}
 	</div>
 	<div class="chat-footer opacity-50">
 		<Icon src={Check} class="w-4 inline" />
@@ -300,6 +350,7 @@
 			</button>
 		{/if}
 	</div>
+
 </div>
 <div
 	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
