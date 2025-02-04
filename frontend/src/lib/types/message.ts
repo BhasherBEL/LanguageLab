@@ -17,7 +17,7 @@ export default class Message {
 	private _versions = writable([] as { content: string; date: Date }[]);
 	private _feedbacks = writable([] as Feedback[]);
 	private _replyTo: string;
-	private _reactions = writable<{ userId: string; emoji: string }[]>([]); 
+	private _reactions = writable<{ userId: string; emoji: string }[]>([]);
 
 	public constructor(
 		id: number,
@@ -91,24 +91,24 @@ export default class Message {
 	}
 
 	get reactions(): Writable<{ userId: string; emoji: string }[]> {
-        return this._reactions;
-    }
+		return this._reactions;
+	}
 
-    addReaction(userId: string, emoji: string) {
-        this._reactions.update(reactions => {
-            const existing = reactions.find(r => r.userId === userId);
-            if (existing) {
-                existing.emoji = emoji; 
-            } else {
-                reactions.push({ userId, emoji });
-            }
-            return reactions;
-        });
-    }
+	addReaction(userId: string, emoji: string) {
+		this._reactions.update((reactions) => {
+			const existing = reactions.find((r) => r.userId === userId);
+			if (existing) {
+				existing.emoji = emoji;
+			} else {
+				reactions.push({ userId, emoji });
+			}
+			return reactions;
+		});
+	}
 
-    removeReaction(userId: string) {
-        this._reactions.update(reactions => reactions.filter(r => r.userId !== userId));
-    }
+	removeReaction(userId: string) {
+		this._reactions.update((reactions) => reactions.filter((r) => r.userId !== userId));
+	}
 
 	async update(content: string, metadata: { message: string; date: number }[]): Promise<boolean> {
 		const response = await updateMessageAPI(
@@ -130,7 +130,7 @@ export default class Message {
 
 	async getMessageById(id: number): Promise<Message | null> {
 		try {
-			const response = await getMessagesAPI(fetch, this._session.id); 
+			const response = await getMessagesAPI(fetch, this._session.id);
 			if (!response) {
 				toastAlert('Failed to retrieve messages from the server.');
 				return null;
