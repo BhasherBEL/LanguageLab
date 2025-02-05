@@ -287,7 +287,6 @@ class Study(Base):
     start_date = Column(DateTime)
     end_date = Column(DateTime)
     chat_duration = Column(Integer)
-    typing_test = Column(Boolean)
 
     users = relationship("User", secondary="study_users", back_populates="studies")
     surveys = relationship(
