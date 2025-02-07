@@ -9,8 +9,6 @@
 	import { Icon, MagnifyingGlass } from 'svelte-hero-icons';
 	import { getUserByEmailAPI } from '$lib/api/users';
 	import type { PageData } from './$types';
-	import Draggable from './Draggable.svelte';
-	import Survey from '$lib/types/survey';
 
 	const { data }: { data: PageData } = $props();
 
@@ -22,12 +20,6 @@
 	let endDate: Date | null = $state(null);
 	let chatDuration: number = $state(30);
 	let typingTest: boolean = $state(false);
-	let tests: (string | Survey)[] = $state([]);
-
-	let studyCreate: boolean = $state(true);
-
-	let possibleTests = ['Typing Test', ...data.surveys];
-	let selectedTest: string | Survey | undefined = $state();
 
 	function selectStudy(study: Study | null) {
 		selectedStudy = study;
@@ -80,38 +72,6 @@
 			toastSuccess($t('studies.updated'));
 		} else {
 			toastAlert($t('studies.updateError'));
-		}
-	}
-
-	async function createStudy() {
-		if (
-			title === null ||
-			description === null ||
-			startDate === null ||
-			endDate === null ||
-			chatDuration === null ||
-			title === '' ||
-			description === ''
-		) {
-			toastAlert($t('studies.createMissing'));
-			return;
-		}
-
-		const study = await Study.create(
-			title,
-			description,
-			startDate,
-			endDate,
-			chatDuration,
-			typingTest
-		);
-
-		if (study) {
-			toastSuccess($t('studies.created'));
-			studyCreate = false;
-			studies.push(study);
-		} else {
-			toastAlert($t('studies.createError'));
 		}
 	}
 
@@ -204,7 +164,7 @@
 	</tbody>
 </table>
 <div class="mt-8 w-[64rem] mx-auto">
-	<button class="button" onclick={() => (studyCreate = true)}>{$t('studies.create')}</button>
+	<a class="button" href="/admin/studies/new">{$t('studies.create')}</a>
 </div>
 
 <dialog class="modal bg-black bg-opacity-50" open={selectedStudy != null}>
@@ -280,73 +240,6 @@
 				{$t('button.delete')}
 			</button>
 		</div>
-	</div>
-</dialog>
-
-<dialog class="modal bg-black bg-opacity-50" open={studyCreate}>
-	<div class="modal-box max-w-4xl">
-		<h2 class="text-xl font-bold m-5 text-center">{$t('studies.createTitle')}</h2>
-		<form>
-			<label class="label" for="title">{$t('utils.words.title')} *</label>
-			<input class="input w-full" type="text" id="title" bind:value={title} />
-			<label class="label" for="description">{$t('utils.words.description')} *</label>
-			<textarea use:autosize class="input w-full max-h-52" id="title" bind:value={description}>
-			</textarea>
-			<label class="label" for="startDate">{$t('studies.startDate')} *</label>
-			<DateInput class="input w-full" id="startDate" bind:date={startDate} />
-			<label class="label" for="endDate">{$t('studies.endDate')} *</label>
-			<DateInput class="input w-full" id="endDate" bind:date={endDate} />
-			<label class="label" for="chatDuration">{$t('studies.chatDuration')} *</label>
-			<input
-				class="input w-full"
-				type="number"
-				id="chatDuration"
-				bind:value={chatDuration}
-				min="0"
-			/>
-			<!--
-			<div class="flex items-center mt-2">
-				<label class="label flex-grow" for="typingTest">{$t('studies.typingTest')} *</label>
-				<input
-					type="checkbox"
-					class="checkbox checkbox-primary size-8"
-					id="typingTest"
-					bind:checked={typingTest}
-				/>
-			</div>
-		-->
-			<h3 class="my-2">{$t('Tests')} *</h3>
-			<Draggable bind:items={tests} />
-			<div class="mt-2 flex">
-				<select class="select select-bordered flex-grow" bind:value={selectedTest}>
-					{#each possibleTests as test}
-						{#if test instanceof Survey}
-							<option value={test}>{test.title}</option>
-						{:else}
-							<option value={test}>{test}</option>
-						{/if}
-					{/each}
-				</select>
-				<button
-					class="ml-2 button"
-					onclick={() => {
-						if (selectedTest === undefined) return;
-						tests = [...tests, selectedTest];
-					}}
-				>
-					+
-				</button>
-			</div>
-			<div class="mt-4">
-				<button class="button" onclick={createStudy}>{$t('button.create')}</button>
-				<button
-					class="btn btn-outline float-end ml-2"
-					onclick={() => (studyCreate = false && selectStudy(null))}
-				>
-					{$t('button.cancel')}
-				</button>
-			</div>
-		</form>
 	</div>
 </dialog>
 
