@@ -297,6 +297,7 @@ class Study(Base):
     surveys = relationship(
         "SurveySurvey", secondary="study_surveys", back_populates="studies"
     )
+    tests = relationship("StudyTests", backref="study")
 
 
 class StudyUser(Base):
@@ -311,3 +312,11 @@ class StudySurvey(Base):
 
     study_id = Column(Integer, ForeignKey("studies.id"), primary_key=True)
     survey_id = Column(Integer, ForeignKey("survey_surveys.id"), primary_key=True)
+
+
+class StudyTests(Base):
+    __tablename__ = "study_tests"
+
+    study_id = Column(Integer, ForeignKey("studies.id"), primary_key=True)
+    type = Column(String)
+    survey_id = Column(Integer, ForeignKey("survey_surveys.id"), nullable=True)

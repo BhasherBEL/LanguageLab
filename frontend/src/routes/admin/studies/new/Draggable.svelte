@@ -2,7 +2,7 @@
 	import { t } from '$lib/services/i18n';
 	import Survey from '$lib/types/survey';
 
-	let { items = $bindable([]) } = $props();
+	let { items = $bindable([]), name } = $props();
 
 	let draggedIndex: number | null = $state(null);
 	let overIndex: number | null = $state(null);
@@ -38,6 +38,13 @@
 </script>
 
 <ul class="space-y-2">
+	{#each items as item}
+		{#if item instanceof Survey}
+			<input type="hidden" {name} value={JSON.stringify({ type: 'survey', id: item.id })} />
+		{:else}
+			<input type="hidden" {name} value={JSON.stringify({ type: 'typing' })} />
+		{/if}
+	{/each}
 	{#each items as item, index}
 		<li
 			class="p-3 bg-gray-200 border rounded-md select-none
@@ -78,8 +85,12 @@
 				</div>
 			</div>
 			<button
+				type="button"
 				class="ml-4 p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-				onclick={() => deleteItem(index)}
+				onclick={(e) => {
+					e.preventDefault();
+					deleteItem(index);
+				}}
 				aria-label="Delete"
 			>
 				<svg

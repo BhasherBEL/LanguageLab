@@ -26,7 +26,8 @@ export async function createStudyAPI(
 	description: string,
 	startDate: Date,
 	endDate: Date,
-	chatDuration: number
+	chatDuration: number,
+	tests: { type: string; id?: number }[]
 ): Promise<number | null> {
 	const response = await fetch('/api/studies', {
 		method: 'POST',
@@ -36,7 +37,8 @@ export async function createStudyAPI(
 			description,
 			start_date: formatToUTCDate(startDate),
 			end_date: formatToUTCDate(endDate),
-			chat_duration: chatDuration
+			chat_duration: chatDuration,
+			tests
 		})
 	});
 	if (!response.ok) return null;

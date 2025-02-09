@@ -77,7 +77,7 @@ export default class Study {
 		chatDuration: number,
 		f: fetchType = fetch
 	): Promise<Study | null> {
-		const id = await createStudyAPI(f, title, description, startDate, endDate, chatDuration);
+		const id = await createStudyAPI(f, title, description, startDate, endDate, chatDuration, []);
 
 		if (id) {
 			return new Study(id, title, description, startDate, endDate, chatDuration, []);

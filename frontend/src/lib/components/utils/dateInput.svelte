@@ -5,19 +5,35 @@ source: https://svelte.dev/playground/dc963bbead384b69aad17824149d6d27?version=3
 <script lang="ts">
 	import dayjs from 'dayjs';
 
-	export let format = 'YYYY-MM-DD';
-	export let date: Date | null;
-	let class_: string | undefined;
-	export { class_ as class };
-	export let id: string | undefined;
+	let {
+		format = 'YYYY-MM-DD',
+		date,
+		id,
+		name,
+		required = false,
+		class: className
+	} = $props<{
+		format?: string;
+		date: Date | null;
+		id?: string;
+		name?: string;
+		required?: boolean;
+		class?: string;
+	}>();
 
-	let internal: string | null = null;
+	let internal = $state<string | null>(null);
 
-	const input = (x) => (internal = x ? dayjs(x).format(format) : null);
-	const output = (x) => (date = x ? dayjs(x, format).toDate() : null);
+	// Convert the input date to internal string format
+	let formattedDate = $derived(date ? dayjs(date).format(format) : null);
+	$effect(() => {
+		internal = formattedDate;
+	});
 
-	$: input(date);
-	$: output(internal);
+	// Convert internal string back to date
+	let parsedDate = $derived(internal ? dayjs(internal, format).toDate() : null);
+	$effect(() => {
+		date = parsedDate;
+	});
 </script>
 
-<input type="date" bind:value={internal} {id} class={class_} />
+<input type="date" bind:value={internal} {id} {name} class={className} {required} />

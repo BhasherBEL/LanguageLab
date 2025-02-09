@@ -29,7 +29,6 @@
 		startDate = study?.startDate ?? null;
 		endDate = study?.endDate ?? null;
 		chatDuration = study?.chatDuration ?? 30;
-		typingTest = study?.typingTest ?? false;
 	}
 
 	async function studyUpdate() {
@@ -50,8 +49,7 @@
 				endDate.getDay() === selectedStudy.endDate.getDay() &&
 				endDate.getMonth() === selectedStudy.endDate.getMonth() &&
 				endDate.getFullYear() === selectedStudy.endDate.getFullYear() &&
-				chatDuration === selectedStudy.chatDuration &&
-				typingTest === selectedStudy.typingTest)
+				chatDuration === selectedStudy.chatDuration)
 		) {
 			selectStudy(null);
 			toastSuccess($t('studies.noChanges'));
@@ -177,9 +175,9 @@
 			<textarea use:autosize class="input w-full max-h-52" id="title" bind:value={description}>
 			</textarea>
 			<label class="label" for="startDate">{$t('studies.startDate')}</label>
-			<DateInput class="input w-full" id="startDate" bind:date={startDate} />
+			<DateInput class="input w-full" id="startDate" date={startDate} />
 			<label class="label" for="endDate">{$t('studies.endDate')}</label>
-			<DateInput class="input w-full" id="endDate" bind:date={endDate} />
+			<DateInput class="input w-full" id="endDate" date={endDate} />
 			<label class="label" for="chatDuration">{$t('studies.chatDuration')}</label>
 			<input
 				class="input w-full"
