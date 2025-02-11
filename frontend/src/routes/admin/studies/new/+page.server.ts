@@ -39,6 +39,12 @@ export const actions: Actions = {
 			};
 		}
 
+		if (startDate.getTime() > endDate.getTime()) {
+			return {
+				message: 'End time cannot be before start time'
+			};
+		}
+
 		const tests = formData
 			.getAll('tests')
 			.map((test) => {

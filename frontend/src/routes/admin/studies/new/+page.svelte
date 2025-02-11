@@ -25,8 +25,8 @@
 		<label class="label" for="title">{$t('utils.words.title')} *</label>
 		<input class="input w-full" type="text" id="title" name="title" required />
 		<label class="label" for="description">{$t('utils.words.description')}</label>
-		<textarea use:autosize class="input w-full max-h-52" id="description" name="description">
-		</textarea>
+		<textarea use:autosize class="input w-full max-h-52" id="description" name="description"
+		></textarea>
 		<label class="label" for="startDate">{$t('studies.startDate')} *</label>
 		<DateInput class="input w-full" id="startDate" name="startDate" date={new Date()} required />
 		<label class="label" for="endDate">{$t('studies.endDate')} *</label>
