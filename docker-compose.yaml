@@ -41,6 +41,11 @@ services:
   languagelab-frontend-dev:
     container_name: languagelab-frontend-dev
     image: registry.forge.uclouvain.be/sbibauw/languagelab:frontend-dev
+    environment:
+      - VITE_API_URL=https://beta.dev.languagelab.be/tmp-api
+      - VITE_API_PROXY=https://beta.dev.languagelab.be/tmp-api
+      - VITE_APP_URL=https://beta.dev.languagelab.be
+      - VITE_WS_URL=wss://beta.dev.languagelab.be/tmp-api/v1/ws
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
