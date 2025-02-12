@@ -41,7 +41,31 @@ docker_deploy:
   stage: deploy
   only:
     - main
-    - feat/cd
   image: alpine:latest
   script:
     - echo "/mnt/data/languagelab/repo/scripts/update.sh" > /mnt/pipeline
+
+build-dev:
+  stage: build
+  only:
+    - dev
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  parallel:
+    matrix:
+      - COMPONENT: [frontend, backend]
+  script:
+    - docker build -t $CI_REGISTRY/sbibauw/languagelab:${COMPONENT}-dev $COMPONENT
+    - docker push $CI_REGISTRY/sbibauw/languagelab:${COMPONENT}-dev
+
+docker_deploy-dev:
+  stage: deploy
+  only:
+    - dev
+    - feat/cd
+  image: alpine:latest
+  script:
+    - echo "/mnt/data/languagelab/repo/scripts/update.dev.sh" > /mnt/pipeline
