@@ -50,9 +50,9 @@ services:
       - external
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`beta.dev.languagelab.be`)"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
+      - "traefik.http.routers.frontend-dev.rule=Host(`beta.dev.languagelab.be`)"
+      - "traefik.http.routers.frontend-dev.tls=true"
+      - "traefik.http.services.frontend-dev.loadbalancer.server.port=8080"
 
   languagelab-backend-dev:
     container_name: languagelab-backend-dev
@@ -73,9 +73,9 @@ services:
       - external
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.tls=true"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
-      - "traefik.http.routers.backend.rule=Host(`beta.dev.languagelab.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
+      - "traefik.http.routers.backend-dev.tls=true"
+      - "traefik.http.services.backend-dev.loadbalancer.server.port=8000"
+      - "traefik.http.routers.backend-dev.rule=Host(`beta.dev.languagelab.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
 
   traefik:
     container_name: traefik
