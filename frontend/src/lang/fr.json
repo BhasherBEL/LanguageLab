@@ -365,7 +365,8 @@
 		"addUserSuccess": "Utilisateur ajouté à l'étude",
 		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
 		"createTitle": "Créer une nouvelle étude",
-		"typingTest": "Activer le test de frappe"
+		"typingTest": "Activer le test de frappe",
+		"hasToLoggin": "Exiger que les participants soient inscrits et connectés pour passer le test"
 	},
 	"button": {
 		"create": "Créer",

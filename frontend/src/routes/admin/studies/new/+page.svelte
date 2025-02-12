@@ -20,6 +20,8 @@
 	let possibleTests = [typing, ...data.surveys];
 	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
 
+	let hasToLoggin: boolean = $state(false);
+
 	let newUsername: string = $state('');
 	let newUserModal = $state(false);
 	let users: User[] = $state([]);
@@ -81,9 +83,9 @@
 			required
 		/>
 
-		<h3 class="my-2">{$t('Tests')}</h3>
+		<h3 class="py-2 px-1">{$t('Tests')}</h3>
 		<Draggable bind:items={tests} name="tests" />
-		<div class="mt-2 flex">
+		<div class="flex">
 			<select class="select select-bordered flex-grow" bind:value={selectedTest}>
 				{#each possibleTests as test}
 					{#if test instanceof Survey}
@@ -103,6 +105,16 @@
 			>
 				+
 			</button>
+		</div>
+
+		<div class="flex items-center mt-2">
+			<label class="label flex-grow" for="typingTest">{$t('studies.hasToLoggin')}*</label>
+			<input
+				type="checkbox"
+				class="checkbox checkbox-primary size-8"
+				id="typingTest"
+				bind:checked={hasToLoggin}
+			/>
 		</div>
 
 		<label class="label" for="users">{$t('utils.words.users')}</label>
@@ -136,10 +148,37 @@
 				{/each}
 			</tbody>
 		</table>
-		<button type="button" class="btn btn-primary block mx-auto" onclick={addUser}>
+		<button type="button" class="btn btn-primary block mx-auto mt-3" onclick={addUser}>
 			{$t('studies.addUserButton')}
 		</button>
-		<div class="mt-4">
+
+		<h3 class="py-2 px-1">{$t('register.consent.title')}</h3>
+		<label class="label text-sm" for="consentParticipation"
+			>{$t('register.consent.participation')}</label
+		>
+		<textarea
+			use:autosize
+			class="input w-full max-h-52"
+			id="consentParticipation"
+			name="consentParticipation"
+		></textarea>
+		<label class="label text-sm" for="consentPrivacy">{$t('register.consent.privacy')}</label>
+		<textarea use:autosize class="input w-full max-h-52" id="consentPrivacy" name="consentPrivacy"
+		></textarea>
+		<label class="label text-sm" for="consentRights">{$t('register.consent.rights')}</label>
+		<textarea use:autosize class="input w-full max-h-52" id="consentRights" name="consentRights"
+		></textarea>
+		<label class="label text-sm" for="consentStudyData"
+			>{$t('register.consent.studyData.title')}</label
+		>
+		<textarea
+			use:autosize
+			class="input w-full max-h-52"
+			id="consentStudyData"
+			name="consentStudyData"
+		></textarea>
+
+		<div class="mt-4 mb-6">
 			<button class="button">{$t('button.create')}</button>
 			<a class="btn btn-outline float-end ml-2" href="/admin/studies">
 				{$t('button.cancel')}

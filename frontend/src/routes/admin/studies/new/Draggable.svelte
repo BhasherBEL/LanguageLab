@@ -37,7 +37,7 @@
 	};
 </script>
 
-<ul class="space-y-2">
+<ul class="w-full">
 	{#each items as item}
 		{#if item instanceof Survey}
 			<input type="hidden" {name} value={JSON.stringify({ type: 'survey', id: item.id })} />
@@ -52,23 +52,23 @@
         {index === draggedIndex ? 'opacity-50 bg-gray-300' : ''}
         {index === overIndex ? 'border-dashed border-2 border-blue-500' : ''}"
 		>
-			<div class="flex-grow">
+			<div class="w-full">
 				{#if item instanceof Survey}
 					{item.title} ({item.groups.length}
 					{$t('utils.words.groups')}, {item.nQuestions}
 					{$t('utils.words.questions')})
 				{:else}
 					<div class="mb-2">{item.name}</div>
-					<label class="label" for="typing_input">Text*</label>
+					<label class="label text-sm" for="typing_input">Text*</label>
 					<textarea
 						use:autosize
-						class="input w-full max-h-52"
+						class="input w-full"
 						id="typing_input"
 						name="typing_input"
 						bind:value={item.text}
 						required
 					></textarea>
-					<div class="flex items-center gap-2">
+					<div class="flex flex-wrap items-center gap-2 text-sm">
 						<label class="label" for="typing_repetition">Number of time to repeat</label>
 						<input
 							class="input w-20"
