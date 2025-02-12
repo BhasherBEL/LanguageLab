@@ -366,7 +366,6 @@ class Study(BaseModel):
     chat_duration: int
     users: list[User]
     surveys: list[Survey]
-    typing_test: bool
 
 
 class StudyCreate(BaseModel):
@@ -375,4 +374,3 @@ class StudyCreate(BaseModel):
     start_date: NaiveDatetime
     end_date: NaiveDatetime
     chat_duration: int = 30
-    typing_test: bool = False

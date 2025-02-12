@@ -1,17 +1,56 @@
 <script lang="ts">
 	import Survey from '$lib/types/survey';
+	import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
 	import type { PageData, ActionData } from './$types';
 	import Draggable from './Draggable.svelte';
 	import autosize from 'svelte-autosize';
 	import { t } from '$lib/services/i18n';
 	import DateInput from '$lib/components/utils/dateInput.svelte';
+	import { toastAlert, toastWarning } from '$lib/utils/toasts';
+	import { getUserByEmailAPI } from '$lib/api/users';
+	import User from '$lib/types/user';
+	import { Icon, MagnifyingGlass } from 'svelte-hero-icons';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
-	let tests: (string | Survey)[] = $state([]);
+	let tests: (SurveyTypingSvelte | Survey)[] = $state([]);
 
-	let possibleTests = ['Typing Test', ...data.surveys];
-	let selectedTest: string | Survey | undefined = $state();
+	let typing = $state(new SurveyTypingSvelte());
+
+	let possibleTests = [typing, ...data.surveys];
+	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
+
+	let newUsername: string = $state('');
+	let newUserModal = $state(false);
+	let users: User[] = $state([]);
+
+	async function addUser() {
+		newUserModal = true;
+	}
+
+	async function searchUser() {
+		if (!newUsername || !newUsername.includes('@')) {
+			toastWarning($t('studies.invalidEmail'));
+			return;
+		}
+		const userData = await getUserByEmailAPI(fetch, newUsername);
+		if (!userData) {
+			toastWarning($t('studies.userNotFound'));
+			return;
+		}
+		const user = User.parse(userData);
+		if (!user) {
+			toastAlert($t('studies.userNotFound'));
+			return;
+		}
+		users = [...users, user];
+		newUsername = '';
+		newUserModal = false;
+	}
+
+	async function removeUser(user: User) {
+		users = users.filter((u) => u.id !== user.id);
+	}
 </script>
 
 <div class="mx-auto w-full max-w-5xl px-4">
@@ -50,7 +89,7 @@
 					{#if test instanceof Survey}
 						<option value={test}>{test.title}</option>
 					{:else}
-						<option value={test}>{test}</option>
+						<option value={test}>{test.name}</option>
 					{/if}
 				{/each}
 			</select>
@@ -65,6 +104,41 @@
 				+
 			</button>
 		</div>
+
+		<label class="label" for="users">{$t('utils.words.users')}</label>
+		<table class="table">
+			<thead>
+				<tr>
+					<td>#</td>
+					<td>{$t('users.category')}</td>
+					<td>{$t('users.nickname')}</td>
+					<td>{$t('users.email')}</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody>
+				{#each users ?? [] as user (user.id)}
+					<tr>
+						<td>{user.id}</td>
+						<td>{$t('users.type.' + user.type)}</td>
+						<td>{user.nickname}</td>
+						<td>{user.email}</td>
+						<td>
+							<button
+								type="button"
+								class="btn btn-sm btn-error text-white"
+								onclick={() => removeUser(user)}
+							>
+								{$t('button.remove')}
+							</button>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		<button type="button" class="btn btn-primary block mx-auto" onclick={addUser}>
+			{$t('studies.addUserButton')}
+		</button>
 		<div class="mt-4">
 			<button class="button">{$t('button.create')}</button>
 			<a class="btn btn-outline float-end ml-2" href="/admin/studies">
@@ -73,3 +147,21 @@
 		</div>
 	</form>
 </div>
+<dialog class="modal bg-black bg-opacity-50" open={newUserModal}>
+	<div class="modal-box">
+		<h2 class="text-xl font-bold mb-4">{$t('studies.newUser')}</h2>
+		<div class="w-full flex">
+			<input
+				type="text"
+				placeholder={$t('utils.words.email')}
+				bind:value={newUsername}
+				class="input flex-grow mr-2"
+				onkeypress={(e) => e.key === 'Enter' && searchUser()}
+			/>
+			<button class="button w-16" onclick={searchUser}>
+				<Icon src={MagnifyingGlass} />
+			</button>
+		</div>
+		<button class="btn float-end mt-4" onclick={() => (newUserModal = false)}>Close</button>
+	</div>
+</dialog>

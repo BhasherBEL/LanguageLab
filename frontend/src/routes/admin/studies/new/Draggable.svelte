@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
 	import Survey from '$lib/types/survey';
+	import autosize from 'svelte-autosize';
 
-	let { items = $bindable([]), name } = $props();
-
+	let { items = $bindable(), name } = $props();
 	let draggedIndex: number | null = $state(null);
 	let overIndex: number | null = $state(null);
 
@@ -58,7 +58,35 @@
 					{$t('utils.words.groups')}, {item.nQuestions}
 					{$t('utils.words.questions')})
 				{:else}
-					{item}
+					<div class="mb-2">{item.name}</div>
+					<label class="label" for="typing_input">Text*</label>
+					<textarea
+						use:autosize
+						class="input w-full max-h-52"
+						id="typing_input"
+						name="typing_input"
+						bind:value={item.text}
+						required
+					></textarea>
+					<div class="flex items-center gap-2">
+						<label class="label" for="typing_repetition">Number of time to repeat</label>
+						<input
+							class="input w-20"
+							type="number"
+							id="typing_repetition"
+							name="typing_repetition"
+							bind:value={item.repetition}
+						/>
+						and/or
+						<label class="label" for="typing_time">Duration (in seconds)</label>
+						<input
+							class="input w-20"
+							type="number"
+							id="typing_time"
+							name="typing_time"
+							bind:value={item.duration}
+						/>
+					</div>
 				{/if}
 			</div>
 			<div
@@ -84,30 +112,32 @@
 					<span class="w-2 h-2 bg-gray-400 rounded-full"></span>
 				</div>
 			</div>
-			<button
-				type="button"
-				class="ml-4 p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-				onclick={(e) => {
-					e.preventDefault();
-					deleteItem(index);
-				}}
-				aria-label="Delete"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-4 w-4"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
+			<div>
+				<button
+					type="button"
+					class="ml-4 p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+					onclick={(e) => {
+						e.preventDefault();
+						deleteItem(index);
+					}}
+					aria-label="Delete"
 				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M6 18L18 6M6 6l12 12"
-					/>
-				</svg>
-			</button>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-4 w-4"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				</button>
+			</div>
 		</li>
 	{/each}
 </ul>
