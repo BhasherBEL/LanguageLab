@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "PUBLIC_API_URL=http://127.0.0.1:8000/tmp-api PUBLIC_APP_URL=http://127.0.0.1:5173 PUBLIC_WS_URL=ws://127.0.0.1:8000/tmp-api/v1/ws vite dev --host 127.0.0.1",
+		"dev-dev": "PUBLIC_API_URL=https://beta.dev.languagelab.be/tmp-api PUBLIC_APP_URL=http://127.0.0.1:5173 PUBLIC_WS_URL=wss://beta.dev.languagelab.be/tmp-api/v1/ws vite dev --host 127.0.0.1",
 		"build": "vite build",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
