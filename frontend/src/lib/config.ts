@@ -1,8 +1,15 @@
+import {
+	PUBLIC_API_URL,
+	PUBLIC_API_PROXY,
+	PUBLIC_APP_URL,
+	PUBLIC_WS_URL
+} from '$env/static/public';
+
 export default {
-	API_URL: import.meta.env.VITE_API_URL || 'https://languagelab.be/tmp-api',
-	API_PROXY: import.meta.env.VITE_API_PROXY || 'https://languagelab.be/tmp-api',
-	APP_URL: import.meta.env.VITE_APP_URL || 'https://languagelab.be',
-	WS_URL: import.meta.env.VITE_WS_URL || 'wss://languagelab.be/tmp-api/v1/ws',
+	API_URL: PUBLIC_API_URL || 'https://languagelab.be/tmp-api',
+	API_PROXY: PUBLIC_API_PROXY || 'https://languagelab.be/tmp-api',
+	APP_URL: PUBLIC_APP_URL || 'https://languagelab.be',
+	WS_URL: PUBLIC_WS_URL || 'wss://languagelab.be/tmp-api/v1/ws',
 	// 1 week - 2 hours
 	WEEKLY_SURVEY_INTERVAL: (7 * 24 - 2) * 60 * 60 * 1000,
 	LEARNING_LANGUAGES: {
