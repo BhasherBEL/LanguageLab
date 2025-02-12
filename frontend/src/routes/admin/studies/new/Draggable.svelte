@@ -48,7 +48,7 @@
 	{#each items as item, index}
 		<li
 			class="p-3 bg-gray-200 border rounded-md select-none
-        transition-transform ease-out duration-200 flex
+        transition-transform ease-out duration-200 flex mb-2
         {index === draggedIndex ? 'opacity-50 bg-gray-300' : ''}
         {index === overIndex ? 'border-dashed border-2 border-blue-500' : ''}"
 		>
