@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import Study from '$lib/types/study';
+	import Study from '$lib/types/study.svelte';
 	import { displayDate, formatToUTCDate } from '$lib/utils/date';
 	import autosize from 'svelte-autosize';
 	import DateInput from '$lib/components/utils/dateInput.svelte';
@@ -151,7 +151,10 @@
 	</thead>
 	<tbody>
 		{#each studies as study (study.id)}
-			<tr class="hover:bg-gray-100 hover:cursor-pointer" onclick={() => selectStudy(study)}>
+			<tr
+				class="hover:bg-gray-100 hover:cursor-pointer"
+				onclick={() => (window.location.href = `/admin/studies/${study.id}`)}
+			>
 				<td>{study.id}</td>
 				<td>{displayDate(study.startDate)} - {displayDate(study.endDate)}</td>
 				<td>{study.title}</td>

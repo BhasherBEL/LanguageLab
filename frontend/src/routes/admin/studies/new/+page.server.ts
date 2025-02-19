@@ -11,6 +11,11 @@ export const actions: Actions = {
 		const endDateStr = formData.get('endDate')?.toString();
 		const chatDurationStr = formData.get('chatDuration')?.toString();
 
+		const consentParticipation = formData.get('consentParticipation')?.toString();
+		const consentPrivacy = formData.get('consentPrivacy')?.toString();
+		const consentRights = formData.get('consentRights')?.toString();
+		const consentStudyData = formData.get('consentStudyData')?.toString();
+
 		console.log(title, description, startDateStr, endDateStr, chatDurationStr);
 
 		if (!title || !startDateStr || !endDateStr || !chatDurationStr) {
