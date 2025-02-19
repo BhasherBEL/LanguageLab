@@ -59,7 +59,7 @@
 					{$t('utils.words.questions')})
 				{:else}
 					<div class="mb-2">{item.name}</div>
-					<label class="label text-sm" for="typing_input">Text*</label>
+					<label class="label text-sm" for="typing_input">{$t('studies.typingTestText')}*</label>
 					<textarea
 						use:autosize
 						class="input w-full"
@@ -69,7 +69,8 @@
 						required
 					></textarea>
 					<div class="flex flex-wrap items-center gap-2 text-sm">
-						<label class="label" for="typing_repetition">Number of time to repeat</label>
+						<label class="label" for="typing_repetition">{$t('studies.typingTestRepetition')}</label
+						>
 						<input
 							class="input w-20"
 							type="number"
@@ -77,8 +78,8 @@
 							name="typing_repetition"
 							bind:value={item.repetition}
 						/>
-						and/or
-						<label class="label" for="typing_time">Duration (in seconds)</label>
+						{$t('studies.andOr')}
+						<label class="label" for="typing_time">{$t('studies.typingTestDuration')}</label>
 						<input
 							class="input w-20"
 							type="number"
@@ -86,6 +87,9 @@
 							name="typing_time"
 							bind:value={item.duration}
 						/>
+						<div class="tooltip" data-tip={$t('studies.typingTestInfoNote')}>
+							<span class="ml-1 cursor-pointer font-semibold">ⓘ</span>
+						</div>
 					</div>
 				{/if}
 			</div>

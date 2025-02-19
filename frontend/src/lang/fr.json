@@ -366,7 +366,12 @@
 		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
 		"createTitle": "Créer une nouvelle étude",
 		"typingTest": "Activer le test de frappe",
-		"hasToLoggin": "Exiger que les participants soient inscrits et connectés pour passer le test"
+		"hasToLoggin": "Exiger que les participants soient inscrits et connectés pour passer le test",
+		"andOr": "et/ou",
+		"typingTestDuration": "Durée (en secondes)",
+		"typingTestRepetition": "Nombre de fois à répéter",
+		"typingTestText": "Texte",
+		"typingTestInfoNote": "Si aucune durée n'est fournis le mode \"plus vite que possible\" sera activé."
 	},
 	"button": {
 		"create": "Créer",
