@@ -259,6 +259,7 @@
 					{$t('button.cancel')}
 				</a>
 				<button
+					type="button"
 					class="btn btn-error btn-outline float-end"
 					onclick={() => confirm($t('studies.deleteConfirm')) && deleteStudy()}
 				>
