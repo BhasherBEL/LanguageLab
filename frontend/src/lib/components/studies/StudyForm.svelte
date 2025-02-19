@@ -17,18 +17,31 @@
 		possibleTests,
 		mode
 	}: {
-		study: Study;
+		study: Study | null;
 		possibleTests: (Survey | SurveyTypingSvelte)[];
 		mode: string; //"create" or "edit"
 	} = $props();
 
-	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
-
 	let hasToLoggin: boolean = $state(false);
 
+	let title: string | null = $state(study?.title ?? null);
+	let description: string | null = $state(study?.description ?? null);
+	let startDate: Date = $state(study?.startDate ?? new Date());
+	let endDate: Date = $state(study?.endDate ?? new Date());
+	let chatDuration: number = $state(study?.chatDuration ?? 30);
+	let tests: (SurveyTypingSvelte | Survey)[] = $state(study?.tests ?? []);
+	let users: User[] = $state(study?.users ?? []);
+	let consentParticipation: string = $state(study?.consentParticipation ?? '');
+	let consentPrivacy: string = $state(study?.consentPrivacy ?? '');
+	let consentRights: string = $state(study?.consentRights ?? '');
+	let consentStudyData: string = $state(study?.consentStudyData ?? '');
 	let newUsername: string = $state('');
 	let newUserModal = $state(false);
-	let users: User[] = $state(study.users);
+	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
+
+	console.log(endDate);
+
+	$inspect(endDate);
 
 	async function addUser() {
 		newUserModal = true;
@@ -61,16 +74,16 @@
 	async function studyUpdate() {
 		if (!study) return;
 		const result = await study.patch({
-			title: study.title,
-			description: study.description,
-			start_date: formatToUTCDate(study.startDate),
-			end_date: formatToUTCDate(study.endDate),
-			chat_duration: study.chatDuration,
-			tests: study.tests,
-			consent_participation: study.consentParticipation,
-			consent_privacy: study.consentPrivacy,
-			consent_rights: study.consentRights,
-			consent_study_data: study.consentStudyData
+			title: title,
+			description: description,
+			start_date: formatToUTCDate(startDate),
+			end_date: formatToUTCDate(endDate),
+			chat_duration: chatDuration,
+			tests: tests,
+			consent_participation: consentParticipation,
+			consent_privacy: consentPrivacy,
+			consent_rights: consentRights,
+			consent_study_data: consentStudyData
 		});
 
 		if (result) {
@@ -93,39 +106,23 @@
 		{$t(mode === 'create' ? 'studies.createTitle' : 'studies.editTitle')}
 	</h2>
 	<form method="post">
+		<!-- Title & description -->
 		<label class="label" for="title">{$t('utils.words.title')} *</label>
-		<input
-			class="input w-full"
-			type="text"
-			id="title"
-			name="title"
-			required
-			bind:value={study.title}
-		/>
+		<input class="input w-full" type="text" id="title" name="title" required bind:value={title} />
 		<label class="label" for="description">{$t('utils.words.description')}</label>
 		<textarea
 			use:autosize
 			class="input w-full max-h-52"
 			id="description"
 			name="description"
-			bind:value={study.description}
+			bind:value={description}
 		></textarea>
+
+		<!-- Dates -->
 		<label class="label" for="startDate">{$t('studies.startDate')} *</label>
-		<DateInput
-			class="input w-full"
-			id="startDate"
-			name="startDate"
-			date={study.startDate}
-			required
-		/>
+		<DateInput class="input w-full" id="startDate" name="startDate" date={startDate} required />
 		<label class="label" for="endDate">{$t('studies.endDate')} *</label>
-		<DateInput
-			class="input w-full"
-			id="endDate"
-			name="endDate"
-			date={study.endDate || new Date()}
-			required
-		/>
+		<DateInput class="input w-full" id="endDate" name="endDate" date={endDate} required />
 
 		<!-- Chat Duration -->
 		<label class="label" for="chatDuration">{$t('studies.chatDuration')} *</label>
@@ -135,13 +132,13 @@
 			id="chatDuration"
 			name="chatDuration"
 			min="0"
-			bind:value={study.chatDuration}
+			bind:value={chatDuration}
 			required
 		/>
 
 		<!-- Tests Section -->
 		<h3 class="py-2 px-1">{$t('Tests')}</h3>
-		<Draggable bind:items={study.tests} name="tests" />
+		<Draggable bind:items={tests} name="tests" />
 		<div class="flex">
 			<select class="select select-bordered flex-grow" bind:value={selectedTest}>
 				{#each possibleTests as test}
@@ -157,7 +154,7 @@
 				onclick={(e) => {
 					e.preventDefault();
 					if (selectedTest === undefined) return;
-					study.tests = [...study.tests, selectedTest];
+					tests = [...tests, selectedTest];
 				}}
 			>
 				+
@@ -180,7 +177,6 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<td>#</td>
 					<td>{$t('users.category')}</td>
 					<td>{$t('users.nickname')}</td>
 					<td>{$t('users.email')}</td>
@@ -190,7 +186,6 @@
 			<tbody>
 				{#each users ?? [] as user (user.id)}
 					<tr>
-						<td>{user.id}</td>
 						<td>{$t('users.type.' + user.type)}</td>
 						<td>{user.nickname}</td>
 						<td>{user.email}</td>
@@ -221,7 +216,7 @@
 			class="input w-full max-h-52"
 			id="consentParticipation"
 			name="consentParticipation"
-			bind:value={study.consentParticipation}
+			bind:value={consentParticipation}
 		></textarea>
 		<label class="label text-sm" for="consentPrivacy">{$t('register.consent.privacy')}</label>
 		<textarea
@@ -229,7 +224,7 @@
 			class="input w-full max-h-52"
 			id="consentPrivacy"
 			name="consentPrivacy"
-			bind:value={study.consentPrivacy}
+			bind:value={consentPrivacy}
 		></textarea>
 		<label class="label text-sm" for="consentRights">{$t('register.consent.rights')}</label>
 		<textarea
@@ -237,7 +232,7 @@
 			class="input w-full max-h-52"
 			id="consentRights"
 			name="consentRights"
-			bind:value={study.consentRights}
+			bind:value={consentRights}
 		></textarea>
 		<label class="label text-sm" for="consentStudyData"
 			>{$t('register.consent.studyData.title')}</label
@@ -247,7 +242,7 @@
 			class="input w-full max-h-52"
 			id="consentStudyData"
 			name="consentStudyData"
-			bind:value={study.consentStudyData}
+			bind:value={consentStudyData}
 		></textarea>
 
 		{#if mode === 'create'}
@@ -259,7 +254,7 @@
 			</div>
 		{:else}
 			<div class="mt-4 mb-6">
-				<button class="button" onclick={studyUpdate}>{$t('button.update')}</button>
+				<button type="button" class="button" onclick={studyUpdate}>{$t('button.update')}</button>
 				<a class="btn btn-outline float-end ml-2" href="/admin/studies">
 					{$t('button.cancel')}
 				</a>
