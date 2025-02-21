@@ -16,9 +16,16 @@ export const actions: Actions = {
 		const consentRights = formData.get('consentRights')?.toString();
 		const consentStudyData = formData.get('consentStudyData')?.toString();
 
-		console.log(title, description, startDateStr, endDateStr, chatDurationStr);
-
-		if (!title || !startDateStr || !endDateStr || !chatDurationStr) {
+		if (
+			!title ||
+			!startDateStr ||
+			!endDateStr ||
+			!chatDurationStr ||
+			!consentParticipation ||
+			!consentPrivacy ||
+			!consentRights ||
+			!consentStudyData
+		) {
 			return {
 				message: 'Invalid request 1'
 			};
@@ -61,7 +68,19 @@ export const actions: Actions = {
 			})
 			.filter((test) => test !== null);
 
-		await createStudyAPI(fetch, title, description, startDate, endDate, chatDuration, tests);
+		await createStudyAPI(
+			fetch,
+			title,
+			description,
+			startDate,
+			endDate,
+			chatDuration,
+			tests,
+			consentParticipation,
+			consentPrivacy,
+			consentRights,
+			consentStudyData
+		);
 
 		return redirect(303, '/admin/studies');
 	}
