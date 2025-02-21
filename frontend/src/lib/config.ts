@@ -1,8 +1,10 @@
+import { env } from '$env/dynamic/public';
+
 export default {
-	API_URL: import.meta.env.VITE_API_URL || 'https://languagelab.be/tmp-api',
-	API_PROXY: import.meta.env.VITE_API_PROXY || 'https://languagelab.be/tmp-api',
-	APP_URL: import.meta.env.VITE_APP_URL || 'https://languagelab.be',
-	WS_URL: import.meta.env.VITE_WS_URL || 'wss://languagelab.be/tmp-api/v1/ws',
+	API_URL: env.PUBLIC_API_URL,
+	API_PROXY: env.PUBLIC_API_PROXY,
+	APP_URL: env.PUBLIC_APP_URL,
+	WS_URL: env.PUBLIC_WS_URL,
 	// 1 week - 2 hours
 	WEEKLY_SURVEY_INTERVAL: (7 * 24 - 2) * 60 * 60 * 1000,
 	LEARNING_LANGUAGES: {

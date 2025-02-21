@@ -73,6 +73,10 @@ The CI run `npm run lint` and `black --check --verbose` on every commit, on ever
 git config --local core.hooksPath .githooks
 ```
 
+#### up-to-date PR
+
+The project is more and more complex, integrated, tested, etc. To avoid conflicts, ensure you're PR is always up-to-date with the `dev` branch.
+
 ## Useful tips
 
 #### Users
@@ -90,3 +94,49 @@ After an update, it may happen that the dependencies have changed. In such case,
 #### API documentation
 
 To use, try and explore the backend's API, both production and development's server have the `/docs` endpoint. Using the interface, it's possible to register, login, get, create, update, ...
+
+#### Alembic
+
+As alembic is backend-specific, you have to go into the `backend` folder for the commands to work. Note that the alembic environment is slighly different in local, dev and prod, so they all have their own `alembic.*.ini` file. Those files shouldn't be changed unless you really know what you are doing.
+
+:warning: Alembic versions work as a linked list. Each version refer it's previous and next version. To prevent having to tweak "weird" things, ensure you're up-to-date with any other version update. You could need to redo those steps if someone else merged a change in the meantime.
+
+To create a migration script, you can run
+```sh
+alembic revision -m "<change message>"
+```
+It will tell you the name of the new file, where you can implement the changes.
+
+In most cases, you should only need to change the functions:
+ - `upgrade` contains all your changes
+ - `downgrade` drop them. This is **deeply advised** to allow to rollback in case of issue, especially in production.
+
+Here are the most useful alembic functions:
+```python
+# Create a table
+op.create_table(
+    'account',
+    sa.Column('id', sa.Integer, primary_key=True),
+    sa.Column('name', sa.String(50), nullable=False),
+)
+
+# Drop a table
+op.drop_table('account')
+
+# Add a column
+op.add_column('account', sa.Column('last_transaction_date', sa.DateTime))
+
+# Remove a column
+op.drop_column('account', 'last_transaction_date')
+
+# Rename a column
+op.alter_column('account', 'id', new_column_name='uuid')
+```
+
+To update to the latest version:
+```sh
+alembic upgrade head
+```
+:warning: You will also need to run that if someone else wrote a version. This is NOT automatic for the local environment.
+
+For more in depth information, check the [official documentation](https://alembic.sqlalchemy.org/en/latest/).
