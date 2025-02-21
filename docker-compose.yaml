@@ -46,10 +46,10 @@ services:
       #- PUBLIC_API_PROXY=https://beta.dev.languagelab.be/tmp-api
       #- PUBLIC_APP_URL=https://beta.dev.languagelab.be
       #- PUBLIC_WS_URL=wss://beta.dev.languagelab.be/tmp-api/v1/ws
-      - PUBLIC_API_URL=https://languagelab.be/tmp-api
-      - PUBLIC_API_PROXY=https://languagelab.be/tmp-api
-      - PUBLIC_APP_URL=https://languagelab.be
-      - PUBLIC_WS_URL=wss://languagelab.be/tmp-api/v1/ws
+      - PUBLIC_API_URL=https://dev.languagelab.be/tmp-api
+      - PUBLIC_API_PROXY=https://dev.languagelab.be/tmp-api
+      - PUBLIC_APP_URL=https://dev.languagelab.be
+      - PUBLIC_WS_URL=wss://dev.languagelab.be/tmp-api/v1/ws
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -59,7 +59,7 @@ services:
       - external
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend-dev.rule=Host(`beta.dev.languagelab.be`)"
+      - "traefik.http.routers.frontend-dev.rule=Host(`dev.languagelab.be`)"
       - "traefik.http.routers.frontend-dev.tls=true"
       - "traefik.http.services.frontend-dev.loadbalancer.server.port=8080"
 
@@ -73,7 +73,7 @@ services:
       - ADMIN_EMAIL=${LANGUAGELAB_ADMIN_EMAIL}
       - ADMIN_PASSWORD=${LANGUAGELAB_ADMIN_PASSWORD}
       - CALCOM_SECRET=${LANGUAGELAB_CALCOM_SECRET}
-      - ALLOWED_ORIGINS=https://beta.dev.languagelab.be,https://api.dev.languagelab.be
+      - ALLOWED_ORIGINS=https://dev.languagelab.be,https://api.dev.languagelab.be
     volumes:
       - /mnt/data/languagelab/backend:/data
       - /etc/timezone:/etc/timezone:ro
@@ -84,7 +84,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.backend-dev.tls=true"
       - "traefik.http.services.backend-dev.loadbalancer.server.port=8000"
-      - "traefik.http.routers.backend-dev.rule=Host(`beta.dev.languagelab.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
+      - "traefik.http.routers.backend-dev.rule=Host(`dev.languagelab.be`) && (PathPrefix(`/tmp-api`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
 
   traefik:
     container_name: traefik
