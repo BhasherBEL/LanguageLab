@@ -209,7 +209,7 @@
 		<!-- Consent Section -->
 		<h3 class="py-2 px-1">{$t('register.consent.title')}</h3>
 		<label class="label text-sm" for="consentParticipation"
-			>{$t('register.consent.participation')}</label
+			>{$t('register.consent.participation')} *</label
 		>
 		<textarea
 			use:autosize
@@ -217,25 +217,28 @@
 			id="consentParticipation"
 			name="consentParticipation"
 			bind:value={consentParticipation}
+			required
 		></textarea>
-		<label class="label text-sm" for="consentPrivacy">{$t('register.consent.privacy')}</label>
+		<label class="label text-sm" for="consentPrivacy">{$t('register.consent.privacy')} *</label>
 		<textarea
 			use:autosize
 			class="input w-full max-h-52"
 			id="consentPrivacy"
 			name="consentPrivacy"
 			bind:value={consentPrivacy}
+			required
 		></textarea>
-		<label class="label text-sm" for="consentRights">{$t('register.consent.rights')}</label>
+		<label class="label text-sm" for="consentRights">{$t('register.consent.rights')} *</label>
 		<textarea
 			use:autosize
 			class="input w-full max-h-52"
 			id="consentRights"
 			name="consentRights"
 			bind:value={consentRights}
+			required
 		></textarea>
 		<label class="label text-sm" for="consentStudyData"
-			>{$t('register.consent.studyData.title')}</label
+			>{$t('register.consent.studyData.title')} *</label
 		>
 		<textarea
 			use:autosize
@@ -243,6 +246,7 @@
 			id="consentStudyData"
 			name="consentStudyData"
 			bind:value={consentStudyData}
+			required
 		></textarea>
 
 		{#if mode === 'create'}
