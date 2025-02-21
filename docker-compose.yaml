@@ -2,6 +2,10 @@ services:
   languagelab-frontend:
     container_name: languagelab-frontend
     image: registry.forge.uclouvain.be/sbibauw/languagelab:frontend
+    environment:
+      - PUBLIC_API_URL=https://languagelab.be/tmp-api
+      - PUBLIC_API_PROXY=https://languagelab.be/tmp-api
+      - PUBLIC_APP_URL=https://languagelab.be
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -42,10 +46,6 @@ services:
     container_name: languagelab-frontend-dev
     image: registry.forge.uclouvain.be/sbibauw/languagelab:frontend-dev
     environment:
-      #- PUBLIC_API_URL=https://beta.dev.languagelab.be/tmp-api
-      #- PUBLIC_API_PROXY=https://beta.dev.languagelab.be/tmp-api
-      #- PUBLIC_APP_URL=https://beta.dev.languagelab.be
-      #- PUBLIC_WS_URL=wss://beta.dev.languagelab.be/tmp-api/v1/ws
       - PUBLIC_API_URL=https://dev.languagelab.be/tmp-api
       - PUBLIC_API_PROXY=https://dev.languagelab.be/tmp-api
       - PUBLIC_APP_URL=https://dev.languagelab.be
