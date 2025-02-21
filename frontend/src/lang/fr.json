@@ -432,7 +432,8 @@
 			"title": "Titre",
 			"users": "Utilisateurs",
 			"description": "Description",
-			"email": "E-mail"
+			"email": "E-mail",
+			"toggle": "Participants"
 		}
 	},
 	"inputs": {

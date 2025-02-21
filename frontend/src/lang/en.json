@@ -144,7 +144,8 @@
 			"participants": "Participants",
 			"programed": "Scheduled",
 			"status": "Status",
-			"topics": "Topics"
+			"topics": "Topics",
+			"toggle": "Participants"
 		}
 	},
 	"button": {
