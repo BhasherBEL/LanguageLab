@@ -8,23 +8,20 @@ API_PATH = "/tmp-api/v1"
 LOCAL_ITEMS_FOLDER = "../../frontend/static/surveys/items"
 REMOTE_ITEMS_FOLDER = "/surveys/items"
 
-# PARSE ITEMS
+# PARSE QCM QUESTIONS
 
-df_items = pd.read_csv("items.csv", dtype=str)
+df_questions_qcm = pd.read_csv("questions_qcm.csv", dtype=str)
 
-items = []
-for i, row in df_items.iterrows():
+questions_qcm = []
+for i, row in df_questions_qcm.iterrows():
     row = row.dropna()
     id_ = int(row["id"])
 
-    o = {"id": id_, "question": None, "correct": None}
-    items.append(o)
+    o = {"id": id_, "question": None, "question_qcm": {"correct": None}}
+    questions_qcm.append(o)
 
     if "question" in row:
-        if re.search(r"<.*?>", str(row["question"])):
-            o["question"] = f'gap:{row["question"]}'
-        else:
-            o["question"] = f'text:{row["question"]}'
+        o["question"] = f'text:{row["question"]}'
     elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.mp3"):
         o["question"] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/q.mp3"
     elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.jpeg"):
@@ -33,7 +30,7 @@ for i, row in df_items.iterrows():
         print(f"Failed to find a question for item {id_}")
 
     if "correct" in row:
-        o["correct"] = int(row["correct"])
+        o["question_qcm"]["correct"] = int(row["correct"])
     else:
         print(f"Failed to find corect for item {id_}")
 
@@ -41,22 +38,22 @@ for i, row in df_items.iterrows():
         with open(f"{LOCAL_ITEMS_FOLDER}/{id_}/1_dropdown.txt", "r") as file:
             options = file.read().split(",")
         options = [option.strip() for option in options]
-        o[f"option1"] = f"dropdown:{', '.join(options)}"
+        o["question_qcm"][f"option1"] = f"dropdown:{', '.join(options)}"
     elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/1_radio.txt"):
         with open(f"{LOCAL_ITEMS_FOLDER}/{id_}/1_radio.txt", "r") as file:
             options = file.read().split(",")
         options = [option.strip() for option in options]
-        o[f"option1"] = f"radio:{', '.join(options)}"
+        o["question_qcm"][f"option1"] = f"radio:{', '.join(options)}"
     else:
         for j in range(1, 9):
             op = f"option{j}"
             if op in row:
-                o[op] = "text:" + row[op]
+                o["question_qcm"][op] = "text:" + row[op]
             elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.mp3"):
-                o[op] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.mp3"
+                o["question_qcm"][op] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.mp3"
             elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.jpeg"):
-                o[op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpeg"
-    # print(o)
+                o["question_qcm"][op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpeg"
+
 # PARSE GROUPS
 
 groups = []
@@ -73,8 +70,8 @@ with open("groups.csv") as file:
 
 # PARSE SURVEYS
 
-surveys = []
-with open("surveys.csv") as file:
+tests_task = []
+with open("tests_task.csv") as file:
     file.readline()
     for line in file.read().split("\n"):
         if not line:
@@ -82,7 +79,7 @@ with open("surveys.csv") as file:
         id_, title, *gps = line.split(",")
         id_ = int(id_)
         gps = [int(x) for x in gps if x]
-        surveys.append({"id": id_, "title": title, "groups_id": gps})
+        tests_task.append({"id": id_, "test_task": {"title": title}, "groups_id": gps})
 
 # SESSION DATA
 
@@ -99,22 +96,22 @@ assert (
     response_code == 200
 ), f"Probably wrong username or password. Status code: {response_code}"
 
-# CREATE ITEMS
+# CREATE QUESTIONS QCM
 
-n_items = 0
+n_questions_qcm = 0
 
-for item in items:
+for q in questions_qcm:
     assert session.delete(
-        f'{API_URL}{API_PATH}/surveys/items/{item["id"]}'
-    ).status_code in [404, 204], f'Failed to delete item {item["id"]}'
-    r = session.post(f"{API_URL}{API_PATH}/surveys/items", json=item)
+        f'{API_URL}{API_PATH}/tests/questions/{q["id"]}'
+    ).status_code in [404, 204], f'Failed to delete item {q["id"]}'
+    r = session.post(f"{API_URL}{API_PATH}/tests/questions", json=q)
     if r.status_code not in [201]:
-        print(f'Failed to create item {item["id"]}: {r.text}')
+        print(f'Failed to create item {q["id"]}: {r.text}')
         continue
     else:
-        n_items += 1
+        n_questions_qcm += 1
 else:
-    print(f"Successfully created {n_items}/{len(items)} items")
+    print(f"Successfully created {n_questions_qcm}/{len(questions_qcm)} qcm questions")
 
 # CREATE GROUPS
 
@@ -124,9 +121,9 @@ for group in groups:
     group = group.copy()
     its = group.pop("items_id")
     assert session.delete(
-        f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}'
+        f'{API_URL}{API_PATH}/tests/groups/{group["id"]}'
     ).status_code in [404, 204], f'Failed to delete group {group["id"]}'
-    r = session.post(f"{API_URL}{API_PATH}/surveys/groups", json=group)
+    r = session.post(f"{API_URL}{API_PATH}/tests/groups", json=group)
     if r.status_code not in [201]:
         print(f'Failed to create group {group["id"]}: {r.text}')
         continue
@@ -135,14 +132,13 @@ for group in groups:
 
     for it in its:
         assert session.delete(
-            f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}/items/{it}'
+            f'{API_URL}{API_PATH}/tests/groups/{group["id"]}/questions/{it}'
         ).status_code in [
             404,
             204,
-        ], f'Failed to delete item {it} from group {group["id"]}'
+        ], f'Failed to delete question {it} from group {group["id"]}'
         r = session.post(
-            f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}/items',
-            json={"question_id": it},
+            f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}/questions/{it}'
         )
         if r.status_code not in [201]:
             print(f'Failed to add item {it} to group {group["id"]}: {r.text}')
@@ -151,39 +147,35 @@ for group in groups:
 else:
     print(f"Successfully created {n_groups}/{len(groups)} groups")
 
-# CREATE SURVEYS
+# CREATE TASK TESTS
 
-n_surveys = 0
+n_task_tests = 0
 
-for survey in surveys:
-    survey = survey.copy()
-    gps = survey.pop("groups_id")
-    assert session.delete(
-        f'{API_URL}{API_PATH}/surveys/{survey["id"]}'
-    ).status_code in [
+for t in tests_task:
+    t = t.copy()
+    gps = t.pop("groups_id")
+    assert session.delete(f'{API_URL}{API_PATH}/tests/{t["id"]}').status_code in [
         404,
         204,
-    ], f'Failed to delete survey {survey["id"]}'
-    r = session.post(f"{API_URL}{API_PATH}/surveys", json=survey)
+    ], f'Failed to delete test {t["id"]}'
+    r = session.post(f"{API_URL}{API_PATH}/tests", json=t)
     if r.status_code not in [201]:
-        print(f'Failed to create suvey {survey["id"]}: {r.text}')
+        print(f'Failed to create suvey {t["id"]}: {r.text}')
         continue
     else:
-        n_surveys += 1
+        n_task_tests += 1
 
     for gp in gps:
         assert session.delete(
-            f'{API_URL}{API_PATH}/surveys/{survey["id"]}/groups/{gp}'
+            f'{API_URL}{API_PATH}/tests/{t["id"]}/groups/{gp}'
         ).status_code in [
             404,
             204,
-        ], f'Failed to delete gp {gp} from survey {survey["id"]}'
-        r = session.post(
-            f'{API_URL}{API_PATH}/surveys/{survey["id"]}/groups', json={"group_id": gp}
-        )
+        ], f'Failed to delete gp {gp} from test {t["id"]}'
+        r = session.post(f'{API_URL}{API_PATH}/tests/{t["id"]}/groups/{gp}')
         if r.status_code not in [201]:
-            print(f'Failed to add group {gp} to survey {survey["id"]}: {r.text}')
+            print(f'Failed to add group {gp} to test {t["id"]}: {r.text}')
             break
 
 else:
-    print(f"Successfully created {n_surveys}/{len(surveys)} surveys")
+    print(f"Successfully created {n_task_tests}/{len(tests_task)} tests")

@@ -1,6 +1,5 @@
 import os
 import secrets
-import logging
 
 # Database
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///../languagelab.sqlite")

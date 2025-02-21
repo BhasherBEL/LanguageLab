@@ -163,7 +163,19 @@ export default class Study {
 		tests: (SurveyTypingSvelte | Survey)[],
 		f: fetchType = fetch
 	): Promise<Study | null> {
-		const id = await createStudyAPI(f, title, description, startDate, endDate, chatDuration, []);
+		const id = await createStudyAPI(
+			f,
+			title,
+			description,
+			startDate,
+			endDate,
+			chatDuration,
+			[],
+			consentParticipation,
+			consentPrivacy,
+			consentRights,
+			consentStudyData
+		);
 
 		if (id) {
 			return new Study(

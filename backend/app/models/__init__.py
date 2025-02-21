@@ -14,7 +14,9 @@ from enum import Enum
 from database import Base
 import datetime
 from utils import datetime_aware
-from sqlalchemy.dialects.postgresql import JSON
+
+from models.studies import *
+from models.tests import *
 
 
 class UserType(Enum):
@@ -41,7 +43,7 @@ class User(Base):
     password = Column(String)
     type = Column(Integer, default=UserType.STUDENT.value)
     is_active = Column(Boolean, default=True)
-    bio = Column(String, default="")
+    availability = Column(String, default=0)
     ui_language = Column(String, default="fr")
     home_language = Column(String, default="en")
     target_language = Column(String, default="fr")
@@ -49,10 +51,6 @@ class User(Base):
     gender = Column(String, default=None)
     calcom_link = Column(String, default="")
     last_survey = Column(DateTime, default=None)
-    availabilities = Column(JSON, default=[])
-    tutor_list = Column(JSON, default=[])
-    my_tutor = Column(String, default="")
-    my_slots = Column(JSON, default=[])
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"
