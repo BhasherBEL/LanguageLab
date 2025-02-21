@@ -1,7 +1,7 @@
 <script lang="ts">
 	import User from '$lib/types/user';
 	import { t } from '$lib/services/i18n';
-	import UserItem from '$lib/components/users/userItem.svelte';
+	import UserItem from './userItem.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
