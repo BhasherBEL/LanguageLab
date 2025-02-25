@@ -18,7 +18,7 @@ export default class Study {
 	private _description: string;
 	private _startDate: Date;
 	private _endDate: Date;
-	private _chatDuration: number;
+	private _nbSession: number = $state(0);
 	private _users: User[];
 	private _consentParticipation: string;
 	private _consentPrivacy: string;
@@ -32,7 +32,7 @@ export default class Study {
 		description: string,
 		startDate: Date,
 		endDate: Date,
-		chatDuration: number,
+		nbSession: number,
 		users: User[],
 		consentParticipation: string,
 		consentPrivacy: string,
@@ -45,7 +45,7 @@ export default class Study {
 		this._description = description;
 		this._startDate = startDate;
 		this._endDate = endDate;
-		this._chatDuration = chatDuration;
+		this._nbSession = nbSession;
 		this._users = users;
 		this._consentParticipation = consentParticipation;
 		this._consentPrivacy = consentPrivacy;
@@ -90,12 +90,12 @@ export default class Study {
 		this._endDate = value;
 	}
 
-	get chatDuration(): number {
-		return this._chatDuration;
+	get nbSession(): number {
+		return this._nbSession;
 	}
 
-	set chatDuration(value: number) {
-		this._chatDuration = value;
+	set nbSession(value: number) {
+		this._nbSession = value;
 	}
 
 	get users(): User[] {
@@ -155,7 +155,7 @@ export default class Study {
 		description: string,
 		startDate: Date,
 		endDate: Date,
-		chatDuration: number,
+		nbSession: number,
 		consentParticipation: string,
 		consentPrivacy: string,
 		consentRights: string,
@@ -163,19 +163,7 @@ export default class Study {
 		tests: (SurveyTypingSvelte | Survey)[],
 		f: fetchType = fetch
 	): Promise<Study | null> {
-		const id = await createStudyAPI(
-			f,
-			title,
-			description,
-			startDate,
-			endDate,
-			chatDuration,
-			[],
-			consentParticipation,
-			consentPrivacy,
-			consentRights,
-			consentStudyData
-		);
+		const id = await createStudyAPI(f, title, description, startDate, endDate, nbSession, []);
 
 		if (id) {
 			return new Study(
@@ -184,7 +172,7 @@ export default class Study {
 				description,
 				startDate,
 				endDate,
-				chatDuration,
+				nbSession,
 				[],
 				consentParticipation,
 				consentPrivacy,
@@ -207,7 +195,7 @@ export default class Study {
 			if (data.description) this._description = data.description;
 			if (data.start_date) this._startDate = parseToLocalDate(data.start_date);
 			if (data.end_date) this._endDate = parseToLocalDate(data.end_date);
-			if (data.chat_duration) this._chatDuration = data.chat_duration;
+			if (data.chat_duration) this._nbSession = data.chat_duration;
 			if (data.consent_participation) this._consentParticipation = data.consent_participation;
 			if (data.consent_privacy) this._consentPrivacy = data.consent_privacy;
 			if (data.consent_rights) this._consentRights = data.consent_rights;

@@ -30,7 +30,7 @@
 	let description = study ? study.description : '';
 	let startDate = study ? study.startDate : new Date();
 	let endDate = study ? study.endDate : new Date();
-	let chatDuration = study ? study.chatDuration : 30;
+	let nbSession = study ? study.nbSession : 8;
 	let tests = study ? [...study.tests] : [];
 	let consentParticipation = study ? study.consentParticipation : '';
 	let consentPrivacy = study ? study.consentPrivacy : '';
@@ -106,14 +106,14 @@
 		<DateInput class="input w-full" id="endDate" name="endDate" date={endDate} required />
 
 		<!-- Chat Duration -->
-		<label class="label" for="chatDuration">{$t('studies.chatDuration')} *</label>
+		<label class="label" for="nbSession">{$t('studies.nbSession')} *</label>
 		<input
 			class="input w-full"
 			type="number"
-			id="chatDuration"
-			name="chatDuration"
+			id="nbSession"
+			name="nbSession"
 			min="0"
-			bind:value={chatDuration}
+			bind:value={nbSession}
 			required
 		/>
 

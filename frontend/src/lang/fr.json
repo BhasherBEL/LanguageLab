@@ -346,6 +346,7 @@
 		"startDate": "Date de début",
 		"endDate": "Date de fin",
 		"chatDuration": "Durée des sessions (en minutes)",
+		"nbSession": "Nombre de sessions",
 		"updated": "Étude mise à jour avec succès",
 		"noChanges": "Aucune modification",
 		"updateError": "Erreur lors de la mise à jour de l'étude",

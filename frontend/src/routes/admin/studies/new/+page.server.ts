@@ -9,7 +9,7 @@ export const actions: Actions = {
 		let description = formData.get('description')?.toString();
 		const startDateStr = formData.get('startDate')?.toString();
 		const endDateStr = formData.get('endDate')?.toString();
-		const chatDurationStr = formData.get('chatDuration')?.toString();
+		const nbSessionStr = formData.get('nbSession')?.toString();
 
 		const consentParticipation = formData.get('consentParticipation')?.toString();
 		const consentPrivacy = formData.get('consentPrivacy')?.toString();
@@ -20,7 +20,7 @@ export const actions: Actions = {
 			!title ||
 			!startDateStr ||
 			!endDateStr ||
-			!chatDurationStr ||
+			!nbSessionStr ||
 			!consentParticipation ||
 			!consentPrivacy ||
 			!consentRights ||
@@ -44,8 +44,8 @@ export const actions: Actions = {
 			};
 		}
 
-		const chatDuration = parseInt(chatDurationStr, 10);
-		if (isNaN(chatDuration)) {
+		const nbSession = parseInt(nbSessionStr, 10);
+		if (isNaN(nbSession)) {
 			return {
 				message: 'Invalid request 3'
 			};
@@ -74,7 +74,7 @@ export const actions: Actions = {
 			description,
 			startDate,
 			endDate,
-			chatDuration,
+			nbSession,
 			tests,
 			consentParticipation,
 			consentPrivacy,
