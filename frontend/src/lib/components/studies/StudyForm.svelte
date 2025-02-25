@@ -9,7 +9,7 @@
 	import Survey from '$lib/types/survey';
 	import User from '$lib/types/user';
 	import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
-	import type Study from '$lib/types/study.svelte';
+	import type Study from '$lib/types/study.js';
 
 	let {
 		study = $bindable(),

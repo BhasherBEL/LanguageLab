@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import Study from '$lib/types/study.svelte';
+	import Study from '$lib/types/study.js';
 	import { displayDate } from '$lib/utils/date';
 	import type { PageData } from './$types';
 

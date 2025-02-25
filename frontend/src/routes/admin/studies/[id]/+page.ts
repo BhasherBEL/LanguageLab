@@ -1,7 +1,7 @@
 import { getSurveysAPI } from '$lib/api/survey';
 import Survey from '$lib/types/survey';
 import { type Load, redirect } from '@sveltejs/kit';
-import Study from '$lib/types/study.svelte';
+import Study from '$lib/types/study.js';
 import { getStudyAPI } from '$lib/api/studies';
 
 export const load: Load = async ({ fetch, params }) => {

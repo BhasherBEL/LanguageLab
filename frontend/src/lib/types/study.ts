@@ -18,7 +18,7 @@ export default class Study {
 	private _description: string;
 	private _startDate: Date;
 	private _endDate: Date;
-	private _nbSession: number = $state(0);
+	private _nbSession: number;
 	private _users: User[];
 	private _consentParticipation: string;
 	private _consentPrivacy: string;
@@ -163,7 +163,19 @@ export default class Study {
 		tests: (SurveyTypingSvelte | Survey)[],
 		f: fetchType = fetch
 	): Promise<Study | null> {
-		const id = await createStudyAPI(f, title, description, startDate, endDate, nbSession, []);
+		const id = await createStudyAPI(
+			f,
+			title,
+			description,
+			startDate,
+			endDate,
+			nbSession,
+			[],
+			consentParticipation,
+			consentPrivacy,
+			consentRights,
+			consentStudyData
+		);
 
 		if (id) {
 			return new Study(
