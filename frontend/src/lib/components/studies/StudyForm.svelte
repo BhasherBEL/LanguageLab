@@ -42,10 +42,19 @@
 	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
 	let users: User[] = $state(study?.users ?? []);
 
-	async function addUser() {
+	/**
+	 * Opens the participant search dialog to allow adding a new user.
+	 */
+	function addUser() {
 		newUserModal = true;
 	}
 
+	/**
+	 * Add the new participant to the user list if the email given is properly formated and is found
+	 * in the database.
+	 * If successful close the dialog to search participant.
+	 * @async
+	 */
 	async function searchUser() {
 		if (!newUsername || !newUsername.includes('@')) {
 			toastWarning($t('studies.invalidEmail'));
@@ -66,10 +75,18 @@
 		newUserModal = false;
 	}
 
-	async function removeUser(user: User) {
+	/**
+	 * Remove the user from the list of users.
+	 * @param user the user to be removed
+	 */
+	function removeUser(user: User) {
 		users = users.filter((u) => u.id !== user.id);
 	}
 
+	/**
+	 * Deletes the current study from the database and redirects to the admin studies page.
+	 * @async
+	 */
 	async function deleteStudy() {
 		if (!study) return;
 		await study?.delete();
@@ -81,6 +98,7 @@
 	<h2 class="text-xl font-bold m-5 text-center">
 		{$t(mode === 'create' ? 'studies.createTitle' : 'studies.editTitle')}
 	</h2>
+	<!-- if error message to display -->
 	{#if form?.message}
 		<div class="alert alert-error mb-4">
 			{form.message}
@@ -105,7 +123,7 @@
 		<label class="label" for="endDate">{$t('studies.endDate')} *</label>
 		<DateInput class="input w-full" id="endDate" name="endDate" date={endDate} required />
 
-		<!-- Chat Duration -->
+		<!-- number of Sessions -->
 		<label class="label" for="nbSession">{$t('studies.nbSession')} *</label>
 		<input
 			class="input w-full"
@@ -229,6 +247,8 @@
 			bind:value={consentStudyData}
 			required
 		></textarea>
+
+		<!-- submit, cancel and delete buttons -->
 		<div class="mt-4 mb-6">
 			<input type="hidden" name="studyId" value={study ? study.id : ''} />
 			<button type="submit" class="button">
@@ -249,6 +269,7 @@
 		</div>
 	</form>
 </div>
+<!-- Dialog for the research of participant to be added -->
 <dialog class="modal bg-black bg-opacity-50" open={newUserModal}>
 	<div class="modal-box">
 		<h2 class="text-xl font-bold mb-4">{$t('studies.newUser')}</h2>

@@ -150,6 +150,11 @@ export default class Study {
 		this._tests = value;
 	}
 
+	/**
+	 * Creates a new Study and saves it in the database.
+	 * @async
+	 * @returns a Study instance if successful, null otherwise
+	 */
 	static async create(
 		title: string,
 		description: string,
@@ -196,10 +201,21 @@ export default class Study {
 		return null;
 	}
 
+	/**
+	 * Delete this study from the database
+	 * @async
+	 */
 	async delete(f: fetchType = fetch): Promise<void> {
 		await deleteStudyAPI(f, this._id);
 	}
 
+	/**
+	 * Update the study in the database with the new data.
+	 * @async
+	 * @param data  the updated fields
+	 * @param f
+	 * @return `true` if successful, `false` otherwise
+	 */
 	async patch(data: any, f: fetchType = fetch): Promise<boolean> {
 		const res = await patchStudyAPI(f, this._id, data);
 		if (res) {
@@ -218,6 +234,14 @@ export default class Study {
 		return false;
 	}
 
+	/**
+	 * Remove the given user from this study in the database, if successful update the user list of
+	 * this study.
+	 * @async
+	 * @param user the user to remove
+	 * @param f
+	 * @return `true` if successful, `false` otherwise
+	 */
 	async removeUser(user: User, f: fetchType = fetch): Promise<boolean> {
 		const res = await removeUserToStudyAPI(f, this._id, user.id);
 		if (res) {
@@ -227,6 +251,14 @@ export default class Study {
 		return res;
 	}
 
+	/**
+	 * Add the given user from this study in the database, if successful update the user list of this
+	 * study.
+	 * @async
+	 * @param user the user to be added
+	 * @param f
+	 * @return `true` if successful, `false` otherwise
+	 */
 	async addUser(user: User, f: fetchType = fetch): Promise<boolean> {
 		const res = await addUserToStudyAPI(f, this._id, user.id);
 		if (res) {
@@ -236,6 +268,12 @@ export default class Study {
 		return res;
 	}
 
+	/**
+	 * Parses a JSON object into a Study instance.
+	 *
+	 * @param json the JSON object representing a study.
+	 * @returns a Study instance if successful, `null` otherwise
+	 */
 	static parse(json: any): Study | null {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse study: json is null');
@@ -262,6 +300,12 @@ export default class Study {
 		return study;
 	}
 
+	/**
+	 * Parses an array of json into an array of Study instances.
+	 *
+	 * @param json an array of json representing studies
+	 * @returns an array of Study instances. If parsing fails, returns an empty array.
+	 */
 	static parseAll(json: any): Study[] {
 		if (json === null || json === undefined) {
 			toastAlert('Failed to parse studies: json is null');
