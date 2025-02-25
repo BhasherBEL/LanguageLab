@@ -2,7 +2,7 @@
 	import DateInput from '$lib/components/utils/dateInput.svelte';
 	import Draggable from './Draggable.svelte';
 	import autosize from 'svelte-autosize';
-	import { toastWarning, toastAlert, toastSuccess } from '$lib/utils/toasts';
+	import { toastWarning, toastAlert } from '$lib/utils/toasts';
 	import { getUserByEmailAPI } from '$lib/api/users';
 	import { Icon, MagnifyingGlass } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
@@ -10,38 +10,37 @@
 	import User from '$lib/types/user';
 	import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
 	import type Study from '$lib/types/study.svelte';
-	import { formatToUTCDate } from '$lib/utils/date';
 
 	let {
 		study = $bindable(),
 		possibleTests,
-		mode
+		mode,
+		data,
+		form
 	}: {
 		study: Study | null;
 		possibleTests: (Survey | SurveyTypingSvelte)[];
 		mode: string; //"create" or "edit"
+		data: any;
+		form: any;
 	} = $props();
 
 	let hasToLoggin: boolean = $state(false);
+	let title = study ? study.title : '';
+	let description = study ? study.description : '';
+	let startDate = study ? study.startDate : new Date();
+	let endDate = study ? study.endDate : new Date();
+	let chatDuration = study ? study.chatDuration : 30;
+	let tests = study ? [...study.tests] : [];
+	let consentParticipation = study ? study.consentParticipation : '';
+	let consentPrivacy = study ? study.consentPrivacy : '';
+	let consentRights = study ? study.consentRights : '';
+	let consentStudyData = study ? study.consentStudyData : '';
 
-	let title: string | null = $state(study?.title ?? null);
-	let description: string | null = $state(study?.description ?? null);
-	let startDate: Date = $state(study?.startDate ?? new Date());
-	let endDate: Date = $state(study?.endDate ?? new Date());
-	let chatDuration: number = $state(study?.chatDuration ?? 30);
-	let tests: (SurveyTypingSvelte | Survey)[] = $state(study?.tests ?? []);
-	let users: User[] = $state(study?.users ?? []);
-	let consentParticipation: string = $state(study?.consentParticipation ?? '');
-	let consentPrivacy: string = $state(study?.consentPrivacy ?? '');
-	let consentRights: string = $state(study?.consentRights ?? '');
-	let consentStudyData: string = $state(study?.consentStudyData ?? '');
 	let newUsername: string = $state('');
 	let newUserModal = $state(false);
 	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
-
-	console.log(endDate);
-
-	$inspect(endDate);
+	let users: User[] = $state(study?.users ?? []);
 
 	async function addUser() {
 		newUserModal = true;
@@ -71,29 +70,6 @@
 		users = users.filter((u) => u.id !== user.id);
 	}
 
-	async function studyUpdate() {
-		if (!study) return;
-		const result = await study.patch({
-			title: title,
-			description: description,
-			start_date: formatToUTCDate(startDate),
-			end_date: formatToUTCDate(endDate),
-			chat_duration: chatDuration,
-			tests: tests,
-			consent_participation: consentParticipation,
-			consent_privacy: consentPrivacy,
-			consent_rights: consentRights,
-			consent_study_data: consentStudyData
-		});
-
-		if (result) {
-			toastSuccess($t('studies.updated'));
-		} else {
-			toastAlert($t('studies.updateError'));
-		}
-		window.location.href = '/admin/studies';
-	}
-
 	async function deleteStudy() {
 		if (!study) return;
 		await study?.delete();
@@ -105,6 +81,11 @@
 	<h2 class="text-xl font-bold m-5 text-center">
 		{$t(mode === 'create' ? 'studies.createTitle' : 'studies.editTitle')}
 	</h2>
+	{#if form?.message}
+		<div class="alert alert-error mb-4">
+			{form.message}
+		</div>
+	{/if}
 	<form method="post">
 		<!-- Title & description -->
 		<label class="label" for="title">{$t('utils.words.title')} *</label>
@@ -248,20 +229,15 @@
 			bind:value={consentStudyData}
 			required
 		></textarea>
-
-		{#if mode === 'create'}
-			<div class="mt-4 mb-6">
-				<button class="button">{$t('button.create')}</button>
-				<a class="btn btn-outline float-end ml-2" href="/admin/studies">
-					{$t('button.cancel')}
-				</a>
-			</div>
-		{:else}
-			<div class="mt-4 mb-6">
-				<button type="button" class="button" onclick={studyUpdate}>{$t('button.update')}</button>
-				<a class="btn btn-outline float-end ml-2" href="/admin/studies">
-					{$t('button.cancel')}
-				</a>
+		<div class="mt-4 mb-6">
+			<input type="hidden" name="studyId" value={study ? study.id : ''} />
+			<button type="submit" class="button">
+				{$t(mode === 'create' ? 'button.create' : 'button.update')}
+			</button>
+			<a class="btn btn-outline float-end ml-2" href="/admin/studies">
+				{$t('button.cancel')}
+			</a>
+			{#if mode === 'edit'}
 				<button
 					type="button"
 					class="btn btn-error btn-outline float-end"
@@ -269,8 +245,8 @@
 				>
 					{$t('button.delete')}
 				</button>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</form>
 </div>
 <dialog class="modal bg-black bg-opacity-50" open={newUserModal}>

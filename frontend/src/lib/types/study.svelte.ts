@@ -14,17 +14,17 @@ import Survey from '$lib/types/survey';
 
 export default class Study {
 	private _id: number;
-	private _title: string = $state('');
-	private _description: string = $state('');
+	private _title: string;
+	private _description: string;
 	private _startDate: Date;
 	private _endDate: Date;
-	private _chatDuration: number = $state(0);
+	private _chatDuration: number;
 	private _users: User[];
-	private _consentParticipation: string = $state('');
-	private _consentPrivacy: string = $state('');
-	private _consentRights: string = $state('');
-	private _consentStudyData: string = $state('');
-	private _tests: (SurveyTypingSvelte | Survey)[] = $state([]);
+	private _consentParticipation: string;
+	private _consentPrivacy: string;
+	private _consentRights: string;
+	private _consentStudyData: string;
+	private _tests: (SurveyTypingSvelte | Survey)[];
 
 	private constructor(
 		id: number,

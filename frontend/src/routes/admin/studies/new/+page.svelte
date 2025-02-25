@@ -1,13 +1,13 @@
 <script lang="ts">
 	import StudyForm from '$lib/components/studies/StudyForm.svelte';
 	import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
-	import type { PageData } from './$types';
+	import type { PageData, ActionData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let study = null;
 	let typing = $state(new SurveyTypingSvelte());
 	let possibleTests = [typing, ...data.surveys];
 	let mode = 'create';
 </script>
 
-<StudyForm {study} {possibleTests} {mode} />
+<StudyForm {study} {possibleTests} {mode} {data} {form} />
