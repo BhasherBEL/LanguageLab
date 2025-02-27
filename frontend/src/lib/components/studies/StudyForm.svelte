@@ -209,7 +209,10 @@
 				{#each users ?? [] as user (user.id)}
 					<tr>
 						<td>{$t('users.type.' + user.type)}</td>
-						<td>{user.nickname}</td>
+						<td>
+							{user.nickname}
+							<input type="hidden" name="users[]" value={user.id} />
+						</td>
 						<td>{user.email}</td>
 						<td>
 							<button

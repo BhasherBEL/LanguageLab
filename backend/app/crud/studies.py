@@ -23,19 +23,30 @@ def get_studies(db: Session, skip: int = 0) -> list[models.Study]:
 
 def update_study(db: Session, study: schemas.StudyCreate, study_id: int) -> None:
     db.query(models.Study).filter(models.Study.id == study_id).update(
-        {**study.model_dump(exclude_unset=True, exclude={"users", "tests"})}
+        {**study.model_dump(exclude_unset=True, exclude={"user_ids", "test_ids"})}
     )
 
-    if study.model_fields_set & {"users", "tests"}:
-        if study_obj := db.query(models.Study).get(study_id):
-            if "users" in study.model_fields_set:
-                study_obj.users = [
-                    models.User(**user.model_dump()) for user in study.users
-                ]
-            if "tests" in study.model_fields_set:
-                study_obj.tests = [
-                    models.Test(**test.model_dump()) for test in study.tests
-                ]
+    print(study.model_fields_set)
+
+    if study.model_fields_set & {"user_ids", "test_ids"}:
+        if (
+            study_obj := db.query(models.Study)
+            .filter(models.Study.id == study_id)
+            .first()
+        ):
+            if "user_ids" in study.model_fields_set:
+                print(study_obj.users, study.user_ids)
+                study_obj.users = (
+                    db.query(models.User)
+                    .filter(models.User.id.in_(study.user_ids))
+                    .all()
+                )
+            if "test_ids" in study.model_fields_set:
+                study_obj.tests = (
+                    db.query(models.Test)
+                    .filter(models.Test.id.in_(study.test_ids))
+                    .all()
+                )
 
     db.commit()
 

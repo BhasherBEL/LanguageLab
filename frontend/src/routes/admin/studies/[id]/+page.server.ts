@@ -44,8 +44,8 @@ export const actions: Actions = {
 			return { message: 'End time cannot be before start time' };
 		}
 
-		const tests = formData
-			.getAll('tests')
+		const test_ids = formData
+			.getAll('tests[]')
 			.map((test) => {
 				try {
 					return JSON.parse(test.toString());
@@ -55,17 +55,20 @@ export const actions: Actions = {
 			})
 			.filter((test) => test !== null);
 
+		const user_ids = formData.getAll('users[]').map((user) => parseInt(user.toString(), 10));
+
 		const updated = await patchStudyAPI(fetch, parseInt(studyId, 10), {
 			title: title,
 			description: description,
 			start_date: formatToUTCDate(startDate),
 			end_date: formatToUTCDate(endDate),
 			nb_session: nbSession,
-			tests: tests,
+			test_ids,
 			consent_participation: consentParticipation,
 			consent_privacy: consentPrivacy,
 			consent_rights: consentRights,
-			consent_study_data: consentStudyData
+			consent_study_data: consentStudyData,
+			user_ids
 		});
 
 		if (!updated) return { message: 'Failed to update study' };
