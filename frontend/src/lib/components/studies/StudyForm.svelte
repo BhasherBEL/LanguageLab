@@ -10,6 +10,7 @@
 	import User from '$lib/types/user';
 	import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
 	import type Study from '$lib/types/study.js';
+	import { onMount } from 'svelte';
 
 	let {
 		study = $bindable(),
@@ -32,15 +33,31 @@
 	let endDate = study ? study.endDate : new Date();
 	let nbSession = study ? study.nbSession : 8;
 	let tests = study ? [...study.tests] : [];
-	let consentParticipation = study ? study.consentParticipation : '';
-	let consentPrivacy = study ? study.consentPrivacy : '';
-	let consentRights = study ? study.consentRights : '';
-	let consentStudyData = study ? study.consentStudyData : '';
+	let consentParticipation = study
+		? study.consentParticipation
+		: $t('studies.consentParticipation');
+	let consentPrivacy = study ? study.consentPrivacy : $t('studies.consentPrivacy');
+	let consentRights = study ? study.consentRights : $t('studies.consentRights');
+	let consentStudyData = study ? study.consentStudyData : $t('studies.consentStudyData');
 
 	let newUsername: string = $state('');
 	let newUserModal = $state(false);
 	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
 	let users: User[] = $state(study?.users ?? []);
+
+	/**
+	 * Triggers the autosize update for all textarea elements in the document, to adjust the textarea
+	 * size based on the initial content.
+	 */
+	function triggerAutosize() {
+		const textareas = document.querySelectorAll('textarea');
+		textareas.forEach((textarea) => {
+			autosize.update(textarea);
+		});
+	}
+	onMount(() => {
+		triggerAutosize();
+	});
 
 	/**
 	 * Opens the participant search dialog to allow adding a new user.
