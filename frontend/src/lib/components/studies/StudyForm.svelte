@@ -34,12 +34,15 @@
 	let endDate = study ? study.endDate : new Date();
 	let nbSession = study ? study.nbSession : 8;
 	let tests = study ? [...study.tests] : [];
-	let consentParticipation = study
-		? study.consentParticipation
-		: $t('studies.consentParticipation');
-	let consentPrivacy = study ? study.consentPrivacy : $t('studies.consentPrivacy');
-	let consentRights = study ? study.consentRights : $t('studies.consentRights');
-	let consentStudyData = study ? study.consentStudyData : $t('studies.consentStudyData');
+	let consentParticipation =
+		form?.consentParticipation ??
+		(study ? study.consentParticipation : $t('studies.consentParticipation'));
+	let consentPrivacy =
+		form?.consentPrivacy ?? (study ? study.consentPrivacy : $t('studies.consentPrivacy'));
+	let consentRights =
+		form?.consentRights ?? (study ? study.consentRights : $t('studies.consentRights'));
+	let consentStudyData =
+		form?.consentStudyData ?? (study ? study.consentStudyData : $t('studies.consentStudyData'));
 
 	let newUsername: string = $state('');
 	let newUserModal = $state(false);
@@ -235,7 +238,7 @@
 			class="input w-full max-h-52"
 			id="consentParticipation"
 			name="consentParticipation"
-			bind:value={consentParticipation}
+			value={consentParticipation}
 			required
 		></textarea>
 		<label class="label text-sm" for="consentPrivacy">{$t('register.consent.privacy')} *</label>
@@ -244,7 +247,7 @@
 			class="input w-full max-h-52"
 			id="consentPrivacy"
 			name="consentPrivacy"
-			bind:value={consentPrivacy}
+			value={consentPrivacy}
 			required
 		></textarea>
 		<label class="label text-sm" for="consentRights">{$t('register.consent.rights')} *</label>
@@ -253,7 +256,7 @@
 			class="input w-full max-h-52"
 			id="consentRights"
 			name="consentRights"
-			bind:value={consentRights}
+			value={consentRights}
 			required
 		></textarea>
 		<label class="label text-sm" for="consentStudyData"
@@ -264,7 +267,7 @@
 			class="input w-full max-h-52"
 			id="consentStudyData"
 			name="consentStudyData"
-			bind:value={consentStudyData}
+			value={consentStudyData}
 			required
 		></textarea>
 

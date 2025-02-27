@@ -7,27 +7,23 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const studyId = params.id;
 
-		console.log('here');
-
 		if (!studyId) return { message: 'Invalid study ID' };
 
 		const title = formData.get('title')?.toString();
 		const description = formData.get('description')?.toString() || '';
 		const startDateStr = formData.get('startDate')?.toString();
 		const endDateStr = formData.get('endDate')?.toString();
-		const chatDurationStr = formData.get('chatDuration')?.toString();
+		const nbSessionStr = formData.get('nbSession')?.toString();
 		const consentParticipation = formData.get('consentParticipation')?.toString();
 		const consentPrivacy = formData.get('consentPrivacy')?.toString();
 		const consentRights = formData.get('consentRights')?.toString();
 		const consentStudyData = formData.get('consentStudyData')?.toString();
 
-		console.log('here1');
-
 		if (
 			!title ||
 			!startDateStr ||
 			!endDateStr ||
-			!chatDurationStr ||
+			!nbSessionStr ||
 			!consentParticipation ||
 			!consentPrivacy ||
 			!consentRights ||
@@ -38,10 +34,10 @@ export const actions: Actions = {
 
 		const startDate = new Date(startDateStr);
 		const endDate = new Date(endDateStr);
-		const chatDuration = parseInt(chatDurationStr, 10);
+		const nbSession = parseInt(nbSessionStr, 10);
 
-		if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || isNaN(chatDuration)) {
-			return { message: 'Invalid date or chat duration' };
+		if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || isNaN(nbSession)) {
+			return { message: 'Invalid date or session amount' };
 		}
 
 		if (startDate.getTime() > endDate.getTime()) {
@@ -59,14 +55,12 @@ export const actions: Actions = {
 			})
 			.filter((test) => test !== null);
 
-		console.log('here2');
-
 		const updated = await patchStudyAPI(fetch, parseInt(studyId, 10), {
 			title: title,
 			description: description,
 			start_date: formatToUTCDate(startDate),
 			end_date: formatToUTCDate(endDate),
-			chat_duration: chatDuration,
+			nb_session: nbSession,
 			tests: tests,
 			consent_participation: consentParticipation,
 			consent_privacy: consentPrivacy,
@@ -74,13 +68,8 @@ export const actions: Actions = {
 			consent_study_data: consentStudyData
 		});
 
-		console.log('here3');
-		console.log(updated);
-
 		if (!updated) return { message: 'Failed to update study' };
 
-		console.log('Action executed');
-		console.log('here4');
 		return redirect(303, '/admin/studies');
 	}
 };
