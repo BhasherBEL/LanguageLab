@@ -1,11 +1,11 @@
 import { getSurveysAPI } from '$lib/api/survey';
-import Survey from '$lib/types/survey';
+import { Test } from '$lib/types/tests';
 import { type Load } from '@sveltejs/kit';
 
 export const load: Load = async ({ fetch }) => {
-	const surveys = Survey.parseAll(await getSurveysAPI(fetch));
+	const tests = Test.parseAll(await getSurveysAPI(fetch));
 
 	return {
-		surveys
+		tests
 	};
 };

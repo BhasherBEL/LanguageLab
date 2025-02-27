@@ -27,6 +27,7 @@ from utils import check_user_level
 import config
 from security import jwt_cookie, get_jwt_user
 from routes.tests import testRouter
+from routes.studies import studiesRouter
 
 websocket_users = defaultdict(lambda: defaultdict(set))
 websocket_users_global = defaultdict(set)
@@ -1055,5 +1056,6 @@ v1Router.include_router(sessionsRouter)
 v1Router.include_router(studyRouter)
 v1Router.include_router(websocketRouter)
 v1Router.include_router(testRouter)
+v1Router.include_router(studiesRouter)
 apiRouter.include_router(v1Router)
 app.include_router(apiRouter)

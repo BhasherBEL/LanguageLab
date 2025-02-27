@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, validates
 from utils import datetime_aware
 from database import Base
@@ -43,7 +43,11 @@ class TestTask(Base):
     test = relationship(
         "Test", uselist=False, back_populates="test_task", lazy="selectin"
     )
-    groups = relationship("TestTaskGroup", secondary="test_task_task_groups")
+    groups = relationship(
+        "TestTaskGroup",
+        secondary="test_task_task_groups",
+        lazy="selectin",
+    )
 
 
 class Test(Base):
@@ -52,10 +56,16 @@ class Test(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     test_typing = relationship(
-        "TestTyping", uselist=False, back_populates="test", lazy="selectin"
+        "TestTyping",
+        uselist=False,
+        back_populates="test",
+        lazy="selectin",
     )
     test_task = relationship(
-        "TestTask", uselist=False, back_populates="test", lazy="selectin"
+        "TestTask",
+        uselist=False,
+        back_populates="test",
+        lazy="selectin",
     )
 
     @validates("test_typing")
@@ -79,13 +89,14 @@ class TestTaskTaskGroup(Base):
 class TestTaskGroup(Base):
     __tablename__ = "test_task_groups"
     id = Column(Integer, primary_key=True, index=True)
-    test_task_id = Column(Integer, ForeignKey("test_tasks.test_id"), index=True)
+
     title = Column(String, nullable=False)
-    demo = Column(String, default=False)
+    demo = Column(Boolean, default=False)
 
     questions = relationship(
         "TestTaskQuestion",
         secondary="test_task_group_questions",
+        lazy="selectin",
     )
 
 
@@ -123,7 +134,10 @@ class TestTaskQuestion(Base):
     question = Column(String, nullable=True)
 
     question_qcm = relationship(
-        "TestTaskQuestionQCM", uselist=False, back_populates="question"
+        "TestTaskQuestionQCM",
+        uselist=False,
+        back_populates="question",
+        lazy="selectin",
     )
 
     @validates("question_qcm")

@@ -11,6 +11,7 @@
 	import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
 	import type Study from '$lib/types/study.js';
 	import { onMount } from 'svelte';
+	import { TestTask, type Test } from '$lib/types/tests';
 
 	let {
 		study = $bindable(),
@@ -20,7 +21,7 @@
 		form
 	}: {
 		study: Study | null;
-		possibleTests: (Survey | SurveyTypingSvelte)[];
+		possibleTests: Test[];
 		mode: string; //"create" or "edit"
 		data: any;
 		form: any;
@@ -158,10 +159,12 @@
 		<div class="flex">
 			<select class="select select-bordered flex-grow" bind:value={selectedTest}>
 				{#each possibleTests as test}
-					{#if test instanceof Survey}
-						<option value={test}>{test.title}</option>
+					{#if test instanceof TestTask}
+						<option value={test}
+							>{test.title} - {test.groups.length} groups - {test.numQuestions} questions</option
+						>
 					{:else}
-						<option value={test}>{test.name}</option>
+						<!-- <option value={test}>{test.name}</option> -->
 					{/if}
 				{/each}
 			</select>

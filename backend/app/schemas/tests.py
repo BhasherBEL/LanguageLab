@@ -30,6 +30,8 @@ class TestCreate(BaseModel):
 
 
 class TestTaskGroupCreate(BaseModel):
+    # TODO remove
+    id: int | None = None
     title: str
     demo: bool = False
 
@@ -64,8 +66,25 @@ class TestTaskGroupAdd(BaseModel):
     task_id: int
 
 
-class TestTaskQuestionQCM(TestTaskQuestionQCMCreate):
-    pass
+class TestTaskQuestionQCM(BaseModel):
+    correct: int
+    options: list[str]
+
+    model_config = {"from_attributes": True}
+
+    @model_validator(mode="before")
+    @classmethod
+    def extract_options(cls, data):
+        if hasattr(data, "__dict__"):
+            result = {"correct": getattr(data, "correct", None), "options": []}
+
+            for i in range(1, 9):
+                option_value = getattr(data, f"option{i}", None)
+                if option_value is not None and option_value != "":
+                    result["options"].append(option_value)
+
+            return result
+        return data
 
 
 class TestTaskQuestion(BaseModel):
@@ -75,23 +94,22 @@ class TestTaskQuestion(BaseModel):
 
 
 class TestTaskGroup(TestTaskGroupCreate):
-    id: int
+    # id: int
     questions: list[TestTaskQuestion] = []
 
 
 class TestTask(TestTaskCreate):
-    id: int
     groups: list[TestTaskGroup] = []
 
 
 class TestTyping(TestTypingCreate):
-    id: int
-
-
-class Test(TestCreate):
-    # TODO add
-    # id: int
     pass
+
+
+class Test(BaseModel):
+    id: int
+    test_typing: TestTyping | None = None
+    test_task: TestTask | None = None
 
 
 class TestTaskEntryQCMCreate(BaseModel):

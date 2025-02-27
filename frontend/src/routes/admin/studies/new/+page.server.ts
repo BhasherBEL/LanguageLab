@@ -68,7 +68,7 @@ export const actions: Actions = {
 			})
 			.filter((test) => test !== null);
 
-		await createStudyAPI(
+		const id = await createStudyAPI(
 			fetch,
 			title,
 			description,
@@ -81,6 +81,12 @@ export const actions: Actions = {
 			consentRights,
 			consentStudyData
 		);
+
+		if (id === null) {
+			return {
+				message: 'Failed to create study'
+			};
+		}
 
 		return redirect(303, '/admin/studies');
 	}

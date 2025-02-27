@@ -34,7 +34,7 @@ def get_test(
     return crud.get_test(db, test_id)
 
 
-@require_admin("You do not have permission to delete a test.")
+@require_admin("You do not have permission to: delete a test.")
 @testRouter.delete("/{test_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_test(
     test_id: int,

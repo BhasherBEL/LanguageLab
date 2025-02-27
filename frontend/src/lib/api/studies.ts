@@ -42,7 +42,7 @@ export async function createStudyAPI(
 			start_date: formatToUTCDate(startDate),
 			end_date: formatToUTCDate(endDate),
 			nb_session: nbSession,
-			tests,
+			//tests,
 			consent_participation: consentParticipation,
 			consent_privacy: consentPrivacy,
 			consent_rights: consentRights,

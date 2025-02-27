@@ -17,7 +17,7 @@ class Study(Base):
     description = Column(String)
     start_date = Column(DateTime)
     end_date = Column(DateTime)
-    week_duration = Column(Integer)
+    nb_session = Column(Integer)
     consent_participation = Column(String)
     consent_privacy = Column(String)
     consent_rights = Column(String)

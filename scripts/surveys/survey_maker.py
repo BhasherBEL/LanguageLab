@@ -54,6 +54,28 @@ for i, row in df_questions_qcm.iterrows():
             elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.jpeg"):
                 o["question_qcm"][op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpeg"
 
+# PARSE GAPFILL QUESTIONS
+
+df_questions_gapfill = pd.read_csv("questions_gapfill.csv", dtype=str)
+
+questions_gapfill = []
+for i, row in df_questions_gapfill.iterrows():
+    row = row.dropna()
+    id_ = int(row["id"])
+
+    o = {"id": id_, "question": None}
+    questions_gapfill.append(o)
+
+    if "question" in row:
+        o["question"] = f'text:{row["question"]}'
+    elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.mp3"):
+        o["question"] = f"audio:{REMOTE_ITEMS_FOLDER}/{id_}/q.mp3"
+    elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.jpeg"):
+        o["question"] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/q.jpeg"
+    else:
+        print(f"Failed to find a question for item {id_}")
+
+
 # PARSE GROUPS
 
 groups = []
@@ -108,10 +130,35 @@ for q in questions_qcm:
     if r.status_code not in [201]:
         print(f'Failed to create item {q["id"]}: {r.text}')
         continue
-    else:
-        n_questions_qcm += 1
+
+    if r.text != str(q["id"]):
+        print(f'Item {q["id"]} was created with id {r.text}')
+
+    n_questions_qcm += 1
 else:
     print(f"Successfully created {n_questions_qcm}/{len(questions_qcm)} qcm questions")
+
+# CREATE QUESTIONS GAPFILL
+
+n_questions_gapfill = 0
+
+for q in questions_gapfill:
+    assert session.delete(
+        f'{API_URL}{API_PATH}/tests/questions/{q["id"]}'
+    ).status_code in [404, 204], f'Failed to delete item {q["id"]}'
+    r = session.post(f"{API_URL}{API_PATH}/tests/questions", json=q)
+    if r.status_code not in [201]:
+        print(f'Failed to create item {q["id"]}: {r.text}')
+        continue
+
+    if r.text != str(q["id"]):
+        print(f'Item {q["id"]} was created with id {r.text}')
+
+    n_questions_gapfill += 1
+else:
+    print(
+        f"Successfully created {n_questions_gapfill}/{len(questions_gapfill)} gapfill questions"
+    )
 
 # CREATE GROUPS
 
@@ -127,8 +174,11 @@ for group in groups:
     if r.status_code not in [201]:
         print(f'Failed to create group {group["id"]}: {r.text}')
         continue
-    else:
-        n_groups += 1
+
+    if r.text != str(group["id"]):
+        print(f'Group {group["id"]} was created with id {r.text}')
+
+    n_groups += 1
 
     for it in its:
         assert session.delete(
@@ -138,7 +188,7 @@ for group in groups:
             204,
         ], f'Failed to delete question {it} from group {group["id"]}'
         r = session.post(
-            f'{API_URL}{API_PATH}/surveys/groups/{group["id"]}/questions/{it}'
+            f'{API_URL}{API_PATH}/tests/groups/{group["id"]}/questions/{it}'
         )
         if r.status_code not in [201]:
             print(f'Failed to add item {it} to group {group["id"]}: {r.text}')
@@ -162,8 +212,11 @@ for t in tests_task:
     if r.status_code not in [201]:
         print(f'Failed to create suvey {t["id"]}: {r.text}')
         continue
-    else:
-        n_task_tests += 1
+
+    if r.text != str(t["id"]):
+        print(f'Survey {t["id"]} was created with id {r.text}')
+
+    n_task_tests += 1
 
     for gp in gps:
         assert session.delete(

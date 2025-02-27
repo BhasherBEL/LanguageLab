@@ -34,9 +34,12 @@ def add_group_to_test_task(db: Session, test: models.Test, group: models.TestTas
 def remove_group_from_test_task(
     db: Session, testTask: models.TestTask, group: models.TestTaskGroup
 ):
-    testTask.groups.remove(group)
-    db.commit()
-    db.refresh(testTask)
+    try:
+        testTask.groups.remove(group)
+        db.commit()
+        db.refresh(testTask)
+    except ValueError:
+        pass
 
 
 def create_group(
@@ -73,9 +76,12 @@ def add_question_to_group(
 def remove_question_from_group(
     db: Session, group: models.TestTaskGroup, question: models.TestTaskQuestion
 ):
-    group.questions.remove(question)
-    db.commit()
-    db.refresh(group)
+    try:
+        group.questions.remove(question)
+        db.commit()
+        db.refresh(group)
+    except ValueError:
+        pass
 
 
 def create_question(db: Session, question: schemas.TestTaskQuestionCreate):
