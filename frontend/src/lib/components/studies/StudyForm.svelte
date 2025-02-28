@@ -8,8 +8,7 @@
 	import { t } from '$lib/services/i18n';
 	import Survey from '$lib/types/survey';
 	import User from '$lib/types/user';
-	import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
-	import type Study from '$lib/types/study.js';
+	import type Study from '$lib/types/study';
 	import { onMount } from 'svelte';
 	import { TestTask, type Test } from '$lib/types/tests';
 
@@ -33,7 +32,7 @@
 	let startDate = study ? study.startDate : new Date();
 	let endDate = study ? study.endDate : new Date();
 	let nbSession = study ? study.nbSession : 8;
-	let tests = study ? [...study.tests] : [];
+	let tests = $state(study ? [...study.tests] : []);
 	let consentParticipation =
 		form?.consentParticipation ??
 		(study ? study.consentParticipation : $t('studies.consentParticipation'));
@@ -46,7 +45,7 @@
 
 	let newUsername: string = $state('');
 	let newUserModal = $state(false);
-	let selectedTest: SurveyTypingSvelte | Survey | undefined = $state();
+	let selectedTest: Test | undefined = $state();
 	let users: User[] = $state(study?.users ?? []);
 
 	/**

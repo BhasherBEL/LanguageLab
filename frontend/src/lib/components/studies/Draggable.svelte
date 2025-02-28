@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
 	import Survey from '$lib/types/survey';
+	import { TestTask } from '$lib/types/tests';
 	import autosize from 'svelte-autosize';
 
 	let { items = $bindable(), name } = $props();
@@ -39,10 +40,10 @@
 
 <ul class="w-full">
 	{#each items as item}
-		{#if item instanceof Survey}
-			<input type="hidden" {name} value={JSON.stringify({ type: 'survey', id: item.id })} />
+		{#if item instanceof TestTask}
+			<input type="hidden" {name} value={item.id} />
 		{:else}
-			<input type="hidden" {name} value={JSON.stringify({ type: 'typing' })} />
+			<input type="hidden" {name} value={item.id} />
 		{/if}
 	{/each}
 	{#each items as item, index}
@@ -53,9 +54,9 @@
         {index === overIndex ? 'border-dashed border-2 border-blue-500' : ''}"
 		>
 			<div class="w-full">
-				{#if item instanceof Survey}
+				{#if item instanceof TestTask}
 					{item.title} ({item.groups.length}
-					{$t('utils.words.groups')}, {item.nQuestions}
+					{$t('utils.words.groups')}, {item.numQuestions}
 					{$t('utils.words.questions')})
 				{:else}
 					<div class="mb-2">{item.name}</div>

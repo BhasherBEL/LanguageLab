@@ -23,8 +23,7 @@ export abstract class TestTaskQuestion {
 		if (data.question_qcm) {
 			return TestTaskQuestionQcm.parse(data);
 		}
-
-		return null;
+		return TestTaskQuestionGapfill.parse(data);
 	}
 
 	static parseAll(data: any): TestTaskQuestion[] {
@@ -69,15 +68,29 @@ export class TestTaskQuestionQcm extends TestTaskQuestion {
 			data.question_qcm.correct
 		);
 	}
+}
 
-	static parseAll(data: any): TestTaskQuestionQcm[] {
+export class TestTaskQuestionGapfill extends TestTaskQuestion {
+	get answer(): string {
+		const match = super.question.match(/<([^>]+)>/);
+		return match ? match[1] : '';
+	}
+
+	get length(): number {
+		return this.answer.length;
+	}
+
+	get blank(): string {
+		const question = super.question;
+		const match = question.match(/<([^>]+)>/);
+		if (!match) return question;
+		return question.replace(/<[^>]+>/, '_'.repeat(this.length));
+	}
+
+	static parse(data: any): TestTaskQuestionGapfill | null {
 		if (data === null) {
-			return [];
+			return null;
 		}
-		return data
-			.map((question: any) => TestTaskQuestionQcm.parse(question))
-			.filter(
-				(question: TestTaskQuestionQcm | null): question is TestTaskQuestionQcm => question !== null
-			);
+		return new TestTaskQuestionGapfill(data.id, data.question);
 	}
 }

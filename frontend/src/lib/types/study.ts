@@ -9,8 +9,7 @@ import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import type { fetchType } from '$lib/utils/types';
 import User from './user';
-import SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
-import Survey from '$lib/types/survey';
+import type { Test } from './tests';
 
 export default class Study {
 	private _id: number;
@@ -24,7 +23,7 @@ export default class Study {
 	private _consentPrivacy: string;
 	private _consentRights: string;
 	private _consentStudyData: string;
-	private _tests: (SurveyTypingSvelte | Survey)[];
+	private _tests: Test[];
 
 	private constructor(
 		id: number,
@@ -38,7 +37,7 @@ export default class Study {
 		consentPrivacy: string,
 		consentRights: string,
 		consentStudyData: string,
-		tests: (SurveyTypingSvelte | Survey)[]
+		tests: Test[]
 	) {
 		this._id = id;
 		this._title = title;
@@ -142,11 +141,11 @@ export default class Study {
 		this._consentStudyData = value;
 	}
 
-	get tests(): (SurveyTypingSvelte | Survey)[] {
+	get tests(): Test[] {
 		return this._tests;
 	}
 
-	set tests(value: (SurveyTypingSvelte | Survey)[]) {
+	set tests(value: Test[]) {
 		this._tests = value;
 	}
 
@@ -165,7 +164,7 @@ export default class Study {
 		consentPrivacy: string,
 		consentRights: string,
 		consentStudyData: string,
-		tests: (SurveyTypingSvelte | Survey)[],
+		tests: Test[],
 		f: fetchType = fetch
 	): Promise<Study | null> {
 		const id = await createStudyAPI(
