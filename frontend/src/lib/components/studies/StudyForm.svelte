@@ -10,6 +10,7 @@
 	import type Study from '$lib/types/study';
 	import { onMount } from 'svelte';
 	import { TestTask, type Test } from '$lib/types/tests';
+	import type SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
 
 	let {
 		study = $bindable(),
@@ -19,7 +20,7 @@
 		form
 	}: {
 		study: Study | null;
-		possibleTests: Test[];
+		possibleTests: (Test | SurveyTypingSvelte)[];
 		mode: string; //"create" or "edit"
 		data: any;
 		form: any;
@@ -165,7 +166,7 @@
 							>{test.title} - {test.groups.length} groups - {test.numQuestions} questions</option
 						>
 					{:else}
-						<!-- <option value={test}>{test.name}</option> -->
+						<option value={test}>{test.name}</option>
 					{/if}
 				{/each}
 			</select>
