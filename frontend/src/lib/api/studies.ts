@@ -27,11 +27,12 @@ export async function createStudyAPI(
 	startDate: Date,
 	endDate: Date,
 	nbSession: number,
-	tests: { type: string; id?: number }[],
+	test_ids: number[],
 	consentParticipation: string,
 	consentPrivacy: string,
 	consentRights: string,
-	consentStudyData: string
+	consentStudyData: string,
+	user_ids: number[]
 ): Promise<number | null> {
 	const response = await fetch('/api/studies', {
 		method: 'POST',
@@ -42,11 +43,12 @@ export async function createStudyAPI(
 			start_date: formatToUTCDate(startDate),
 			end_date: formatToUTCDate(endDate),
 			nb_session: nbSession,
-			//tests,
+			test_ids,
 			consent_participation: consentParticipation,
 			consent_privacy: consentPrivacy,
 			consent_rights: consentRights,
-			consent_study_data: consentStudyData
+			consent_study_data: consentStudyData,
+			user_ids
 		})
 	});
 	if (!response.ok) return null;

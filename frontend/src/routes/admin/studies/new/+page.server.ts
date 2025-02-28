@@ -58,7 +58,7 @@ export const actions: Actions = {
 		}
 
 		const tests = formData
-			.getAll('tests')
+			.getAll('tests[]')
 			.map((test) => {
 				try {
 					return JSON.parse(test.toString());
@@ -67,6 +67,8 @@ export const actions: Actions = {
 				}
 			})
 			.filter((test) => test !== null);
+
+		const user_ids = formData.getAll('users[]').map((user) => parseInt(user.toString(), 10));
 
 		const id = await createStudyAPI(
 			fetch,
@@ -79,7 +81,8 @@ export const actions: Actions = {
 			consentParticipation,
 			consentPrivacy,
 			consentRights,
-			consentStudyData
+			consentStudyData,
+			user_ids
 		);
 
 		if (id === null) {

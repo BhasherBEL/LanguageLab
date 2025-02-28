@@ -26,8 +26,6 @@ def update_study(db: Session, study: schemas.StudyCreate, study_id: int) -> None
         {**study.model_dump(exclude_unset=True, exclude={"user_ids", "test_ids"})}
     )
 
-    print(study.model_fields_set)
-
     if study.model_fields_set & {"user_ids", "test_ids"}:
         if (
             study_obj := db.query(models.Study)
@@ -35,7 +33,6 @@ def update_study(db: Session, study: schemas.StudyCreate, study_id: int) -> None
             .first()
         ):
             if "user_ids" in study.model_fields_set:
-                print(study_obj.users, study.user_ids)
                 study_obj.users = (
                     db.query(models.User)
                     .filter(models.User.id.in_(study.user_ids))

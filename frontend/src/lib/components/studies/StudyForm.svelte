@@ -6,7 +6,6 @@
 	import { getUserByEmailAPI } from '$lib/api/users';
 	import { Icon, MagnifyingGlass } from 'svelte-hero-icons';
 	import { t } from '$lib/services/i18n';
-	import Survey from '$lib/types/survey';
 	import User from '$lib/types/user';
 	import type Study from '$lib/types/study';
 	import { onMount } from 'svelte';
@@ -157,7 +156,7 @@
 
 		<!-- Tests Section -->
 		<h3 class="py-2 px-1">{$t('Tests')}</h3>
-		<Draggable bind:items={tests} name="tests" />
+		<Draggable bind:items={tests} name="tests[]" />
 		<div class="flex">
 			<select class="select select-bordered flex-grow" bind:value={selectedTest}>
 				{#each possibleTests as test}

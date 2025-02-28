@@ -9,7 +9,7 @@ import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import type { fetchType } from '$lib/utils/types';
 import User from './user';
-import type { Test } from './tests';
+import { Test } from './tests';
 
 export default class Study {
 	private _id: number;
@@ -165,6 +165,7 @@ export default class Study {
 		consentRights: string,
 		consentStudyData: string,
 		tests: Test[],
+		users: User[],
 		f: fetchType = fetch
 	): Promise<Study | null> {
 		const id = await createStudyAPI(
@@ -174,11 +175,12 @@ export default class Study {
 			startDate,
 			endDate,
 			nbSession,
-			[],
+			tests.map((t) => t.id),
 			consentParticipation,
 			consentPrivacy,
 			consentRights,
-			consentStudyData
+			consentStudyData,
+			users.map((u) => u.id)
 		);
 
 		if (id) {
@@ -189,7 +191,7 @@ export default class Study {
 				startDate,
 				endDate,
 				nbSession,
-				[],
+				users,
 				consentParticipation,
 				consentPrivacy,
 				consentRights,
@@ -286,15 +288,16 @@ export default class Study {
 			parseToLocalDate(json.start_date),
 			parseToLocalDate(json.end_date),
 			json.nb_session,
-			json.tests || [],
+			[],
 			json.consent_participation,
 			json.consent_privacy,
 			json.consent_rights,
 			json.consent_study_data,
-			json.tests || []
+			[]
 		);
 
 		study._users = User.parseAll(json.users);
+		study._tests = Test.parseAll(json.tests);
 
 		return study;
 	}

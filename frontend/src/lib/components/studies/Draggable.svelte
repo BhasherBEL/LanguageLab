@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import Survey from '$lib/types/survey';
 	import { TestTask } from '$lib/types/tests';
 	import autosize from 'svelte-autosize';
 
