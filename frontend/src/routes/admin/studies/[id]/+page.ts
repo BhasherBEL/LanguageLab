@@ -8,14 +8,12 @@ export const load: Load = async ({ fetch, params }) => {
 	const id = Number(params.id);
 
 	const study = Study.parse(await getStudyAPI(fetch, id));
-	console.log(study);
 
 	if (!study) {
 		redirect(303, '/admin/studies');
 	}
 
 	const tests = Test.parseAll(await getSurveysAPI(fetch));
-	console.log(tests);
 
 	return {
 		tests,
