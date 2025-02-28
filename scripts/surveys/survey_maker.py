@@ -90,7 +90,7 @@ with open("groups.csv") as file:
         its = [int(x) for x in its if x]
         groups.append({"id": id_, "title": title, "demo": demo_, "items_id": its})
 
-# PARSE SURVEYS
+# PARSE TASK TESTS
 
 tests_task = []
 with open("tests_task.csv") as file:
@@ -101,7 +101,28 @@ with open("tests_task.csv") as file:
         id_, title, *gps = line.split(",")
         id_ = int(id_)
         gps = [int(x) for x in gps if x]
-        tests_task.append({"id": id_, "test_task": {"title": title}, "groups_id": gps})
+        tests_task.append(
+            {"id": id_, "title": title, "test_task": {"groups": []}, "groups_id": gps}
+        )
+
+# PARSE TYPING TESTS
+
+df_typing_test = pd.read_csv("tests_typing.csv", dtype=str)
+
+tests_typing = []
+for i, row in df_typing_test.iterrows():
+    tests_typing.append(
+        {
+            "id": int(row["id"]),
+            "title": row["title"],
+            "test_typing": {
+                "explanations": row["explanations"],
+                "text": row["text"],
+                "repeat": int(str(row["repeat"])),
+                "duration": int(str(row["duration"])),
+            },
+        }
+    )
 
 # SESSION DATA
 
@@ -229,6 +250,28 @@ for t in tests_task:
         if r.status_code not in [201]:
             print(f'Failed to add group {gp} to test {t["id"]}: {r.text}')
             break
+else:
+    print(f"Successfully created {n_task_tests}/{len(tests_task)} task tests")
+
+# CREATE TYPING TESTS
+
+n_typing_tests = 0
+
+for t in tests_typing:
+    assert session.delete(f'{API_URL}{API_PATH}/tests/{t["id"]}').status_code in [
+        404,
+        204,
+    ], f'Failed to delete test {t["id"]}'
+
+    r = session.post(f"{API_URL}{API_PATH}/tests", json=t)
+    if r.status_code not in [201]:
+        print(f'Failed to create typing test {t["id"]}: {r.text}')
+        continue
+
+    if r.text != str(t["id"]):
+        print(f'Typing test {t["id"]} was created with id {r.text}')
+
+    n_typing_tests += 1
 
 else:
-    print(f"Successfully created {n_task_tests}/{len(tests_task)} tests")
+    print(f"Successfully created {n_typing_tests}/{len(tests_typing)} typing tests")

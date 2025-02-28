@@ -379,6 +379,10 @@
 		"consentRights": "Votre participation à cette étude est volontaire. Vous pouvez à tout moment décider de ne plus participer à l'étude sans avoir à vous justifier. Vous pouvez également demander à ce que vos données soient supprimées à tout moment. Si vous avez des questions ou des préoccupations concernant cette étude, vous pouvez contacter le responsable de l'étude.",
 		"consentStudyData": "Informations sur l'étude."
 	},
+	"tests": {
+		"taskTests": "Tests de langue",
+		"typingTests": "Tests de frappe"
+	},
 	"button": {
 		"create": "Créer",
 		"submit": "Envoyer",
@@ -477,7 +481,8 @@
 			"email": "E-mail",
 			"toggle": "Participants",
 			"groups": "groupes",
-			"questions": "questions"
+			"questions": "questions",
+			"tests": "tests"
 		}
 	},
 	"inputs": {

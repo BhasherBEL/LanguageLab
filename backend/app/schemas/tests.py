@@ -2,40 +2,6 @@ from typing_extensions import Self
 from pydantic import BaseModel, model_validator
 
 
-class TestTypingCreate(BaseModel):
-    text: str
-    repeat: int | None = None
-    duration: int | None = None
-
-
-class TestTaskCreate(BaseModel):
-    title: str
-
-
-class TestCreate(BaseModel):
-    # TODO remove
-    id: int | None = None
-    test_typing: TestTypingCreate | None = None
-    test_task: TestTaskCreate | None = None
-
-    @model_validator(mode="after")
-    def check_test_type(self) -> Self:
-        if self.test_typing is None and self.test_task is None:
-            raise ValueError("TypingTest or TaskTest must be provided")
-        if self.test_typing is not None and self.test_task is not None:
-            raise ValueError(
-                "TypingTest and TaskTest cannot be provided at the same time"
-            )
-        return self
-
-
-class TestTaskGroupCreate(BaseModel):
-    # TODO remove
-    id: int | None = None
-    title: str
-    demo: bool = False
-
-
 class TestTaskQuestionQCMCreate(BaseModel):
     correct: int
     option1: str | None = None
@@ -93,13 +59,50 @@ class TestTaskQuestion(BaseModel):
     question_qcm: TestTaskQuestionQCM | None = None
 
 
+class TestTaskGroupCreate(BaseModel):
+    # TODO remove
+    id: int | None = None
+    title: str
+    demo: bool = False
+    randomize: bool = True
+
+
+class TestTypingCreate(BaseModel):
+    explanations: str
+    text: str
+    repeat: int | None = None
+    duration: int | None = None
+
+
 class TestTaskGroup(TestTaskGroupCreate):
     # id: int
     questions: list[TestTaskQuestion] = []
 
 
-class TestTask(TestTaskCreate):
+class TestTaskCreate(BaseModel):
     groups: list[TestTaskGroup] = []
+
+
+class TestTask(TestTaskCreate):
+    pass
+
+
+class TestCreate(BaseModel):
+    # TODO remove
+    id: int | None = None
+    title: str
+    test_typing: TestTypingCreate | None = None
+    test_task: TestTaskCreate | None = None
+
+    @model_validator(mode="after")
+    def check_test_type(self) -> Self:
+        if self.test_typing is None and self.test_task is None:
+            raise ValueError("TypingTest or TaskTest must be provided")
+        if self.test_typing is not None and self.test_task is not None:
+            raise ValueError(
+                "TypingTest and TaskTest cannot be provided at the same time"
+            )
+        return self
 
 
 class TestTyping(TestTypingCreate):
@@ -108,6 +111,7 @@ class TestTyping(TestTypingCreate):
 
 class Test(BaseModel):
     id: int
+    title: str
     test_typing: TestTyping | None = None
     test_task: TestTask | None = None
 

@@ -8,6 +8,7 @@ class TestTyping(Base):
     __tablename__ = "test_typings"
 
     test_id = Column(Integer, ForeignKey("tests.id"), primary_key=True)
+    explanations = Column(String, nullable=True)
     text = Column(String, nullable=False)
     repeat = Column(Integer, nullable=False, default=1)
     duration = Column(Integer, nullable=False, default=0)
@@ -38,7 +39,6 @@ class TestTypingEntry(Base):
 class TestTask(Base):
     __tablename__ = "test_tasks"
     test_id = Column(Integer, ForeignKey("tests.id"), primary_key=True)
-    title = Column(String, nullable=False)
 
     test = relationship(
         "Test", uselist=False, back_populates="test_task", lazy="selectin"
@@ -54,6 +54,7 @@ class Test(Base):
     __tablename__ = "tests"
 
     id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
 
     test_typing = relationship(
         "TestTyping",
@@ -92,6 +93,7 @@ class TestTaskGroup(Base):
 
     title = Column(String, nullable=False)
     demo = Column(Boolean, default=False)
+    randomize = Column(Boolean, default=True)
 
     questions = relationship(
         "TestTaskQuestion",

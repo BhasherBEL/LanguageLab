@@ -9,7 +9,7 @@
 	import User from '$lib/types/user';
 	import type Study from '$lib/types/study';
 	import { onMount } from 'svelte';
-	import { TestTask, type Test } from '$lib/types/tests';
+	import { TestTask, TestTyping, type Test } from '$lib/types/tests';
 	import type SurveyTypingSvelte from '$lib/types/surveyTyping.svelte';
 
 	let {
@@ -156,19 +156,26 @@
 		/>
 
 		<!-- Tests Section -->
-		<h3 class="py-2 px-1">{$t('Tests')}</h3>
+		<h3 class="py-2 px-1 capitalize">{$t('utils.words.tests')}</h3>
 		<Draggable bind:items={tests} name="tests[]" />
 		<div class="flex">
 			<select class="select select-bordered flex-grow" bind:value={selectedTest}>
-				{#each possibleTests as test}
-					{#if test instanceof TestTask}
-						<option value={test}
-							>{test.title} - {test.groups.length} groups - {test.numQuestions} questions</option
-						>
-					{:else}
-						<option value={test}>{test.name}</option>
-					{/if}
-				{/each}
+				<optgroup label={$t('tests.taskTests')}>
+					{#each possibleTests as test}
+						{#if test instanceof TestTask}
+							<option value={test}
+								>{test.title} - {test.groups.length} groups - {test.numQuestions} questions</option
+							>
+						{/if}
+					{/each}
+				</optgroup>
+				<optgroup label={$t('tests.typingTests')}>
+					{#each possibleTests as test}
+						{#if test instanceof TestTyping}
+							<option value={test}>{test.title}</option>
+						{/if}
+					{/each}
+				</optgroup>
 			</select>
 			<button
 				class="ml-2 button"

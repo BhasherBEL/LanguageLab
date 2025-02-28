@@ -6,10 +6,29 @@ import schemas
 
 
 def create_study(db: Session, study: schemas.StudyCreate) -> models.Study:
-    db_study = models.Study(**study.model_dump())
+    db_study = models.Study(
+        **study.model_dump(exclude_unset=True, exclude={"user_ids", "test_ids"})
+    )
+
+    if study.model_fields_set & {"user_ids", "test_ids"}:
+        if db_study:
+            if "user_ids" in study.model_fields_set:
+                db_study.users = (
+                    db.query(models.User)
+                    .filter(models.User.id.in_(study.user_ids))
+                    .all()
+                )
+            if "test_ids" in study.model_fields_set:
+                db_study.tests = (
+                    db.query(models.Test)
+                    .filter(models.Test.id.in_(study.test_ids))
+                    .all()
+                )
+
     db.add(db_study)
     db.commit()
     db.refresh(db_study)
+
     return db_study
 
 

@@ -22,6 +22,8 @@ def get_test(db: Session, test_id: int) -> models.Test:
 
 def delete_test(db: Session, test_id: int) -> None:
     db.query(models.Test).filter(models.Test.id == test_id).delete()
+    db.query(models.TestTask).filter(models.TestTask.test_id == test_id).delete()
+    db.query(models.TestTyping).filter(models.TestTyping.test_id == test_id).delete()
     db.commit()
 
 
@@ -103,6 +105,9 @@ def get_question(db: Session, question_id: int):
 def delete_question(db: Session, question_id: int):
     db.query(models.TestTaskQuestion).filter(
         models.TestTaskQuestion.id == question_id
+    ).delete()
+    db.query(models.TestTaskQuestionQCM).filter(
+        models.TestTaskQuestionQCM.question_id == question_id
     ).delete()
     db.commit()
     return None

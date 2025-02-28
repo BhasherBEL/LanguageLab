@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import { TestTask } from '$lib/types/tests';
-	import autosize from 'svelte-autosize';
+	import { TestTask, TestTyping } from '$lib/types/tests';
 
 	let { items = $bindable(), name } = $props();
 	let draggedIndex: number | null = $state(null);
@@ -39,11 +38,7 @@
 
 <ul class="w-full">
 	{#each items as item}
-		{#if item instanceof TestTask}
-			<input type="hidden" {name} value={item.id} />
-		{:else}
-			<input type="hidden" {name} value={item.id} />
-		{/if}
+		<input type="hidden" {name} value={item.id} />
 	{/each}
 	{#each items as item, index}
 		<li
@@ -57,40 +52,8 @@
 					{item.title} ({item.groups.length}
 					{$t('utils.words.groups')}, {item.numQuestions}
 					{$t('utils.words.questions')})
-				{:else}
-					<div class="mb-2">{item.name}</div>
-					<label class="label text-sm" for="typing_input">{$t('studies.typingTestText')}*</label>
-					<textarea
-						use:autosize
-						class="input w-full"
-						id="typing_input"
-						name="typing_input"
-						bind:value={item.text}
-						required
-					></textarea>
-					<div class="flex flex-wrap items-center gap-2 text-sm">
-						<label class="label" for="typing_repetition">{$t('studies.typingTestRepetition')}</label
-						>
-						<input
-							class="input w-20"
-							type="number"
-							id="typing_repetition"
-							name="typing_repetition"
-							bind:value={item.repetition}
-						/>
-						{$t('studies.andOr')}
-						<label class="label" for="typing_time">{$t('studies.typingTestDuration')}</label>
-						<input
-							class="input w-20"
-							type="number"
-							id="typing_time"
-							name="typing_time"
-							bind:value={item.duration}
-						/>
-						<div class="tooltip" data-tip={$t('studies.typingTestInfoNote')}>
-							<span class="ml-1 cursor-pointer font-semibold">ⓘ</span>
-						</div>
-					</div>
+				{:else if item instanceof TestTyping}
+					{item.title}
 				{/if}
 			</div>
 			<div
