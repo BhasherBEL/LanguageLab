@@ -5,6 +5,8 @@
 	import { displayDate } from '$lib/utils/date';
 	import { toastWarning } from '$lib/utils/toasts';
 	import { get } from 'svelte/store';
+	import LanguageTest from '$lib/components/tests/languageTest.svelte';
+	import { TestTask, TestTyping } from '$lib/types/tests';
 
 	let { data, form }: { data: PageData; form: FormData } = $props();
 	let study: Study | undefined = $state(data.study);
@@ -120,6 +122,11 @@
 					{$t('button.next')}
 				</button>
 			</div>
+		{:else if current_step < study.tests.length + 2}
+			{@const test = study.tests[current_step - 2]}
+			{#if test instanceof TestTask}
+				<LanguageTest languageTest={test} {user} {code} onFinish={() => current_step++} />
+			{:else if test instanceof TestTyping}{/if}
 		{/if}
 	{/if}
 </div>

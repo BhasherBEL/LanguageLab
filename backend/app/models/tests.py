@@ -179,7 +179,7 @@ class TestTaskEntry(Base):
     created_at = Column(DateTime, default=datetime_aware)
     test_task_id = Column(Integer, ForeignKey("test_tasks.test_id"), index=True)
     test_group_id = Column(Integer, ForeignKey("test_task_groups.id"), index=True)
-    question_id = Column(Integer, ForeignKey("test_task_questions.id"), index=True)
+    test_question_id = Column(Integer, ForeignKey("test_task_questions.id"), index=True)
     response_time = Column(Float, nullable=False)
 
     entry_qcm = relationship(

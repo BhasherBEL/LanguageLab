@@ -16,8 +16,6 @@
 	let { data }: { data: PageData } = $props();
 	let { user, survey }: { user: User | null; survey: Survey } = data;
 
-	let sid =
-		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 	let startTime = new Date().getTime();
 
 	function getSortedQuestions(group: SurveyGroup) {

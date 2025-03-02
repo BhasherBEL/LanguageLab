@@ -1,3 +1,5 @@
+import { shuffle } from '$lib/utils/arrays';
+
 export abstract class TestTaskQuestion {
 	private _id: number;
 	private _question: string;
@@ -38,6 +40,14 @@ export abstract class TestTaskQuestion {
 	}
 }
 
+export enum TestTaskQuestionQcmType {
+	image = 'image',
+	text = 'text',
+	audio = 'audio',
+	dropdown = 'dropdown',
+	radio = 'radio'
+}
+
 export class TestTaskQuestionQcm extends TestTaskQuestion {
 	private _options: string[];
 	private _correct: number;
@@ -48,12 +58,39 @@ export class TestTaskQuestionQcm extends TestTaskQuestion {
 		this._correct = correct;
 	}
 
-	get options(): string[] {
-		return this._options;
+	get options(): { type: string; value: string }[] {
+		return this._options.map((option) => {
+			const type = option.split(':')[0];
+			const value = option.split(':').slice(1).join(':');
+			return { type, value };
+		});
+	}
+
+	get optionsRandomized(): { type: string; value: string; index: number }[] {
+		let options = this.options.map((option, index) => ({ ...option, index }));
+		shuffle(options);
+		return options;
 	}
 
 	get correct(): number {
 		return this._correct;
+	}
+
+	get type(): TestTaskQuestionQcmType | null {
+		switch (this.question.split(':')[0]) {
+			case 'image':
+				return TestTaskQuestionQcmType.image;
+			case 'audio':
+				return TestTaskQuestionQcmType.audio;
+			case 'text':
+				return TestTaskQuestionQcmType.text;
+		}
+
+		return null;
+	}
+
+	get value(): string {
+		return this.question.split(':').slice(1).join(':');
 	}
 
 	static parse(data: any): TestTaskQuestionQcm | null {
@@ -85,6 +122,20 @@ export class TestTaskQuestionGapfill extends TestTaskQuestion {
 		const match = question.match(/<([^>]+)>/);
 		if (!match) return question;
 		return question.replace(/<[^>]+>/, '_'.repeat(this.length));
+	}
+
+	get parts(): { text: string; gap: string | null }[] {
+		const gapText = this.question.split(':').slice(1).join(':');
+
+		const parts: { text: string; gap: string | null }[] = [];
+
+		for (let part of gapText.split(/(<.+?>)/g)) {
+			const isGap = part.startsWith('<') && part.endsWith('>');
+			const text = isGap ? part.slice(1, -1) : part;
+			parts.push({ text: text, gap: isGap ? '' : null });
+		}
+
+		return parts;
 	}
 
 	static parse(data: any): TestTaskQuestionGapfill | null {

@@ -5,12 +5,20 @@ export default class TestTaskGroup {
 	private _id: number;
 	private _title: string;
 	private _demo: boolean;
+	private _randomize: boolean;
 	private _questions: TestTaskQuestion[];
 
-	constructor(id: number, title: string, demo: boolean, questions: TestTaskQuestion[]) {
+	constructor(
+		id: number,
+		title: string,
+		demo: boolean,
+		randomize: boolean,
+		questions: TestTaskQuestion[]
+	) {
 		this._id = id;
 		this._title = title;
 		this._demo = demo;
+		this._randomize = randomize;
 		this._questions = questions;
 	}
 
@@ -26,6 +34,10 @@ export default class TestTaskGroup {
 		return this._demo;
 	}
 
+	get randomize(): boolean {
+		return this._randomize;
+	}
+
 	get questions(): TestTaskQuestion[] {
 		return this._questions;
 	}
@@ -36,7 +48,7 @@ export default class TestTaskGroup {
 			return null;
 		}
 		const questions = TestTaskQuestion.parseAll(data.questions);
-		return new TestTaskGroup(data.id, data.title, data.demo, questions);
+		return new TestTaskGroup(data.id, data.title, data.demo, data.randomize, questions);
 	}
 
 	static parseAll(data: any): TestTaskGroup[] {
