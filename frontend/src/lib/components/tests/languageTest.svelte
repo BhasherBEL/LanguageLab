@@ -10,7 +10,6 @@
 	import type User from '$lib/types/user';
 	import Gapfill from '../surveys/gapfill.svelte';
 	import { sendTestResponseAPI } from '$lib/api/tests';
-	import { getSurveyScoreAPI } from '$lib/api/survey';
 
 	let {
 		languageTest,
@@ -30,8 +29,6 @@
 
 	let nAnswers = $state(1);
 
-	let sid =
-		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 	let startTime = new Date().getTime();
 
 	let currentGroupId = $state(0);
@@ -46,25 +43,8 @@
 	let currentQuestionParts = $derived(
 		currentQuestion instanceof TestTaskQuestionGapfill ? currentQuestion.parts : null
 	);
-	$inspect(currentQuestion);
 
 	let soundPlayer: HTMLAudioElement | null = $state(null);
-
-	let selectedOption: string;
-	let finalScore: number | null = $state(null);
-
-	//source: shuffle function code taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array/18650169#18650169
-	function shuffle(array: string[]) {
-		let currentIndex = array.length;
-		// While there remain elements to shuffle...
-		while (currentIndex != 0) {
-			// Pick a remaining element...
-			let randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex--;
-			// And swap it with the current element.
-			[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-		}
-	}
 
 	function setGroupId(id: number) {
 		currentGroupId = id;
@@ -84,10 +64,7 @@
 			setGroupId(currentGroupId + 1);
 			//special group id for end of survey questions
 		} else {
-			const scoreData = await getSurveyScoreAPI(fetch, languageTest.id, sid);
-			if (scoreData) {
-				finalScore = scoreData.score;
-			}
+			console.log('END');
 			onFinish();
 		}
 	}

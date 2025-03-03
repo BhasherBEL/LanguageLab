@@ -125,7 +125,9 @@
 		{:else if current_step < study.tests.length + 2}
 			{@const test = study.tests[current_step - 2]}
 			{#if test instanceof TestTask}
-				<LanguageTest languageTest={test} {user} {code} onFinish={() => current_step++} />
+				{#key test}
+					<LanguageTest languageTest={test} {user} {code} onFinish={() => current_step++} />
+				{/key}
 			{:else if test instanceof TestTyping}{/if}
 		{/if}
 	{/if}
