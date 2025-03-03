@@ -2,27 +2,27 @@
 	import { onMount } from 'svelte';
 	import { t } from '$lib/services/i18n';
 	import config from '$lib/config';
+	import type { TestTyping } from '$lib/types/tests';
+	import { sendTestEntryTypingAPI } from '$lib/api/tests';
+	import type User from '$lib/types/user';
 
-	export let initialDuration: number;
-	export let exerciceId: number;
-	export let explications: string;
-	export let text: string;
-	export let data: {
-		exerciceId: number;
-		position: number;
-		downtime: number;
-		uptime: number;
-		keyCode: number;
-		keyValue: string;
-	}[];
-	export let inProgress = false;
-	export let onFinish: Function;
-	let duration = initialDuration >= 0 ? initialDuration : 0;
+	const {
+		typingTest,
+		onFinish,
+		user,
+		code
+	}: { typingTest: TestTyping; onFinish: Function; user: User | null; code: string | null } =
+		$props();
+
+	let duration = $state(typingTest.initialDuration);
 	let lastInput = '';
-	let input = '';
+	let input = $state('');
 	let textArea: HTMLTextAreaElement;
 	let startTime = new Date().getTime();
-	let isDone = false;
+	let isDone = $state(false);
+	let inProgress = $state(false);
+
+	let currentPressings: { [key: string]: number } = {};
 
 	onMount(async () => {
 		textArea.focus();
@@ -32,8 +32,8 @@
 		inProgress = true;
 		startTime = new Date().getTime();
 		const interval = setInterval(() => {
-			duration += initialDuration >= 0 ? -1 : 1;
-			if ((duration <= 0 && initialDuration > 0) || !inProgress) {
+			duration += typingTest.durationStep;
+			if ((duration <= 0 && typingTest.durationDirection) || !inProgress) {
 				clearInterval(interval);
 				inProgress = false;
 				isDone = true;
@@ -41,16 +41,40 @@
 			}
 		}, 1000);
 	}
+
+	async function sendTyping(
+		position: number,
+		downtime: number,
+		uptime: number,
+		key_code: number,
+		key_value: string
+	) {
+		if (
+			!(await sendTestEntryTypingAPI(
+				fetch,
+				code || user?.email || '',
+				user?.id || null,
+				typingTest.id,
+				position,
+				downtime,
+				uptime,
+				key_code,
+				key_value
+			))
+		) {
+			return;
+		}
+	}
 </script>
 
 <div class=" w-full max-w-5xl m-auto mt-8">
-	<div>{explications}</div>
+	<div>{typingTest.explainations}</div>
 	<div class="flex justify-between my-2 p-2">
 		<button
 			class="button"
-			on:click={() => {
+			onclick={() => {
 				input = '';
-				duration = initialDuration >= 0 ? initialDuration : 0;
+				duration = typingTest.initialDuration;
 				start();
 			}}
 			disabled={inProgress}
@@ -65,10 +89,10 @@
 		{#each config.SPECIAL_CHARS as char (char)}
 			<button
 				class="flex-grow"
-				on:click={() => {
+				onclick={() => {
 					input += char;
 				}}
-				on:mousedown={(e) => e.preventDefault()}
+				onmousedown={(e) => e.preventDefault()}
 			>
 				{char}
 			</button>
@@ -82,7 +106,7 @@
 		<div class="font-mono p-4 break-words">
 			<span class="text-inherit p-0 m-0 whitespace-pre-wrap break-words"
 				><!--
-			-->{#each text.slice(0, input.length) as char, i}
+			-->{#each typingTest.textRepeated.slice(0, input.length) as char, i}
 					<span
 						class="text-gray-800 p-0 m-0"
 						class:text-red-500={char !== input[i]}
@@ -92,9 +116,9 @@
 					--></span
 			><span
 				class="text-gray-400 p-0 m-0 underline decoration-2 underline-offset-6 decoration-black whitespace-pre-wrap"
-				>{text[input.length] ?? ''}</span
+				>{typingTest.textRepeated[input.length] ?? ''}</span
 			><span class="text-gray-400 p-0 m-0 whitespace-pre-wrap"
-				>{text.slice(input.length + 1) ?? ''}</span
+				>{typingTest.textRepeated.slice(input.length + 1) ?? ''}</span
 			>
 		</div>
 		<textarea
@@ -102,31 +126,35 @@
 			bind:this={textArea}
 			spellcheck="false"
 			disabled={isDone}
-			on:keyup={() => {
-				if (inProgress) {
-					data[data.length - 1].uptime = new Date().getTime() - startTime;
+			onkeyup={(e) => {
+				if (e.keyCode in currentPressings) {
+					sendTyping(
+						input.length,
+						currentPressings[e.keyCode],
+						new Date().getTime() - startTime,
+						e.keyCode,
+						e.key
+					);
+					delete currentPressings[e.keyCode];
 				}
 			}}
-			on:keydown={(e) => {
+			onkeydown={(e) => {
 				if (
 					!inProgress &&
-					((duration > 0 && initialDuration > 0) || (duration >= 0 && initialDuration < 0))
+					((duration > 0 && typingTest.durationDirection) ||
+						(duration >= 0 && typingTest.duration <= 0))
 				) {
 					start();
 				}
 				if (inProgress) {
 					lastInput = input;
 
-					data.push({
-						exerciceId,
-						position: input.length,
-						downtime: new Date().getTime() - startTime,
-						uptime: 0,
-						keyCode: e.keyCode,
-						keyValue: e.key
-					});
+					currentPressings[e.keyCode] = new Date().getTime() - startTime;
 
-					if (input === text || input.split('\n').length >= text.split('\n').length + 1) {
+					if (
+						input === typingTest.textRepeated ||
+						input.split('\n').length >= typingTest.textRepeated.split('\n').length + 1
+					) {
 						inProgress = false;
 					}
 				} else {

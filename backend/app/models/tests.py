@@ -18,24 +18,6 @@ class TestTyping(Base):
     )
 
 
-class TestTypingEntry(Base):
-    __tablename__ = "test_typing_entries"
-
-    id = Column(Integer, primary_key=True, index=True)
-    test_id = Column(Integer, ForeignKey("test_typings.test_id"), index=True)
-    code = Column(String, nullable=True)
-    user_id = Column(Integer, ForeignKey("users.id"), default=None)
-    created_at = Column(DateTime, default=datetime_aware)
-    position = Column(Integer, nullable=False)
-    downtime = Column(Integer, nullable=False)
-    uptime = Column(Integer, nullable=False)
-    key_code = Column(Integer, nullable=False)
-    key_value = Column(String, nullable=False)
-
-    test_typing = relationship("TestTyping")
-    user = relationship("User")
-
-
 class TestTask(Base):
     __tablename__ = "test_tasks"
     test_id = Column(Integer, ForeignKey("tests.id"), primary_key=True)
@@ -72,12 +54,20 @@ class Test(Base):
     @validates("test_typing")
     def adjust_test_typing(self, _, value) -> TestTyping | None:
         if value:
-            return TestTyping(**value, test_id=self.id)
+            if isinstance(value, dict):
+                return TestTyping(**value, test_id=self.id)
+            else:
+                value.test_id = self.id
+                return value
 
     @validates("test_task")
     def adjust_test_task(self, _, value) -> TestTask | None:
         if value:
-            return TestTask(**value, test_id=self.id)
+            if isinstance(value, dict):
+                return TestTask(**value, test_id=self.id)
+            else:
+                value.test_id = self.id
+                return value
 
 
 class TestTaskTaskGroup(Base):
@@ -145,56 +135,138 @@ class TestTaskQuestion(Base):
     @validates("question_qcm")
     def adjust_question_qcm(self, _, value) -> TestTaskQuestionQCM | None:
         if value:
-            return TestTaskQuestionQCM(**value, question_id=self.id)
+            if isinstance(value, dict):
+                return TestTaskQuestionQCM(**value, question_id=self.id)
+            else:
+                value.question_id = self.id
+                return value
 
 
-class TestTaskEntryQCM(Base):
-    __tablename__ = "test_task_entries_qcm"
+class TestEntryTaskQCM(Base):
+    __tablename__ = "test_entries_task_qcm"
 
-    entry_id = Column(Integer, ForeignKey("test_task_entries.id"), primary_key=True)
+    entry_id = Column(
+        Integer, ForeignKey("test_entries_task.entry_id"), primary_key=True
+    )
     selected_id = Column(Integer, nullable=False)
 
-    entry = relationship(
-        "TestTaskEntry", uselist=False, back_populates="entry_qcm", lazy="selectin"
+    entry_task = relationship(
+        "TestEntryTask",
+        uselist=False,
+        back_populates="entry_task_qcm",
+        lazy="selectin",
     )
 
 
-class TestTaskEntryGapfill(Base):
-    __tablename__ = "test_task_entries_gapfill"
+class TestEntryTaskGapfill(Base):
+    __tablename__ = "test_entries_task_gapfill"
 
-    entry_id = Column(Integer, ForeignKey("test_task_entries.id"), primary_key=True)
+    entry_id = Column(
+        Integer, ForeignKey("test_entries_task.entry_id"), primary_key=True, index=True
+    )
     text = Column(String, nullable=False)
 
-    entry = relationship(
-        "TestTaskEntry", uselist=False, back_populates="entry_gapfill", lazy="selectin"
+    entry_task = relationship(
+        "TestEntryTask",
+        uselist=False,
+        back_populates="entry_task_gapfill",
+        lazy="selectin",
     )
 
 
-class TestTaskEntry(Base):
-    __tablename__ = "test_task_entries"
+class TestEntryTask(Base):
+    __tablename__ = "test_entries_task"
 
-    id = Column(Integer, primary_key=True, index=True)
-    code = Column(String, nullable=True)
-    user_id = Column(Integer, ForeignKey("users.id"), default=None)
-    created_at = Column(DateTime, default=datetime_aware)
-    test_task_id = Column(Integer, ForeignKey("test_tasks.test_id"), index=True)
+    entry_id = Column(
+        Integer, ForeignKey("test_entries.id"), primary_key=True, index=True
+    )
+
     test_group_id = Column(Integer, ForeignKey("test_task_groups.id"), index=True)
     test_question_id = Column(Integer, ForeignKey("test_task_questions.id"), index=True)
     response_time = Column(Float, nullable=False)
 
-    entry_qcm = relationship(
-        "TestTaskEntryQCM", uselist=False, back_populates="entry", lazy="selectin"
+    entry_task_qcm = relationship(
+        "TestEntryTaskQCM",
+        uselist=False,
+        back_populates="entry_task",
+        lazy="selectin",
     )
-    entry_gapfill = relationship(
-        "TestTaskEntryGapfill", uselist=False, back_populates="entry", lazy="selectin"
+    entry_task_gapfill = relationship(
+        "TestEntryTaskGapfill",
+        uselist=False,
+        back_populates="entry_task",
+        lazy="selectin",
     )
 
-    @validates("entry_qcm")
-    def adjust_entry_qcm(self, _, value) -> TestTaskEntryQCM | None:
-        if value:
-            return TestTaskEntryQCM(**value, entry_id=self.id)
+    entry = relationship("TestEntry", uselist=False, back_populates="entry_task")
 
-    @validates("entry_gapfill")
-    def adjust_entry_gapfill(self, _, value) -> TestTaskEntryGapfill | None:
+    @validates("entry_task_qcm")
+    def adjust_entry_qcm(self, _, value) -> TestEntryTaskQCM | None:
         if value:
-            return TestTaskEntryGapfill(**value, entry_id=self.id)
+            if isinstance(value, dict):
+                return TestEntryTaskQCM(**value, entry_id=self.entry_id)
+            else:
+                value.entry_id = self.entry_id
+                return value
+
+    @validates("entry_task_gapfill")
+    def adjust_entry_gapfill(self, _, value) -> TestEntryTaskGapfill | None:
+        if value:
+            if isinstance(value, dict):
+                return TestEntryTaskGapfill(**value, entry_id=self.entry_id)
+            else:
+                value.entry_id = self.entry_id
+                return value
+
+
+class TestEntryTyping(Base):
+    __tablename__ = "test_entries_typing"
+
+    entry_id = Column(
+        Integer, ForeignKey("test_entries.id"), primary_key=True, index=True
+    )
+
+    position = Column(Integer, nullable=False)
+    downtime = Column(Integer, nullable=False)
+    uptime = Column(Integer, nullable=False)
+    key_code = Column(Integer, nullable=False)
+    key_value = Column(String, nullable=False)
+
+    entry = relationship(
+        "TestEntry", uselist=False, back_populates="entry_typing", lazy="selectin"
+    )
+
+
+class TestEntry(Base):
+    __tablename__ = "test_entries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), default=None, nullable=True)
+    test_id = Column(Integer, ForeignKey("tests.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime_aware)
+
+    entry_task = relationship(
+        "TestEntryTask", uselist=False, back_populates="entry", lazy="selectin"
+    )
+    entry_typing = relationship(
+        "TestEntryTyping", uselist=False, back_populates="entry", lazy="selectin"
+    )
+
+    @validates("entry_task")
+    def adjust_entry_task(self, _, value) -> TestEntryTask | None:
+        if value:
+            if isinstance(value, dict):
+                return TestEntryTask(**value, entry_id=self.id)
+            else:
+                value.entry_id = self.id
+                return value
+
+    @validates("entry_typing")
+    def adjust_entry_typing(self, _, value) -> TestEntryTyping | None:
+        if value:
+            if isinstance(value, dict):
+                return TestEntryTyping(**value, entry_id=self.id)
+            else:
+                value.entry_id = self.id
+                return value

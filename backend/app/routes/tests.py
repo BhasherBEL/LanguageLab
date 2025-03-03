@@ -31,7 +31,13 @@ def get_test(
     test_id: int,
     db: Session = Depends(get_db),
 ):
-    return crud.get_test(db, test_id)
+    test = crud.get_test(db, test_id)
+    if test is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Test not found"
+        )
+
+    return test
 
 
 @require_admin("You do not have permission to: delete a test.")
@@ -179,7 +185,7 @@ def delete_question(
 
 @testRouter.post("/entries", status_code=status.HTTP_201_CREATED)
 def create_entry(
-    entry: schemas.TestTaskEntryCreate,
+    entry: schemas.TestEntryCreate,
     db: Session = Depends(get_db),
 ):
-    return crud.create_test_task_entry(db, entry).id
+    return crud.create_test_entry(db, entry).id

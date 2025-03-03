@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 import crud
 import schemas
@@ -32,7 +32,14 @@ def get_study(
     study_id: int,
     db: Session = Depends(get_db),
 ):
-    return crud.get_study(db, study_id)
+    study = crud.get_study(db, study_id)
+
+    if study is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Study not found"
+        )
+
+    return study
 
 
 @require_admin("You do not have permission to patch a study.")

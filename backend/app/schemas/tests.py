@@ -125,20 +125,42 @@ class TestTaskEntryGapfillCreate(BaseModel):
 
 
 class TestTaskEntryCreate(BaseModel):
-    code: str
-    user_id: int
-    test_task_id: int
     test_group_id: int
     test_question_id: int
     response_time: float
 
-    entry_qcm: TestTaskEntryQCMCreate | None = None
-    entry_gapfill: TestTaskEntryGapfillCreate | None = None
+    entry_task_qcm: TestTaskEntryQCMCreate | None = None
+    entry_task_gapfill: TestTaskEntryGapfillCreate | None = None
 
     @model_validator(mode="after")
     def check_entry_type(self) -> Self:
-        if self.entry_qcm is None and self.entry_gapfill is None:
+        if self.entry_task_qcm is None and self.entry_task_gapfill is None:
             raise ValueError("QCM or Gapfill must be provided")
-        if self.entry_qcm is not None and self.entry_gapfill is not None:
+        if self.entry_task_qcm is not None and self.entry_task_gapfill is not None:
             raise ValueError("QCM and Gapfill cannot be provided at the same time")
+        return self
+
+
+class TestTypingEntryCreate(BaseModel):
+    position: int
+    downtime: int
+    uptime: int
+    key_code: int
+    key_value: str
+
+
+class TestEntryCreate(BaseModel):
+    code: str
+    user_id: int
+    test_id: int
+
+    entry_task: TestTaskEntryCreate | None = None
+    entry_typing: TestTypingEntryCreate | None = None
+
+    @model_validator(mode="after")
+    def check_entry_type(self) -> Self:
+        if self.entry_task is None and self.entry_typing is None:
+            raise ValueError("Task or Typing must be provided")
+        if self.entry_task is not None and self.entry_typing is not None:
+            raise ValueError("Task and Typing cannot be provided at the same time")
         return self

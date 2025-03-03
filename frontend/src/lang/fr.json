@@ -380,7 +380,8 @@
 		"consentStudyData": "Informations sur l'étude.",
 		"tab": {
 			"study": "Étude",
-			"code": "Code"
+			"code": "Code",
+			"tests": "Tests"
 		}
 	},
 	"tests": {

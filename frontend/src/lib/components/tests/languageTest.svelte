@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { sendTestEntryTaskGapfillAPI, sendTestEntryTaskQcmAPI } from '$lib/api/tests';
 	import { t } from '$lib/services/i18n';
 	import type { TestTask } from '$lib/types/tests';
 	import {
@@ -9,7 +10,6 @@
 	} from '$lib/types/testTaskQuestions';
 	import type User from '$lib/types/user';
 	import Gapfill from '../surveys/gapfill.svelte';
-	import { sendTestResponseAPI } from '$lib/api/tests';
 
 	let {
 		languageTest,
@@ -81,7 +81,7 @@
 				.join('|');
 
 			if (
-				!(await sendTestResponseAPI(
+				!(await sendTestEntryTaskGapfillAPI(
 					fetch,
 					code || user?.email || '',
 					user?.id || null,
@@ -89,7 +89,6 @@
 					currentGroup.id,
 					questions[currentQuestionId].id,
 					(new Date().getTime() - startTime) / 1000,
-					null,
 					gapTexts
 				))
 			) {
@@ -107,7 +106,7 @@
 	async function selectOption(option: number) {
 		if (!currentGroup.demo) {
 			if (
-				!(await sendTestResponseAPI(
+				!(await sendTestEntryTaskQcmAPI(
 					fetch,
 					code || user?.email || '',
 					user?.id || null,
@@ -115,8 +114,7 @@
 					currentGroup.id,
 					questions[currentQuestionId].id,
 					(new Date().getTime() - startTime) / 1000,
-					option,
-					null
+					option
 				))
 			) {
 				return;

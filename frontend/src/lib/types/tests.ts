@@ -79,12 +79,21 @@ export class TestTyping extends Test {
 	private _text: string;
 	private _duration: number;
 	private _repeat: number;
+	private _explainations: string;
 
-	constructor(id: number, title: string, text: string, duration: number, repeat: number) {
+	constructor(
+		id: number,
+		title: string,
+		text: string,
+		duration: number,
+		repeat: number,
+		explainations: string
+	) {
 		super(id, title);
 		this._text = text;
 		this._duration = duration;
 		this._repeat = repeat;
+		this._explainations = explainations;
 	}
 
 	get text(): string {
@@ -99,6 +108,30 @@ export class TestTyping extends Test {
 		return this._repeat;
 	}
 
+	get explainations(): string {
+		return this._explainations;
+	}
+
+	get initialDuration(): number {
+		return this._duration > 0 ? this._duration : 0;
+	}
+
+	get durationDirection(): boolean {
+		return this._duration > 0;
+	}
+
+	get durationStep(): number {
+		return this.durationDirection ? -1 : 1;
+	}
+
+	get textRepeated(): string {
+		if (this._repeat === 0) {
+			return this._text.repeat(10 * this._duration);
+		} else {
+			return this._text.repeat(this._repeat);
+		}
+	}
+
 	static parse(data: any): TestTyping | null {
 		if (data === null) {
 			toastAlert('Failed to parse test data');
@@ -109,7 +142,8 @@ export class TestTyping extends Test {
 			data.title,
 			data.test_typing.text,
 			data.test_typing.duration,
-			data.test_typing.repeat
+			data.test_typing.repeat,
+			data.test_typing.explainations
 		);
 	}
 }

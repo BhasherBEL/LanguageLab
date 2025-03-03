@@ -1,7 +1,7 @@
 import { toast } from '@zerodevx/svelte-toast';
 
 export function toastAlert(title: string, subtitle: string = '', persistant: boolean = false) {
-	if (window === undefined) return;
+	if (typeof window === 'undefined') return;
 	toast.push(`<strong>${title}</strong><br>${subtitle}`, {
 		theme: {
 			'--toastBackground': '#ff4d4f',
@@ -16,7 +16,7 @@ export function toastAlert(title: string, subtitle: string = '', persistant: boo
 }
 
 export function toastWarning(title: string, subtitle: string = '', persistant: boolean = false) {
-	if (window === undefined) return;
+	if (typeof window === 'undefined') return;
 	toast.push(`<strong>${title}</strong><br>${subtitle}`, {
 		theme: {
 			'--toastBackground': '#faad14',
@@ -31,7 +31,7 @@ export function toastWarning(title: string, subtitle: string = '', persistant: b
 }
 
 export function toastSuccess(title: string, subtitle: string = '', persistant: boolean = false) {
-	if (window === undefined) return;
+	if (typeof window === 'undefined') return;
 	toast.push(`<strong>${title}</strong><br>${subtitle}`, {
 		theme: {
 			'--toastBackground': '#52c41a',

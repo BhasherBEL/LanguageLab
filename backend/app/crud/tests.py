@@ -16,7 +16,7 @@ def get_tests(db: Session, skip: int = 0) -> list[models.Test]:
     return db.query(models.Test).offset(skip).all()
 
 
-def get_test(db: Session, test_id: int) -> models.Test:
+def get_test(db: Session, test_id: int) -> models.Test | None:
     return db.query(models.Test).filter(models.Test.id == test_id).first()
 
 
@@ -54,7 +54,7 @@ def create_group(
     return db_group
 
 
-def get_group(db: Session, group_id: int) -> models.TestTaskGroup:
+def get_group(db: Session, group_id: int) -> models.TestTaskGroup | None:
     return (
         db.query(models.TestTaskGroup)
         .filter(models.TestTaskGroup.id == group_id)
@@ -113,8 +113,8 @@ def delete_question(db: Session, question_id: int):
     return None
 
 
-def create_test_task_entry(db: Session, entry: schemas.TestTaskEntryCreate):
-    db_entry = models.TestTaskEntry(**entry.model_dump())
+def create_test_entry(db: Session, entry: schemas.TestEntryCreate):
+    db_entry = models.TestEntry(**entry.model_dump())
     db.add(db_entry)
     db.commit()
     db.refresh(db_entry)

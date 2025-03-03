@@ -7,6 +7,7 @@
 	import { get } from 'svelte/store';
 	import LanguageTest from '$lib/components/tests/languageTest.svelte';
 	import { TestTask, TestTyping } from '$lib/types/tests';
+	import Typingbox from '$lib/components/tests/typingbox.svelte';
 
 	let { data, form }: { data: PageData; form: FormData } = $props();
 	let study: Study | undefined = $state(data.study);
@@ -61,7 +62,7 @@
 	</ul>
 </div>
 
-<div class="max-w-screen-md mx-auto p-5">
+<div class="max-w-screen-md min-w-max mx-auto p-5">
 	{#if current_step == 0}
 		<div class="form-control">
 			<label for="study" class="label">
@@ -124,11 +125,24 @@
 			</div>
 		{:else if current_step < study.tests.length + 2}
 			{@const test = study.tests[current_step - 2]}
-			{#if test instanceof TestTask}
-				{#key test}
+			{#key test}
+				{#if test instanceof TestTask}
 					<LanguageTest languageTest={test} {user} {code} onFinish={() => current_step++} />
-				{/key}
-			{:else if test instanceof TestTyping}{/if}
+				{:else if test instanceof TestTyping}
+					<div class="w-[1024px]">
+						<Typingbox
+							typingTest={test}
+							onFinish={() => {
+								setTimeout(() => {
+									current_step++;
+								}, 3000);
+							}}
+							{user}
+							{code}
+						/>
+					</div>
+				{/if}
+			{/key}
 		{/if}
 	{/if}
 </div>
