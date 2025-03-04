@@ -136,7 +136,7 @@
 <div class="text-center">{nAnswers}/{languageTest.numQuestions}</div>
 
 {#if currentQuestion instanceof TestTaskQuestionGapfill && currentQuestionParts}
-	<div class="mx-auto mt-16 center flex flex-col">
+	<div class="mx-auto mt-16 center flex flex-col text-xl">
 		<div>
 			{#each currentQuestionParts as part (part)}
 				{#if part.gap !== null}
