@@ -3,6 +3,8 @@
 	import Study from '$lib/types/study.js';
 	import { displayDate } from '$lib/utils/date';
 	import type { PageData } from './$types';
+	import config from '$lib/config';
+	import { ArrowDownTray, Icon } from 'svelte-hero-icons';
 
 	const { data }: { data: PageData } = $props();
 
@@ -30,6 +32,15 @@
 				<td>{displayDate(study.startDate)} - {displayDate(study.endDate)}</td>
 				<td>{study.title}</td>
 				<td>{study.numberOfUsers}</td>
+				<td
+					><a
+						class="btn btn-primary btn-sm"
+						title="Download"
+						href={`${config.API_URL}/v1/studies/${study.id}/download/surveys`}
+					>
+						<Icon src={ArrowDownTray} size="16" />
+					</a></td
+				>
 				<td></td>
 			</tr>
 		{/each}
