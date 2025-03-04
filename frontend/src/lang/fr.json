@@ -381,8 +381,10 @@
 		"tab": {
 			"study": "Étude",
 			"code": "Code",
-			"tests": "Tests"
-		}
+			"tests": "Tests",
+			"end": "Fin"
+		},
+		"complete": "Merci pour votre participation !"
 	},
 	"tests": {
 		"taskTests": "Tests de langue",

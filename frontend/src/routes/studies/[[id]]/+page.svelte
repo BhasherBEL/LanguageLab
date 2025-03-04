@@ -59,10 +59,13 @@
 				{$t('studies.tab.tests')}
 			</li>
 		{/if}
+		<li class="step" class:step-primary={study && current_step >= study.tests.length + 2}>
+			{$t('studies.tab.end')}
+		</li>
 	</ul>
 </div>
 
-<div class="max-w-screen-md min-w-max mx-auto p-5">
+<div class="max-w-screen-md min-w-max mx-auto p-5 h-full">
 	{#if current_step == 0}
 		<div class="form-control">
 			<label for="study" class="label">
@@ -143,6 +146,53 @@
 					</div>
 				{/if}
 			{/key}
+		{:else if current_step == study.tests.length + 2}
+			<div class="flex flex-col h-full">
+				<div class="flex-grow text-center mt-16">
+					{$t('studies.complete')}
+				</div>
+
+				<dl class="text-sm">
+					<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+						<dt class="font-medium">{$t('register.consent.studyData.study')}</dt>
+						<dd class="text-gray-700 sm:col-span-2">
+							{study.title}
+						</dd>
+					</div>
+					<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+						<dt class="font-medium">{$t('register.consent.studyData.project')}</dt>
+						<dd class="text-gray-700 sm:col-span-2">
+							{$t('register.consent.studyData.projectD')}
+						</dd>
+					</div>
+					<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+						<dt class="font-medium">{$t('register.consent.studyData.university')}</dt>
+						<dd class="text-gray-700 sm:col-span-2">
+							{$t('register.consent.studyData.universityD')}
+						</dd>
+					</div>
+					<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+						<dt class="font-medium">{$t('register.consent.studyData.address')}</dt>
+						<dd class="text-gray-700 sm:col-span-2">
+							{$t('register.consent.studyData.addressD')}
+						</dd>
+					</div>
+					<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+						<dt class="font-medium">{$t('register.consent.studyData.person')}</dt>
+						<dd class="text-gray-700 sm:col-span-2">
+							{$t('register.consent.studyData.personD')}
+						</dd>
+					</div>
+					<div class="sm:grid sm:grid-cols-3 sm:gap-4 mb-1">
+						<dt class="font-medium">{$t('register.consent.studyData.email')}</dt>
+						<dd class="text-gray-700 sm:col-span-2">
+							<a href="mailto:{$t('register.consent.studyData.emailD')}" class="link"
+								>{$t('register.consent.studyData.emailD')}</a
+							>
+						</dd>
+					</div>
+				</dl>
+			</div>
 		{/if}
 	{/if}
 </div>
