@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from starlette.status import HTTP_200_OK
 
 import crud
 import schemas
@@ -189,3 +190,11 @@ def create_entry(
     db: Session = Depends(get_db),
 ):
     return crud.create_test_entry(db, entry).id
+
+
+@testRouter.get("/entries/score/{rid}", status_code=status.HTTP_200_OK)
+def get_score(
+    rid: str,
+    db: Session = Depends(get_db),
+):
+    return crud.get_score(db, rid)

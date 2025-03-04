@@ -3,6 +3,7 @@ import type { fetchType } from '$lib/utils/types';
 export async function sendTestEntryTaskQcmAPI(
 	fetch: fetchType,
 	code: string,
+	rid: string | null,
 	user_id: number | null,
 	test_id: number,
 	test_group_id: number,
@@ -15,6 +16,7 @@ export async function sendTestEntryTaskQcmAPI(
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
 			code,
+			rid,
 			user_id,
 			test_id,
 			entry_task: {
@@ -34,6 +36,7 @@ export async function sendTestEntryTaskQcmAPI(
 export async function sendTestEntryTaskGapfillAPI(
 	fetch: fetchType,
 	code: string,
+	rid: string | null,
 	user_id: number | null,
 	test_id: number,
 	test_group_id: number,
@@ -46,6 +49,7 @@ export async function sendTestEntryTaskGapfillAPI(
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
 			code,
+			rid,
 			user_id,
 			test_id,
 			entry_task: {
@@ -65,6 +69,7 @@ export async function sendTestEntryTaskGapfillAPI(
 export async function sendTestEntryTypingAPI(
 	fetch: fetchType,
 	code: string,
+	rid: string | null,
 	user_id: number | null,
 	test_id: number,
 	position: number,
@@ -78,6 +83,7 @@ export async function sendTestEntryTypingAPI(
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
 			code,
+			rid,
 			user_id,
 			test_id,
 			entry_typing: {
@@ -91,4 +97,20 @@ export async function sendTestEntryTypingAPI(
 	});
 
 	return response.ok;
+}
+
+export async function getTestEntriesScoreAPI(
+	fetch: fetchType,
+	rid: string
+): Promise<number | null> {
+	const response = await fetch(`/api/tests/entries/score/${rid}`);
+
+	if (!response.ok) return null;
+	const scoreText = await response.text();
+
+	const score = parseFloat(scoreText);
+
+	if (isNaN(score)) return null;
+
+	return score;
 }

@@ -10,9 +10,15 @@
 		typingTest,
 		onFinish,
 		user,
-		code
-	}: { typingTest: TestTyping; onFinish: Function; user: User | null; code: string | null } =
-		$props();
+		code,
+		rid
+	}: {
+		typingTest: TestTyping;
+		onFinish: Function;
+		user: User | null;
+		code: string | null;
+		rid: string | null;
+	} = $props();
 
 	let duration = $state(typingTest.initialDuration);
 	let lastInput = '';
@@ -53,6 +59,7 @@
 			!(await sendTestEntryTypingAPI(
 				fetch,
 				code || user?.email || '',
+				rid,
 				user?.id || null,
 				typingTest.id,
 				position,

@@ -198,6 +198,8 @@ class TestEntryTask(Base):
         lazy="selectin",
     )
 
+    test_question = relationship("TestTaskQuestion", uselist=False, lazy="selectin")
+
     entry = relationship("TestEntry", uselist=False, back_populates="entry_task")
 
     @validates("entry_task_qcm")
@@ -242,6 +244,7 @@ class TestEntry(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String, nullable=False)
+    rid = Column(String, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=None, nullable=True)
     test_id = Column(Integer, ForeignKey("tests.id"), nullable=False)
     created_at = Column(DateTime, default=datetime_aware)

@@ -15,11 +15,13 @@
 		languageTest,
 		user,
 		code,
+		rid,
 		onFinish = () => {}
 	}: {
 		languageTest: TestTask;
 		user: User | null;
 		code: string | null;
+		rid: string | null;
 		onFinish: Function;
 	} = $props();
 
@@ -84,6 +86,7 @@
 				!(await sendTestEntryTaskGapfillAPI(
 					fetch,
 					code || user?.email || '',
+					rid,
 					user?.id || null,
 					languageTest.id,
 					currentGroup.id,
@@ -109,6 +112,7 @@
 				!(await sendTestEntryTaskQcmAPI(
 					fetch,
 					code || user?.email || '',
+					rid,
 					user?.id || null,
 					languageTest.id,
 					currentGroup.id,

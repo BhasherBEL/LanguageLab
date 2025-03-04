@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from utils import extract_text_between_angle_bracket
 import models
 import schemas
 
@@ -119,3 +120,33 @@ def create_test_entry(db: Session, entry: schemas.TestEntryCreate):
     db.commit()
     db.refresh(db_entry)
     return db_entry
+
+
+def get_score(db: Session, rid: str):
+    db_entries = db.query(models.TestEntry).filter(models.TestEntry.rid == rid).all()
+
+    corrects = 0
+    total = 0
+
+    for entry in db_entries:
+        if entry.entry_task is None:
+            continue
+
+        total += 1
+
+        if entry.entry_task.entry_task_qcm:
+            selected_id = entry.entry_task.entry_task_qcm.selected_id
+            correct_id = entry.entry_task.test_question.question_qcm.correct
+            corrects += selected_id == correct_id
+
+        if entry.entry_task.entry_task_gapfill:
+            answer = entry.entry_task.entry_task_gapfill.text
+            correct = extract_text_between_angle_bracket(
+                entry.entry_task.test_question.question
+            )
+            corrects += answer == correct
+
+    if not total:
+        return 0
+
+    return corrects / total

@@ -1,4 +1,5 @@
 import datetime
+import re
 
 
 def check_user_level(user, required_level):
@@ -9,3 +10,11 @@ def check_user_level(user, required_level):
 
 def datetime_aware():
     return datetime.datetime.now().astimezone(datetime.timezone.utc)
+
+
+def extract_text_between_angle_bracket(text):
+    pattern = r"<(.*?)>"
+    match = re.search(pattern, text)
+    if match:
+        return match.group(1)
+    return None

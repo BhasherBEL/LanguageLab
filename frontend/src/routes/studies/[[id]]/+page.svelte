@@ -8,11 +8,14 @@
 	import LanguageTest from '$lib/components/tests/languageTest.svelte';
 	import { TestTask, TestTyping } from '$lib/types/tests';
 	import Typingbox from '$lib/components/tests/typingbox.svelte';
+	import { getTestEntriesScoreAPI } from '$lib/api/tests';
 
 	let { data, form }: { data: PageData; form: FormData } = $props();
 	let study: Study | undefined = $state(data.study);
 	let studies: Study[] | undefined = $state(data.studies);
 	let user = $state(data.user);
+	let rid =
+		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 	let selectedStudy: Study | undefined = $state();
 
@@ -130,7 +133,7 @@
 			{@const test = study.tests[current_step - 2]}
 			{#key test}
 				{#if test instanceof TestTask}
-					<LanguageTest languageTest={test} {user} {code} onFinish={() => current_step++} />
+					<LanguageTest languageTest={test} {user} {code} {rid} onFinish={() => current_step++} />
 				{:else if test instanceof TestTyping}
 					<div class="w-[1024px]">
 						<Typingbox
@@ -142,6 +145,7 @@
 							}}
 							{user}
 							{code}
+							{rid}
 						/>
 					</div>
 				{/if}
@@ -149,7 +153,20 @@
 		{:else if current_step == study.tests.length + 2}
 			<div class="flex flex-col h-full">
 				<div class="flex-grow text-center mt-16">
-					{$t('studies.complete')}
+					<span>{$t('studies.complete')}</span>
+
+					<div class="mt-4">
+						{$t('studies.score.title')}
+						{#await getTestEntriesScoreAPI(fetch, rid)}
+							{$t('studies.score.loading')}
+						{:then score}
+							{#if score !== null}
+								{(score * 100).toFixed(0)}%
+							{:else}
+								{$t('studies.score.error')}
+							{/if}
+						{/await}
+					</div>
 				</div>
 
 				<dl class="text-sm">

@@ -151,6 +151,7 @@ class TestTypingEntryCreate(BaseModel):
 
 class TestEntryCreate(BaseModel):
     code: str
+    rid: str | None = None
     user_id: int | None = None
     test_id: int
 

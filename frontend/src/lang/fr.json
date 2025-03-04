@@ -384,7 +384,12 @@
 			"tests": "Tests",
 			"end": "Fin"
 		},
-		"complete": "Merci pour votre participation !"
+		"complete": "Merci pour votre participation !",
+		"score": {
+			"title": "Résultat moyen: ",
+			"loading": "Calcul en cours...",
+			"error": "Erreur lors du calcul du score"
+		}
 	},
 	"tests": {
 		"taskTests": "Tests de langue",
