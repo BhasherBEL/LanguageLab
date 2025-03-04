@@ -151,7 +151,7 @@ class TestTypingEntryCreate(BaseModel):
 
 class TestEntryCreate(BaseModel):
     code: str
-    user_id: int
+    user_id: int | None = None
     test_id: int
 
     entry_task: TestTaskEntryCreate | None = None
