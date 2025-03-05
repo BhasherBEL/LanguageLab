@@ -83,15 +83,16 @@ def download_study(db: Session, study_id: int):
     writer = csv.writer(output)
 
     header = [
-        "study",
-        "test",
-        "group",
+        "study_id",
+        "test_id",
+        "group_id",
+        "group_name",
         "item_id",
-        "user id",
-        "item type",
+        "user_id",
+        "item_type",
         "response",
         "correct",
-        "response time",
+        "response_time",
     ]
     writer.writerow(header)
 
@@ -104,7 +105,6 @@ def download_study(db: Session, study_id: int):
             continue
 
         test_id = entry.test_id
-        test = crud.get_test(db, test_id).title
         group_id = entry.entry_task.test_group_id
         group = crud.get_group(db, group_id).title
         item = entry.entry_task.test_question_id
@@ -114,12 +114,13 @@ def download_study(db: Session, study_id: int):
         if entry.entry_task.entry_task_qcm:
             selected_id = entry.entry_task.entry_task_qcm.selected_id
             correct_id = entry.entry_task.test_question.question_qcm.correct
-            correct_answer = selected_id == correct_id
+            correct_answer = int(selected_id == correct_id)
 
             item_type = "qcm"
             row = [
                 study_id,
-                test,
+                test_id,
+                group_id,
                 group,
                 item,
                 user_id,
@@ -135,12 +136,13 @@ def download_study(db: Session, study_id: int):
             correct = extract_text_between_angle_bracket(
                 entry.entry_task.test_question.question
             )
-            correct_answer = answer == correct
+            correct_answer = int(answer == correct)
 
             item_type = "gapfill"
             row = [
                 study_id,
-                test,
+                test_id,
+                group_id,
                 group,
                 item,
                 user_id,
