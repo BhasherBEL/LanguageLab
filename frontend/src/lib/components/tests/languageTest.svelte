@@ -16,12 +16,14 @@
 		user,
 		code,
 		rid,
+		study_id,
 		onFinish = () => {}
 	}: {
 		languageTest: TestTask;
 		user: User | null;
 		code: string | null;
 		rid: string | null;
+		study_id: number;
 		onFinish: Function;
 	} = $props();
 
@@ -89,6 +91,7 @@
 					rid,
 					user?.id || null,
 					languageTest.id,
+					study_id,
 					currentGroup.id,
 					questions[currentQuestionId].id,
 					(new Date().getTime() - startTime) / 1000,
@@ -115,6 +118,7 @@
 					rid,
 					user?.id || null,
 					languageTest.id,
+					study_id,
 					currentGroup.id,
 					questions[currentQuestionId].id,
 					(new Date().getTime() - startTime) / 1000,

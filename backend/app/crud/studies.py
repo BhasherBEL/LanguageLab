@@ -95,9 +95,9 @@ def download_study(db: Session, study_id: int):
     ]
     writer.writerow(header)
 
-    # TODO filter on study_id
-    # db_entries = db.query(models.TestEntry).filter(models.TestEntry.study_id == study_id).all()
-    db_entries = db.query(models.TestEntry).all()
+    db_entries = (
+        db.query(models.TestEntry).filter(models.TestEntry.study_id == study_id).all()
+    )
 
     for entry in db_entries:
         if entry.entry_task is None:

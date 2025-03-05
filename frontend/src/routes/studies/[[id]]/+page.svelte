@@ -133,7 +133,14 @@
 			{@const test = study.tests[current_step - 2]}
 			{#key test}
 				{#if test instanceof TestTask}
-					<LanguageTest languageTest={test} {user} {code} {rid} onFinish={() => current_step++} />
+					<LanguageTest
+						languageTest={test}
+						{user}
+						{code}
+						{rid}
+						study_id={study.id}
+						onFinish={() => current_step++}
+					/>
 				{:else if test instanceof TestTyping}
 					<div class="w-[1024px]">
 						<Typingbox
