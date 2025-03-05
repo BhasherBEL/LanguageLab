@@ -247,6 +247,7 @@ class TestEntry(Base):
     rid = Column(String, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=None, nullable=True)
     test_id = Column(Integer, ForeignKey("tests.id"), nullable=False)
+    study_id = Column(Integer, ForeignKey("studies.id"), nullable=False)
     created_at = Column(DateTime, default=datetime_aware)
 
     entry_task = relationship(

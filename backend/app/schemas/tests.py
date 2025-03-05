@@ -154,6 +154,7 @@ class TestEntryCreate(BaseModel):
     rid: str | None = None
     user_id: int | None = None
     test_id: int
+    study_id: int
 
     entry_task: TestTaskEntryCreate | None = None
     entry_typing: TestTypingEntryCreate | None = None
