@@ -89,6 +89,7 @@ def download_study(db: Session, study_id: int):
         "group_name",
         "item_id",
         "user_id",
+        "code",
         "item_type",
         "response",
         "correct",
@@ -109,6 +110,7 @@ def download_study(db: Session, study_id: int):
         group = crud.get_group(db, group_id).title
         item = entry.entry_task.test_question_id
         user_id = entry.user_id
+        code = entry.code
         response_time = entry.entry_task.response_time
 
         if entry.entry_task.entry_task_qcm:
@@ -124,6 +126,7 @@ def download_study(db: Session, study_id: int):
                 group,
                 item,
                 user_id,
+                code,
                 item_type,
                 selected_id,
                 correct_answer,
@@ -146,6 +149,7 @@ def download_study(db: Session, study_id: int):
                 group,
                 item,
                 user_id,
+                code,
                 item_type,
                 answer,
                 correct_answer,
