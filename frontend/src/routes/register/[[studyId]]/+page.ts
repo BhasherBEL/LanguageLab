@@ -1,6 +1,6 @@
 import { getStudiesAPI, getStudyAPI } from '$lib/api/studies';
 import { getUsersAPI } from '$lib/api/users';
-import Study from '$lib/types/study.svelte';
+import Study from '$lib/types/study';
 import type { Load } from '@sveltejs/kit';
 
 export const load: Load = async ({ parent, fetch, params }) => {
