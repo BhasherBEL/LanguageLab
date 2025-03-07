@@ -1,7 +1,13 @@
 import type { fetchType } from '$lib/utils/types';
 
+export async function getSurveysAPI(fetch: fetchType) {
+	const response = await fetch('/api/tests');
+	if (!response.ok) return null;
+	return await response.json();
+}
+
 export async function getSurveyAPI(fetch: fetchType, survey_id: number) {
-	const response = await fetch(`/api/surveys/${survey_id}`);
+	const response = await fetch(`/api/tests/${survey_id}`);
 	if (!response.ok) return null;
 
 	return await response.json();
@@ -19,7 +25,7 @@ export async function sendSurveyResponseAPI(
 	response_time: number,
 	text: string = ''
 ) {
-	const response = await fetch(`/api/surveys/responses`, {
+	const response = await fetch(`/api/tests/responses`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
@@ -39,7 +45,7 @@ export async function sendSurveyResponseAPI(
 }
 
 export async function getSurveyScoreAPI(fetch: fetchType, survey_id: number, sid: string) {
-	const response = await fetch(`/api/surveys/${survey_id}/score/${sid}`);
+	const response = await fetch(`/api/tests/${survey_id}/score/${sid}`);
 	if (!response.ok) return null;
 
 	return await response.json();
@@ -55,7 +61,7 @@ export async function sendSurveyResponseInfoAPI(
 	other_language: string,
 	education: string
 ) {
-	const response = await fetch(`/api/surveys/info/${survey_id}`, {
+	const response = await fetch(`/api/tests/info/${survey_id}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({

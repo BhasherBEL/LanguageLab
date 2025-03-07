@@ -7,8 +7,8 @@
 	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import { browser } from '$app/environment';
 	import type { PageData } from './$types';
-	import type Study from '$lib/types/study';
 	import Consent from '$lib/components/surveys/consent.svelte';
+	import type Study from '$lib/types/study';
 
 	let { data, form }: { data: PageData; form: FormData } = $props();
 	let study: Study | undefined = $state(data.study);

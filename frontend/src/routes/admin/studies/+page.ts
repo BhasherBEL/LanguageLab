@@ -1,5 +1,5 @@
 import { getStudiesAPI } from '$lib/api/studies';
-import Study from '$lib/types/study';
+import Study from '$lib/types/study.js';
 import { type Load } from '@sveltejs/kit';
 
 export const load: Load = async ({ fetch }) => {

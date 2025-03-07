@@ -345,7 +345,8 @@
 		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
 		"startDate": "Date de début",
 		"endDate": "Date de fin",
-		"chatDuration": "Durée des sessions (en secondes)",
+		"chatDuration": "Durée des sessions (en minutes)",
+		"nbSession": "Nombre de sessions",
 		"updated": "Étude mise à jour avec succès",
 		"noChanges": "Aucune modification",
 		"updateError": "Erreur lors de la mise à jour de l'étude",
@@ -364,7 +365,35 @@
 		"addUserError": "Erreur lors de l'ajout de l'utilisateur",
 		"addUserSuccess": "Utilisateur ajouté à l'étude",
 		"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette étude ? Cette action est irréversible.",
-		"createTitle": "Créer une nouvelle étude"
+		"createTitle": "Créer une nouvelle étude",
+		"editTitle": "Modification de l'étude",
+		"typingTest": "Activer le test de frappe",
+		"hasToLoggin": "Exiger que les participants soient inscrits et connectés pour passer le test",
+		"andOr": "et/ou",
+		"typingTestDuration": "Durée (en secondes)",
+		"typingTestRepetition": "Nombre de fois à répéter",
+		"typingTestText": "Texte",
+		"typingTestInfoNote": "Si aucune durée n'est fournis le mode \"plus vite que possible\" sera activé.",
+		"consentParticipation": "Si vous acceptez de participer, vous serez invité·e à participer à des sessions de tutorat en ligne avec un tuteur de langue étrangère. Vous serez également invité à remplir des questionnaires avant et après les sessions de tutorat. Les sessions de tutorat seront enregistrées pour analyse ultérieure.Nous vous demandons de prévoir de réaliser un minimum de 8 sessions d'une heure de tutorat (donc 8 heures au total), au cours d'une période de 1 à 3 mois. Vous pouvez bien sûr en réaliser plus si vous le souhaitez. Vous pouvez cependant arrêter de participer à l'étude à tout moment.",
+		"consentPrivacy": "Les données collectées (par exemple, les transcriptions des conversations, les résultats de tests, les mesures de frappe, les informations sur les participants comme l'age ou le genre) seront traitées de manière confidentielle et anonyme. Elles seront conservées après leur anonymisation intégrale et ne pourront être utilisées qu'à des fins scientifiques ou pédagogiques. Elles pourront éventuellement être partagées avec d'autres chercheurs ou enseignants, mais toujours dans ce cadre strictement de recherche ou d'enseignement.",
+		"consentRights": "Votre participation à cette étude est volontaire. Vous pouvez à tout moment décider de ne plus participer à l'étude sans avoir à vous justifier. Vous pouvez également demander à ce que vos données soient supprimées à tout moment. Si vous avez des questions ou des préoccupations concernant cette étude, vous pouvez contacter le responsable de l'étude.",
+		"consentStudyData": "Informations sur l'étude.",
+		"tab": {
+			"study": "Étude",
+			"code": "Code",
+			"tests": "Tests",
+			"end": "Fin"
+		},
+		"complete": "Merci pour votre participation !",
+		"score": {
+			"title": "Résultat moyen: ",
+			"loading": "Calcul en cours...",
+			"error": "Erreur lors du calcul du score"
+		}
+	},
+	"tests": {
+		"taskTests": "Tests de langue",
+		"typingTests": "Tests de frappe"
 	},
 	"button": {
 		"create": "Créer",
@@ -462,7 +491,10 @@
 			"users": "Utilisateurs",
 			"description": "Description",
 			"email": "E-mail",
-			"toggle": "Participants"
+			"toggle": "Participants",
+			"groups": "groupes",
+			"questions": "questions",
+			"tests": "tests"
 		}
 	},
 	"inputs": {

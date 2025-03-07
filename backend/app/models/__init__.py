@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    JSON,
     Column,
     Float,
     Integer,
@@ -14,7 +15,9 @@ from enum import Enum
 from database import Base
 import datetime
 from utils import datetime_aware
-from sqlalchemy.dialects.postgresql import JSON
+
+from models.studies import *
+from models.tests import *
 
 
 class UserType(Enum):
@@ -180,134 +183,3 @@ class MessageFeedback(Base):
 
     def raw(self):
         return [self.id, self.message_id, self.start, self.end, self.content, self.date]
-
-
-class TestTyping(Base):
-    __tablename__ = "test_typing"
-
-    id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime, default=datetime_aware)
-    code = Column(String)
-    entries = relationship("TestTypingEntry", backref="typing")
-
-
-class TestTypingEntry(Base):
-    __tablename__ = "test_typing_entry"
-
-    id = Column(Integer, primary_key=True, index=True)
-    typing_id = Column(Integer, ForeignKey("test_typing.id"), index=True)
-    exerciceId = Column(Integer)
-    position = Column(Integer)
-    downtime = Column(Integer)
-    uptime = Column(Integer)
-    keyCode = Column(Integer)
-    keyValue = Column(String)
-
-
-class SurveyGroupQuestion(Base):
-    __tablename__ = "survey_group_questions"
-
-    group_id = Column(Integer, ForeignKey("survey_groups.id"), primary_key=True)
-    question_id = Column(Integer, ForeignKey("survey_questions.id"), primary_key=True)
-
-
-class SurveyQuestion(Base):
-    __tablename__ = "survey_questions"
-
-    id = Column(Integer, primary_key=True, index=True)
-    question = Column(String)
-    correct = Column(Integer)
-    option1 = Column(String)
-    option2 = Column(String)
-    option3 = Column(String)
-    option4 = Column(String)
-    option5 = Column(String)
-    option6 = Column(String)
-    option7 = Column(String)
-    option8 = Column(String)
-
-
-class SurveyGroup(Base):
-    __tablename__ = "survey_groups"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    demo = Column(String, default=False)
-    questions = relationship(
-        "SurveyQuestion", secondary="survey_group_questions", backref="group"
-    )
-
-
-class SurveySurvey(Base):
-    __tablename__ = "survey_surveys"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    groups = relationship(
-        "SurveyGroup", secondary="survey_survey_groups", backref="survey"
-    )
-    studies = relationship("Study", secondary="study_surveys", back_populates="surveys")
-
-
-class SurveySurveyGroup(Base):
-    __tablename__ = "survey_survey_groups"
-
-    survey_id = Column(Integer, ForeignKey("survey_surveys.id"), primary_key=True)
-    group_id = Column(Integer, ForeignKey("survey_groups.id"), primary_key=True)
-
-
-class SurveyResponse(Base):
-    __tablename__ = "survey_responses"
-
-    id = Column(Integer, primary_key=True, index=True)
-    code = Column(String)
-    sid = Column(String)
-    uid = Column(Integer, ForeignKey("users.id"), default=None)
-    created_at = Column(DateTime, default=datetime_aware)
-    survey_id = Column(Integer, ForeignKey("survey_surveys.id"))
-    group_id = Column(Integer, ForeignKey("survey_groups.id"))
-    question_id = Column(Integer, ForeignKey("survey_questions.id"))
-    selected_id = Column(Integer)
-    response_time = Column(Float)
-    text = Column(String)
-
-
-class SurveyResponseInfo(Base):
-    __tablename__ = "survey_response_info"
-
-    id = Column(Integer, primary_key=True, index=True)
-    sid = Column(String)
-    birthyear = Column(Integer)
-    gender = Column(String)
-    primary_language = Column(String)
-    other_language = Column(String)
-    education = Column(String)
-
-
-class Study(Base):
-    __tablename__ = "studies"
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    description = Column(String)
-    start_date = Column(DateTime)
-    end_date = Column(DateTime)
-    chat_duration = Column(Integer)
-
-    users = relationship("User", secondary="study_users", back_populates="studies")
-    surveys = relationship(
-        "SurveySurvey", secondary="study_surveys", back_populates="studies"
-    )
-
-
-class StudyUser(Base):
-    __tablename__ = "study_users"
-
-    study_id = Column(Integer, ForeignKey("studies.id"), primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-
-
-class StudySurvey(Base):
-    __tablename__ = "study_surveys"
-
-    study_id = Column(Integer, ForeignKey("studies.id"), primary_key=True)
-    survey_id = Column(Integer, ForeignKey("survey_surveys.id"), primary_key=True)
