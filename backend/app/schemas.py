@@ -20,7 +20,7 @@ class User(BaseModel):
     email: str
     nickname: str
     type: int
-    availability: int
+    bio: str | None
     is_active: bool
     ui_language: str | None
     home_language: str | None
@@ -29,6 +29,10 @@ class User(BaseModel):
     gender: str | None = None
     calcom_link: str | None
     last_survey: NaiveDatetime | None = None
+    availabilities: list[dict] | None = []
+    tutor_list: list[str] | None = []
+    my_tutor: str | None = None
+    my_slots: list[dict] | None = []
 
     class Config:
         from_attributes = True
@@ -53,7 +57,7 @@ class UserCreate(BaseModel):
     nickname: str | None = None
     password: str
     type: int = UserType.STUDENT.value
-    availability: int = 0
+    bio: str | None = None
     is_active: bool = True
     ui_language: str | None = None
     home_language: str | None = None
@@ -62,6 +66,10 @@ class UserCreate(BaseModel):
     gender: str | None = None
     calcom_link: str | None = None
     last_survey: NaiveDatetime | None = None
+    availabilities: list[dict] | None = []
+    tutor_list: list[str] | None = []
+    my_tutor: str | None = None
+    my_slots: list[dict] | None = []
 
 
 class UserUpdate(BaseModel):
@@ -69,7 +77,7 @@ class UserUpdate(BaseModel):
     nickname: str | None = None
     password: str | None = None
     type: int | None = None
-    availability: int | None = None
+    bio: str | None = None
     is_active: bool | None = None
     ui_language: str | None = None
     home_language: str | None = None
@@ -78,6 +86,10 @@ class UserUpdate(BaseModel):
     gender: str | None = None
     calcom_link: str | None = None
     last_survey: NaiveDatetime | None = None
+    availabilities: list[dict] | None = []
+    tutor_list: list[str] | None = []
+    my_tutor: str | None = None
+    my_slots: list[dict] | None = None
 
     class Config:
         from_attributes = True

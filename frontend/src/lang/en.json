@@ -218,10 +218,36 @@
 		}
 	},
 	"register": {
+		"confirm": "Confirm",
+		"bio": "Short Bio",
+		"bio.note": "Introduce yourself in one sentence",
+		"bio.ph": "Write something about yourself here...",
 		"birthyear": "Year of birth",
 		"birthyear.note": "In what year were you born?",
 		"confirmPassword": "Confirm password",
 		"confirmTutor": "Do you confirm selecting “{NAME}” as your guardian?",
+		"availabilities": "Availabilities",
+		"noAvailabilities": "No availabilities provided",
+		"notAvailable": "Not available",
+		"scheduleMeeting": "Schedule Meeting",
+		"linkNotAvailable": "Link Not Available",
+		"noTutorsAvailable": "No tutors are currently available",
+		"selectWeekday": "Select a weekday",
+		"weekday": "Weekday",
+		"startTime": "Start Time",
+		"endTime": "End Time",
+		"addAvailability": "Add Availability",
+		"yourAvailabilities": "Your Availabilities",
+		"remove": "Remove",
+		"loadingTutors": "Loading tutors...",
+		"firstLanguage": "First Language:",
+		"role": "Role",
+		"ScheduleWith": "Schedule a meeting with",
+		"roles": {
+			"note": "Select the role you want to play in the application",
+			"learner": "Learner",
+			"tutor": "Tutor"
+		},
 		"consent": {
 			"intro": "You are invited to participate in a scientific study. \nThe objective of this study is to understand how tutors and foreign language learners interact during online tutoring sessions. \nThe data collected will be used to improve online tutoring tools and to better understand cognitive processes on both sides.",
 			"ok": "I agree to participate in the study as described above.",
@@ -291,9 +317,12 @@
 			"availabilities": "Availability",
 			"consent": "Consent",
 			"continue": "Continue",
+			"timeslots": "tutor selection",
+			"availableSlots": "Available slots :",
 			"information": "Information",
 			"signup": "Registration",
-			"start": "To start"
+			"start": "To start",
+			"ScheduleWith": "Schedule a meeting with"
 		},
 		"welcome": "Welcome to LanguageLab! Before you begin, please fill out the following information. This will allow us to get to know you better and tailor the experience to your needs.",
 		"homeLanguage": "First language",
@@ -373,7 +402,8 @@
 		"calcomWarning": "Invalid cal.com link",
 		"cesttime": "CET time (Brussels)",
 		"noTutors": "No tutor available. \nPlease select other availabilities.",
-		"setAvailabilities": "Select your availability"
+		"setAvailabilities": "Select your availability",
+		"availableSlots": "Available slots"
 	},
 	"users": {
 		"actions": "Actions",

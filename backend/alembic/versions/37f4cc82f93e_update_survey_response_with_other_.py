@@ -1,7 +1,7 @@
 """Update survey response with other languages
 
 Revision ID: 37f4cc82f93e
-Revises: 
+Revises:
 Create Date: 2024-12-22 18:42:42.049100
 
 """

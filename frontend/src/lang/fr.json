@@ -119,6 +119,10 @@
 		"passwordPrompt": "Entrez le mot de passe. Attention, celui-ci ne sera plus récupérable."
 	},
 	"register": {
+		"confirm": "Confirmer",
+		"bio": "Courte biographie",
+		"bio.note": "Présentez-vous en une phrase",
+		"bio.ph": "Écrivez quelque chose sur vous-même ici...",
 		"email": "E-mail",
 		"email.ph": "Adresse e-mail",
 		"email.note": "Votre adresse e-mail sera utilisée pour vous connecter à l'application",
@@ -130,16 +134,40 @@
 		"confirmPassword": "Confirmer le mot de passe",
 		"humans": "Je ne suis pas un robot",
 		"signup": "S'inscrire",
+		"availabilities": "Disponibilités",
+		"noAvailabilities": "Aucune disponibilité fournie",
+		"notAvailable": "Non disponible",
+		"scheduleMeeting": "Planifier une réunion",
+		"linkNotAvailable": "Lien non disponible",
+		"noTutorsAvailable": "Aucun tuteur n'est actuellement disponible",
+		"selectWeekday": "Sélectionnez un jour de la semaine",
+		"weekday": "Jour de la semaine",
+		"startTime": "Heure de début",
+		"endTime": "Heure de fin",
+		"addAvailability": "Ajouter disponibilité",
+		"yourAvailabilities": "Vos disponibilités",
+		"remove": "Supprimer",
+		"loadingTutors": "Chargement des tuteurs...",
+		"firstLanguage": "Langue principale :",
+		"role": "Rôle",
+		"ScheduleWith": "Planifier une réunion avec",
+		"roles": {
+			"note": "Sélectionnez le rôle que vous souhaitez jouer dans l'application",
+			"learner": "Apprenant",
+			"tutor": "Tuteur"
+		},
 		"tab": {
 			"study": "Étude",
 			"consent": "Consentement",
 			"signup": "Inscription",
 			"information": "Informations",
 			"test": "Tests",
-			"timeslots": "Tuteur",
+			"timeslots": "Choix tuteur",
+			"availableSlots": "Créneaux disponibles :",
 			"start": "Commencer",
 			"continue": "Continuer",
-			"availabilities": "Disponibilitées"
+			"availabilities": "Disponibilitées",
+			"ScheduleWith": "Planifier une réunion avec"
 		},
 		"error": {
 			"emptyFields": "Veuillez remplir tous les champs",
@@ -234,7 +262,8 @@
 		"noTutors": "Aucun tuteur disponible. Veuillez sélectionner d'autres disponibilités.",
 		"setAvailabilities": "Sélectionnez vos disponibilités",
 		"calcom": "Lien vers la réservation du calendrier",
-		"calcomWarning": "Lien cal.com invalide"
+		"calcomWarning": "Lien cal.com invalide",
+		"availableSlots": "Créneaux disponibles"
 	},
 	"tests": {
 		"sendResults": "Envoyer",
