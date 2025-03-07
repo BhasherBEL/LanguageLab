@@ -24,6 +24,10 @@ export default class Survey {
 		return this._groups;
 	}
 
+	get nQuestions(): number {
+		return this._groups.reduce((acc, group) => acc + group.questions.length, 0);
+	}
+
 	static parse(data: any): Survey | null {
 		if (data === null) {
 			toastAlert('Failed to parse survey data');

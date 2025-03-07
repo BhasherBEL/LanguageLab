@@ -16,21 +16,21 @@
 	<a
 		class="btn btn-primary btn-sm"
 		title="Download"
-		href={`${config.API_URL}/sessions/download/messages`}
+		href={`${config.API_URL}/v1/sessions/download/messages`}
 	>
 		{$t('session.downloadAllMessages')}
 	</a>
 	<a
 		class="btn btn-primary btn-sm"
 		title="Download"
-		href={`${config.API_URL}/sessions/download/metadata`}
+		href={`${config.API_URL}/v1/sessions/download/metadata`}
 	>
 		{$t('session.downloadAllMetadata')}
 	</a>
 	<a
 		class="btn btn-primary btn-sm"
 		title="Download"
-		href={`${config.API_URL}/sessions/download/feedbacks`}
+		href={`${config.API_URL}/v1/sessions/download/feedbacks`}
 	>
 		{$t('session.downloadAllFeedbacks')}
 	</a>
@@ -74,7 +74,7 @@
 					<a
 						class="btn btn-primary btn-sm"
 						title="Download"
-						href={`${config.API_URL}/sessions/${session.id}/download/messages`}
+						href={`${config.API_URL}/v1/sessions/${session.id}/download/messages`}
 					>
 						<Icon src={ArrowDownTray} size="16" />
 					</a>
