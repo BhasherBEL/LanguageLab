@@ -30,12 +30,17 @@ export default class User {
 	private _target_language: string | null;
 	private _birthdate: Date | null;
 	private _gender: string | null;
+	private _bio: string | null;
 	private _calcom_link: string | null;
 	private _study_id: number | null;
 	private _last_survey: Date | null;
+	private _tutor_list: string[];
+	private _my_tutor: string | null;
 	private _ws_connected: boolean = false;
 	private _ws: WebSocket | null = null;
 	private _sessions_added: Writable<Session[]> = writable([]);
+	private _availabilities: { day: string; start: string; end: string }[];
+	private _my_slots: { day: string; start: string; end: string }[];
 
 	private constructor(
 		id: number,
@@ -50,7 +55,12 @@ export default class User {
 		gender: string | null,
 		calcom_link: string | null,
 		study_id: number | null,
-		last_survey: Date | null
+		last_survey: Date | null,
+		tutor_list: string[] = [],
+		my_tutor: string | null = null,
+		bio: string | null = null,
+		availabilities: { day: string; start: string; end: string }[] = [],
+		my_slots: { day: string; start: string; end: string }[] = []
 	) {
 		this._id = id;
 		this._email = email;
@@ -65,6 +75,11 @@ export default class User {
 		this._calcom_link = calcom_link;
 		this._study_id = study_id;
 		this._last_survey = last_survey;
+		this._tutor_list = tutor_list;
+		this._my_tutor = my_tutor;
+		this._bio = bio;
+		this._availabilities = availabilities;
+		this._my_slots = my_slots;
 	}
 
 	get id(): number {
@@ -85,6 +100,10 @@ export default class User {
 
 	get type(): number {
 		return this._type;
+	}
+
+	get bio(): string | null {
+		return this._bio;
 	}
 
 	get is_active(): boolean {
@@ -135,6 +154,34 @@ export default class User {
 		return this._sessions_added;
 	}
 
+	get my_tutor(): string | null {
+		return this._my_tutor;
+	}
+
+	get tutor_list(): string[] {
+		return this._tutor_list;
+	}
+
+	get availabilities(): { day: string; start: string; end: string }[] {
+		return this._availabilities;
+	}
+
+	set availabilities(value: { day: string; start: string; end: string }[]) {
+		this._availabilities = value;
+	}
+
+	get my_slots(): { day: string; start: string; end: string }[] {
+		return this._my_slots;
+	}
+
+	set my_slots(value: { day: string; start: string; end: string }[]) {
+		this._my_slots = value;
+	}
+
+	set tutor_list(value: string[]) {
+		this._tutor_list = value;
+	}
+
 	equals<T>(obj: T): boolean {
 		if (obj === null || obj === undefined) return false;
 		if (!(obj instanceof User)) return false;
@@ -168,7 +215,12 @@ export default class User {
 			gender: this.gender,
 			calcom_link: this.calcom_link,
 			study_id: this.study_id,
-			last_survey: this.last_survey
+			last_survey: this.last_survey,
+			tutor_list: this._tutor_list,
+			my_tutor: this.my_tutor,
+			bio: this.bio,
+			availabilities: this._availabilities,
+			my_slots: this._my_slots
 		});
 	}
 
@@ -187,6 +239,11 @@ export default class User {
 			if (data.calcum_link) this._calcom_link = data.calcom_link;
 			if (data.study_id) this._study_id = data.study_id;
 			if (data.last_survey) this._last_survey = data.last_survey;
+			if (data.tutor_list) this._tutor_list = data.tutor_list;
+			if (data.my_tutor) this._my_tutor = data.my_tutor;
+			if (data.bio) this._bio = data.bio;
+			if (data.availabilities) this._availabilities = data.availabilities;
+			if (data.my_slots) this._my_slots = data.my_slots;
 		}
 		return res;
 	}
@@ -218,7 +275,12 @@ export default class User {
 			null,
 			null,
 			null,
-			null
+			null,
+			[],
+			null,
+			null,
+			[],
+			[]
 		);
 		users.add(user);
 		return user;
@@ -294,7 +356,12 @@ export default class User {
 			json.gender,
 			json.calcom_link,
 			json.study_id,
-			json.last_survey === null ? null : parseToLocalDate(json.last_survey)
+			json.last_survey === null ? null : parseToLocalDate(json.last_survey),
+			json.tutor_list || [],
+			json.my_tutor,
+			json.bio,
+			json.availabilities || [],
+			json.my_slots || []
 		);
 
 		users.update((us) => {

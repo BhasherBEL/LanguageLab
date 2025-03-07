@@ -1,5 +1,5 @@
 import { addUserToStudyAPI } from '$lib/api/studies';
-import { patchUserAPI } from '$lib/api/users';
+import { patchUserAPI, getUsersAPI } from '$lib/api/users';
 import { formatToUTCDate } from '$lib/utils/date';
 import { validateEmail, validatePassword, validateUsername } from '$lib/utils/security';
 import { redirect, type Actions } from '@sveltejs/kit';
@@ -14,6 +14,7 @@ export const actions: Actions = {
 		const nickname = formData.get('nickname');
 		const password = formData.get('password');
 		const confirmPassword = formData.get('confirmPassword');
+		const role = formData.get('role');
 
 		if (!email || !nickname || !password || !confirmPassword) {
 			return { message: 'Invalid request' };
@@ -25,12 +26,14 @@ export const actions: Actions = {
 
 		if (password !== confirmPassword) return { message: 'Passwords do not match' };
 
+		const is_tutor = Number(role) === 1;
+
 		let response = await fetch(`/api/auth/register`, {
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			method: 'POST',
-			body: JSON.stringify({ email, nickname, password, is_tutor: false })
+			body: JSON.stringify({ email, nickname, password, is_tutor })
 		});
 
 		if (response.status === 400) return { message: 'User already exists' };
@@ -64,36 +67,56 @@ export const actions: Actions = {
 		const birthyear = formData.get('birthyear');
 		const gender = formData.get('gender');
 		const study = formData.get('study');
+		const bio = formData.get('bio');
+		let my_tutor = formData.get('myTutor');
 
-		if (!homeLanguage || !targetLanguage || !birthyear || !gender || !study) {
-			return { message: 'Invalid request' };
+		if (locals.user.type == 2) {
+			if (!homeLanguage || !targetLanguage || !birthyear || !gender) {
+				return { message: 'Invalid request' };
+			}
+			// Fixme: I struggled to retrieve the my_tutor's value in the form (temporary fix)
+			if (!my_tutor || (my_tutor as string).trim() === '') {
+				my_tutor = '';
+			}
+
+			let birthdate;
+			try {
+				birthdate = formatToUTCDate(new Date(parseInt(birthyear.toString()), 0, 30));
+			} catch (e) {
+				return { message: 'Invalid request' };
+			}
+
+			const response = await patchUserAPI(fetch, locals.user.id, {
+				home_language: homeLanguage,
+				target_language: targetLanguage,
+				gender,
+				birthdate,
+				my_tutor: my_tutor
+			});
+			if (!response) return { message: 'Unknown error occurred' };
+
+			redirect(303, '/register');
+		} else if (locals.user.type == 1) {
+			if (!homeLanguage || !birthyear || !gender || !bio) {
+				return { message: 'Invalid request' };
+			}
+
+			let birthdate;
+			try {
+				birthdate = formatToUTCDate(new Date(parseInt(birthyear.toString()), 0, 30));
+			} catch (e) {
+				return { message: 'Invalid request' };
+			}
+
+			let response = await patchUserAPI(fetch, locals.user.id, {
+				home_language: homeLanguage,
+				target_language: targetLanguage,
+				gender,
+				birthdate,
+				bio
+			});
+			if (!response) return { message: 'Unknown error occurred' };
+			redirect(303, '/register');
 		}
-
-		let birthdate;
-		try {
-			birthdate = formatToUTCDate(new Date(parseInt(birthyear.toString()), 0, 30));
-		} catch (e) {
-			return { message: 'Invalid request' };
-		}
-
-		let studyId;
-		try {
-			studyId = parseInt(study.toString());
-		} catch (e) {
-			return { message: 'Invalid request' };
-		}
-
-		let response = await patchUserAPI(fetch, locals.user.id, {
-			home_language: homeLanguage,
-			target_language: targetLanguage,
-			gender,
-			birthdate
-		});
-		if (!response) return { message: 'Unknown error occurred' };
-
-		response = await addUserToStudyAPI(fetch, studyId, locals.user.id);
-		if (!response) return { message: 'Failed to add user to study' };
-
-		redirect(303, '/register');
 	}
 };

@@ -88,8 +88,15 @@
 		"noAccountLink": "Registreer hier"
 	},
 	"register": {
+		"confirm": "Bevestigen",
 		"confirmPassword": "Bevestig wachtwoord",
 		"confirmTutor": "Bevestig je dat je '{NAME}' als je voogd hebt geselecteerd?",
+		"role": "Rol",
+		"roles": {
+			"note": "Selecteer de rol die u wilt spelen in de applicatie",
+			"learner": "Leerling",
+			"tutor": "Tutor"
+		},
 		"consent": {
 			"intro": "U wordt uitgenodigd om deel te nemen aan een wetenschappelijk onderzoek. \nHet doel van deze studie is om te begrijpen hoe docenten en leerlingen in vreemde talen communiceren tijdens online tutorssessies. \nDe verzamelde gegevens zullen worden gebruikt om online tutoring -tools te verbeteren en om de cognitieve processen aan beide zijden beter te begrijpen.",
 			"ok": "Ik ga akkoord met deelname aan het onderzoek zoals hierboven beschreven.",

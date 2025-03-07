@@ -23,7 +23,6 @@
 
 	let { data } = $props();
 	let user = data.user!;
-	let jwt = data.jwt!;
 	let contacts: User[] = $state(data.contacts);
 	let contact: User | undefined = $state(data.contact);
 	let contactSessions: Session[] = $state(data.sessions);
@@ -32,17 +31,6 @@
 	let nickname = $state('');
 
 	let showTerminatedSessions = $state(false);
-
-	user.sessions_added.subscribe((sessions) => {
-		if (!contact) return;
-
-		sessions = sessions.filter((s) => s.users.some((u) => u.id === contact?.id));
-
-		contactSessions = [
-			...contactSessions,
-			...sessions.filter((s) => !contactSessions.some((cs) => cs.id === s.id))
-		].sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
-	});
 
 	async function selectContact(c: User | undefined) {
 		showTerminatedSessions = false;
@@ -58,71 +46,77 @@
 	}
 
 	onMount(async () => {
-		user.wsConnect(jwt);
+		contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
 
-		(function (C: any, A: any, L: any) {
-			let p = function (a: any, ar: any) {
-				a.q.push(ar);
-			};
-			let d = C.document;
-			C.Cal =
-				C.Cal ||
-				function () {
-					let cal = C.Cal;
-					let ar = arguments;
-					if (!cal.loaded) {
-						cal.ns = {};
-						cal.q = cal.q || [];
-						d.head.appendChild(d.createElement('script')).src = A;
-						cal.loaded = true;
-					}
-					if (ar[0] === L) {
-						const api: any = function () {
-							p(api, arguments);
-						};
-						const namespace = ar[1];
-						api.q = api.q || [];
-						if (typeof namespace === 'string') {
-							cal.ns[namespace] = cal.ns[namespace] || api;
-							p(cal.ns[namespace], ar);
-							p(cal, ['initNamespace', namespace]);
-						} else p(cal, ar);
-						return;
-					}
-					p(cal, ar);
-				};
-		})(window, 'https://app.cal.com/embed/embed.js', 'init');
-		// @ts-ignore
-		Cal('init');
-		// @ts-ignore
-		Cal('on', {
-			action: 'bookingSuccessful',
-			callback: async (e: any) => {
-				if (!contact || !user || !e.detail.data) {
-					toastAlert(get(t)('home.bookingFailed'));
-					return;
+		if (contacts.length === 0 && user.my_tutor) {
+			const res = await createUserContactFromEmailAPI(fetch, user.id, user.my_tutor);
+			if (res) {
+				contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
+			}
+		}
+
+		if (user.my_slots && user.my_slots.length > 0) {
+			const firstSlot = user.my_slots[0];
+
+			let sessionDate = new Date();
+
+			while (
+				sessionDate.toLocaleString('en-US', { weekday: 'long' }).toLowerCase() !== firstSlot.day
+			) {
+				sessionDate.setDate(sessionDate.getDate() + 1);
+			}
+
+			const [startHour, startMinute] = firstSlot.start.split(':').map(Number);
+			const [endHour, endMinute] = firstSlot.end.split(':').map(Number);
+
+			sessionDate.setHours(startHour, startMinute, 0, 0);
+
+			if (!contact) {
+				console.warn('No contact selected, cannot create a session.');
+				return;
+			}
+
+			contactSessions = Session.parseAll(
+				await getUserContactSessionsAPI(fetch, user.id, contact.id)
+			);
+
+			for (let i = 0; i < 8; i++) {
+				let sessionStartDate = new Date(sessionDate);
+				sessionStartDate.setDate(sessionStartDate.getDate() + 7 * i);
+
+				let sessionEndDate = new Date(sessionStartDate);
+				sessionEndDate.setHours(endHour, endMinute, 0, 0);
+
+				const sessionExists = contactSessions.some(
+					(s) =>
+						s.start_time.getTime() === sessionStartDate.getTime() &&
+						s.end_time.getTime() === sessionEndDate.getTime()
+				);
+
+				if (sessionExists) {
+					continue;
 				}
 
-				const date = new Date(e.detail.data.date);
-				const duration = e.detail.data.duration;
-				const end = new Date(date.getTime() + duration * 60000);
 				const sess_id: number | null = await createSessionFromCalComAPI(
 					fetch,
 					user.id,
 					contact.id,
-					date,
-					end
+					sessionStartDate,
+					sessionEndDate
 				);
+
 				if (!sess_id) {
-					toastAlert(get(t)('home.bookingFailed'));
-					return;
+					console.warn(`Failed to create session for ${sessionStartDate}`);
+					continue;
 				}
-				toastSuccess(get(t)('home.bookingSuccessful'));
+
 				contactSessions = Session.parseAll(
-					await getUserContactSessionsAPI(fetch, user!.id, contact.id)
+					await getUserContactSessionsAPI(fetch, user.id, contact.id)
 				).sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
 			}
-		});
+
+			toastSuccess(get(t)('home.bookingSuccessful'));
+		}
 	});
 
 	async function createSession() {
@@ -299,7 +293,7 @@
 				</table>
 			</div>
 		</div>
-	{:else}
+		<!-- {:else}
 		<div class="flex-grow text-center mt-16">
 			<div class="text-lg text-gray-500 pt-4 italic">{$t('home.noContact')}</div>
 			<div>
@@ -307,7 +301,7 @@
 					+ {$t('home.newFirstContact')}
 				</button>
 			</div>
-		</div>
+		</div> -->
 	{/if}
 </div>
 
