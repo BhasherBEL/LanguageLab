@@ -19,7 +19,6 @@
 	let selectedStudy: Study | undefined = $state();
 
 	let tutors = $state(data.tutors || []);
-	console.log('data:', data);
 	let isLoading = $state(false);
 	let selectedTutorEmail = $state('');
 	let is_tutor = $state(false);
@@ -116,19 +115,29 @@
 		bio = target.value;
 		remainingCharacters = MAX_BIO_LENGTH - bio.length;
 	}
+
 	function addAvailability(): void {
-		if (selectedWeekday && selectedTimeStart && selectedTimeEnd) {
-			availability.push({
-				day: selectedWeekday,
-				start: selectedTimeStart,
-				end: selectedTimeEnd
-			});
-			selectedWeekday = '';
-			selectedTimeStart = '';
-			selectedTimeEnd = '';
-		} else {
-			console.error('Failed to add availability. Make sure all fields are selected.');
+		if (!selectedWeekday || !selectedTimeStart || !selectedTimeEnd) {
+			console.error('All fields must be selected.');
+			return;
 		}
+		const startHour = parseInt(selectedTimeStart.split(':')[0]);
+		const endHour = parseInt(selectedTimeEnd.split(':')[0]);
+
+		if (startHour >= endHour) {
+			alert('End time must be later than start time.');
+			return;
+		}
+
+		availability.push({
+			day: selectedWeekday,
+			start: selectedTimeStart,
+			end: selectedTimeEnd
+		});
+
+		selectedWeekday = '';
+		selectedTimeStart = '';
+		selectedTimeEnd = '';
 	}
 
 	function removeAvailability(index: number): void {
