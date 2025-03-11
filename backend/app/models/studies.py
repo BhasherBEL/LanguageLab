@@ -21,7 +21,10 @@ class Study(Base):
     consent_participation = Column(String)
     consent_privacy = Column(String)
     consent_rights = Column(String)
-    consent_study_data = Column(String)
+    study_data_organisation = Column(String)
+    study_data_address = Column(String)
+    study_data_contact = Column(String)
+    study_data_email = Column(String)
 
     users = relationship("User", secondary="study_users")
     tests = relationship("Test", secondary="study_tests")

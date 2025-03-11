@@ -14,7 +14,10 @@ export const actions: Actions = {
 		const consentParticipation = formData.get('consentParticipation')?.toString();
 		const consentPrivacy = formData.get('consentPrivacy')?.toString();
 		const consentRights = formData.get('consentRights')?.toString();
-		const consentStudyData = formData.get('consentStudyData')?.toString();
+		const studyOrganisation = formData.get('StudyOrganisation')?.toString();
+		const studyAddress = formData.get('StudyAddress')?.toString();
+		const studyContact = formData.get('StudyContact')?.toString();
+		const studyPIemail = formData.get('StudyPIemail')?.toString();
 
 		if (
 			!title ||
@@ -24,10 +27,13 @@ export const actions: Actions = {
 			!consentParticipation ||
 			!consentPrivacy ||
 			!consentRights ||
-			!consentStudyData
+			!studyOrganisation ||
+			!studyAddress ||
+			!studyContact ||
+			!studyPIemail
 		) {
 			return {
-				message: 'Invalid request 1'
+				message: 'Invalid request: Missing required fields'
 			};
 		}
 
@@ -40,20 +46,20 @@ export const actions: Actions = {
 
 		if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
 			return {
-				message: 'Invalid request 2'
+				message: 'Invalid request: Invalid dates'
 			};
 		}
 
 		const nbSession = parseInt(nbSessionStr, 10);
 		if (isNaN(nbSession)) {
 			return {
-				message: 'Invalid request 3'
+				message: 'Invalid request: Invalid number of sessions'
 			};
 		}
 
 		if (startDate.getTime() > endDate.getTime()) {
 			return {
-				message: 'End time cannot be before start time'
+				message: 'End date cannot be before start date'
 			};
 		}
 
@@ -81,7 +87,10 @@ export const actions: Actions = {
 			consentParticipation,
 			consentPrivacy,
 			consentRights,
-			consentStudyData,
+			studyOrganisation,
+			studyAddress,
+			studyContact,
+			studyPIemail,
 			user_ids
 		);
 
@@ -94,3 +103,4 @@ export const actions: Actions = {
 		return redirect(303, '/admin/studies');
 	}
 };
+null as any as Actions;

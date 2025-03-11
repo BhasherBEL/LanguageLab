@@ -22,8 +22,11 @@ export default class Study {
 	private _consentParticipation: string;
 	private _consentPrivacy: string;
 	private _consentRights: string;
-	private _consentStudyData: string;
 	private _tests: Test[];
+	private _studyOrganisation: string;
+	private _studyAddress: string;
+	private _studyContact: string;
+	private _studyPIemail: string;
 
 	private constructor(
 		id: number,
@@ -36,8 +39,11 @@ export default class Study {
 		consentParticipation: string,
 		consentPrivacy: string,
 		consentRights: string,
-		consentStudyData: string,
-		tests: Test[]
+		tests: Test[],
+		studyOrganisation: string,
+		studyAddress: string,
+		studyContact: string,
+		studyPIemail: string
 	) {
 		this._id = id;
 		this._title = title;
@@ -49,8 +55,11 @@ export default class Study {
 		this._consentParticipation = consentParticipation;
 		this._consentPrivacy = consentPrivacy;
 		this._consentRights = consentRights;
-		this._consentStudyData = consentStudyData;
 		this._tests = tests;
+		this._studyOrganisation = studyOrganisation;
+		this._studyAddress = studyAddress;
+		this._studyContact = studyContact;
+		this._studyPIemail = studyPIemail;
 	}
 
 	get id(): number {
@@ -133,20 +142,44 @@ export default class Study {
 		this._consentRights = value;
 	}
 
-	get consentStudyData(): string {
-		return this._consentStudyData;
-	}
-
-	set consentStudyData(value: string) {
-		this._consentStudyData = value;
-	}
-
 	get tests(): Test[] {
 		return this._tests;
 	}
 
 	set tests(value: Test[]) {
 		this._tests = value;
+	}
+
+	get studyOrganisation(): string {
+		return this._studyOrganisation;
+	}
+
+	set studyOrganisation(value: string) {
+		this._studyOrganisation = value;
+	}
+
+	get studyAddress(): string {
+		return this._studyAddress;
+	}
+
+	set studyAddress(value: string) {
+		this._studyAddress = value;
+	}
+
+	get studyContact(): string {
+		return this._studyContact;
+	}
+
+	set studyContact(value: string) {
+		this._studyContact = value;
+	}
+
+	get studyPIemail(): string {
+		return this._studyPIemail;
+	}
+
+	set studyPIemail(value: string) {
+		this._studyPIemail = value;
 	}
 
 	/**
@@ -165,6 +198,10 @@ export default class Study {
 		consentRights: string,
 		consentStudyData: string,
 		tests: Test[],
+		studyOrganisation: string,
+		studyAddress: string,
+		studyContact: string,
+		studyPIemail: string,
 		users: User[],
 		f: fetchType = fetch
 	): Promise<Study | null> {
@@ -179,7 +216,10 @@ export default class Study {
 			consentParticipation,
 			consentPrivacy,
 			consentRights,
-			consentStudyData,
+			studyOrganisation,
+			studyAddress,
+			studyContact,
+			studyPIemail,
 			users.map((u) => u.id)
 		);
 
@@ -195,8 +235,11 @@ export default class Study {
 				consentParticipation,
 				consentPrivacy,
 				consentRights,
-				consentStudyData,
-				tests
+				tests,
+				studyOrganisation,
+				studyAddress,
+				studyContact,
+				studyPIemail
 			);
 		}
 		return null;
@@ -228,7 +271,10 @@ export default class Study {
 			if (data.consent_participation) this._consentParticipation = data.consent_participation;
 			if (data.consent_privacy) this._consentPrivacy = data.consent_privacy;
 			if (data.consent_rights) this._consentRights = data.consent_rights;
-			if (data.consent_study_data) this._consentStudyData = data.consent_study_data;
+			if (data.study_organisation) this._studyOrganisation = data.study_organisation;
+			if (data.study_address) this._studyAddress = data.study_address;
+			if (data.study_contact) this._studyContact = data.study_contact;
+			if (data.study_pi_email) this._studyPIemail = data.study_pi_email;
 			if (data.tests) this._tests = data.tests;
 			return true;
 		}
@@ -292,8 +338,11 @@ export default class Study {
 			json.consent_participation,
 			json.consent_privacy,
 			json.consent_rights,
-			json.consent_study_data,
-			[]
+			[],
+			json.study_data_organisation,
+			json.study_data_address,
+			json.study_data_contact,
+			json.study_data_email
 		);
 
 		study._users = User.parseAll(json.users);

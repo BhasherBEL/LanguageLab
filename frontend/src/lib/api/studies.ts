@@ -31,7 +31,10 @@ export async function createStudyAPI(
 	consentParticipation: string,
 	consentPrivacy: string,
 	consentRights: string,
-	consentStudyData: string,
+	studyOrganisation: string,
+	studyAddress: string,
+	studyContact: string,
+	studyPIemail: string,
 	user_ids: number[]
 ): Promise<number | null> {
 	const response = await fetch('/api/studies', {
@@ -47,7 +50,10 @@ export async function createStudyAPI(
 			consent_participation: consentParticipation,
 			consent_privacy: consentPrivacy,
 			consent_rights: consentRights,
-			consent_study_data: consentStudyData,
+			study_data_organisation: studyOrganisation,
+			study_data_address: studyAddress,
+			study_data_contact: studyContact,
+			study_data_email: studyPIemail,
 			user_ids
 		})
 	});
