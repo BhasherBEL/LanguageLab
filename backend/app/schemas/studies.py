@@ -13,7 +13,10 @@ class StudyCreate(BaseModel):
     consent_participation: str
     consent_privacy: str
     consent_rights: str
-    consent_study_data: str
+    study_data_organisation: str
+    study_data_address: str
+    study_data_contact: str
+    study_data_email: str
 
     user_ids: list[int] = []
     test_ids: list[int] = []
@@ -29,7 +32,10 @@ class Study(BaseModel):
     consent_participation: str
     consent_privacy: str
     consent_rights: str
-    consent_study_data: str
+    study_data_organisation: str
+    study_data_address: str
+    study_data_contact: str
+    study_data_email: str
 
     users: list[User] = []
     tests: list[Test] = []

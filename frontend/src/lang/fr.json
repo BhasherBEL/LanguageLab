@@ -378,6 +378,10 @@
 		"consentPrivacy": "Les données collectées (par exemple, les transcriptions des conversations, les résultats de tests, les mesures de frappe, les informations sur les participants comme l'age ou le genre) seront traitées de manière confidentielle et anonyme. Elles seront conservées après leur anonymisation intégrale et ne pourront être utilisées qu'à des fins scientifiques ou pédagogiques. Elles pourront éventuellement être partagées avec d'autres chercheurs ou enseignants, mais toujours dans ce cadre strictement de recherche ou d'enseignement.",
 		"consentRights": "Votre participation à cette étude est volontaire. Vous pouvez à tout moment décider de ne plus participer à l'étude sans avoir à vous justifier. Vous pouvez également demander à ce que vos données soient supprimées à tout moment. Si vous avez des questions ou des préoccupations concernant cette étude, vous pouvez contacter le responsable de l'étude.",
 		"consentStudyData": "Informations sur l'étude.",
+		"studyDescription": "Projet de recherche (titre et/ou financement du projet dans lequel s'inscrit cette étude)",
+		"addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve",
+		"contact": "Personne de contact/chercheur principal",
+		"email": "Email du PI/de la personne de contact",
 		"tab": {
 			"study": "Étude",
 			"code": "Code",
@@ -487,14 +491,16 @@
 			"inProgress": "En cours",
 			"finished": "Terminée",
 			"topics": "Topics",
-			"title": "Titre",
+			"title": "Titre de l'étude",
 			"users": "Utilisateurs",
 			"description": "Description",
 			"email": "E-mail",
 			"toggle": "Participants",
 			"groups": "groupes",
 			"questions": "questions",
-			"tests": "tests"
+			"tests": "tests",
+			"OrganisationUni": "Organisation/Université",
+			"Address": "Adresse"
 		}
 	},
 	"inputs": {

@@ -145,7 +145,10 @@
 			"programed": "Scheduled",
 			"status": "Status",
 			"topics": "Topics",
-			"toggle": "Participants"
+			"toggle": "Participants",
+			"title": "Study Title",
+			"OrganisationUni": "Organization/University",
+			"Address": "Address"
 		}
 	},
 	"button": {
@@ -430,5 +433,11 @@
 			"tutor": "Tutor",
 			"tutors": "Tutor(s)"
 		}
+	},
+	"studies": {
+		"studyDescription": "Research Project (title and/or funding of the project this study is part of)",
+		"addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve",
+		"contact": "Contact Person/Principal Investigator",
+		"email": "Email of PI/Contact Person"
 	}
 }

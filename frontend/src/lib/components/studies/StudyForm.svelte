@@ -40,8 +40,10 @@
 		form?.consentPrivacy ?? (study ? study.consentPrivacy : $t('studies.consentPrivacy'));
 	let consentRights =
 		form?.consentRights ?? (study ? study.consentRights : $t('studies.consentRights'));
-	let consentStudyData =
-		form?.consentStudyData ?? (study ? study.consentStudyData : $t('studies.consentStudyData'));
+	let studyOrganisation = study ? study.studyOrganisation : '';
+	let studyAddress = form?.studyAddress ?? (study ? study.studyAddress : $t('studies.addressD'));
+	let studyContact = study ? study.studyContact : '';
+	let studyPIemail = study ? study.studyPIemail : '';
 
 	let newUsername: string = $state('');
 	let newUserModal = $state(false);
@@ -128,7 +130,7 @@
 		<!-- Title & description -->
 		<label class="label" for="title">{$t('utils.words.title')} *</label>
 		<input class="input w-full" type="text" id="title" name="title" required bind:value={title} />
-		<label class="label" for="description">{$t('utils.words.description')}</label>
+		<label class="label" for="description">{$t('studies.studyDescription')}</label>
 		<textarea
 			use:autosize
 			class="input w-full max-h-52"
@@ -268,17 +270,47 @@
 			value={consentRights}
 			required
 		></textarea>
-		<label class="label text-sm" for="consentStudyData"
-			>{$t('register.consent.studyData.title')} *</label
+		<h3 class="py-2 px-1">{$t('register.consent.studyData.title')}</h3>
+		<label class="label text-sm" for="StudyOrganisation"
+			>{$t('utils.words.OrganisationUni')} *</label
 		>
 		<textarea
 			use:autosize
 			class="input w-full max-h-52"
-			id="consentStudyData"
-			name="consentStudyData"
-			value={consentStudyData}
+			id="StudyOrganisation"
+			name="StudyOrganisation"
+			value={studyOrganisation}
 			required
 		></textarea>
+		<label class="label text-sm" for="StudyAddress">{$t('utils.words.Address')} *</label>
+		<textarea
+			use:autosize
+			class="input w-full max-h-52"
+			id="StudyAddress"
+			name="StudyAddress"
+			value={studyAddress}
+			required
+		></textarea>
+		<label class="label text-sm" for="StudyContact">{$t('studies.contact')} *</label>
+		<textarea
+			use:autosize
+			class="input w-full max-h-52"
+			id="StudyContact"
+			name="StudyContact"
+			value={studyContact}
+			required
+		></textarea>
+		<label class="label text-sm" for="StudyPIemail">
+			{$t('studies.email')} *
+		</label>
+		<input
+			class="input w-full"
+			id="StudyPIemail"
+			name="StudyPIemail"
+			type="email"
+			bind:value={studyPIemail}
+			required
+		/>
 
 		<!-- submit, cancel and delete buttons -->
 		<div class="mt-4 mb-6">
