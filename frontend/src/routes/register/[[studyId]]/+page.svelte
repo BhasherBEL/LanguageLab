@@ -615,7 +615,7 @@
 			<p class="text-center">
 				{@html $t('register.continue')}
 			</p>
-			<button class="button mt-4 w-full" onclick={() => (current_step = 6)}>
+			<button class="button mt-4 w-full" onclick={() => (current_step = 8)}>
 				{$t('register.continueButton')}
 			</button>
 			<button class="button mt-4 w-full" onclick={() => (document.location.href = '/')}>
