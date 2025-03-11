@@ -38,10 +38,16 @@
 						title="Download"
 						href={`${config.API_URL}/v1/studies/${study.id}/download/surveys`}
 					>
-						<Icon src={ArrowDownTray} size="16" />
+						<Icon src={ArrowDownTray} size="16" /> CSV long
+					</a>
+					<a
+						class="btn btn-primary btn-sm"
+						title="Download"
+						href={`${config.API_URL}/v1/studies/${study.id}/download/surveys-wide`}
+					>
+						<Icon src={ArrowDownTray} size="16" /> CSV wide
 					</a></td
 				>
-				<td></td>
 			</tr>
 		{/each}
 	</tbody>

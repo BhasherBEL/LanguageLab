@@ -187,7 +187,19 @@ def download_study_wide(db: Session, study_id: int):
         key = (user_id, code)
 
         if key not in data:
-            data[key] = {"study_id": study_id, "user_id": user_id, "code": code}
+            if user_id is not None:
+                user = crud.get_user(db, user_id)
+                data[key] = {
+                    "study_id": study_id,
+                    "user_id": user_id,
+                    "code": code,
+                    "home_language": user.home_language,
+                    "target_language": user.target_language,
+                    "gender": user.gender,
+                    "birthdate": user.birthdate,
+                }
+            else:
+                data[key] = {"study_id": study_id, "user_id": user_id, "code": code}
 
         if entry.entry_task.entry_task_qcm:
             selected_id = entry.entry_task.entry_task_qcm.selected_id
@@ -207,7 +219,15 @@ def download_study_wide(db: Session, study_id: int):
 
     # Sort question IDs for consistent column order
     question_ids = sorted(question_ids)
-    header = ["study_id", "user_id", "code"] + question_ids
+    header = [
+        "study_id",
+        "user_id",
+        "code",
+        "home_language",
+        "target_language",
+        "gender",
+        "birthdate",
+    ] + question_ids
     writer.writerow(header)
     for (user_id, code), values in data.items():
         row = [values.get(col, "") for col in header]
