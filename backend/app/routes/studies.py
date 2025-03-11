@@ -71,3 +71,15 @@ def download_study(
     if study is None:
         raise HTTPException(status_code=404, detail="Study not found")
     return crud.download_study(db, study_id)
+
+
+@require_admin("You do not have permission to download this study.")
+@studiesRouter.get("/{study_id}/download/surveys-wide")
+def download_study(
+    study_id: int,
+    db: Session = Depends(get_db),
+):
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+    return crud.download_study_wide(db, study_id)
