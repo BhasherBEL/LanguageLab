@@ -164,3 +164,81 @@ def download_study(db: Session, study_id: int):
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={study_id}-surveys.csv"},
     )
+
+
+def download_study_wide(db: Session, study_id: int):
+    output = StringIO()
+    writer = csv.writer(output)
+
+    data = {}
+    question_ids = set()
+
+    db_entries = (
+        db.query(models.TestEntry).filter(models.TestEntry.study_id == study_id).all()
+    )
+
+    for entry in db_entries:
+        if entry.entry_task is None:
+            continue
+
+        user_id = entry.user_id
+        code = entry.code
+        item_id = entry.entry_task.test_question_id
+        key = (user_id, code)
+
+        if key not in data:
+            if user_id is not None:
+                user = crud.get_user(db, user_id)
+                data[key] = {
+                    "study_id": study_id,
+                    "user_id": user_id,
+                    "code": code,
+                    "home_language": user.home_language,
+                    "target_language": user.target_language,
+                    "gender": user.gender,
+                    "birthdate": user.birthdate,
+                }
+            else:
+                data[key] = {"study_id": study_id, "user_id": user_id, "code": code}
+
+        if entry.entry_task.entry_task_qcm:
+            selected_id = entry.entry_task.entry_task_qcm.selected_id
+            correct_id = entry.entry_task.test_question.question_qcm.correct
+            correct_answer = int(selected_id == correct_id)
+            data[key][item_id] = correct_answer
+            question_ids.add(item_id)
+
+        if entry.entry_task.entry_task_gapfill:
+            answer = entry.entry_task.entry_task_gapfill.text
+            correct = extract_text_between_angle_bracket(
+                entry.entry_task.test_question.question
+            )
+            correct_answer = int(answer == correct)
+            data[key][item_id] = correct_answer
+            question_ids.add(item_id)
+
+    # Sort question IDs for consistent column order
+    question_ids = sorted(question_ids)
+    header = [
+        "study_id",
+        "user_id",
+        "code",
+        "home_language",
+        "target_language",
+        "gender",
+        "birthdate",
+    ] + question_ids
+    writer.writerow(header)
+    for (user_id, code), values in data.items():
+        row = [values.get(col, "") for col in header]
+        writer.writerow(row)
+
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename={study_id}-surveys-wide.csv"
+        },
+    )
