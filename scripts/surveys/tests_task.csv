@@ -5,3 +5,5 @@ id,title,groups
 4,Vocabulary test T1,20,21,22
 5,Vocabulary test T2,21,23
 6,Vocabulary test T3,21,24
+10,LJT Français,30,31,32,33,34,35,36
+11,LJT+APVT Français,30,31,32,33,34,35,36,10,11,12,13,14,15
