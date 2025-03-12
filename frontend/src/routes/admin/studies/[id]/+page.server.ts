@@ -17,7 +17,10 @@ export const actions: Actions = {
 		const consentParticipation = formData.get('consentParticipation')?.toString();
 		const consentPrivacy = formData.get('consentPrivacy')?.toString();
 		const consentRights = formData.get('consentRights')?.toString();
-		const consentStudyData = formData.get('consentStudyData')?.toString();
+		const studyOrganisation = formData.get('StudyOrganisation')?.toString();
+		const studyAddress = formData.get('StudyAddress')?.toString();
+		const studyContact = formData.get('StudyContact')?.toString();
+		const studyPIemail = formData.get('StudyPIemail')?.toString();
 
 		if (
 			!title ||
@@ -27,9 +30,12 @@ export const actions: Actions = {
 			!consentParticipation ||
 			!consentPrivacy ||
 			!consentRights ||
-			!consentStudyData
+			!studyOrganisation ||
+			!studyAddress ||
+			!studyContact ||
+			!studyPIemail
 		) {
-			return { message: 'Invalid request' };
+			return { message: 'Invalid request: : Missing required fields' };
 		}
 
 		const startDate = new Date(startDateStr);
@@ -67,10 +73,12 @@ export const actions: Actions = {
 			consent_participation: consentParticipation,
 			consent_privacy: consentPrivacy,
 			consent_rights: consentRights,
-			consent_study_data: consentStudyData,
+			study_data_organisation: studyOrganisation,
+			study_data_address: studyAddress,
+			study_data_contact: studyContact,
+			study_data_email: studyPIemail,
 			user_ids
 		});
-
 		if (!updated) return { message: 'Failed to update study' };
 
 		return redirect(303, '/admin/studies');
