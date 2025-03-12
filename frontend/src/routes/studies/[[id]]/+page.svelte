@@ -9,6 +9,7 @@
 	import { TestTask, TestTyping } from '$lib/types/tests';
 	import Typingbox from '$lib/components/tests/typingbox.svelte';
 	import { getTestEntriesScoreAPI } from '$lib/api/tests';
+	import EndQuestions from '$lib/components/surveys/endQuestions.svelte';
 
 	let { data, form }: { data: PageData; form: FormData } = $props();
 	let study: Study | undefined = $state(data.study);
@@ -63,6 +64,9 @@
 			</li>
 		{/if}
 		<li class="step" class:step-primary={study && current_step >= study.tests.length + 2}>
+			{$t('studies.tab.infos')}
+		</li>
+		<li class="step" class:step-primary={study && current_step >= study.tests.length + 3}>
 			{$t('studies.tab.end')}
 		</li>
 	</ul>
@@ -158,6 +162,10 @@
 				{/if}
 			{/key}
 		{:else if current_step == study.tests.length + 2}
+			<div class="flex flex-col h-full">
+				<EndQuestions study_id={study.id} {rid} onFinish={() => current_step++} />
+			</div>
+		{:else if current_step == study.tests.length + 3}
 			<div class="flex flex-col h-full">
 				<div class="flex-grow text-center mt-16">
 					<span>{$t('studies.complete')}</span>

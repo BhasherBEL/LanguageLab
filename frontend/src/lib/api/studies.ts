@@ -111,3 +111,29 @@ export async function createTestTypingAPI(
 
 	return parseInt(await response.text());
 }
+
+export async function sendStudyResponseInfoAPI(
+	fetch: fetchType,
+	survey_id: number,
+	rid: string,
+	birthyear: number,
+	gender: string,
+	primary_language: string,
+	other_languages: string,
+	education: string
+) {
+	const response = await fetch(`/api/studies/${survey_id}/info`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			rid,
+			birthyear,
+			gender,
+			primary_language,
+			other_languages,
+			education
+		})
+	});
+
+	return response.ok;
+}

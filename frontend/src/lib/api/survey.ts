@@ -50,29 +50,3 @@ export async function getSurveyScoreAPI(fetch: fetchType, survey_id: number, sid
 
 	return await response.json();
 }
-
-export async function sendSurveyResponseInfoAPI(
-	fetch: fetchType,
-	survey_id: number,
-	sid: string,
-	birthyear: number,
-	gender: string,
-	primary_language: string,
-	other_language: string,
-	education: string
-) {
-	const response = await fetch(`/api/tests/info/${survey_id}`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			sid,
-			birthyear,
-			gender,
-			primary_language,
-			other_language,
-			education
-		})
-	});
-
-	return response.ok;
-}

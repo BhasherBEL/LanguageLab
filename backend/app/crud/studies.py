@@ -242,3 +242,15 @@ def download_study_wide(db: Session, study_id: int):
             "Content-Disposition": f"attachment; filename={study_id}-surveys-wide.csv"
         },
     )
+
+
+def create_study_info(
+    db: Session, study_id: int, study_info: schemas.StudyInfoCreate
+) -> models.StudyInfo:
+    db_study_info = models.StudyInfo(
+        study_id=study_id, **study_info.dict(exclude_unset=True)
+    )
+    db.add(db_study_info)
+    db.commit()
+    db.refresh(db_study_info)
+    return db_study_info

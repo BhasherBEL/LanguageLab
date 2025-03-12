@@ -42,3 +42,15 @@ class StudyTest(Base):
 
     study_id = Column(Integer, ForeignKey("studies.id"), primary_key=True)
     test_id = Column(Integer, ForeignKey("tests.id"), primary_key=True)
+
+
+class StudyInfo(Base):
+    __tablename__ = "study_infos"
+    id = Column(Integer, primary_key=True, index=True)
+    study_id = Column(Integer, ForeignKey("studies.id"))
+    rid = Column(String)
+    birthyear = Column(Integer)
+    gender = Column(String)
+    primary_language = Column(String)
+    other_languages = Column(String)
+    education = Column(String)

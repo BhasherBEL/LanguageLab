@@ -39,3 +39,12 @@ class Study(BaseModel):
 
     users: list[User] = []
     tests: list[Test] = []
+
+
+class StudyInfoCreate(BaseModel):
+    rid: str
+    birthyear: int
+    gender: str
+    primary_language: str
+    other_languages: str
+    education: str

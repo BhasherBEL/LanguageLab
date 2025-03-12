@@ -75,7 +75,7 @@ def download_study(
 
 @require_admin("You do not have permission to download this study.")
 @studiesRouter.get("/{study_id}/download/surveys-wide")
-def download_study(
+def download_study_wide(
     study_id: int,
     db: Session = Depends(get_db),
 ):
@@ -83,3 +83,12 @@ def download_study(
     if study is None:
         raise HTTPException(status_code=404, detail="Study not found")
     return crud.download_study_wide(db, study_id)
+
+
+@studiesRouter.post("/{study_id}/info", status_code=status.HTTP_201_CREATED)
+def create_study_info(
+    study_id: int,
+    study_info: schemas.StudyInfoCreate,
+    db: Session = Depends(get_db),
+):
+    return crud.create_study_info(db, study_id, study_info)
