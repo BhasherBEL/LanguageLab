@@ -4,6 +4,8 @@ cd /mnt/data/languagelab/repo/
 git checkout dev >> /tmp/docker_update_dev
 git pull >> /tmp/docker_update_dev
 
+cp /mnt/data/languagelab/backend/db.sqlite3 /mnt/data/languagelab/backend/db.dev.sqlite3 >> /tmp/docker_update_dev
+
 cd /mnt/data/languagelab/repo/backend 
 source app/.env/bin/activate >> /tmp/docker_update_dev
 alembic -c alembic.dev.ini upgrade head >> /tmp/docker_update_dev
