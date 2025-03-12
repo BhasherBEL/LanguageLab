@@ -155,8 +155,7 @@
 {:else if currentQuestion instanceof TestTaskQuestionQcm}
 	<div class="mx-auto mt-16 text-center">
 		{#if currentQuestion.type === TestTaskQuestionQcmType.text}
-			<pre
-				class="text-center font-bold py-4 px-6 m-auto max-w-5xl">{@html currentQuestion.value}</pre>
+			<p class="text-center font-bold py-4 px-6 m-auto max-w-5xl">{@html currentQuestion.value}</p>
 		{:else if currentQuestion.type === TestTaskQuestionQcmType.image}
 			<img src={currentQuestion.value} alt="Question" />
 		{:else if currentQuestion.type === TestTaskQuestionQcmType.audio}
