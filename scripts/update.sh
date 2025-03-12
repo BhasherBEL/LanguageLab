@@ -10,6 +10,7 @@ alembic -c alembic.prod.ini upgrade head >> /tmp/docker_update
 
 cd /mnt/data/languagelab/repo/
 docker compose up -d >> /tmp/docker_update
+docker restart languagelab-backend >> /tmp/docker_update
 
 cd /mnt/data/languagelab/repo/scripts/surveys
 python3 survey_maker.py < .creds >> /tmp/docker_update
