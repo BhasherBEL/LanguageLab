@@ -22,15 +22,15 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.drop_column("studies", "consent_study_data")
     op.add_column(
-        "studies", sa.Column("study_data_organisation", sa.String, nullable=False)
+        "studies", sa.Column("study_data_organisation", sa.String, nullable=False, server_default="")
     )
-    op.add_column("studies", sa.Column("study_data_address", sa.String, nullable=False))
-    op.add_column("studies", sa.Column("study_data_contact", sa.String, nullable=False))
-    op.add_column("studies", sa.Column("study_data_email", sa.String, nullable=False))
+    op.add_column("studies", sa.Column("study_data_address", sa.String, nullable=False, server_default=""))
+    op.add_column("studies", sa.Column("study_data_contact", sa.String, nullable=False, server_default=""))
+    op.add_column("studies", sa.Column("study_data_email", sa.String, nullable=False, server_default=""))
 
 
 def downgrade() -> None:
-    op.add_column("studies", sa.Column("consent_study_data", sa.String, nullable=False))
+    op.add_column("studies", sa.Column("consent_study_data", sa.String, nullable=False, server_default=""))
     op.drop_column("studies", "study_data_organisation")
     op.drop_column("studies", "study_data_address")
     op.drop_column("studies", "study_data_contact")
