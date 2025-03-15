@@ -58,7 +58,7 @@ export async function createAIMessageAPI(
     sessionId: string,
     content: string
 ): Promise<any | null> {
-    const response = await fetch(`/tmp-api/v1/chat/`, {
+    const response = await fetch(`/api/chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

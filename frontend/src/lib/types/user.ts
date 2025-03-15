@@ -162,7 +162,9 @@ export default class User {
 		return this._tutor_list;
 	}
 
-	get availabilities(): { day: string; start: string; end: string }[] {
+	get availabilities(): {
+		avaibility: number; day: string; start: string; end: string 
+}[] {
 		return this._availabilities;
 	}
 
