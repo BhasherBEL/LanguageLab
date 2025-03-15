@@ -129,6 +129,19 @@
 		);
 	}
 
+	async function createSoloSession() {
+    let session = await Session.create();
+    if (!session) {
+        console.warn("Failed to create solo session.");
+        return;
+    }
+
+    contactSessions = [...contactSessions, session].sort(
+        (a, b) => b.start_time.getTime() - a.start_time.getTime()
+    );
+}
+
+
 	async function searchNickname() {
 		if (!user || !nickname || !nickname.includes('@')) {
 			toastWarning('Please enter a valid email address');
@@ -190,6 +203,16 @@
 				>
 					{$t('home.createSession')}
 				</button>
+				<button
+    onclick={(e) => {
+        e.preventDefault();
+        createSoloSession();
+    }}
+    class="button float-start mr-2"
+>
+     Solo session
+</button>
+
 				<button
 					class="button float-start"
 					class:btn-disabled={!contact || !contact.calcom_link}
