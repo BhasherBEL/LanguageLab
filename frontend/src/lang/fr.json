@@ -162,11 +162,11 @@
 			"signup": "Inscription",
 			"information": "Informations",
 			"test": "Tests",
-			"timeslots": "Choix tuteur",
+			"timeslots": "Tuteur",
 			"availableSlots": "Créneaux disponibles :",
 			"start": "Commencer",
 			"continue": "Continuer",
-			"availabilities": "Disponibilitées",
+			"availabilities": "Disponibilités",
 			"ScheduleWith": "Planifier une réunion avec"
 		},
 		"error": {
