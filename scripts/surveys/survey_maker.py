@@ -28,6 +28,8 @@ for i, row in df_questions_qcm.iterrows():
         o["question"] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/q.jpeg"
     elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.jpg"):
         o["question"] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/q.jpg"
+    elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.webp"):
+        o["question"] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/q.webp"
     else:
         print(f"Failed to find a question for item {id_}")
 
@@ -57,6 +59,8 @@ for i, row in df_questions_qcm.iterrows():
                 o["question_qcm"][op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpeg"
             elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.jpg"):
                 o["question_qcm"][op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.jpg"
+            elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/{j}.webp"):
+                o["question_qcm"][op] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/{j}.webp"
 
 # PARSE GAPFILL QUESTIONS
 
@@ -78,6 +82,8 @@ for i, row in df_questions_gapfill.iterrows():
         o["question"] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/q.jpeg"
     elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.jpg"):
         o["question"] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/q.jpg"
+    elif os.path.isfile(f"{LOCAL_ITEMS_FOLDER}/{id_}/q.webp"):
+        o["question"] = f"image:{REMOTE_ITEMS_FOLDER}/{id_}/q.webp"
     else:
         print(f"Failed to find a question for item {id_}")
 
