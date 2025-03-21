@@ -14,9 +14,19 @@ const config: Config = {
 			loader: async () => (await import('../../lang/en.json')).default
 		},
 		{
+			locale: 'es',
+			key: '',
+			loader: async () => (await import('../../lang/es.json')).default
+		},
+		{
 			locale: 'fr',
 			key: '',
 			loader: async () => (await import('../../lang/fr.json')).default
+		},
+		{
+			locale: 'nl',
+			key: '',
+			loader: async () => (await import('../../lang/nl.json')).default
 		}
 	],
 	fallbackLocale: 'fr'
