@@ -206,7 +206,7 @@ export default class Session {
 	): Promise<Message | null> {
 		const json = await createMessageAPI(fetch, this.id, content, metadata, replyTo);
 		const ai_message = await createAIMessageAPI(fetch, this.id.toString(), content);
-		console.log("AI Message: ", ai_message);
+		console.log('AI Message: ', ai_message);
 		if (json == null || json.id == null || json.message_id == null) {
 			toastAlert('Failed to parse message');
 			return null;

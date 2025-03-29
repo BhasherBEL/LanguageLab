@@ -163,9 +163,15 @@ export default class User {
 	}
 
 	get availabilities(): {
-		avaibility: number; day: string; start: string; end: string 
-}[] {
-		return this._availabilities;
+		avaibility: number;
+		day: string;
+		start: string;
+		end: string;
+	}[] {
+		return this._availabilities.map((availability, index) => ({
+			avaibility: index,
+			...availability
+		}));
 	}
 
 	set availabilities(value: { day: string; start: string; end: string }[]) {

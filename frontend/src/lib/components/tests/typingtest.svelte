@@ -119,20 +119,20 @@
 	{@const j = step - 1}
 	{#each exercices as _, i (i)}
 		{#if i === j}
-		<Typingbox
-		exerciceId={i}
-		initialDuration={exercices[i].duration}
-		explications={exercices[i].explications}
-		text={exercices[i].text}
-		bind:data
-		bind:inProgress
-		onFinish={() => {
-			inProgress = false;
-			setTimeout(() => {
-				step++;
-			}, 3000);
-		}}
-	/>
+			<Typingbox
+				exerciceId={i}
+				initialDuration={exercices[i].duration}
+				explications={exercices[i].explications}
+				text={exercices[i].text}
+				bind:data
+				bind:inProgress
+				onFinish={() => {
+					inProgress = false;
+					setTimeout(() => {
+						step++;
+					}, 3000);
+				}}
+			/>
 		{/if}
 	{/each}
 {:else}

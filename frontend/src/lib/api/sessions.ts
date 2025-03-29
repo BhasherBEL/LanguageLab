@@ -54,23 +54,23 @@ export async function createMessageAPI(
 }
 
 export async function createAIMessageAPI(
-    fetch: fetchType,
-    sessionId: string,
-    content: string
+	fetch: fetchType,
+	sessionId: string,
+	content: string
 ): Promise<any | null> {
-    const response = await fetch(`/api/chat/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            session_id: sessionId,
-            role: "user",
-            content: content
-        })
-    });
+	const response = await fetch(`/api/chat/`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			session_id: sessionId,
+			role: 'user',
+			content: content
+		})
+	});
 
-    if (!response.ok) return null;
+	if (!response.ok) return null;
 
-    return await response.json();
+	return await response.json();
 }
 
 export async function updateMessageAPI(
