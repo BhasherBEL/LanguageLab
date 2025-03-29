@@ -13,9 +13,13 @@
 			"users": "Utilisateurs",
 			"sessions": "Sessions",
 			"studies": "Études"
-		}, 
+		},
 		"tutor": {
-			"profile": "Mon profil"
+			"profile": "Mon profil",
+			"update": "Confirmer",
+			"selectGender": "Sélectionnez votre genre",
+			"bio": "Biographie",
+			"availabilities": "Disponibilités"
 		}
 	},
 	"chatbox": {
@@ -52,7 +56,8 @@
 		"actions": "Actions",
 		"date": "Date",
 		"participants": "Participants",
-		"sessionAdded": "Vous avez été ajouté à une session avec {users}"
+		"sessionAdded": "Vous avez été ajouté à une session avec {users}",
+		"birthdate": "Date de naissance"
 	},
 	"login": {
 		"email": "E-mail",
