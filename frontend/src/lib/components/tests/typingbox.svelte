@@ -62,6 +62,7 @@
 				rid,
 				user?.id || null,
 				typingTest.id,
+				user?.study_id ?? 0,
 				position,
 				downtime,
 				uptime,

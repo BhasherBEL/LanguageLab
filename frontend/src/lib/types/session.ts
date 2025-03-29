@@ -12,7 +12,8 @@ import {
 	patchSessionAPI,
 	removeUserFromSessionAPI,
 	sendPresenceAPI,
-	sendTypingAPI
+	sendTypingAPI,
+	createAIMessageAPI
 } from '$lib/api/sessions';
 import Message from './message';
 import config from '$lib/config';
@@ -204,6 +205,8 @@ export default class Session {
 		replyTo: string | null
 	): Promise<Message | null> {
 		const json = await createMessageAPI(fetch, this.id, content, metadata, replyTo);
+		const ai_message = await createAIMessageAPI(fetch, this.id.toString(), content);
+		console.log("AI Message: ", ai_message);
 		if (json == null || json.id == null || json.message_id == null) {
 			toastAlert('Failed to parse message');
 			return null;

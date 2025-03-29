@@ -53,6 +53,26 @@ export async function createMessageAPI(
 	return await response.json();
 }
 
+export async function createAIMessageAPI(
+    fetch: fetchType,
+    sessionId: string,
+    content: string
+): Promise<any | null> {
+    const response = await fetch(`/api/chat/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            session_id: sessionId,
+            role: "user",
+            content: content
+        })
+    });
+
+    if (!response.ok) return null;
+
+    return await response.json();
+}
+
 export async function updateMessageAPI(
 	fetch: fetchType,
 	id: number,
