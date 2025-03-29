@@ -622,12 +622,15 @@
 				{$t('register.startFastButton')}
 			</button>
 		</div>
-		{:else if current_step == 8}
+	{:else if current_step == 8}
 		<div class="text-center">
 			<p class="text-center">
 				{@html $t('register.start')}
 			</p>
-			<button class="button mt-4 m-auto" onclick={() => (document.location.href = `/studies/${study?.id}`)}>
+			<button
+				class="button mt-4 m-auto"
+				onclick={() => (document.location.href = `/studies/${study?.id}`)}
+			>
 				{$t('register.continueButton')}
 			</button>
 		</div>
