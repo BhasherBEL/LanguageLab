@@ -8,14 +8,10 @@
 	const formatBirthdate = (dateStr: string | Date | undefined): string => {
 		if (!dateStr) return '';
 		const date = new Date(dateStr);
-		if (!isNaN(date.getTime())) {
-			return date.toISOString().split('T')[0];
-		}
+		if (!isNaN(date.getTime())) return date.toISOString().split('T')[0];
 		if (typeof dateStr === 'string') {
 			const [day, month, year] = dateStr.split('/');
-			if (year?.length === 4) {
-				return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-			}
+			if (year?.length === 4) return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 		}
 		return '';
 	};
@@ -32,7 +28,6 @@
 	async function updateProfile() {
 		try {
 			const parsedAvailabilities = availabilities ? JSON.parse(availabilities) : [];
-			console.log('birth:', new Date(birthdate).toISOString());
 			const updateData = {
 				email,
 				nickname,
@@ -48,7 +43,6 @@
 			} else {
 				throw new Error($t('header.tutor.userNotFound'));
 			}
-			console.log('Update success:', success);
 			if (success) {
 				alert($t('header.tutor.updatedSuccessfully'));
 			} else {
@@ -61,91 +55,102 @@
 	}
 </script>
 
-<h1 class="text-2xl font-bold text-center my-5">{$t('header.tutor.profile')}</h1>
+<h1 class="text-3xl font-bold text-center mb-8 text-primary">
+	{$t('header.tutor.profile')}
+</h1>
 
-<div class="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6">
-	<form on:submit|preventDefault={updateProfile}>
-		<div class="mb-4">
-			<label for="email" class="block text-sm font-medium text-gray-700">{$t('home.email')}</label>
-			<input
-				type="email"
-				id="email"
-				bind:value={email}
-				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-				required
-			/>
+<div class="card bg-base-100 shadow-xl max-w-2xl mx-auto p-8">
+	<form on:submit|preventDefault={updateProfile} class="space-y-4">
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<div class="form-control">
+				<label class="label" for="email">
+					<span class="label-text">{$t('home.email')}</span>
+				</label>
+				<input
+					type="email"
+					id="email"
+					bind:value={email}
+					class="input input-bordered focus:input-primary"
+					required
+				/>
+			</div>
+
+			<div class="form-control">
+				<label class="label" for="nickname">
+					<span class="label-text">{$t('home.nickname')}</span>
+				</label>
+				<input
+					type="text"
+					id="nickname"
+					bind:value={nickname}
+					class="input input-bordered focus:input-primary"
+					required
+				/>
+			</div>
+
+			<div class="form-control">
+				<label class="label" for="birthdate">
+					<span class="label-text">{$t('home.birthdate')}</span>
+				</label>
+				<input
+					type="date"
+					id="birthdate"
+					bind:value={birthdate}
+					class="input input-bordered focus:input-primary"
+					required
+				/>
+			</div>
+
+			<div class="form-control">
+				<label class="label" for="gender">
+					<span class="label-text">{$t('users.gender')}</span>
+				</label>
+				<select
+					id="gender"
+					bind:value={gender}
+					class="select select-bordered focus:select-primary"
+					required
+				>
+					<option value="" disabled>{$t('header.tutor.selectGender')}</option>
+					<option value="male">{$t('users.genders.male')}</option>
+					<option value="female">{$t('users.genders.female')}</option>
+					<option value="other">{$t('users.genders.other')}</option>
+				</select>
+			</div>
 		</div>
 
-		<div class="mb-4">
-			<label for="nickname" class="block text-sm font-medium text-gray-700"
-				>{$t('home.nickname')}</label
-			>
-			<input
-				type="text"
-				id="nickname"
-				bind:value={nickname}
-				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-				required
-			/>
-		</div>
-
-		<div class="mb-4">
-			<label for="birthdate" class="block text-sm font-medium text-gray-700"
-				>{$t('home.birthdate')}</label
-			>
-			<input
-				type="date"
-				id="birthdate"
-				bind:value={birthdate}
-				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-				required
-			/>
-		</div>
-
-		<div class="mb-4">
-			<label for="gender" class="block text-sm font-medium text-gray-700"
-				>{$t('users.gender')}</label
-			>
-			<select
-				id="gender"
-				bind:value={gender}
-				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-				required
-			>
-				<option value="" disabled>{$t('header.tutor.selectGender')}</option>
-				<option value="male">{$t('users.genders.male')}</option>
-				<option value="female">{$t('users.genders.female')}</option>
-				<option value="other">{$t('users.genders.other')}</option>
-			</select>
-		</div>
-
-		<div class="mb-4">
-			<label for="bio" class="block text-sm font-medium text-gray-700">{$t('register.bio')}</label>
+		<div class="form-control">
+			<label class="label" for="bio">
+				<span class="label-text">{$t('register.bio')}</span>
+			</label>
 			<textarea
 				id="bio"
 				rows="4"
 				bind:value={bio}
 				placeholder={$t('header.tutor.bio')}
-				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+				class="textarea textarea-bordered focus:textarea-primary h-24"
 				required
 			></textarea>
 		</div>
 
-		<div class="mb-4">
-			<label for="availabilities" class="block text-sm font-medium text-gray-700"
-				>{$t('register.availabilities')}</label
-			>
+		<div class="form-control">
+			<label class="label" for="availabilities">
+				<span class="label-text">
+					{$t('register.availabilities')}
+					<span class="text-xs text-info ml-2">(JSON format)</span>
+				</span>
+			</label>
 			<textarea
 				id="availabilities"
 				rows="4"
 				bind:value={availabilities}
 				placeholder={$t('header.tutor.availabilities')}
-				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+				class="textarea textarea-bordered focus:textarea-primary font-mono h-32"
 				required
 			></textarea>
 		</div>
 
-		<button type="submit" class="button">
+		<button type="submit" class="btn btn-primary w-full mt-6 text-lg">
 			{$t('header.tutor.update')}
 		</button>
 	</form>
