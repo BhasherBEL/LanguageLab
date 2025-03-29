@@ -55,7 +55,8 @@ export const actions: Actions = {
 
 		return redirect(303, `/register/${studyId}`);
 	},
-	data: async ({ request, fetch, locals }) => {
+	data: async ({ request, fetch, locals, params }) => {
+		const studyId = params.studyId;
 		if (!locals.user) {
 			return { message: 'Unauthorized' };
 		}
@@ -95,7 +96,7 @@ export const actions: Actions = {
 			});
 			if (!response) return { message: 'Unknown error occurred' };
 
-			redirect(303, '/register');
+			redirect(303, `/register/${studyId}`);
 		} else if (locals.user.type == 1) {
 			if (!homeLanguage || !birthyear || !gender || !bio) {
 				return { message: 'Invalid request' };
@@ -116,7 +117,7 @@ export const actions: Actions = {
 				bio
 			});
 			if (!response) return { message: 'Unknown error occurred' };
-			redirect(303, '/register');
+			redirect(303, `/register/${studyId}`);
 		}
 	}
 };
