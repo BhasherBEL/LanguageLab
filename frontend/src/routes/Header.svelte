@@ -120,6 +120,11 @@
 										{$t('header.admin.studies')}
 									</a>
 								</li>
+								<li>
+									<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
+										{$t('header.signout')}
+									</a>
+								</li>
 							</ul>
 						</details>
 					</li>
