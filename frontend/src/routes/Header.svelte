@@ -51,7 +51,7 @@
 	</div>
 	<div class="navbar-end hidden sm:flex">
 		<ul class="menu menu-horizontal p-0 flex items-center">
-			{#if user}
+			{#if user?.type === 2}
 				<li>
 					<details>
 						<summary class="px-3">
@@ -71,7 +71,34 @@
 						</ul>
 					</details>
 				</li>
-				{#if user?.type === 0}
+			{/if}
+			{#if user?.type === 1}
+				<li>
+					<details>
+						<summary class="px-3">
+							<img
+								src={`https://gravatar.com/avatar/${user.emailHash}?d=identicon`}
+								alt={''}
+								class="rounded-full border text-sm size-8 border-neutral-400"
+							/>
+							{user.nickname}
+						</summary>
+						<ul class="menu menu-sm dropdown-content absolute right-0">
+							<li>
+								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
+									{$t('header.signout')}
+								</a>
+							</li>
+							<li>
+								<a data-sveltekit-reload href="/tutor/profile" class="whitespace-nowrap">
+									{$t('header.tutor.profile')}
+								</a>
+							</li>
+						</ul>
+					</details>
+				</li>
+			{/if}
+			{#if user?.type === 0}
 					<li>
 						<details>
 							<summary class="p-3">
@@ -96,8 +123,7 @@
 							</ul>
 						</details>
 					</li>
-				{/if}
-			{:else}
+			{:else if !user}
 				<li>
 					<a
 						class="btn btn-sm my-auto"

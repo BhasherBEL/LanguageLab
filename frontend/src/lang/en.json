@@ -8,6 +8,9 @@
 			"users": "Users",
 			"studies": "Studies"
 		},
+		"tutor": {
+			"profile": "My profile"
+		},
 		"availability": "Availability",
 		"language": "Language",
 		"register": "Sign up",
