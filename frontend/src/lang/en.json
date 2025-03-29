@@ -11,6 +11,9 @@
 		"tutor": {
 			"profile": "My profile",
 			"update": "Update",
+			"updatedSuccessfully": "Profile updated successfully",
+			"updateError": "Error updating profile",
+			"userNotFound": "User not found",
 			"selectGender": "Select your gender",
 			"bio": "Biography",
 			"availabilities": "Availabilities"

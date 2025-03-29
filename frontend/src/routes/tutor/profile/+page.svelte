@@ -1,50 +1,63 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
+	import { patchUserAPI } from '$lib/api/users';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	const formatBirthdate = (dateStr: string | undefined): string => {
+	const formatBirthdate = (dateStr: string | Date | undefined): string => {
 		if (!dateStr) return '';
-		const isoDate = dateStr.split('T')[0];
-		if (/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate;
-		const [day, month, year] = dateStr.split('/');
-		if (year?.length === 4) {
-			return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+		const date = new Date(dateStr);
+		if (!isNaN(date.getTime())) {
+			return date.toISOString().split('T')[0];
 		}
-
+		if (typeof dateStr === 'string') {
+			const [day, month, year] = dateStr.split('/');
+			if (year?.length === 4) {
+				return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+			}
+		}
 		return '';
 	};
 
 	let email = data.user?.email || '';
 	let nickname = data.user?.nickname || '';
-	let birthdate = formatBirthdate(
-		data.user?.birthdate ? data.user.birthdate.toString() : undefined
-	);
+	let birthdate = formatBirthdate(data.user?.birthdate ?? undefined);
 	let gender = data.user?.gender || '';
 	let bio = data.user?.bio || '';
 	let availabilities = data.user?.availabilities
 		? JSON.stringify(data.user.availabilities, null, 2)
 		: '';
 
-	function updateProfile() {
-		let parsedAvailabilities;
+	async function updateProfile() {
 		try {
-			parsedAvailabilities = availabilities ? JSON.parse(availabilities) : [];
-		} catch (error) {
-			alert($t('errors.invalidAvailabilities'));
-			return;
-		}
+			const parsedAvailabilities = availabilities ? JSON.parse(availabilities) : [];
+			console.log('birth:', new Date(birthdate).toISOString());
+			const updateData = {
+				email,
+				nickname,
+				birthdate,
+				gender,
+				bio,
+				availabilities: parsedAvailabilities
+			};
 
-		console.log({
-			email,
-			nickname,
-			birthdate,
-			gender,
-			bio,
-			availabilities: parsedAvailabilities
-		});
-		alert($t('profile.updatedSuccessfully'));
+			let success = false;
+			if (data.user) {
+				success = await patchUserAPI(fetch, data.user.id, updateData);
+			} else {
+				throw new Error($t('header.tutor.userNotFound'));
+			}
+			console.log('Update success:', success);
+			if (success) {
+				alert($t('header.tutor.updatedSuccessfully'));
+			} else {
+				alert($t('header.tutor.updateError'));
+			}
+		} catch (error) {
+			console.error('Update failed:', error);
+			alert(error instanceof Error ? error.message : $t('errors.updateFailed'));
+		}
 	}
 </script>
 
@@ -132,10 +145,7 @@
 			></textarea>
 		</div>
 
-		<button
-			type="submit"
-			class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:ring focus:ring-indigo-200"
-		>
+		<button type="submit" class="button">
 			{$t('header.tutor.update')}
 		</button>
 	</form>
