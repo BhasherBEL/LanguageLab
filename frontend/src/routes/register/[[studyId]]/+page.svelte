@@ -615,7 +615,7 @@
 			<p class="text-center">
 				{@html $t('register.continue')}
 			</p>
-			<button class="button mt-4 w-full" onclick={() => (current_step = 6)}>
+			<button class="button mt-4 w-full" onclick={() => (current_step = 8)}>
 				{$t('register.continueButton')}
 			</button>
 			<button class="button mt-4 w-full" onclick={() => (document.location.href = '/')}>
@@ -623,9 +623,17 @@
 			</button>
 		</div>
 	{:else if current_step == 8}
-		{#if user}
-			<Typingtest onFinish={() => current_step++} {user} />
-		{/if}
+		<div class="text-center">
+			<p class="text-center">
+				{@html $t('register.start')}
+			</p>
+			<button
+				class="button mt-4 m-auto"
+				onclick={() => (document.location.href = `/studies/${study?.id}`)}
+			>
+				{$t('register.continueButton')}
+			</button>
+		</div>
 	{:else if current_step == 9}
 		<div class="text-center">
 			<p class="text-center">
