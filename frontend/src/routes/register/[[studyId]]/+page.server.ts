@@ -95,7 +95,7 @@ export const actions: Actions = {
 			});
 			if (!response) return { message: 'Unknown error occurred' };
 
-			redirect(303, '/register');
+			redirect(303, `/register/`);
 		} else if (locals.user.type == 1) {
 			if (!homeLanguage || !birthyear || !gender || !bio) {
 				return { message: 'Invalid request' };
@@ -116,7 +116,7 @@ export const actions: Actions = {
 				bio
 			});
 			if (!response) return { message: 'Unknown error occurred' };
-			redirect(303, '/register');
+			redirect(303, `/register/`);
 		}
 	}
 };
