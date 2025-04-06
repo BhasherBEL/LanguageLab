@@ -18,6 +18,21 @@ def create_test(
     return crud.create_test(db, test).id
 
 
+@require_admin("You do not have permission to update a test.")
+@testRouter.put("/{test_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_test(
+    test_id: int,
+    test: schemas.TestCreate,
+    db: Session = Depends(get_db),
+):
+    db_test = crud.get_test(db, test_id)
+    if db_test is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Test not found"
+        )
+    crud.update_test(db, test, test_id)
+
+
 @testRouter.get("")
 def get_tests(
     skip: int = 0,
