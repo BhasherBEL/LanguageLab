@@ -120,3 +120,63 @@ export async function getTestEntriesScoreAPI(
 
 	return score;
 }
+
+export async function createTestTypingAPI(
+	fetch: fetchType,
+	title: string,
+	explanation: string,
+	text: string,
+	repeat: number,
+	duration: number
+) {
+	const response = await fetch(`/api/tests`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			title,
+			test_typing: {
+				explanations: explanation,
+				text,
+				repeat,
+				duration
+			}
+		})
+	});
+	if (!response.ok) return null;
+	const test = await response.json();
+	return test.id;
+}
+
+export async function updateTestTypingAPI(
+	fetch: fetchType,
+	id: number,
+	title: string,
+	explanation: string,
+	text: string,
+	repeat: number,
+	duration: number
+): Promise<boolean> {
+	const response = await fetch(`/api/tests/${id}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			title,
+			test_typing: {
+				explanations: explanation,
+				text,
+				repeat,
+				duration
+			}
+		})
+	});
+
+	return response.ok;
+}
+
+export async function deleteTestAPI(fetch: fetchType, id: number): Promise<boolean> {
+	const response = await fetch(`/api/tests/${id}`, {
+		method: 'DELETE'
+	});
+	if (!response.ok) return false;
+	return true;
+}

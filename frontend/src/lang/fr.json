@@ -12,7 +12,8 @@
 		"admin": {
 			"users": "Utilisateurs",
 			"sessions": "Sessions",
-			"studies": "Études"
+			"studies": "Études",
+			"tests": "Tests"
 		}
 	},
 	"chatbox": {
@@ -398,7 +399,22 @@
 	},
 	"tests": {
 		"taskTests": "Tests de langue",
-		"typingTests": "Tests de frappe"
+		"typingTests": "Tests de frappe",
+		"manage": "Gerer les tests",
+		"create": "Créer un nouveau test",
+		"backtostudies": "Revenir aux études",
+		"title": {
+			"edit": "Modifier le test",
+			"create": "Créer un test"
+		},
+		"label": {
+			"title": "Titre",
+			"type": "Type",
+			"explanation": "Explication",
+			"text": "Contenu",
+			"repeat": "Nombre de répétitions",
+			"duration": "Durée"
+		}
 	},
 	"button": {
 		"create": "Créer",
@@ -492,7 +508,7 @@
 			"inProgress": "En cours",
 			"finished": "Terminée",
 			"topics": "Topics",
-			"title": "Titre de l'étude",
+			"title": "Titre",
 			"users": "Utilisateurs",
 			"description": "Description",
 			"email": "E-mail",
@@ -501,7 +517,8 @@
 			"questions": "questions",
 			"tests": "tests",
 			"OrganisationUni": "Organisation/Université",
-			"Address": "Adresse"
+			"Address": "Adresse",
+			"type": "Type"
 		}
 	},
 	"inputs": {

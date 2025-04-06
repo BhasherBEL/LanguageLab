@@ -13,6 +13,30 @@ def create_test(db: Session, test: schemas.TestCreate) -> models.Test:
     return db_test
 
 
+def update_test(db: Session, test: schemas.TestCreate, test_id: int) -> None:
+    db.query(models.Test).filter(models.Test.id == test_id).update(
+        {**test.model_dump(exclude_unset=True, exclude={"test_typing", "test_task"})}
+    )
+
+    if test.test_typing:
+        db.query(models.TestTyping).filter(models.TestTyping.test_id == test_id).update(
+            {**test.test_typing.model_dump(exclude_unset=True)}
+        )
+    else:
+        db.query(models.TestTyping).filter(
+            models.TestTyping.test_id == test_id
+        ).delete()
+
+    if test.test_task:
+        db.query(models.TestTask).filter(models.TestTask.test_id == test_id).update(
+            {**test.test_task.model_dump(exclude_unset=True)}
+        )
+    else:
+        db.query(models.TestTask).filter(models.TestTask.test_id == test_id).delete()
+
+    db.commit()
+
+
 def get_tests(db: Session, skip: int = 0) -> list[models.Test]:
     return db.query(models.Test).offset(skip).all()
 
