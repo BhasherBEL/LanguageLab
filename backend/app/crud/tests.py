@@ -90,11 +90,42 @@ def remove_group_from_test_task(
 def create_group(
     db: Session, group: schemas.TestTaskGroupCreate
 ) -> models.TestTaskGroup:
-    db_group = models.TestTaskGroup(**group.model_dump())
+    db_group = models.TestTaskGroup(
+        **group.model_dump(exclude_unset=True, exclude={"questions"})
+    )
+
+    if group.questions:
+        db_group.questions = (
+            db.query(models.TestTaskQuestion)
+            .filter(models.TestTaskQuestion.id.in_(group.questions))
+            .all()
+        )
     db.add(db_group)
     db.commit()
     db.refresh(db_group)
     return db_group
+
+
+def update_group(
+    db: Session, group: schemas.TestTaskGroupCreate, group_id: int
+) -> None:
+    current = db.query(models.TestTaskGroup).filter(models.TestTaskGroup.id == group_id)
+    current.update(
+        {
+            **group.model_dump(exclude_unset=True, exclude={"questions"}),
+        }
+    )
+
+    first = current.first()
+
+    if first:
+        first.questions = (
+            db.query(models.TestTaskQuestion)
+            .filter(models.TestTaskQuestion.id.in_(group.questions))
+            .all()
+        )
+
+    db.commit()
 
 
 def get_group(db: Session, group_id: int) -> models.TestTaskGroup | None:

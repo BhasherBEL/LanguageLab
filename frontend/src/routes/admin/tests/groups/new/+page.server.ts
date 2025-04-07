@@ -1,5 +1,5 @@
 import { redirect, type Actions } from '@sveltejs/kit';
-import { createTestTypingAPI } from '$lib/api/tests';
+import { createTestTaskGroupAPI } from '$lib/api/tests';
 
 export const actions: Actions = {
 	default: async ({ request, fetch }) => {
@@ -9,7 +9,7 @@ export const actions: Actions = {
 		const demo = formData.get('demo')?.toString() == 'on';
 		const randomize = formData.get('randomize')?.toString() == 'on';
 
-		if (!title || !demo || !randomize) {
+		if (!title) {
 			return {
 				message: 'Invalid request: Missing required fields'
 			};
@@ -22,6 +22,12 @@ export const actions: Actions = {
 
 		const id = await createTestTaskGroupAPI(fetch, title, demo, randomize, questions);
 
-		return redirect(303, `/admin/tests`);
+		if (id === null) {
+			return {
+				message: 'Error creating test task group'
+			};
+		}
+
+		return redirect(303, `/admin/tests/groups`);
 	}
 };
