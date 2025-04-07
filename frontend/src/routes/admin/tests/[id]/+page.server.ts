@@ -1,5 +1,5 @@
 import { redirect, type Actions } from '@sveltejs/kit';
-import { updateTestTypingAPI } from '$lib/api/tests';
+import { updateTestTaskAPI, updateTestTypingAPI } from '$lib/api/tests';
 
 export const actions: Actions = {
 	default: async ({ request, fetch }) => {
@@ -45,6 +45,21 @@ export const actions: Actions = {
 			}
 
 			const ok = await updateTestTypingAPI(fetch, id, title, explanation, text, repeat, duration);
+
+			if (!ok) {
+				return {
+					message: 'Invalid request: Failed to update test'
+				};
+			}
+
+			return redirect(303, `/admin/tests`);
+		} else if (type === 'task') {
+			const groups = formData
+				.getAll('groups[]')
+				.map((group) => parseInt(group.toString(), 10))
+				.filter((group) => !isNaN(group));
+
+			const ok = await updateTestTaskAPI(fetch, id, title, groups);
 
 			if (!ok) {
 				return {

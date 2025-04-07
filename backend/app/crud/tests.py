@@ -6,7 +6,15 @@ import schemas
 
 
 def create_test(db: Session, test: schemas.TestCreate) -> models.Test:
-    db_test = models.Test(**test.model_dump())
+    db_test = models.Test(**test.model_dump(exclude_unset=True, exclude={"test_task"}))
+
+    if test.test_task:
+        db_test.test_task = models.TestTask(
+            groups=db.query(models.TestTaskGroup)
+            .filter(models.TestTaskGroup.id.in_(test.test_task.groups))
+            .all(),
+        )
+
     db.add(db_test)
     db.commit()
     db.refresh(db_test)
@@ -28,9 +36,19 @@ def update_test(db: Session, test: schemas.TestCreate, test_id: int) -> None:
         ).delete()
 
     if test.test_task:
-        db.query(models.TestTask).filter(models.TestTask.test_id == test_id).update(
-            {**test.test_task.model_dump(exclude_unset=True)}
+
+        test_task = (
+            db.query(models.TestTask).filter(models.TestTask.test_id == test_id).first()
         )
+
+        if test_task:
+            groups = (
+                db.query(models.TestTaskGroup)
+                .filter(models.TestTaskGroup.id.in_(test.test_task.groups))
+                .all()
+            )
+
+            test_task.groups = groups
     else:
         db.query(models.TestTask).filter(models.TestTask.test_id == test_id).delete()
 
@@ -174,3 +192,11 @@ def get_score(db: Session, rid: str):
         return 0
 
     return corrects / total
+
+
+def get_groups(db: Session):
+    return db.query(models.TestTaskGroup).all()
+
+
+def get_questions(db: Session):
+    return db.query(models.TestTaskQuestion).all()

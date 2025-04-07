@@ -14,7 +14,9 @@
 			"sessions": "Sessions",
 			"studies": "Études",
 			"tasks": "Tâches",
-			"tests": "Tests"
+			"tests": "Tests",
+			"groups": "Groupes",
+			"questions": "Questions"
 		},
 		"profile": "Mon profil"
 	},
@@ -429,6 +431,20 @@
 			"text": "Contenu",
 			"repeat": "Nombre de répétitions",
 			"duration": "Durée"
+		},
+		"groups": {
+			"manage": "Gérer les groupes",
+			"create": "Créer un groupe",
+			"backtotests": "Revenir aux tests",
+			"title": {
+				"edit": "Modifier le groupe",
+				"create": "Créer un groupe"
+			}
+		},
+		"questions": {
+			"manage": "Gérer les questions",
+			"create": "Créer une question",
+			"backtogroups": "Revenir aux groupes"
 		}
 	},
 	"tasks": {
@@ -559,7 +575,16 @@
 			"instructions": "Instructions",
 			"examples": "Exemples",
 			"tasks": "Tâches",
-			"type": "Type"
+			"type": "Type",
+			"demo": "Demo",
+			"randomize": "Aléatoire",
+			"qcm": "QCM",
+			"image": "Image",
+			"text": "Texte",
+			"audio": "Audio",
+			"dropdown": "Menu déroulant",
+			"radio": "Boutons radio",
+			"gapfill": "Texte à trous"
 		}
 	},
 	"inputs": {
