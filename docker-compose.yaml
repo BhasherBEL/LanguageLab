@@ -74,7 +74,7 @@ services:
       - ADMIN_EMAIL=${LANGUAGELAB_ADMIN_EMAIL}
       - ADMIN_PASSWORD=${LANGUAGELAB_ADMIN_PASSWORD}
       - CALCOM_SECRET=${LANGUAGELAB_CALCOM_SECRET}
-      - ALLOWED_ORIGINS=https://dev.languagelab.be,https://api.dev.languagelab.be
+      - ALLOWED_ORIGINS=*
     volumes:
       - /mnt/data/languagelab/backend:/data
       - /etc/timezone:/etc/timezone:ro
