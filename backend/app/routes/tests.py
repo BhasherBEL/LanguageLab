@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from starlette.status import HTTP_200_OK
 
 import crud
 import schemas
@@ -40,6 +39,22 @@ def get_tests(
     db: Session = Depends(get_db),
 ):
     return crud.get_tests(db, skip)
+
+
+@require_admin("You do not have permission to get all the groups.")
+@testRouter.get("/groups", response_model=list[schemas.TestTaskGroup])
+def get_groups(
+    db: Session = Depends(get_db),
+):
+    return crud.get_groups(db)
+
+
+@require_admin("You do not have permission to get all the questions.")
+@testRouter.get("/questions", response_model=list[schemas.TestTaskQuestion])
+def get_questions(
+    db: Session = Depends(get_db),
+):
+    return crud.get_questions(db)
 
 
 @testRouter.get("/{test_id}", response_model=schemas.Test)

@@ -80,11 +80,11 @@ class TestTaskGroup(TestTaskGroupCreate):
 
 
 class TestTaskCreate(BaseModel):
+    groups: list[int] = []
+
+
+class TestTask(BaseModel):
     groups: list[TestTaskGroup] = []
-
-
-class TestTask(TestTaskCreate):
-    pass
 
 
 class TestCreate(BaseModel):

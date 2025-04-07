@@ -180,3 +180,63 @@ export async function deleteTestAPI(fetch: fetchType, id: number): Promise<boole
 	if (!response.ok) return false;
 	return true;
 }
+
+export async function getTestAPI(fetch: fetchType, id: number): Promise<any> {
+	const response = await fetch(`/api/tests/${id}`);
+	if (!response.ok) return null;
+	const test = await response.json();
+	return test;
+}
+
+export async function getTestGroupsAPI(fetch: fetchType): Promise<any> {
+	const response = await fetch(`/api/tests/groups`);
+	if (!response.ok) return null;
+	const groups = await response.json();
+	return groups;
+}
+
+export async function getTestQuestionsAPI(fetch: fetchType): Promise<any> {
+	const response = await fetch(`/api/tests/questions`);
+	if (!response.ok) return null;
+	const questions = await response.json();
+	return questions;
+}
+
+export async function createTestTaskAPI(
+	fetch: fetchType,
+	title: string,
+	groups: number[]
+): Promise<number | null> {
+	const response = await fetch(`/api/tests`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			title,
+			test_task: {
+				groups
+			}
+		})
+	});
+	if (!response.ok) return null;
+	const test = await response.json();
+	return test.id;
+}
+
+export async function updateTestTaskAPI(
+	fetch: fetchType,
+	id: number,
+	title: string,
+	groups: number[]
+): Promise<boolean> {
+	const response = await fetch(`/api/tests/${id}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			title,
+			test_task: {
+				groups
+			}
+		})
+	});
+	return response.ok;
+}

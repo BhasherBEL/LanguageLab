@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
 	import { TestTask, TestTyping } from '$lib/types/tests';
+	import TestTaskGroup from '$lib/types/testTaskGroups';
+	import { TestTaskQuestionGapfill, TestTaskQuestionQcm } from '$lib/types/testTaskQuestions';
 
 	let { items = $bindable(), name } = $props();
 	let draggedIndex: number | null = $state(null);
@@ -54,6 +56,14 @@
 					{$t('utils.words.questions')})
 				{:else if item instanceof TestTyping}
 					{item.title}
+				{:else if item instanceof TestTaskGroup}
+					{item.title}
+					({item.questions.length}
+					{$t('utils.words.questions')})
+				{:else if item instanceof TestTaskQuestionQcm}
+					{@html item.value}
+				{:else if item instanceof TestTaskQuestionGapfill}
+					{item.value}
 				{/if}
 			</div>
 			<div

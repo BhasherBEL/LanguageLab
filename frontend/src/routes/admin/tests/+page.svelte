@@ -33,5 +33,8 @@
 </table>
 <div class="mt-8 mx-auto w-[64rem] flex justify-between">
 	<a class="button" href="/admin/tests/new">{$t('tests.create')}</a>
-	<a class="btn" href="/admin/studies">⏎ {$t('tests.backtostudies')}</a>
+	<span>
+		<a class="btn" href="/admin/studies">⏎ {$t('tests.backtostudies')}</a>
+		<a class="btn" href="/admin/tests/groups">{$t('tests.groups.manage')}</a>
+	</span>
 </div>

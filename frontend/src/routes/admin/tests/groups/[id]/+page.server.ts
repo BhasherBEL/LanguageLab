@@ -1,16 +1,25 @@
 import { redirect, type Actions } from '@sveltejs/kit';
-import { createTestTaskAPI, createTestTypingAPI } from '$lib/api/tests';
+import { updateTestTypingAPI } from '$lib/api/tests';
 
 export const actions: Actions = {
 	default: async ({ request, fetch }) => {
 		const formData = await request.formData();
 
+		const idStr = formData.get('id')?.toString();
 		const title = formData.get('title')?.toString();
 		const type = formData.get('type')?.toString();
 
-		if (!title || !type || (type !== 'typing' && type !== 'task')) {
+		if (!title || !type || !idStr || (type !== 'typing' && type !== 'task')) {
 			return {
 				message: 'Invalid request: Missing required fields'
+			};
+		}
+
+		const id = parseInt(idStr, 10);
+
+		if (isNaN(id)) {
+			return {
+				message: 'Invalid request: Invalid ID'
 			};
 		}
 
@@ -35,26 +44,11 @@ export const actions: Actions = {
 				};
 			}
 
-			const id = await createTestTypingAPI(fetch, title, explanation, text, repeat, duration);
+			const ok = await updateTestTypingAPI(fetch, id, title, explanation, text, repeat, duration);
 
-			if (id === null) {
+			if (!ok) {
 				return {
-					message: 'Invalid request: Failed to create test'
-				};
-			}
-
-			return redirect(303, `/admin/tests`);
-		} else if (type === 'task') {
-			const groups = formData
-				.getAll('groups[]')
-				.map((group) => parseInt(group.toString(), 10))
-				.filter((group) => !isNaN(group));
-
-			const id = await createTestTaskAPI(fetch, title, groups);
-
-			if (id === null) {
-				return {
-					message: 'Invalid request: Failed to create test'
+					message: 'Invalid request: Failed to update test'
 				};
 			}
 
