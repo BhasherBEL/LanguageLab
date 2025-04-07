@@ -1,5 +1,5 @@
 import { redirect, type Actions } from '@sveltejs/kit';
-import { updateTestTypingAPI } from '$lib/api/tests';
+import { updateTestTaskGroupAPI } from '$lib/api/tests';
 
 export const actions: Actions = {
 	default: async ({ request, fetch }) => {
@@ -7,9 +7,10 @@ export const actions: Actions = {
 
 		const idStr = formData.get('id')?.toString();
 		const title = formData.get('title')?.toString();
-		const type = formData.get('type')?.toString();
+		const demo = formData.get('demo')?.toString() == 'on';
+		const randomize = formData.get('randomize')?.toString() == 'on';
 
-		if (!title || !type || !idStr || (type !== 'typing' && type !== 'task')) {
+		if (!idStr || !title) {
 			return {
 				message: 'Invalid request: Missing required fields'
 			};
@@ -23,36 +24,19 @@ export const actions: Actions = {
 			};
 		}
 
-		if (type === 'typing') {
-			const explanation = formData.get('explanation')?.toString();
-			const text = formData.get('text')?.toString();
-			const repeatStr = formData.get('repeat')?.toString();
-			const durationStr = formData.get('duration')?.toString();
+		const questions = formData
+			.getAll('questions[]')
+			.map((question) => parseInt(question.toString(), 10))
+			.filter((question) => !isNaN(question));
 
-			if (!explanation || !text || !repeatStr || !durationStr) {
-				return {
-					message: 'Invalid request: Missing required fields'
-				};
-			}
+		const ok = await updateTestTaskGroupAPI(fetch, id, title, demo, randomize, questions);
 
-			const repeat = parseInt(repeatStr, 10);
-			const duration = parseInt(durationStr, 10);
-
-			if (isNaN(repeat) || isNaN(duration)) {
-				return {
-					message: 'Invalid request: Invalid format for numbers'
-				};
-			}
-
-			const ok = await updateTestTypingAPI(fetch, id, title, explanation, text, repeat, duration);
-
-			if (!ok) {
-				return {
-					message: 'Invalid request: Failed to update test'
-				};
-			}
-
-			return redirect(303, `/admin/tests`);
+		if (!ok) {
+			return {
+				message: 'Error updating test task group'
+			};
 		}
+
+		return redirect(303, `/admin/tests/groups`);
 	}
 };

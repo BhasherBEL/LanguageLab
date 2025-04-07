@@ -195,6 +195,13 @@ export async function getTestGroupsAPI(fetch: fetchType): Promise<any> {
 	return groups;
 }
 
+export async function getTestTaskGroupAPI(fetch: fetchType, id: number): Promise<any> {
+	const response = await fetch(`/api/tests/groups/${id}`);
+	if (!response.ok) return null;
+	const group = await response.json();
+	return group;
+}
+
 export async function getTestQuestionsAPI(fetch: fetchType): Promise<any> {
 	const response = await fetch(`/api/tests/questions`);
 	if (!response.ok) return null;
@@ -236,6 +243,49 @@ export async function updateTestTaskAPI(
 			test_task: {
 				groups
 			}
+		})
+	});
+	return response.ok;
+}
+
+export async function createTestTaskGroupAPI(
+	fetch: fetchType,
+	title: string,
+	demo: boolean,
+	randomize: boolean,
+	questions: number[]
+): Promise<number | null> {
+	const response = await fetch(`/api/tests/groups`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			title,
+			demo,
+			randomize,
+			questions
+		})
+	});
+	if (!response.ok) return null;
+	const group = await response.json();
+	return group.id;
+}
+
+export async function updateTestTaskGroupAPI(
+	fetch: fetchType,
+	id: number,
+	title: string,
+	demo: boolean,
+	randomize: boolean,
+	questions: number[]
+): Promise<boolean> {
+	const response = await fetch(`/api/tests/groups/${id}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			title,
+			demo,
+			randomize,
+			questions
 		})
 	});
 	return response.ok;

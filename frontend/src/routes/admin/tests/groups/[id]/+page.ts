@@ -1,20 +1,31 @@
-import { getTestAPI, getTestGroupsAPI } from '$lib/api/tests';
-import { Test } from '$lib/types/tests';
+import { getTestQuestionsAPI, getTestTaskGroupAPI } from '$lib/api/tests';
 import TestTaskGroup from '$lib/types/testTaskGroups';
+import { TestTaskQuestion } from '$lib/types/testTaskQuestions';
 import { error, type Load } from '@sveltejs/kit';
 
 export const load: Load = async ({ fetch, params }) => {
-	const id = Number(params.id);
+	const idStr = params?.id;
+
+	if (!idStr) {
+		return error(400, 'Invalid ID');
+	}
+
+	const id = parseInt(idStr, 10);
 
 	if (isNaN(id)) {
 		return error(400, 'Invalid ID');
 	}
 
-	const testRaw = await getTestAPI(fetch, id);
-	const test = Test.parse(testRaw);
+	const groupRaw = await getTestTaskGroupAPI(fetch, id);
 
-	const groupsRaw = await getTestGroupsAPI(fetch);
-	const groups = TestTaskGroup.parseAll(groupsRaw);
+	if (!groupRaw) {
+		return error(404, 'Group not found');
+	}
 
-	return { test, possibleGroups: groups };
+	const group = TestTaskGroup.parse(groupRaw);
+
+	const questionsRaw = await getTestQuestionsAPI(fetch);
+	const questions = TestTaskQuestion.parseAll(questionsRaw);
+
+	return { group, possibleQuestions: questions };
 };

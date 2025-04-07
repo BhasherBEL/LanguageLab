@@ -49,6 +49,35 @@ def get_groups(
     return crud.get_groups(db)
 
 
+@require_admin("You do not have permission to get a group.")
+@testRouter.get("/groups/{group_id}", response_model=schemas.TestTaskGroup)
+def get_group(
+    group_id: int,
+    db: Session = Depends(get_db),
+):
+    group = crud.get_group(db, group_id)
+    if group is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Group not found"
+        )
+    return group
+
+
+@require_admin("You do not have permission to edit a group.")
+@testRouter.put("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_group(
+    group_id: int,
+    group: schemas.TestTaskGroupCreate,
+    db: Session = Depends(get_db),
+):
+    db_group = crud.get_group(db, group_id)
+    if db_group is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Group not found"
+        )
+    crud.update_group(db, group, group_id)
+
+
 @require_admin("You do not have permission to get all the questions.")
 @testRouter.get("/questions", response_model=list[schemas.TestTaskQuestion])
 def get_questions(
