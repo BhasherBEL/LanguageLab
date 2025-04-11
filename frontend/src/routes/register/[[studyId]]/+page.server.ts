@@ -5,7 +5,7 @@ import { validateEmail, validatePassword, validateUsername } from '$lib/utils/se
 import { redirect, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
-	register: async ({ request, fetch, params }) => {
+	register: async ({ request, fetch, params, url }) => {
 		const formData = await request.formData();
 		const study_idStr = params.studyId;
 		if (!study_idStr) return { message: 'Invalid request' };
@@ -54,6 +54,10 @@ export const actions: Actions = {
 		if (response.status === 401) return { message: 'Incorrect email or password' };
 		if (response.status === 422) return { message: 'Invalid request' };
 		if (!response.ok) return { message: 'Unknown error occurred' };
+
+		if (url.searchParams.has('role')) {
+			return redirect(303, `/register/${study_id}?role=${url.searchParams.get('role')}`);
+		}
 
 		return redirect(303, `/register/${study_id}`);
 	},

@@ -4,7 +4,6 @@
 	import { displayDate } from '$lib/utils/date';
 	import { t } from '$lib/services/i18n';
 	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
-	import { browser } from '$app/environment';
 	import type { PageData } from './$types';
 	import Consent from '$lib/components/surveys/consent.svelte';
 	import type Study from '$lib/types/study';
@@ -20,7 +19,6 @@
 	let tutors = $state(data.tutors || []);
 	let isLoading = $state(false);
 	let selectedTutorEmail = $state('');
-	let is_tutor = $state(false);
 	const MAX_BIO_LENGTH = 100;
 	let remainingCharacters = $state(MAX_BIO_LENGTH);
 	let bio = $state('');
@@ -69,13 +67,6 @@
 			return 1;
 		})()
 	);
-
-	let study_id: number | null = (() => {
-		if (!browser) return null;
-		let study_id_str = new URLSearchParams(window.location.search).get('study');
-		if (!study_id_str) return null;
-		return parseInt(study_id_str) || null;
-	})();
 
 	async function handleTutorSelection(tutor: any) {
 		selectedTutorEmail = tutor.email;
@@ -242,7 +233,7 @@
 			<a
 				class="button mt-8"
 				class:btn-disabled={!selectedStudy}
-				href="/register/{selectedStudy?.id}"
+				href="/register/{selectedStudy?.id}?role={data.role}"
 				data-sveltekit-reload
 			>
 				{$t('button.continue')}
@@ -327,15 +318,9 @@
 						/>
 					</div>
 				</label>
-				<div class="form-control">
-					<label for="role" class="label">
-						<span class="label-text">{$t('register.role')}</span>
-					</label>
-					<select class="select select-bordered" id="role" name="role" bind:value={is_tutor}>
-						<option value="2">{$t('register.roles.learner')}</option>
-						<option value="1">{$t('register.roles.tutor')}</option>
-					</select>
-				</div>
+				<select hidden id="role" name="role">
+					<option value={data.role === 'tutor' ? 1 : 2}></option>
+				</select>
 				<div class="form-control">
 					<button class="button mt-2">{$t('register.signup')}</button>
 				</div>
