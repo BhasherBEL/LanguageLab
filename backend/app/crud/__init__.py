@@ -9,6 +9,7 @@ from hashing import Hasher
 
 from crud.tests import *
 from crud.studies import *
+from crud.tasks import *
 
 
 def get_user(db: Session, user_id: int):

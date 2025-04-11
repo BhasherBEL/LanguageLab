@@ -3,6 +3,7 @@ from pydantic import BaseModel, NaiveDatetime
 from schemas.studies import *
 from schemas.tests import *
 from schemas.users import *
+from schemas.tasks import *
 
 
 class LoginData(BaseModel):

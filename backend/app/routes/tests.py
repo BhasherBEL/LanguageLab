@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from starlette.status import HTTP_200_OK
 
 import crud
 import schemas
