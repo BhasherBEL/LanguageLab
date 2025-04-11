@@ -15,6 +15,7 @@ class RegisterData(BaseModel):
     password: str
     nickname: str
     is_tutor: bool
+    study_id: int | None = None
 
 
 class ContactCreate(BaseModel):

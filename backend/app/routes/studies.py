@@ -92,3 +92,27 @@ def create_study_info(
     db: Session = Depends(get_db),
 ):
     return crud.create_study_info(db, study_id, study_info)
+
+
+@studiesRouter.post("/{study_id}/users/{user_id}", status_code=status.HTTP_201_CREATED)
+def add_user_to_study(
+    study_id: int,
+    user_id: int,
+    current_user: schemas.User,
+    db: Session = Depends(get_db),
+):
+    if current_user.id != user_id and current_user.type != schemas.UserType.ADMIN:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to add a user to this study.",
+        )
+
+    study = crud.get_study(db, study_id)
+    if study is None:
+        raise HTTPException(status_code=404, detail="Study not found")
+
+    user = crud.get_user(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    crud.add_user_to_study(db, study, user)

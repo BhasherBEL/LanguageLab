@@ -32,7 +32,7 @@ export default class User {
 	private _gender: string | null;
 	private _bio: string | null;
 	private _calcom_link: string | null;
-	private _study_id: number | null;
+	private _studies_id: number[];
 	private _last_survey: Date | null;
 	private _tutor_list: string[];
 	private _my_tutor: string | null;
@@ -54,7 +54,7 @@ export default class User {
 		birthdate: Date | null,
 		gender: string | null,
 		calcom_link: string | null,
-		study_id: number | null,
+		studies_id: number[] | null,
 		last_survey: Date | null,
 		tutor_list: string[] = [],
 		my_tutor: string | null = null,
@@ -73,7 +73,7 @@ export default class User {
 		this._birthdate = birthdate;
 		this._gender = gender;
 		this._calcom_link = calcom_link;
-		this._study_id = study_id;
+		this._studies_id = studies_id || [];
 		this._last_survey = last_survey;
 		this._tutor_list = tutor_list;
 		this._my_tutor = my_tutor;
@@ -142,8 +142,8 @@ export default class User {
 		return this._calcom_link;
 	}
 
-	get study_id(): number | null {
-		return this._study_id;
+	get studies_id(): number[] {
+		return this._studies_id;
 	}
 
 	get last_survey(): Date | null {
@@ -214,7 +214,7 @@ export default class User {
 			birthdate: this.birthdate,
 			gender: this.gender,
 			calcom_link: this.calcom_link,
-			study_id: this.study_id,
+			studies_id: this.studies_id,
 			last_survey: this.last_survey,
 			tutor_list: this._tutor_list,
 			my_tutor: this.my_tutor,
@@ -237,7 +237,7 @@ export default class User {
 			if (data.birthdate) this._birthdate = data.birthdate;
 			if (data.gender) this._gender = data.gender;
 			if (data.calcum_link) this._calcom_link = data.calcom_link;
-			if (data.study_id) this._study_id = data.study_id;
+			if (data.studies_id) this._studies_id = data.studies_id;
 			if (data.last_survey) this._last_survey = data.last_survey;
 			if (data.tutor_list) this._tutor_list = data.tutor_list;
 			if (data.my_tutor) this._my_tutor = data.my_tutor;
@@ -355,7 +355,7 @@ export default class User {
 			json.birthdate,
 			json.gender,
 			json.calcom_link,
-			json.study_id,
+			json.studies_id,
 			json.last_survey === null ? null : parseToLocalDate(json.last_survey),
 			json.tutor_list || [],
 			json.my_tutor,

@@ -128,6 +128,13 @@ def register(
 
     user = crud.create_user(db=db, user=user_data)
 
+    if register.study_id:
+        study = crud.get_study(db, register.study_id)
+        if study is None:
+            raise HTTPException(status_code=404, detail="Study not found")
+
+        crud.add_user_to_study(db, study, user)
+
     return user.id
 
 

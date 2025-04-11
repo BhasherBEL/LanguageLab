@@ -4,14 +4,13 @@
 	import { displayDate } from '$lib/utils/date';
 	import { t } from '$lib/services/i18n';
 	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
-	import Typingtest from '$lib/components/tests/typingtest.svelte';
 	import { browser } from '$app/environment';
 	import type { PageData } from './$types';
 	import Consent from '$lib/components/surveys/consent.svelte';
 	import type Study from '$lib/types/study';
 
 	let { data, form }: { data: PageData; form: FormData } = $props();
-	let study: Study | undefined = $state(data.study);
+	let study: Study | undefined | null = $state(data.study);
 	let studies: Study[] | undefined = $state(data.studies);
 	let user = $state(data.user);
 	let message = $state('');
@@ -612,33 +611,15 @@
 		</div>
 	{:else if current_step == 7}
 		<div class="text-center">
-			<p class="text-center">
-				{@html $t('register.continue')}
-			</p>
-			<button class="button mt-4 w-full" onclick={() => (current_step = 8)}>
+			<a class="button mt-4 w-full" href="/studies/{study?.id || user?.studies_id[0]}">
 				{$t('register.continueButton')}
-			</button>
+			</a>
 			<button class="button mt-4 w-full" onclick={() => (document.location.href = '/')}>
 				{$t('register.startFastButton')}
 			</button>
 		</div>
-	{:else if current_step == 8}
+	{:else if current_step == 8}{:else if current_step == 9}
 		<div class="text-center">
-			<p class="text-center">
-				{@html $t('register.start')}
-			</p>
-			<button
-				class="button mt-4 m-auto"
-				onclick={() => (document.location.href = `/studies/${study?.id}`)}
-			>
-				{$t('register.continueButton')}
-			</button>
-		</div>
-	{:else if current_step == 9}
-		<div class="text-center">
-			<p class="text-center">
-				{@html $t('register.start')}
-			</p>
 			<button class="button mt-4 m-auto" onclick={() => (document.location.href = '/')}>
 				{$t('register.startButton')}
 			</button>
