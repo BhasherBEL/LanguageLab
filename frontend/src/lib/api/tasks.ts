@@ -66,3 +66,34 @@ export async function deleteTaskAPI(fetch: fetchType, task_id: number): Promise<
 	});
 	return response.ok;
 }
+
+export async function sendTaskStatusAPI(
+	fetch: fetchType,
+	status: string,
+	student_id: number,
+	tutor_id: number,
+	task_id: number,
+	session_id: number
+): Promise<boolean> {
+	const response = await fetch(`/api/tasks/status`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			status,
+			task_id,
+			student_id,
+			tutor_id,
+			session_id
+		})
+	});
+	return response.ok;
+}
+
+export async function getTaskStatusFromSessionAPI(
+	fetch: fetchType,
+	session_id: number
+): Promise<any> {
+	const response = await fetch(`/api/tasks/status/sessions/${session_id}`);
+	if (!response.ok) return null;
+	return await response.json();
+}

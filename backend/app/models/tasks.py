@@ -15,11 +15,11 @@ class Task(Base):
 
 
 class TaskStatus(Base):
-    __tablename__ = "task_statuses"
+    __tablename__ = "task_status"
     id = Column(Integer, primary_key=True, index=True)
     task_id = Column(Integer, ForeignKey("tasks.id"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    status = Column(String, nullable=False)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     tutor_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     session_id = Column(Integer, ForeignKey("sessions.id"), nullable=False)
+    status = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime_aware)

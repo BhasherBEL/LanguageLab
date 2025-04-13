@@ -3,11 +3,77 @@
 	import type { PageData } from './$types.js';
 	import WeeklySurvey from './WeeklySurvey.svelte';
 	import Chatbox from './Chatbox.svelte';
+	import type Task from '$lib/types/tasks';
+	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
+	import { sendTaskStatusAPI } from '$lib/api/tasks';
 
 	let { data }: { data: PageData } = $props();
 	let user = data.user!;
-	let { session, jwt } = data;
+	let { session, jwt, tasks } = data;
 	let { onlineUsers } = session;
+
+	let level = $state('all');
+	let currentTask: Task | null = $state(data.currentTask);
+	let taskInProgress: boolean = $state(data.currentTask !== null);
+
+	let availableLevels = new Set(tasks.map((task: Task) => task.level));
+
+	async function startTask() {
+		const student = session.student;
+		if (!student || !currentTask) return;
+		const ok = await sendTaskStatusAPI(
+			fetch,
+			'start',
+			student.id,
+			user.id,
+			currentTask.id,
+			session.id
+		);
+		if (!ok) {
+			toastAlert($t('tasks.statusFail'));
+			return;
+		}
+		taskInProgress = true;
+	}
+
+	async function cancelTask() {
+		const student = session.student;
+		if (!student || !currentTask) return;
+		const ok = await sendTaskStatusAPI(
+			fetch,
+			'cancel',
+			student.id,
+			user.id,
+			currentTask.id,
+			session.id
+		);
+		if (!ok) {
+			toastAlert($t('tasks.statusFail'));
+			return;
+		}
+		taskInProgress = false;
+		currentTask = null;
+	}
+
+	async function finishTask() {
+		const student = session.student;
+		if (!student || !currentTask) return;
+		const ok = await sendTaskStatusAPI(
+			fetch,
+			'finish',
+			student.id,
+			user.id,
+			currentTask.id,
+			session.id
+		);
+		if (!ok) {
+			toastAlert($t('tasks.statusFail'));
+			return;
+		}
+		taskInProgress = false;
+		currentTask = null;
+		toastSuccess($t('tasks.taskFinished'));
+	}
 </script>
 
 <div class="h-full flex flex-col lg:flex-row pt-2 lg:pt-0 bg-gray-50 relative">
@@ -53,11 +119,61 @@
 		</div>
 
 		<h2 class="text-lg truncate font-semibold text-gray-700 text-center border-t pt-4 mt-4">
-			{$t('utils.words.topics')}
+			{$t('utils.words.tasks')}
 		</h2>
-		<p class="text-center truncate text-sm text-neutral-500 italic">
-			{$t('session.noTopic')}
-		</p>
+		{#if !taskInProgress || !currentTask}
+			<div class="flex gap-2">
+				<select class="select select-bordered w-32" bind:value={level}>
+					<option value="all">{$t('utils.words.all')}</option>
+					{#each availableLevels as l}
+						<option value={l}>{l}</option>
+					{/each}
+				</select>
+				<select class="select select-bordered flex-1 overflow-hidden" bind:value={currentTask}>
+					{#each availableLevels as l}
+						{#if level === 'all' || l === level}
+							<optgroup label={l}>
+								{#each tasks.filter((task: Task) => task.level === l) as task (task.id)}
+									<option value={task}>{task.shortTitle}</option>
+								{/each}
+							</optgroup>
+						{/if}
+					{/each}
+				</select>
+			</div>
+			<button class="btn mt-2 w-full btn-primary" onclick={startTask}>
+				{$t('button.select')}
+			</button>
+		{:else}
+			<p class="mt-4 font-bold">
+				{$t('tasks.taskInProgress')}:
+			</p>
+			<p>
+				{currentTask.shortTitle}
+			</p>
+			{#if currentTask.instructions}
+				<p class="mt-2 font-bold">
+					{$t('utils.words.instructions')}:
+				</p>
+				<p>
+					{currentTask.instructions}
+				</p>
+			{/if}
+			<p class="mt-2 font-bold">
+				{$t('utils.words.examples')}:
+			</p>
+			<p>
+				{currentTask.examples}
+			</p>
+			<div class="flex gap-2 mt-4">
+				<button class="btn flex-grow" onclick={cancelTask}>
+					{$t('button.cancel')}
+				</button>
+				<button class="btn btn-primary flex-grow" onclick={finishTask}>
+					{$t('button.finish')}
+				</button>
+			</div>
+		{/if}
 	</div>
 
 	<div class="flex flex-row flex-grow col-span-5">

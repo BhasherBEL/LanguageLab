@@ -19,3 +19,18 @@ def require_admin(error: str):
         return wrapper
 
     return decorator
+
+
+def require_tutor(error: str):
+    def decorator(func: Callable):
+        def wrapper(*args, current_user: schemas.User, **kwargs):
+            if not check_user_level(current_user, schemas.UserType.TUTOR):
+                raise HTTPException(
+                    status_code=401,
+                    detail=error,
+                )
+            return func(*args, current_user=current_user, **kwargs)
+
+        return wrapper
+
+    return decorator

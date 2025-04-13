@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import crud
 import schemas
 from database import get_db
-from routes.decorators import require_admin
+from routes.decorators import require_admin, require_tutor
 
 taskRouter = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -43,6 +43,28 @@ def get_tasks(
     db: Session = Depends(get_db),
 ):
     return crud.get_tasks(db, skip)
+
+
+@require_tutor("You do not have permission to create a task status.")
+@taskRouter.post("/status", status_code=status.HTTP_201_CREATED)
+def create_task_status(
+    task_status: schemas.TaskStatusCreate,
+    db: Session = Depends(get_db),
+):
+    return crud.create_task_status(db, task_status).id
+
+
+@taskRouter.get("/status/sessions/{session_id}", response_model=schemas.TaskStatus)
+def get_task_status_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+):
+    task_status = crud.get_task_status_session(db, session_id)
+    if task_status is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task status not found"
+        )
+    return task_status
 
 
 @taskRouter.get("/{task_id}", response_model=schemas.Task)

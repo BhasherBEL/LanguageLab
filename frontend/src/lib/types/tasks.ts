@@ -69,3 +69,79 @@ export default class Task {
 			.filter((task: Task | null): task is Task => task !== null);
 	}
 }
+
+// some IDs not resolved because they are not used in the front-end
+export class TaskStatus {
+	private _id: number;
+	private _task_id: number;
+	private _student_id: number;
+	private _tutor_id: number;
+	private _session_id: number;
+	private _status: string;
+
+	constructor(
+		id: number,
+		task_id: number,
+		student_id: number,
+		tutor_id: number,
+		session_id: number,
+		status: string
+	) {
+		this._id = id;
+		this._task_id = task_id;
+		this._student_id = student_id;
+		this._tutor_id = tutor_id;
+		this._session_id = session_id;
+		this._status = status;
+	}
+
+	get id(): number {
+		return this._id;
+	}
+
+	get task_id(): number {
+		return this._task_id;
+	}
+
+	get status(): string {
+		return this._status;
+	}
+
+	get student_id(): number {
+		return this.student_id;
+	}
+
+	get tutor_id(): number {
+		return this.tutor_id;
+	}
+
+	get session_id(): number {
+		return this.session_id;
+	}
+
+	static parse(data: any): TaskStatus | null {
+		if (data === null) {
+			toastAlert('Failed to parse task status data');
+			return null;
+		}
+
+		return new TaskStatus(
+			data.id,
+			data.task_id,
+			data.student_id,
+			data.tutor_id,
+			data.session_id,
+			data.status
+		);
+	}
+
+	static parseAll(data: any): TaskStatus[] {
+		if (data === null) {
+			toastAlert('Failed to parse task status data');
+			return [];
+		}
+		return data
+			.map((taskStatus: any) => TaskStatus.parse(taskStatus))
+			.filter((taskStatus: TaskStatus | null): taskStatus is TaskStatus => taskStatus !== null);
+	}
+}
