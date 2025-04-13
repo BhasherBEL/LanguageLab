@@ -67,6 +67,21 @@ def get_task_status_session(
     return task_status
 
 
+@taskRouter.get(
+    "/status/completed/students/{student_id}", response_model=list[schemas.TaskStatus]
+)
+def get_task_status_completed(
+    student_id: int,
+    db: Session = Depends(get_db),
+):
+    task_status = crud.get_task_status_completed(db, student_id)
+    if task_status is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task status not found"
+        )
+    return task_status
+
+
 @taskRouter.get("/{task_id}", response_model=schemas.Task)
 def get_task(
     task_id: int,

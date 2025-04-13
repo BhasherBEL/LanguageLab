@@ -49,3 +49,12 @@ def get_task_status_session(db: Session, session_id: int) -> models.TaskStatus |
         .order_by(models.TaskStatus.created_at.desc())
         .first()
     )
+
+
+def get_task_status_completed(db: Session, student_id: int) -> list[models.TaskStatus]:
+    return (
+        db.query(models.TaskStatus)
+        .filter(models.TaskStatus.student_id == student_id)
+        .filter(models.TaskStatus.status == "finish")
+        .all()
+    )

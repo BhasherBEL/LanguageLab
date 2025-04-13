@@ -1,5 +1,9 @@
 import { getSessionAPI } from '$lib/api/sessions';
-import { getTasksAPI, getTaskStatusFromSessionAPI } from '$lib/api/tasks';
+import {
+	getTasksAPI,
+	getTaskStatusCompletedFromStudentAPI,
+	getTaskStatusFromSessionAPI
+} from '$lib/api/tasks';
 import Session from '$lib/types/session';
 import Task, { TaskStatus } from '$lib/types/tasks';
 import { error, type Load } from '@sveltejs/kit';
@@ -38,5 +42,20 @@ export const load: Load = async ({ params, fetch, data }) => {
 		}
 	}
 
-	return { session, jwt, tasks, currentTask };
+	let completedTasks: Task[] = [];
+
+	if (session.student) {
+		const completedTasksStatusRaw = await getTaskStatusCompletedFromStudentAPI(
+			fetch,
+			session.student.id
+		);
+		if (completedTasksStatusRaw) {
+			const completedTasksStatus = TaskStatus.parseAll(completedTasksStatusRaw);
+			completedTasks = completedTasksStatus
+				.map((taskStatus) => tasks.find((task) => task.id === taskStatus.task_id))
+				.filter((task) => task !== undefined) as Task[];
+		}
+	}
+
+	return { session, jwt, tasks, currentTask, completedTasks };
 };

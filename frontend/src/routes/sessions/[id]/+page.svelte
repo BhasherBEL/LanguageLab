@@ -9,7 +9,7 @@
 
 	let { data }: { data: PageData } = $props();
 	let user = data.user!;
-	let { session, jwt, tasks } = data;
+	let { session, jwt, tasks, completedTasks } = data;
 	let { onlineUsers } = session;
 
 	let level = $state('all');
@@ -70,6 +70,8 @@
 			toastAlert($t('tasks.statusFail'));
 			return;
 		}
+		completedTasks.push(currentTask);
+
 		taskInProgress = false;
 		currentTask = null;
 		toastSuccess($t('tasks.taskFinished'));
@@ -134,7 +136,12 @@
 						{#if level === 'all' || l === level}
 							<optgroup label={l}>
 								{#each tasks.filter((task: Task) => task.level === l) as task (task.id)}
-									<option value={task}>{task.shortTitle}</option>
+									<option value={task}>
+										{#if completedTasks.includes(task)}
+											✓
+										{/if}
+										{task.shortTitle}
+									</option>
 								{/each}
 							</optgroup>
 						{/if}

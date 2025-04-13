@@ -97,3 +97,12 @@ export async function getTaskStatusFromSessionAPI(
 	if (!response.ok) return null;
 	return await response.json();
 }
+
+export async function getTaskStatusCompletedFromStudentAPI(
+	fetch: fetchType,
+	student_id: number
+): Promise<any> {
+	const response = await fetch(`/api/tasks/status/completed/students/${student_id}`);
+	if (!response.ok) return null;
+	return await response.json();
+}
