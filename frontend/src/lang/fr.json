@@ -403,17 +403,20 @@
 		"typingTests": "Tests de frappe"
 	},
 	"tasks": {
+		"title": "Nouvelle tâche cible",
 		"createTitle": "Créer une nouvelle tâche",
 		"editTitle": "Modifier la tâche",
 		"level": "Niveau CEFR",
 		"shortTitle": "Nom de la tâche (max 5 mots)",
-		"instructions": "Instructions le tuteur (peut être sur plusieurs lignes)",
-		"learnerInstructions": "Instructions pour l'apprenant (peut être sur plusieurs lignes)",
-		"examples": "Exemples (peut être sur plusieurs lignes)",
+		"instructions": "Instructions pour le tuteur (plusieurs lignes si besoin)",
+		"learnerInstructions": "Instructions pour l'apprenant (plusieurs lignes si besoin)",
+		"examples": "Exemples (plusieurs lignes si besoin)",
 		"create": "Créer une nouvelle tâche",
 		"taskInProgress": "Tâche en cours",
 		"taskFinished": "Tâche terminée avec succès",
-		"statusFail": "Echec du changement de status de la tâche"
+		"statusFail": "Echec du changement de status de la tâche",
+		"startTask": "Commencer cette tâche",
+		"achieveTask": "Tâche achevée"
 	},
 	"button": {
 		"create": "Créer",

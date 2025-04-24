@@ -120,11 +120,11 @@
 			{/each}
 		</div>
 
-		<h2 class="text-lg truncate font-semibold text-gray-700 text-center border-t pt-4 mt-4">
-			{$t('utils.words.tasks')}
-		</h2>
 		{#if !taskInProgress || !currentTask}
 			{#if user.is_tutor}
+				<h2 class="text-lg truncate font-semibold text-gray-700 text-center border-t pt-4 mt-4">
+					🎯 {$t('tasks.title')}
+				</h2>
 				<div class="flex gap-2">
 					<select class="select select-bordered w-32" bind:value={level}>
 						<option value="all">{$t('utils.words.all')}</option>
@@ -150,38 +150,40 @@
 					</select>
 				</div>
 				<button class="btn mt-2 w-full btn-primary" onclick={startTask}>
-					{$t('button.select')}
+					{$t('tasks.startTask')}
 				</button>
 			{/if}
 		{:else}
 			<p class="mt-4 font-bold">
-				{$t('tasks.taskInProgress')}:
+				🎯 {$t('tasks.taskInProgress')}:
 			</p>
 			<p>
 				{currentTask.shortTitle}
 			</p>
-			{#if currentTask.instructions}
-				<p class="mt-2 font-bold">
-					{$t('utils.words.instructions')}:
-				</p>
-				<p>
-					{currentTask.instructions}
-				</p>
+			{#if user.is_tutor}
+				{#if currentTask.instructions}
+					<p>
+						{currentTask.instructions}
+					</p>
+					<p class="mt-2 text-sm">
+						{currentTask.examples}
+					</p>
+					<div class="flex gap-2 mt-4">
+						<button class="btn flex-grow" onclick={cancelTask}>
+							🔙 {$t('button.cancel')}
+						</button>
+						<button class="btn btn-primary flex-grow" onclick={finishTask}>
+							✔️ {$t('tasks.achieveTask')}
+						</button>
+					</div>
+				{/if}
+			{:else}
+				{#if currentTask.learnerInstructions}
+					<p>
+						{currentTask.learnerInstructions}
+					</p>
+				{/if}
 			{/if}
-			<p class="mt-2 font-bold">
-				{$t('utils.words.examples')}:
-			</p>
-			<p>
-				{currentTask.examples}
-			</p>
-			<div class="flex gap-2 mt-4">
-				<button class="btn flex-grow" onclick={cancelTask}>
-					{$t('button.cancel')}
-				</button>
-				<button class="btn btn-primary flex-grow" onclick={finishTask}>
-					{$t('button.finish')}
-				</button>
-			</div>
 		{/if}
 	</div>
 
