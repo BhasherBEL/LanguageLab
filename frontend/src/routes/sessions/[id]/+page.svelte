@@ -149,10 +149,10 @@
 						{/each}
 					</select>
 				</div>
+				<button class="btn mt-2 w-full btn-primary" onclick={startTask}>
+					{$t('button.select')}
+				</button>
 			{/if}
-			<button class="btn mt-2 w-full btn-primary" onclick={startTask}>
-				{$t('button.select')}
-			</button>
 		{:else}
 			<p class="mt-4 font-bold">
 				{$t('tasks.taskInProgress')}:
