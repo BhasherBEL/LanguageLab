@@ -54,7 +54,6 @@
 		<label class="label" for="instructions">{$t('tasks.instructions')}</label>
 		<textarea
 			use:autosize
-			rows="2"
 			class="input w-full"
 			id="instructions"
 			name="instructions"
@@ -64,7 +63,6 @@
 		<label class="label" for="learnerInstructions">{$t('tasks.learnerInstructions')}</label>
 		<textarea
 			use:autosize
-			rows="2"
 			class="input w-full"
 			id="learnerInstructions"
 			name="learnerInstructions"
@@ -74,7 +72,6 @@
 		<label class="label" for="examples">{$t('tasks.examples')} *</label>
 		<textarea
 			use:autosize
-			rows="2"
 			class="input w-full"
 			id="examples"
 			name="examples"
