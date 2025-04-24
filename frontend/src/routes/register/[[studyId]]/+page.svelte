@@ -596,12 +596,13 @@
 		</div>
 	{:else if current_step == 7}
 		<div class="text-center">
+			<p>{$t('register.testText')}</p>
 			<a class="button mt-4 w-full" href="/studies/{study?.id || user?.studies_id[0]}">
 				{$t('register.continueButton')}
 			</a>
-			<button class="button mt-4 w-full" onclick={() => (document.location.href = '/')}>
-				{$t('register.startFastButton')}
-			</button>
+			<!-- <button class="button mt-4 w-full" onclick={() => (document.location.href = '/')}> -->
+			<!-- 	{$t('register.startFastButton')} -->
+			<!-- </button> -->
 		</div>
 	{:else if current_step == 8}{:else if current_step == 9}
 		<div class="text-center">

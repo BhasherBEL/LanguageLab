@@ -253,7 +253,8 @@
 		"start": "Continue",
 		"study": "Étude",
 		"study.note": "Nom de l'étude à laquelle vous participez",
-		"study.placeholder": "Nom de l'étude"
+		"study.placeholder": "Nom de l'étude",
+		"testText": "Vous allez passer un test de vocabulaire. Cliquez sur le bouton suivent pour commencer."
 	},
 	"timeslots": {
 		"cesttime": "Heure CET (Bruxelles)",
@@ -394,7 +395,8 @@
 			"title": "Résultat moyen: ",
 			"loading": "Calcul en cours...",
 			"error": "Erreur lors du calcul du score"
-		}
+		},
+		"backToHomePage": "Retour à la page d'accueil"
 	},
 	"tests": {
 		"taskTests": "Tests de langue",
