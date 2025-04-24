@@ -165,24 +165,24 @@
 					<p>
 						{currentTask.instructions}
 					</p>
+				{/if}
+				{#if currentTask.examples}
 					<p class="mt-2 text-sm">
 						{currentTask.examples}
 					</p>
-					<div class="flex gap-2 mt-4">
-						<button class="btn flex-grow" onclick={cancelTask}>
-							🔙 {$t('button.cancel')}
-						</button>
-						<button class="btn btn-primary flex-grow" onclick={finishTask}>
-							✔️ {$t('tasks.achieveTask')}
-						</button>
-					</div>
 				{/if}
-			{:else}
-				{#if currentTask.learnerInstructions}
-					<p>
-						{currentTask.learnerInstructions}
-					</p>
-				{/if}
+				<div class="flex gap-2 mt-4">
+					<button class="btn flex-grow" onclick={cancelTask}>
+						🔙 {$t('button.cancel')}
+					</button>
+					<button class="btn btn-primary flex-grow" onclick={finishTask}>
+						✔️ {$t('tasks.achieveTask')}
+					</button>
+				</div>
+			{:else if currentTask.learnerInstructions}
+				<p>
+					{currentTask.learnerInstructions}
+				</p>
 			{/if}
 		{/if}
 	</div>
