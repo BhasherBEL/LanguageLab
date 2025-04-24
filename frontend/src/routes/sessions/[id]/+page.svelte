@@ -124,30 +124,32 @@
 			{$t('utils.words.tasks')}
 		</h2>
 		{#if !taskInProgress || !currentTask}
-			<div class="flex gap-2">
-				<select class="select select-bordered w-32" bind:value={level}>
-					<option value="all">{$t('utils.words.all')}</option>
-					{#each availableLevels as l}
-						<option value={l}>{l}</option>
-					{/each}
-				</select>
-				<select class="select select-bordered flex-1 overflow-hidden" bind:value={currentTask}>
-					{#each availableLevels as l}
-						{#if level === 'all' || l === level}
-							<optgroup label={l}>
-								{#each tasks.filter((task: Task) => task.level === l) as task (task.id)}
-									<option value={task}>
-										{#if completedTasks.includes(task)}
-											✓
-										{/if}
-										{task.shortTitle}
-									</option>
-								{/each}
-							</optgroup>
-						{/if}
-					{/each}
-				</select>
-			</div>
+			{#if user.is_tutor}
+				<div class="flex gap-2">
+					<select class="select select-bordered w-32" bind:value={level}>
+						<option value="all">{$t('utils.words.all')}</option>
+						{#each availableLevels as l}
+							<option value={l}>{l}</option>
+						{/each}
+					</select>
+					<select class="select select-bordered flex-1 overflow-hidden" bind:value={currentTask}>
+						{#each availableLevels as l}
+							{#if level === 'all' || l === level}
+								<optgroup label={l}>
+									{#each tasks.filter((task: Task) => task.level === l) as task (task.id)}
+										<option value={task}>
+											{#if completedTasks.includes(task)}
+												✓
+											{/if}
+											{task.shortTitle}
+										</option>
+									{/each}
+								</optgroup>
+							{/if}
+						{/each}
+					</select>
+				</div>
+			{/if}
 			<button class="btn mt-2 w-full btn-primary" onclick={startTask}>
 				{$t('button.select')}
 			</button>
