@@ -125,6 +125,10 @@ export default class Session {
 		return this._length;
 	}
 
+	get student(): User | null {
+		return this._users.find((u) => u.type === 2) ?? null;
+	}
+
 	usersList(maxLength = 30): string {
 		const users = this._users
 			.filter((u) => u.id != this._user?.id)

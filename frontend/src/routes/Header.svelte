@@ -93,6 +93,11 @@
 										{$t('header.admin.studies')}
 									</a>
 								</li>
+								<li>
+									<a data-sveltekit-reload href="/admin/tasks">
+										{$t('header.admin.tasks')}
+									</a>
+								</li>
 							</ul>
 						</details>
 					</li>

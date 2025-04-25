@@ -5,7 +5,8 @@
 		"metadataWarning": "Please complete the post-registration form before using the application.",
 		"admin": {
 			"sessions": "Sessions",
-			"users": "Users"
+			"users": "Users",
+			"studies": "Studies"
 		},
 		"availability": "Availability",
 		"language": "Language",
@@ -148,7 +149,13 @@
 			"toggle": "Participants",
 			"title": "Study Title",
 			"OrganisationUni": "Organization/University",
-			"Address": "Address"
+			"Address": "Address",
+			"description": "Description",
+			"email": "E-mail",
+			"groups": "groups",
+			"questions": "questions",
+			"tests": "tests",
+			"users": "Users"
 		}
 	},
 	"button": {
@@ -165,7 +172,9 @@
 		"save": "Save",
 		"update": "Update",
 		"updated": "Updated!",
-		"continue": "Continue"
+		"continue": "Continue",
+		"delete": "DELETE",
+		"remove": "Withdraw"
 	},
 	"surveys": {
 		"complete": "Thank you for participating!",
@@ -299,20 +308,20 @@
 				"studyD": "Longitudinal study of foreign language tutoring",
 				"title": "Study information",
 				"university": "University",
-				"universityD": "Catholic University of Louvain (UCLouvain)"
+				"universityD": "Université catholique de Louvain (UCLouvain)"
 			},
 			"title": "Information document and informed consent"
 		},
-		"continue": "Aut sint sint et nihil aut. \nQuia nihil eos rerum neque exercitationem molestiae. \nAut ab accusantium consequatur rerum architecto voluptas. \nRepudiandae minima nemo vitae tempore. \nMolestiae rerum aliquid ut fugit eligendi. \nTempore eum id nobis sunt deleniti et non ducimus. \nMaiores perferendis non consequuntur neque nostrum. \nOdio itaque fugiat no. \nLaboriosam sint voluptatem aut placeat et perferendis. \nSed quam voluptatem necessitatibus quia dolorum. \nEius est nihil natus modi natus quisquam ut impedit. \nTempore enim autem laboriosam sequi ipsum quo. \n<bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
 		"error": {
 			"emailRules": "Please enter a valid email address",
 			"emptyFields": "Please complete all fields",
 			"humanity": "Please confirm that you are not a robot",
 			"metadata": "Please check that you have completed all fields correctly",
-			"passwordRules": "Password must contain at least 8 characters"
+			"passwordRules": "Password must contain at least 8 characters",
+			"differentPasswords": "Passwords do not match",
+			"tutor": "Error when selecting the tutor. \nPlease try again."
 		},
 		"signup": "Register",
-		"start": "Aut sint sint et nihil aut. \nQuia nihil eos rerum neque exercitationem molestiae. \nAut ab accusantium consequatur rerum architecto voluptas. \nRepudiandae minima nemo vitae tempore. \nMolestiae rerum aliquid ut fugit eligendi. \nAlias ​​dolorum quia voluptatum veniam harum aut qui et. \nVoluptatibus adipisci il velit assumenda. \nAsperiores accusemus deserunt eveniet adipisci reprehenderit. \nDucimus placeat sit reprehenderit ea eos quam. \nUt facilis quia suscipit officiis odit unde temporibus error. \nNeque sapiente ut similique. \nEius ut sapiente maxime dolor est voluptatem eum. \nVeniam aut sit quo. \nQuibusdam sed numquam et rem. \nTempore eum id nobis sunt deleniti et non ducimus. \nMaiores perferendis non consequuntur neque nostrum. \nOdio itaque fugiat no. \nLaboriosam sint voluptatem aut placeat et perferendis. \nSed quam voluptatem necessitatibus quia dolorum. \nEius est nihil natus modi natus quisquam ut impedit. \nTempore enim autem laboriosam sequi ipsum quo. \n<bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
 		"startButton": "To start",
 		"startFastButton": "Start using the app directly",
 		"tab": {
@@ -325,7 +334,8 @@
 			"information": "Information",
 			"signup": "Registration",
 			"start": "To start",
-			"ScheduleWith": "Schedule a meeting with"
+			"ScheduleWith": "Schedule a meeting with",
+			"test": "Tests"
 		},
 		"welcome": "Welcome to LanguageLab! Before you begin, please fill out the following information. This will allow us to get to know you better and tailor the experience to your needs.",
 		"homeLanguage": "First language",
@@ -339,7 +349,24 @@
 			"female": "A woman",
 			"other": "Other",
 			"na": "Prefer not to say"
-		}
+		},
+		"email": {
+			"note": "",
+			"ph": ""
+		},
+		"humans": "I'm not a robot",
+		"study": {
+			"placeholder": "",
+			"note": ""
+		},
+		"nickname": {
+			"note": "",
+			"ph": ""
+		},
+		"password": {
+			"note": ""
+		},
+		"continueButton": "Continue"
 	},
 	"session": {
 		"downloadAllFeedbacks": "Download all feedback",
@@ -384,10 +411,12 @@
 					"submit": "Error sending questionnaire",
 					"toggle": "Error activating or deactivating session"
 				},
-				"questions[0]": "How many hours of <b>course</b> in {lang} have you taken?",
-				"questions[1]": "How many hours have you <b>watched videos</b> in {lang} (films, series, Youtube...) or <b>listened to content</b> in {lang} (podcasts, radio \n, university courses, etc.)?",
-				"questions[2]": "How many hours have you <b>read texts</b> in {lang} (book, newspaper, comics, websites, etc.)?",
-				"questions[3]": "How many hours have you <b>spoken</b> in {lang} (discussions with friends, family, colleagues, etc.)?",
+				"questions": [
+					"How many hours of <b>courses</b> in {lang} have you taken?",
+					"How many hours have you <b>watched videos</b> in {lang} (films, series, Youtube...) or <b>listened to content</b> in {lang} (podcasts, radio, university courses...)?",
+					"How many hours have you <b>read texts</b> in {lang} (books, newspapers, comics, websites...)?",
+					"How many hours have you <b>spoken</b> in {lang} (discussions with friends, family, colleagues...)?"
+				],
 				"success": "Questionnaire sent, thank you!",
 				"title": "Weekly questionnaire"
 			}
@@ -396,7 +425,9 @@
 	},
 	"tests": {
 		"sendResults": "Send",
-		"sendResultsDone": "Sent"
+		"sendResultsDone": "Sent",
+		"taskTests": "Language tests",
+		"typingTests": "Strike tests"
 	},
 	"timeslots": {
 		"availabilities": "Select your availability to filter available tutors",
@@ -438,6 +469,54 @@
 		"studyDescription": "Research Project (title and/or funding of the project this study is part of)",
 		"addressD": "Place Cardinal Mercier 14, 1348 Louvain-la-Neuve",
 		"contact": "Contact Person/Principal Investigator",
-		"email": "Email of PI/Contact Person"
+		"email": "Email of PI/Contact Person",
+		"addUserButton": "Add a participant",
+		"addUserError": "Error when adding the user",
+		"addUserSuccess": "User added to the study",
+		"andOr": "and/or",
+		"chatDuration": "Duration of sessions (in minutes)",
+		"complete": "Thank you for your participation!",
+		"consentParticipation": "If you agree to participate, you will be invited to participate in online tutorial sessions with a foreign language tutor. \nYou will also be invited to fulfill questionnaires before and after tutoring sessions. \nThe tutorial sessions will be recorded for subsequent analysis. We ask you to plan to carry out a minimum of 8 sessions of one hour of tutorial (therefore 8 hours in total), during a period of 1 to 3 months. \nYou can of course realize more if you wish. \nHowever, you can stop participating in the study at any time.",
+		"consentPrivacy": "The data collected (for example, transcriptions of conversations, test results, striking measures, information on participants such as age or gender) will be processed in a confidential and anonymous manner. \nThey will be kept after their full anonymization and can only be used for scientific or educational purposes. \nThey can possibly be shared with other researchers or teachers, but always in this strictly research or teaching framework.",
+		"consentRights": "Your participation in this study is voluntary. \nYou can decide not to participate in the study at any time without having to justify yourself. \nYou can also request that your data be deleted at any time. \nIf you have any questions or concerns about this study, you can contact the study manager.",
+		"consentStudyData": "Study information.",
+		"create": "Create a new study",
+		"createError": "Error when creating the study",
+		"createMissing": "Please fill all fields",
+		"createTitle": "Create a new study",
+		"created": "Successful study",
+		"deleteConfirm": "Are you sure you want to delete this study? \nThis action is irreversible.",
+		"editTitle": "Modification of the study",
+		"endDate": "End date",
+		"hasToLoggin": "Require that the participants be registered and connected to take the test",
+		"invalidEmail": "Invalide email address",
+		"nbSession": "Number of sessions",
+		"newUser": "New participant",
+		"noChanges": "No modification",
+		"removeUserConfirm": "Are you sure you want to withdraw this participant from the study?",
+		"removeUserError": "Error when the participant is deleted",
+		"removeUserSuccess": "Participant withdrawn from the study",
+		"score": {
+			"error": "Error when calculating the score",
+			"loading": "Calculation in progress ...",
+			"title": "Average result:"
+		},
+		"startDate": "Start date",
+		"study": "Study",
+		"tab": {
+			"code": "Code",
+			"end": "END",
+			"infos": "Information",
+			"study": "Study",
+			"tests": "Tests"
+		},
+		"typingTest": "Activate the typing test",
+		"typingTestDuration": "Duration (seconds)",
+		"typingTestInfoNote": "If no duration is provided the mode \"faster than possible\" will be activated.",
+		"typingTestRepetition": "Number of times to repeat",
+		"typingTestText": "Text",
+		"updateError": "Error when updating the study",
+		"updated": "Successful update study",
+		"userNotFound": "User not found"
 	}
 }

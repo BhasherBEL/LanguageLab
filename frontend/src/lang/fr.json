@@ -12,7 +12,8 @@
 		"admin": {
 			"users": "Utilisateurs",
 			"sessions": "Sessions",
-			"studies": "Études"
+			"studies": "Études",
+			"tasks": "Tâches"
 		}
 	},
 	"chatbox": {
@@ -246,14 +247,14 @@
 		"birthyear": "Année de naissance",
 		"birthyear.note": "En quelle année êtes-vous né·e ?",
 		"confirmTutor": "Confirmez-vous sélectionner \"{NAME}\" comme tuteur ?",
-		"continue": "Aut sint sint et nihil aut. Quia nihil eos rerum neque exercitationem molestiae. Aut ab accusantium consequatur rerum architecto voluptas. Repudiandae minima nemo vitae tempore. Molestiae rerum aliquid ut fugit eligendi. Tempore eum id nobis sunt deleniti et non ducimus. Maiores perferendis non consequuntur neque nostrum. Odio itaque fugiat non. Laboriosam sint voluptatem aut placeat et perferendis. Sed quam voluptatem necessitatibus quia dolorum. Eius est nihil natus modi natus quisquam ut impedit. Tempore enim autem laboriosam sequi ipsum quo. <bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
+		"continue": "Continuer <!-- TODO: Remove this key -->",
 		"continueButton": "Continuer vers les tests",
 		"startFastButton": "Commencer directement à utiliser l'application",
-		"start": "Aut sint sint et nihil aut. Quia nihil eos rerum neque exercitationem molestiae. Aut ab accusantium consequatur rerum architecto voluptas. Repudiandae minima nemo vitae tempore. Molestiae rerum aliquid ut fugit eligendi. Alias dolorum quia voluptatum veniam harum aut qui et. Voluptatibus adipisci illo velit assumenda. Asperiores accusamus deserunt eveniet adipisci reprehenderit. Ducimus placeat sit reprehenderit ea eos quam. Ut facilis quia suscipit officiis odit unde temporibus error. Neque sapiente ut similique. Eius ut sapiente maxime dolor est voluptatem eum. Veniam aut sit quo. Quibusdam sed numquam et rem. Tempore eum id nobis sunt deleniti et non ducimus. Maiores perferendis non consequuntur neque nostrum. Odio itaque fugiat non. Laboriosam sint voluptatem aut placeat et perferendis. Sed quam voluptatem necessitatibus quia dolorum. Eius est nihil natus modi natus quisquam ut impedit. Tempore enim autem laboriosam sequi ipsum quo. <bold class=\"font-bold\">Aut voluptatum debitis et aliquam vel rerum facere.</bold>",
-		"startButton": "Commencer",
+		"start": "Continue",
 		"study": "Étude",
 		"study.note": "Nom de l'étude à laquelle vous participez",
-		"study.placeholder": "Nom de l'étude"
+		"study.placeholder": "Nom de l'étude",
+		"testText": "Vous allez passer un test de vocabulaire. Cliquez sur le bouton suivent pour commencer."
 	},
 	"timeslots": {
 		"cesttime": "Heure CET (Bruxelles)",
@@ -394,11 +395,28 @@
 			"title": "Résultat moyen: ",
 			"loading": "Calcul en cours...",
 			"error": "Erreur lors du calcul du score"
-		}
+		},
+		"backToHomePage": "Retour à la page d'accueil"
 	},
 	"tests": {
 		"taskTests": "Tests de langue",
 		"typingTests": "Tests de frappe"
+	},
+	"tasks": {
+		"title": "Nouvelle tâche cible",
+		"createTitle": "Créer une nouvelle tâche",
+		"editTitle": "Modifier la tâche",
+		"level": "Niveau CEFR",
+		"shortTitle": "Nom de la tâche (max 5 mots)",
+		"instructions": "Instructions pour le tuteur (plusieurs lignes si besoin)",
+		"learnerInstructions": "Instructions pour l'apprenant (plusieurs lignes si besoin)",
+		"examples": "Exemples (plusieurs lignes si besoin)",
+		"create": "Créer une nouvelle tâche",
+		"taskInProgress": "Tâche en cours",
+		"taskFinished": "Tâche terminée avec succès",
+		"statusFail": "Echec du changement de status de la tâche",
+		"startTask": "Commencer cette tâche",
+		"achieveTask": "Tâche achevée"
 	},
 	"button": {
 		"create": "Créer",
@@ -416,7 +434,9 @@
 		"updated": "Mis à jour !",
 		"delete": "Supprimer",
 		"remove": "Retirer",
-		"continue": "Continuer"
+		"continue": "Continuer",
+		"select": "Sélectionner",
+		"finish": "Terminer"
 	},
 	"utils": {
 		"month": {
@@ -501,7 +521,11 @@
 			"questions": "questions",
 			"tests": "tests",
 			"OrganisationUni": "Organisation/Université",
-			"Address": "Adresse"
+			"Address": "Adresse",
+			"all": "Tous",
+			"instructions": "Instructions",
+			"examples": "Exemples",
+			"tasks": "Tâches"
 		}
 	},
 	"inputs": {

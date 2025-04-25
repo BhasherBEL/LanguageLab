@@ -24,7 +24,7 @@
 	"chatbox": {
 		"deleteFeedback": "¿Estás seguro de que quieres eliminar estos comentarios? \nEsta acción es irreversible.",
 		"disabled": "Esta sesión sólo es visible para la memoria.",
-		"edited": "enmendado",
+		"edited": "modificado",
 		"history": "Histórico",
 		"placeholder": "Escribe tu mensaje aquí...",
 		"replyingTo": "En respuesta a:",
@@ -85,7 +85,10 @@
 	"login": {
 		"email": "Correo electrónico",
 		"login": "Acceso",
-		"noAccountLink": "Regístrate aquí"
+		"noAccountLink": "Regístrate aquí",
+		"noAccountText": "¿No hay cuenta todavía?",
+		"password": "Contraseña",
+		"title": "Conectar"
 	},
 	"register": {
 		"confirmPassword": "Confirmar Contraseña",
@@ -151,7 +154,9 @@
 			"emailRules": "Por favor, introduce una dirección de correo electrónico válida",
 			"emptyFields": "Por favor llene todos los campos",
 			"humanity": "Por favor confirma que no eres un robot.",
-			"metadata": "Verifique que haya llenado correctamente todos los campos"
+			"metadata": "Verifique que haya llenado correctamente todos los campos",
+			"passwordRules": "La contraseña debe contener al menos 8 caracteres",
+			"tutor": "Error al seleccionar el tutor. \nPor favor intente de nuevo."
 		},
 		"genders": {
 			"female": "una mujer",
@@ -165,16 +170,43 @@
 			"continue": "Continuar",
 			"information": "Información",
 			"signup": "Registro",
-			"start": "Para empezar"
+			"start": "Para empezar",
+			"availabilities": "Disponibilidad",
+			"availableSlots": "Ranuras disponibles:",
+			"study": "Estudiar",
+			"test": "Pruebas",
+			"timeslots": "Tutor"
 		},
 		"welcome": "¡Bienvenido a Languagelab! \nAntes de comenzar, complete la siguiente información. \nEsto nos permitirá conocerlo mejor y adaptar la experiencia a sus necesidades.",
-		"continue": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
 		"continueButton": "continuar con las pruebas",
 		"signup": "Registro",
-		"start": "AUTS SINT y NIHIL AUT. \nQuia Nihil Eos Rerum Neque Exerciseem molestiae. \nAUT AB Accidentium consecuente Rerum Architecto Voluptas. \nRepudiandae Minima Nemo Vitae Tempore. \nMoletiae Rerum Aliquid Ut Fugit Eligendi. \nAlias ​​dolorum quia voluptatum veniam harum auth y. \nVoluptatibus adipisci Ilo Velt Asumenda. \nAsperiores acumus deserunt desarrollo adipisci reprehenderit. \nDucimus Placat Sit Reverseit Ea Eos Quam. \nUT Facilis Quia Dégitiis Odit Unde temporibus Error. \nNeque Sapiente Ut similar. \nEius Ut Sapiente Maxime Dolor es Voluptatem Eum. \nVeniam Aut Quo. \nQuibusdam sed numquam y rem. \nTempore Eum id nobis Sunt Deleniti y no Ducimus. \nMaiores Perferendis no acordado NOSTRUM. \nOdio Itaque Fugiat no. \nLabriosam Sint Voluptatem Aut Placeat y Perferendis. \nSed Quam Voluptatem Requiritatibus quia dolorum. \nEius es nihil natus modi natus quisquam ut impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold class = \"Font-Bold\"> Aut Voluptatum Debitis y Facera de Vel Rerum.",
 		"startButton": "Para empezar",
 		"startFastButton": "Comience a usar la aplicación directamente",
-		"study": "Estudiar"
+		"study": "Estudiar",
+		"ScheduleWith": "Planificar una reunión con",
+		"addAvailability": "Agregar disponibilidad",
+		"confirm": "Confirmar",
+		"endTime": "Tiempo de finalización",
+
+		"noAvailabilities": "Sin disponibilidad proporcionada",
+		"noTutorsAvailable": "No hay tutor disponible actualmente",
+		"notAvailable": "No disponible",
+		"remove": "Borrar",
+		"role": "Role",
+		"roles": {
+			"learner": "Aprendiz",
+			"note": "Seleccione el papel que desea desempeñar en la aplicación",
+			"tutor": "Tutor"
+		},
+		"yourAvailabilities": "Tu disponibilidad",
+		"firstLanguage": "Idioma principal:",
+		"gender": "Eres...",
+		"scheduleMeeting": "Planificar una reunión",
+		"bio": "Biografía corta",
+		"selectWeekday": "Seleccione un día de la semana",
+		"startTime": "Hora de inicio",
+		"weekday": "Día de la semana",
+		"availabilities": "Disponibilidad"
 	},
 	"session": {
 		"downloadAllFeedbacks": "Descargar todos los comentarios",
@@ -219,22 +251,17 @@
 					"submit": "Error al enviar el cuestionario",
 					"toggle": "Error al activar o desactivar sesión"
 				},
-				"questions[0]": "¿Cuántas horas de <b> curso </b> {lang} has seguido?",
-				"questions[1]": "¿Cuántas horas ha visto videos </b> en {lang} (películas, series, youtube ...) o <b> escuchado contenido </b> en {lang} (podcasts, radio radio, cursos universitarios ... .)?",
-				"questions[2]": "¿Cuántas horas has <b>leído textos</b> en {lang} (libros, periódicos, cómics, sitios web, etc.)?",
-				"questions[3]": "¿Cuántas horas has <b>hablado</b> en {lang} (discusiones con amigos, familiares, colegas, etc.)?",
+				"questions": [
+					"¿Cuántas horas de <b>cursos</b> en {lang} has seguido?",
+					"¿Cuántas horas has <b>visto vídeos</b> en {lang} (películas, series, Youtube...) o <b>escuchado contenidos</b> en {lang} (podcasts, radio, cursos universitarios...)?",
+					"¿Cuántas horas has <b>leído textos</b> en {lang} (libros, periódicos, cómics, páginas web...)?",
+					"¿Cuántas horas has <b>hablado</b> en {lang} (conversaciones con amigos, familiares, compañeros...)?"
+				],
 				"success": "Cuestionario enviado, ¡gracias!",
 				"title": "Cuestionario semanal"
 			}
 		},
 		"noTopic": "No hay temas disponibles"
-	},
-	"signup": {
-		"signup": "",
-		"title": "",
-		"confirmPassword": "",
-		"email": "",
-		"language": ""
 	},
 	"studies": {
 		"addUserButton": "Agregar un participante",
@@ -258,7 +285,37 @@
 		"study": "Estudiar",
 		"updateError": "Error al actualizar el estudio",
 		"updated": "Estudio de actualización exitoso",
-		"userNotFound": "Usuario no encontrado"
+		"userNotFound": "Usuario no encontrado",
+		"addressD": "Place Cardinal Mercier 14, 1348 Louvain-La-Neuve",
+		"andOr": "y/o",
+		"complete": "¡Gracias por su participación!",
+		"consentParticipation": "Si acepta participar, se le invitará a participar en sesiones de tutoriales en línea con un tutor de idiomas extranjeros. \nTambién se le invitará a cumplir cuestionarios antes y después de las sesiones de tutoría. \nLas sesiones tutoriales se registrarán para el análisis posterior. \nPor supuesto, puede darse cuenta más si lo desea. \nSin embargo, puede dejar de participar en el estudio en cualquier momento.",
+		"consentPrivacy": "Los datos recopilados (por ejemplo, transcripciones de conversaciones, resultados de pruebas, medidas sorprendentes, información sobre participantes como la edad o el género) se procesarán de manera confidencial y anónima. \nSe mantendrán después de su anonimización completa y solo se pueden usar con fines científicos o educativos. \nPosiblemente puedan compartirse con otros investigadores o maestros, pero siempre en este marco estrictamente de investigación o enseñanza.",
+		"consentRights": "Su participación en este estudio es voluntaria. \nPuede decidir no participar en el estudio en ningún momento sin tener que justificarse. \nTambién puede solicitar que sus datos se eliminen en cualquier momento. \nSi tiene alguna pregunta o inquietud sobre este estudio, puede comunicarse con el gerente de estudio.",
+		"consentStudyData": "Información de estudio.",
+		"contact": "Persona de contacto/investigador principal",
+		"editTitle": "Modificación del estudio",
+		"email": "Pi Correo electrónico/persona de contacto",
+		"hasToLoggin": "Requiere que los participantes estén registrados y conectados para tomar la prueba",
+		"nbSession": "Número de sesiones",
+		"score": {
+			"error": "Error al calcular la puntuación",
+			"loading": "Cálculo en progreso ...",
+			"title": "Resultado promedio:"
+		},
+		"studyDescription": "Proyecto de investigación (título y/o financiamiento del proyecto en el que este estudio es parte)",
+		"tab": {
+			"code": "Código",
+			"end": "Fin",
+			"infos": "Información",
+			"study": "Estudiar",
+			"tests": "Pruebas"
+		},
+		"typingTest": "Activar la prueba de tipeo",
+		"typingTestDuration": "Duración (segundos)",
+		"typingTestInfoNote": "Si no se proporciona duración, se activará el modo \"más rápido de lo posible\".",
+		"typingTestRepetition": "Número de veces para repetir",
+		"typingTestText": "Texto"
 	},
 	"surveys": {
 		"birthYear": "¿Cuál es tu año de nacimiento?",
@@ -306,16 +363,19 @@
 	},
 	"tests": {
 		"sendResults": "Enviar",
-		"sendResultsDone": "Enviado"
+		"sendResultsDone": "Enviado",
+		"taskTests": "Pruebas de idiomas",
+		"typingTests": "Pruebas de huelga"
 	},
 	"timeslots": {
 		"availabilities": "Selecciona tu disponibilidad para filtrar los profesores disponibles",
 		"availableTutors": "Tutores disponibles",
 		"calcom": "Enlace a la reserva de calendario",
-		"calcomWarning": "CAL.com Enlace Invalidio",
-		"cesttime": "CE Hour (Bruselas)",
+		"calcomWarning": "Cal.com Enlace Invalidio",
+		"cesttime": "Hora CET (Bruselas)",
 		"noTutors": "No hay tutor disponible. \nPor favor seleccione otras disponibilidades.",
-		"setAvailabilities": "Selecciona tu disponibilidad"
+		"setAvailabilities": "Selecciona tu disponibilidad",
+		"availableSlots": "Ranuras disponibles"
 	},
 	"users": {
 		"actions": "Comportamiento",
@@ -420,7 +480,13 @@
 			"status": "Estado",
 			"title": "Título",
 			"topics": "Temas",
-			"users": "Usuarios"
+			"users": "Usuarios",
+			"Address": "Dirección",
+			"OrganisationUni": "Organización/universidad",
+			"groups": "grupos",
+			"questions": "preguntas",
+			"tests": "pruebas",
+			"toggle": "Participantes"
 		}
 	}
 }

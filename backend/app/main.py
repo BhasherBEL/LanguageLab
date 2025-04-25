@@ -28,6 +28,7 @@ import config
 from security import jwt_cookie, get_jwt_user
 from routes.tests import testRouter
 from routes.studies import studiesRouter
+from routes.tasks import taskRouter
 
 websocket_users = defaultdict(lambda: defaultdict(set))
 websocket_users_global = defaultdict(set)
@@ -127,6 +128,13 @@ def register(
     )
 
     user = crud.create_user(db=db, user=user_data)
+
+    if register.study_id:
+        study = crud.get_study(db, register.study_id)
+        if study is None:
+            raise HTTPException(status_code=404, detail="Study not found")
+
+        crud.add_user_to_study(db, study, user)
 
     return user.id
 
@@ -1057,5 +1065,6 @@ v1Router.include_router(studyRouter)
 v1Router.include_router(websocketRouter)
 v1Router.include_router(testRouter)
 v1Router.include_router(studiesRouter)
+v1Router.include_router(taskRouter)
 apiRouter.include_router(v1Router)
 app.include_router(apiRouter)

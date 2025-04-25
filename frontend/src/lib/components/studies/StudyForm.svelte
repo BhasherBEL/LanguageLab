@@ -16,7 +16,6 @@
 		study = $bindable(),
 		possibleTests,
 		mode,
-		data,
 		form
 	}: {
 		study: Study | null;

@@ -18,6 +18,7 @@ from utils import datetime_aware
 
 from models.studies import *
 from models.tests import *
+from models.tasks import *
 
 
 class UserType(Enum):

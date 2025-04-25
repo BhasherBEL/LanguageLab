@@ -8,7 +8,7 @@
 		"close": "Dichtbij",
 		"continue": "Doorgaan",
 		"create": "Creëren",
-		"delete": "VERWIJDEREN",
+		"delete": "Verwijderen",
 		"login": "Inloggen",
 		"next": "Volgende",
 		"remove": "Terugtrekken",
@@ -16,7 +16,7 @@
 		"sent": "Verstuurd !",
 		"start": "Om te beginnen",
 		"submit": "Versturen",
-		"thank-you": "BEDANKT !",
+		"thank-you": "Bedankt !",
 		"tryit": "Om te proberen",
 		"update": "Om bij te werken",
 		"updated": "Bijgewerkt!"
@@ -85,7 +85,10 @@
 	"login": {
 		"email": "E-mail",
 		"login": "Inloggen",
-		"noAccountLink": "Registreer hier"
+		"noAccountLink": "Registreer hier",
+		"noAccountText": "Nog geen account?",
+		"password": "Wachtwoord",
+		"title": "Verbinden"
 	},
 	"register": {
 		"confirm": "Bevestigen",
@@ -149,24 +152,17 @@
 			},
 			"title": "Informatiedocument en geïnformeerde toestemming"
 		},
-		"continue": "Auts Sint en Nihil Aut. \nQuia nihil eos rerum neque oefeningem molestiae. \nAut Ab Accidentium consequatur Rerum Architecto Voluptas. \nRefudiandae minima nemo vitae tempore. \nMoletiae Rerum aliquid UT Fugit eligendi. \nTempore Eum Id Nobis Sunt Deleniti en niet Ducimus. \nMaiRes Perferendis was niet overeengekomen Nostrum. \nOdio itaque Fugiat nr. \nLabriosam Sint Voluptatem Aut Placeat en Perferendis. \nSed quam voluptatem nodigatiBus quia dolorum. \nEius is Nihil Natus Modi Natus Quisquam Ut Impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold Class = \"Font-Bold\"> Aut Voluptatum Debitis en Aliquam Vel Rerum Facere.",
 		"continueButton": "Ga verder naar testen",
-		"email": {
-			"note": "",
-			"ph": ""
-		},
 		"error": {
 			"differentPasswords": "Wachtwoorden komen niet overeen",
 			"emailRules": "Voer een geldig e-mailadres in",
 			"emptyFields": "Vul alle velden in",
 			"humanity": "Bevestig dat u geen robot bent",
-			"metadata": "Controleer of u alle velden correct hebt gevuld"
-		},
-		"password": {
-			"note": ""
+			"metadata": "Controleer of u alle velden correct hebt gevuld",
+			"passwordRules": "Het wachtwoord moet minimaal 8 tekens bevatten",
+			"tutor": "Fout bij het selecteren van de tutor. \nProbeer het opnieuw."
 		},
 		"signup": "Register",
-		"start": "Auts Sint en Nihil Aut. \nQuia nihil eos rerum neque oefeningem molestiae. \nAut Ab Accidentium consequatur Rerum Architecto Voluptas. \nRefudiandae minima nemo vitae tempore. \nMoletiae Rerum aliquid UT Fugit eligendi. \nAlias ​​Dolorum Quia Voluptatum Veniam Harum Aut welke en. \nVoluptatibus adipisci illo velt Apportenda. \nAsperiores accumus deserunt ontwikkeling adipisci expreesit. \nDucimus placeat zit Reversereit ea eos quam. \nUt facilis quia dégitiis odit unde temporibus error. \nNeque Sapiente UT vergelijkbaar. \nEius ut sapiente maxime dolor is Voluptatem Eum. \nVeniam Aut Quo. \nQuibusdam sed Numquam en Rem. \nTempore Eum Id Nobis Sunt Deleniti en niet Ducimus. \nMaiRes Perferendis was niet overeengekomen Nostrum. \nOdio itaque Fugiat nr. \nLabriosam Sint Voluptatem Aut Placeat en Perferendis. \nSed quam voluptatem nodigatiBus quia dolorum. \nEius is Nihil Natus Modi Natus Quisquam Ut Impedit. \nTempore Enim Autem Laboriosam Sequi Ipsum quo. \n<Bold Class = \"Font-Bold\"> Aut Voluptatum Debitis en Aliquam Vel Rerum Facere.",
 		"startButton": "Om te beginnen",
 		"startFastButton": "Begin direct met het gebruiken van de app",
 		"tab": {
@@ -174,8 +170,28 @@
 			"information": "Informatie",
 			"signup": "Registratie",
 			"start": "Om te beginnen",
-			"study": "Studie"
-		}
+			"study": "Studie",
+			"ScheduleWith": "Plan een ontmoeting met",
+			"availabilities": "Beschikbaarheid",
+			"availableSlots": "Beschikbare slots:",
+			"consent": "Toestemming",
+			"test": "Tests"
+		},
+		"ScheduleWith": "Plan een ontmoeting met",
+		"addAvailability": "Voeg beschikbaarheid toe",
+		"endTime": "Eindtijd",
+		"linkNotAvailable": "Link niet beschikbaar",
+		"loadingTutors": "Tutors laden ...",
+		"nickname": {
+			"note": "",
+			"ph": ""
+		},
+		"noAvailabilities": "Geen beschikbaarheid verstrekt",
+		"noTutorsAvailable": "Er is momenteel geen tutor beschikbaar",
+		"notAvailable": "Niet beschikbaar",
+		"remove": "VERWIJDEREN",
+		"scheduleMeeting": "Plan een vergadering",
+		"yourAvailabilities": "Uw beschikbaarheid"
 	},
 	"session": {
 		"downloadAllFeedbacks": "Download alle feedbacks",
@@ -220,10 +236,246 @@
 					"submit": "Fout bij verzenden vragenlijst",
 					"toggle": "Fout bij het activeren of deactiveren van de sessie"
 				},
-				"questions[0]": "Hoeveel uur <b>cursus</b> in het {lang} heeft u gevolgd?",
-				"questions[1]": "Hoeveel uur heb je video's bekeken </b> in {lang} (films, serie, youtube ...) of <b> luisterde naar inhoud </b> in {lang} (podcasts, radio -radio, universitaire cursussen .. .)?",
-				"questions[2]": "Hoeveel uur heeft u <b>teksten gelezen</b> in het {lang} (boek, krant, strips, websites, enz.)?"
+				"questions": [
+					"Hoeveel uur <b>cursussen</b> in {lang} heb je gevolgd?",
+					"Hoeveel uur heb je <b>video's</b> gekeken in {lang} (films, series, Youtube...) of <b>geluisterd naar inhoud</b> in {lang} (podcasts, radio, universitaire cursussen...)?",
+					"Hoeveel uur heb je <b>teksten</b> gelezen in {lang} (boeken, kranten, strips, websites...)?",
+					"Hoeveel uur heb je <b>gesproken</b> in {lang} (discussies met vrienden, familie, collega's...)?"
+				],
+				"success": "Vragenlijst verzonden, bedankt!",
+				"title": "Wekelijkse vragenlijst"
 			}
+		},
+		"noTopic": "Geen onderwerp beschikbaar"
+	},
+	"signup": {
+		"confirmPassword": "",
+		"email": ""
+	},
+	"studies": {
+		"addUserButton": "Voeg een deelnemer toe",
+		"addUserError": "Fout bij het toevoegen van de gebruiker",
+		"addUserSuccess": "Gebruiker toegevoegd aan de studie",
+		"addressD": "Plaats kardinaal Mercier 14, 1348 Louvain-la-neuve",
+		"andOr": "en/of",
+		"chatDuration": "Duur van sessies (in minuten)",
+		"complete": "Bedankt voor je deelname!",
+		"consentParticipation": "Als u ermee instemt om deel te nemen, wordt u uitgenodigd om deel te nemen aan online zelfstudiesessies met een tutor in vreemde talen. \nU wordt ook uitgenodigd om vragenlijsten voor en na tutoring -sessies uit te voeren. \nDe tutorialsessies worden opgenomen voor de latere analyse. \nJe kunt je natuurlijk meer realiseren als je dat wilt. \nU kunt echter op elk gewenst moment stoppen met deelname aan het onderzoek.",
+		"consentPrivacy": "De verzamelde gegevens (bijvoorbeeld transcripties van gesprekken, testresultaten, opvallende maatregelen, informatie over deelnemers zoals leeftijd of geslacht) zullen op een vertrouwelijke en anonieme manier worden verwerkt. \nZe zullen worden bewaard na hun volledige anonimisering en kunnen alleen worden gebruikt voor wetenschappelijke of educatieve doeleinden. \nZe kunnen mogelijk worden gedeeld met andere onderzoekers of leraren, maar altijd in dit strikt onderzoeks- of onderwijskader.",
+		"consentRights": "Uw deelname aan dit onderzoek is vrijwillig. U kunt besluiten om niet op elk gewenst moment deel te nemen aan het onderzoek zonder uzelf te rechtvaardigen. U kunt ook vragen om uw gegevens op elk gewenst moment te verwijderen. Als u vragen of zorgen over deze studie hebt, kunt u contact opnemen met de studiemanager.",
+		"consentStudyData": "Studie -informatie.",
+		"contact": "Contactpersoon/hoofdonderzoeker",
+		"create": "Creëer een nieuwe studie",
+		"createError": "Fout bij het maken van de studie",
+		"createMissing": "Vul alle velden in",
+		"createTitle": "Creëer een nieuwe studie",
+		"created": "Succesvolle studie",
+		"deleteConfirm": "Weet je zeker dat je deze studie wilt verwijderen? Deze actie is onomkeerbaar.",
+		"editTitle": "Aanpassing van de studie",
+		"email": "PI -e -mail/contactpersoon",
+		"endDate": "Einddatum",
+		"hasToLoggin": "Eisen dat de deelnemers worden geregistreerd en verbonden om de test af te leggen",
+		"invalidEmail": "Invalide e -mailadres",
+		"nbSession": "Aantal sessies",
+		"newUser": "Nieuwe deelnemer",
+		"noChanges": "Geen aanpassing",
+		"removeUserConfirm": "Weet u zeker dat u deze deelnemer uit de studie wilt opnemen?",
+		"removeUserError": "Fout wanneer de deelnemer wordt verwijderd",
+		"removeUserSuccess": "Deelnemer teruggetrokken uit het onderzoek",
+		"score": {
+			"error": "Fout bij het berekenen van de score",
+			"loading": "Rekening in uitvoering ...",
+			"title": "Gemiddeld resultaat:"
+		},
+		"startDate": "Startdatum",
+		"study": "Studie",
+		"studyDescription": "Onderzoeksproject (titel en/of financiering van het project waarin deze studie deel uitmaakt)",
+		"tab": {
+			"code": "Code",
+			"end": "Einde",
+			"infos": "Informatie",
+			"study": "Studie",
+			"tests": "Tests"
+		},
+		"typingTest": "Activeer de typetest",
+		"typingTestDuration": "Duur (seconden)",
+		"typingTestInfoNote": "Als er geen duur wordt verstrekt, wordt de modus \"sneller dan mogelijk\" geactiveerd.",
+		"typingTestRepetition": "Aantal keren om te herhalen",
+		"typingTestText": "Tekst",
+		"updateError": "Fout bij het bijwerken van de studie",
+		"updated": "Succesvolle updatestudie",
+		"userNotFound": "Gebruiker niet gevonden"
+	},
+	"surveys": {
+		"birthYear": "Wat is uw geboortejaar?",
+		"code": "Uw code:",
+		"codeIndication": "De instructeur moet u een persoonlijke code hebben gegeven.",
+		"complete": "Bedankt voor je deelname!",
+		"consent": {
+			"intro": "U wordt uitgenodigd om deel te nemen aan een wetenschappelijk onderzoek om vocabulaire tests te ontwerpen, valideren en toepassen.",
+			"ok": "Ik ga ermee akkoord om deel te nemen aan het onderzoek zoals hierboven beschreven.",
+			"participation": "Wat betreft uw deelname?",
+			"participationD": "Als u ermee instemt deel te nemen, hoeft u deze vragenlijst alleen maar te beantwoorden en mogelijk een andere test, indien aangegeven door de persoon die de test beheert.",
+			"privacy": "Hoe worden uw gegevens verwerkt en bewaard?",
+			"privacyD": "De verzamelde gegevens (uw antwoorden op de verschillende vragen) worden op een vertrouwelijke en anonieme manier verwerkt. \nZe zullen worden bewaard na hun volledige anonimisering en kunnen alleen worden gebruikt voor wetenschappelijke of educatieve doeleinden. \nZe kunnen mogelijk worden gedeeld met andere onderzoekers of leraren, maar altijd in dit strikt onderzoeks- of onderwijskader.",
+			"rights": "Wat zijn uw rechten? Vrijwillige deelname en mogelijke terugtrekking",
+			"rightsD": "Uw deelname aan dit onderzoek is vrijwillig. \nU kunt besluiten om niet op elk gewenst moment deel te nemen aan het onderzoek zonder uzelf te rechtvaardigen. \nU kunt ook vragen om uw gegevens op elk gewenst moment te verwijderen. \nAls u vragen of zorgen over deze studie hebt, kunt u contact opnemen met de studiemanager, Serge Bibauw, op het volgende adres:",
+			"title": "Informatie over geïnformeerde studie- en toestemming"
+		},
+		"education": {
+			"Bachelor": "Vrijgezel",
+			"Master": "Meester of hoger diploma",
+			"NoEducation": "Geen",
+			"NonUni": "Superieure niet -academisch",
+			"PrimarySchool": "Basisschool",
+			"SecondarySchool": "Middelbare school",
+			"title": "Wat is het hoogste kwaliteit, diploma of studieniveau dat je hebt?"
+		},
+		"example": "Voorbeeld",
+		"gender": "Wat voor soort identificeer je?",
+		"genders": {
+			"female": "Een vrouw",
+			"male": "Een man",
+			"na": "Ik geef er de voorkeur aan om niet te antwoorden",
+			"other": "Ander"
+		},
+		"homeLanguage": "Eerste taal",
+		"introduction": "Dit is een vragenlijst.",
+		"invalidCode": "Ongeldige code",
+		"invalidEmail": "Invalide e -mailadres",
+		"loginEmail": "Gebruik een e-mailadres",
+		"loginUser": "Maak verbinding via een gebruikersaccount",
+		"loginWarning": "Om uw voortgang te onthouden, moet u worden geverifieerd om toegang te krijgen tot deze vragenlijst. \nAls u een gebruikersaccount heeft, maakt u verbinding. \nAnders kunt u <a class = \"link\" href = \"/register\"> register </a> of doorgaan met een e -mailadres.",
+		"otherLanguage": "Is er een andere taal waarin u relatief vloeiend bent?",
+		"otherLanguageNote": "(Als u vloeiend bent in meerdere andere talen, buiten uw doeltaal en uw eerste taal, selecteer dan degene die het dichtst bij uw doeltaal staat of dat lijkt u het meest te helpen bij het leren van uw doeltaal.)",
+		"score": "Score:"
+	},
+	"tests": {
+		"sendResults": "",
+		"sendResultsDone": "",
+		"taskTests": "Taaltests",
+		"typingTests": "Strike -tests"
+	},
+	"timeslots": {
+		"availabilities": "Selecteer uw beschikbaarheid om de beschikbare docenten te filteren",
+		"availableSlots": "Beschikbare slots",
+		"availableTutors": "Beschikbare docenten",
+		"calcom": "Link naar agenda -boeking",
+		"calcomWarning": "Cal.com Link Invalide",
+		"cesttime": "CET Tijd (Brussel)",
+		"noTutors": "Geen tutor beschikbaar. \nSelecteer andere beschikbaarheid.",
+		"setAvailabilities": "Selecteer uw beschikbaarheid"
+	},
+	"users": {
+		"actions": "Acties",
+		"availability": "Beschikbaarheid",
+		"category": "Categorie",
+		"email": "E-mail",
+		"gender": "Geslacht",
+		"genders": {
+			"female": "Vrouwen",
+			"male": "Man",
+			"na": "Ik geef er de voorkeur aan om niet te antwoorden",
+			"other": "Ander"
+		},
+		"isActive": "Actief",
+		"nickname": "Naam",
+		"type": {
+			"0": "Admin",
+			"1": "Tutor",
+			"2": "Leerling",
+			"admin": "Admin",
+			"admins": "Admin(s)",
+			"student": "Leerling",
+			"students": "Leerling(en)",
+			"tutor": "Tutor",
+			"tutors": "Tutor(en)"
+		}
+	},
+	"utils": {
+		"bool": {
+			"false": "Nee",
+			"true": "Ja"
+		},
+		"days": {
+			"0": "Maandag",
+			"1": "Dinsdag",
+			"2": "Woensdag",
+			"3": "Donderdag",
+			"4": "Vrijdag",
+			"5": "Zaterdag",
+			"6": "Zondag",
+			"friday": "Vrijdag",
+			"monday": "Maandag",
+			"saturday": "Zaterdag",
+			"sunday": "Zondag",
+			"thursday": "Donderdag",
+			"tuesday": "Dinsdag",
+			"wednesday": "Woensdag"
+		},
+		"language": {
+			"en": "Engels",
+			"eng": "Engels",
+			"fr": "Frans",
+			"fra": "Frans"
+		},
+		"month": {
+			"april": "april",
+			"august": "augustus",
+			"december": "december",
+			"february": "februari",
+			"january": "januari",
+			"july": "juli",
+			"june": "juni",
+			"march": "maart",
+			"may": "mei",
+			"november": "november",
+			"october": "oktober",
+			"september": "september"
+		},
+		"past": {
+			"day": "Er is {n, meervoud, één {",
+			"hour": "Er is {n, meervoud, één {",
+			"justNow": "Minder dan een uur geleden",
+			"month": "Er is {n, meervoud, één {",
+			"today": "Vandaag",
+			"year": "Er is {n, meervoud, één {",
+			"yesterday": "Gisteren"
+		},
+		"shortMonth": {
+			"april": "apr.",
+			"august": "aug.",
+			"december": "dec.",
+			"february": "feb.",
+			"january": "jan.",
+			"july": "jul.",
+			"june": "jun.",
+			"march": "maa.",
+			"may": "mei",
+			"november": "nov.",
+			"october": "okt.",
+			"september": "sep."
+		},
+		"words": {
+			"Address": "Adres",
+			"OrganisationUni": "Organisatie/universiteit",
+			"actions": "Acties",
+			"date": "Datum",
+			"description": "Beschrijving",
+			"email": "E-mail",
+			"finished": "Afgerond",
+			"groups": "groepen",
+			"inProgress": "In uitvoering",
+			"messages": "Berichten",
+			"participants": "Deelnemers",
+			"programed": "Geprogrammeerd",
+			"questions": "vragen",
+			"status": "Status",
+			"tests": "tests",
+			"title": "Studietitel",
+			"toggle": "Deelnemers",
+			"topics": "Onderwerpen",
+			"users": "Gebruikers"
 		}
 	}
 }

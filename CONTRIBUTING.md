@@ -4,7 +4,7 @@ This document aims to specify how we currently work on this project, and how to 
 
 ## General organisation
 
-To keep track of the past, present and future work, we use the gitlab repository as a source of trust for the progress of the project. All the bugs, *to do*, improvement ideas and discussions are developed in the [issues](https://forge.uclouvain.be/sbibauw/languagelab/-/issues).
+To keep track of the past, present and future work, we use the gitlab repository as a source of trust for the progress of the project. All the bugs, _to do_, improvement ideas and discussions are developed in the [issues](https://forge.uclouvain.be/sbibauw/languagelab/-/issues).
 
 The issues are categorised using tags. There are two types of tags. Gray tags are used to specify the kind of issues: UX, Studies, AI, topics, ... New kinds could be created at any time to reflect the progress and the targets of the project. Colored tags are used to specify the priority of an issue. Here are the different priorities:
 
@@ -12,14 +12,13 @@ The issues are categorised using tags. There are two types of tags. Gray tags ar
 - To do: New functionalities or improvements already discussed and validated.
 - Waiting: Issues where work has already started, but is waiting someone else's answer or opinion to continue.
 - To review: Developed functionalities and improvements waiting for a review.
-- Nice to have: Non-priority features or improvements, that would be *nice to have*.
+- Nice to have: Non-priority features or improvements, that would be _nice to have_.
 - Open for discussions: Features and improvements that still need more discussions before being started.
 - Won't: Rejected features and improvements.
 
 To keep track of who is working on what, it's better to assign our-self an issue when working on it (or plan to work on it in a near future), and unassign if we plan to not work anymore (or anytime soon) on it.
 
 The different planned versions and the issues assigned to them are presented in the form of [milestones](https://forge.uclouvain.be/sbibauw/languagelab/-/milestones). The general idea is to finish a milestone before working on the next one.
-
 
 ## Getting started
 
@@ -31,11 +30,12 @@ The different planned versions and the issues assigned to them are presented in 
 
 #### Configuration
 
-The application is configured using environment variables for both the frontend and the backend. The best way to specify them is through the `.env` file. 
+The application is configured using environment variables for both the frontend and the backend. The best way to specify them is through the `.env` file.
 
 Check `backend/app/config.py` and `frontend/src/lib/config.ts` for an extensive list of the environment variables in use and their default values.
 
 Here is a simple example:
+
 ```sh
 LANGUAGELAB_JWT_SECRET_KEY=abc
 LANGUAGELAB_JWT_REFRESH_SECRET_KEY=efg
@@ -44,6 +44,7 @@ LANGUAGELAB_ADMIN_PASSWORD=admin
 LANGUAGELAB_CALCOM_SECRET=hij
 ALLOWED_ORIGINS=*
 ```
+
 ⚠ Be sure to NEVER push the `.env` to the repo, and to use long and random keys for tests and deployment ⚠
 
 #### Backend dependencies
@@ -69,6 +70,7 @@ pip install -r ../requirements.txt
 #### Pre-Commit hooks
 
 The CI run `npm run lint` and `black --check --verbose` on every commit, on every branch. To prevent a failing CI, there is a pre-commit hook ([docs](https://git-scm.com/book/ms/v2/Customizing-Git-Git-Hooks)). To use it, you can configure the local repository to use the hooks available directly on the repository:
+
 ```sh
 git config --local core.hooksPath .githooks
 ```
@@ -102,16 +104,20 @@ As alembic is backend-specific, you have to go into the `backend` folder for the
 :warning: Alembic versions work as a linked list. Each version refer it's previous and next version. To prevent having to tweak "weird" things, ensure you're up-to-date with any other version update. You could need to redo those steps if someone else merged a change in the meantime.
 
 To create a migration script, you can run
+
 ```sh
 alembic revision -m "<change message>"
 ```
+
 It will tell you the name of the new file, where you can implement the changes.
 
 In most cases, you should only need to change the functions:
- - `upgrade` contains all your changes
- - `downgrade` drop them. This is **deeply advised** to allow to rollback in case of issue, especially in production.
+
+- `upgrade` contains all your changes
+- `downgrade` drop them. This is **deeply advised** to allow to rollback in case of issue, especially in production.
 
 Here are the most useful alembic functions:
+
 ```python
 # Create a table
 op.create_table(
@@ -134,9 +140,11 @@ op.alter_column('account', 'id', new_column_name='uuid')
 ```
 
 To update to the latest version:
+
 ```sh
 alembic upgrade head
 ```
+
 :warning: You will also need to run that if someone else wrote a version. This is NOT automatic for the local environment.
 
 For more in depth information, check the [official documentation](https://alembic.sqlalchemy.org/en/latest/).

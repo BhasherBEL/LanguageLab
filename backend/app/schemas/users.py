@@ -1,4 +1,4 @@
-from pydantic import BaseModel, NaiveDatetime
+from pydantic import BaseModel, NaiveDatetime, model_validator
 
 from models import UserType
 
@@ -21,6 +21,16 @@ class User(BaseModel):
     tutor_list: list[str] | None = []
     my_tutor: str | None = None
     my_slots: list[dict] | None = []
+    studies_id: list[int] = []
+
+    @model_validator(mode="before")
+    @classmethod
+    def add_studies_id(cls, data):
+        if hasattr(data, "__dict__"):
+            data.studies_id = []
+            if hasattr(data, "studies") and data.studies:
+                data.studies_id = [study.id for study in data.studies]
+        return data
 
     class Config:
         from_attributes = True
@@ -37,6 +47,7 @@ class User(BaseModel):
             "home_language": self.home_language,
             "target_language": self.target_language,
             "birthdate": self.birthdate.isoformat() if self.birthdate else None,
+            "studies_id": self.studies_id,
         }
 
 

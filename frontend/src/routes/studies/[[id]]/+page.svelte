@@ -161,16 +161,16 @@
 					</div>
 				{/if}
 			{/key}
+			<!-- {:else if current_step == study.tests.length + 2} -->
+			<!-- 	<div class="flex flex-col h-full"> -->
+			<!-- 		<EndQuestions study_id={study.id} {rid} onFinish={() => current_step++} /> -->
+			<!-- 	</div> -->
 		{:else if current_step == study.tests.length + 2}
-			<div class="flex flex-col h-full">
-				<EndQuestions study_id={study.id} {rid} onFinish={() => current_step++} />
-			</div>
-		{:else if current_step == study.tests.length + 3}
 			<div class="flex flex-col h-full">
 				<div class="flex-grow text-center mt-16">
 					<span>{$t('studies.complete')}</span>
 
-					<div class="mt-4">
+					<div class="my-4">
 						{$t('studies.score.title')}
 						{#await getTestEntriesScoreAPI(fetch, rid)}
 							{$t('studies.score.loading')}
@@ -182,6 +182,9 @@
 							{/if}
 						{/await}
 					</div>
+
+					<!-- TODO: Only if registration was required -->
+					<a class="btn btn-primary" href="/">{$t('studies.backToHomePage')}</a>
 				</div>
 
 				<dl class="text-sm">

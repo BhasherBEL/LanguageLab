@@ -1,14 +1,16 @@
 import { addUserToStudyAPI } from '$lib/api/studies';
-import { patchUserAPI, getUsersAPI } from '$lib/api/users';
+import { patchUserAPI } from '$lib/api/users';
 import { formatToUTCDate } from '$lib/utils/date';
 import { validateEmail, validatePassword, validateUsername } from '$lib/utils/security';
 import { redirect, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
-	register: async ({ request, fetch, params }) => {
+	register: async ({ request, fetch, params, url }) => {
 		const formData = await request.formData();
-		const studyId = params.studyId;
-		if (!studyId) return { message: 'Invalid request' };
+		const study_idStr = params.studyId;
+		if (!study_idStr) return { message: 'Invalid request' };
+		const study_id = parseInt(study_idStr);
+		if (isNaN(study_id)) return { message: 'Invalid request' };
 
 		const email = formData.get('email');
 		const nickname = formData.get('nickname');
@@ -33,7 +35,7 @@ export const actions: Actions = {
 				'Content-Type': 'application/json'
 			},
 			method: 'POST',
-			body: JSON.stringify({ email, nickname, password, is_tutor })
+			body: JSON.stringify({ email, nickname, password, is_tutor, study_id })
 		});
 
 		if (response.status === 400) return { message: 'User already exists' };
@@ -53,7 +55,11 @@ export const actions: Actions = {
 		if (response.status === 422) return { message: 'Invalid request' };
 		if (!response.ok) return { message: 'Unknown error occurred' };
 
-		return redirect(303, `/register/${studyId}`);
+		if (url.searchParams.has('role')) {
+			return redirect(303, `/register/${study_id}?role=${url.searchParams.get('role')}`);
+		}
+
+		return redirect(303, `/register/${study_id}`);
 	},
 	data: async ({ request, fetch, locals }) => {
 		if (!locals.user) {
@@ -66,7 +72,6 @@ export const actions: Actions = {
 		const targetLanguage = formData.get('targetLanguage');
 		const birthyear = formData.get('birthyear');
 		const gender = formData.get('gender');
-		const study = formData.get('study');
 		const bio = formData.get('bio');
 		let my_tutor = formData.get('myTutor');
 
@@ -86,7 +91,7 @@ export const actions: Actions = {
 				return { message: 'Invalid request' };
 			}
 
-			const response = await patchUserAPI(fetch, locals.user.id, {
+			let response = await patchUserAPI(fetch, locals.user.id, {
 				home_language: homeLanguage,
 				target_language: targetLanguage,
 				gender,
@@ -95,7 +100,7 @@ export const actions: Actions = {
 			});
 			if (!response) return { message: 'Unknown error occurred' };
 
-			redirect(303, '/register');
+			redirect(303, `/register/`);
 		} else if (locals.user.type == 1) {
 			if (!homeLanguage || !birthyear || !gender || !bio) {
 				return { message: 'Invalid request' };
@@ -116,7 +121,7 @@ export const actions: Actions = {
 				bio
 			});
 			if (!response) return { message: 'Unknown error occurred' };
-			redirect(303, '/register');
+			redirect(303, `/register/`);
 		}
 	}
 };

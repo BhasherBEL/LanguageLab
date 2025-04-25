@@ -254,3 +254,9 @@ def create_study_info(
     db.commit()
     db.refresh(db_study_info)
     return db_study_info
+
+
+def add_user_to_study(db: Session, study: models.Study, user: models.User):
+    study.users.append(user)
+    db.commit()
+    db.refresh(study)
