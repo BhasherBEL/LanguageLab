@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
 	import type Session from '$lib/types/session';
 	import type User from '$lib/types/user';
@@ -14,6 +14,7 @@
 	
 	let isOpen = false;
 	let allFeedbacks: Feedback[] = [];
+	let unsubscribers: (() => void)[] = [];
 	
 	function toggleSidebar() {
 		isOpen = !isOpen;
@@ -34,11 +35,29 @@
 		return feedbacks.sort((a, b) => b.date.getTime() - a.date.getTime());
 	}
 
+	function setupMessageSubscriptions(messages: (Message | null)[]) {
+		// Cleanup previous subscriptions
+		unsubscribers.forEach(unsub => unsub());
+		unsubscribers = [];
+
+		// Subscribe to each message's feedbacks
+		messages.forEach(message => {
+			if (message instanceof Message) {
+				const unsubscribe = message.feedbacks.subscribe(() => {
+					const currentMessages = get(session.messages) as (Message | null)[];
+					allFeedbacks = extractAllFeedbacks(currentMessages);
+				});
+				unsubscribers.push(unsubscribe);
+			}
+		});
+	}
+
 	// Subscribe to messages changes
 	$: {
 		const messages = get(session.messages) as (Message | null)[];
 		if (messages) {
 			allFeedbacks = extractAllFeedbacks(messages);
+			setupMessageSubscriptions(messages);
 		}
 	}
 
@@ -46,7 +65,13 @@
 		const messages = get(session.messages) as (Message | null)[];
 		if (messages) {
 			allFeedbacks = extractAllFeedbacks(messages);
+			setupMessageSubscriptions(messages);
 		}
+	});
+
+	onDestroy(() => {
+		// Cleanup all subscriptions
+		unsubscribers.forEach(unsub => unsub());
 	});
 </script>
 
