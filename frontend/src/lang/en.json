@@ -381,6 +381,14 @@
 			"typing": "Error sending input indicator"
 		},
 		"feedbackInline": "Feedback was added to",
+		"feedback": {
+			"title": "Comments",
+			"empty": "No comments for this session",
+			"toggle": "Show comments",
+			"comment": "Comment",
+			"noComment": "No comment",
+			"viewMessage": "View message"
+		},
 		"modal": {
 			"satisfy": {
 				"q1": "How useful is this app?",

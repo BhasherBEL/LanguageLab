@@ -221,6 +221,14 @@
 			"typing": "Error al enviar el indicador de entrada"
 		},
 		"feedbackInline": "Se agregó retroalimentación a",
+		"feedback": {
+			"title": "Comentarios",
+			"empty": "No hay comentarios para esta sesión",
+			"toggle": "Mostrar comentarios",
+			"comment": "Comentario",
+			"noComment": "Sin comentario",
+			"viewMessage": "Ver mensaje"
+		},
 		"modal": {
 			"satisfy": {
 				"q1": "¿Qué tan útil es esta aplicación?",

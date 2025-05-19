@@ -3,6 +3,7 @@
 	import type { PageData } from './$types.js';
 	import WeeklySurvey from './WeeklySurvey.svelte';
 	import Chatbox from './Chatbox.svelte';
+	import FeedbackSidebar from './FeedbackSidebar.svelte';
 	import type Task from '$lib/types/tasks';
 	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
 	import { sendTaskStatusAPI } from '$lib/api/tasks';
@@ -191,5 +192,7 @@
 		<Chatbox {session} {jwt} {user} />
 	</div>
 </div>
+
+<FeedbackSidebar {session} {user} />
 
 <WeeklySurvey {user} />

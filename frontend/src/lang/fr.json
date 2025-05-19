@@ -62,6 +62,14 @@
 	},
 	"session": {
 		"feedbackInline": "Un feedback a été ajouté à",
+		"feedback": {
+			"title": "Commentaires",
+			"empty": "Aucun commentaire pour cette session",
+			"toggle": "Afficher les commentaires",
+			"comment": "Commentaire",
+			"noComment": "Aucun commentaire",
+			"viewMessage": "Voir le message"
+		},
 		"modal": {
 			"satisfy": {
 				"title": "Questionnaire de satisfaction",
