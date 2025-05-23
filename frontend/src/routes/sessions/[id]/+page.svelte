@@ -7,6 +7,7 @@
 	import type Task from '$lib/types/tasks';
 	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
 	import { sendTaskStatusAPI } from '$lib/api/tasks';
+	import { Icon, ChatBubbleLeft } from 'svelte-hero-icons';
 
 	let { data }: { data: PageData } = $props();
 	let user = data.user!;
@@ -16,8 +17,14 @@
 	let level = $state('all');
 	let currentTask: Task | null = $state(data.currentTask);
 	let taskInProgress: boolean = $state(data.currentTask !== null);
+	let sidebarOpen = $state(true); // Track sidebar state
 
 	let availableLevels = new Set(tasks.map((task: Task) => task.level));
+
+	// Function to toggle the sidebar
+	function toggleSidebar() {
+		sidebarOpen = !sidebarOpen;
+	}
 
 	async function startTask() {
 		const student = session.student;
@@ -79,7 +86,7 @@
 	}
 </script>
 
-<div class="h-full flex flex-col lg:flex-row pt-2 lg:pt-0 bg-gray-50 relative">
+<div class="h-full flex flex-row bg-gray-50 relative">
 	<input type="checkbox" id="toggleParticipants" class="hidden peer" />
 
 	<label
@@ -92,7 +99,7 @@
 
 	<div
 		class="group w-full max-w-md bg-white border rounded-lg shadow-md p-6 mx-4 my-2 h-fit text-base
-		lg:text-lg transition-all duration-300 ease-in-out hidden lg:block peer-checked:block"
+		lg:text-lg transition-all duration-300 ease-in-out hidden lg:block peer-checked:block flex-shrink-0"
 	>
 		<h2 class="text-xl truncate font-semibold text-gray-700 text-center mb-4">
 			{$t('utils.words.participants')}
@@ -188,11 +195,36 @@
 		{/if}
 	</div>
 
-	<div class="flex flex-row flex-grow col-span-5">
-		<Chatbox {session} {jwt} {user} />
+	<div class="flex flex-grow relative overflow-hidden">
+		<!-- Chat area -->
+		<div class="flex-grow transition-all duration-300 ease-in-out relative min-w-0" 
+			 style={`margin-right: ${sidebarOpen ? '350px' : '0px'}`}>
+			{#if !sidebarOpen}
+				<button 
+					class="absolute top-4 right-4 z-20 btn btn-primary btn-sm shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
+					onclick={toggleSidebar}
+					aria-label={$t('session.feedback.show')}
+					title={$t('session.feedback.show')}
+				>
+					<Icon src={ChatBubbleLeft} size="16" />
+					<span class="font-medium hidden sm:inline">{$t('session.feedback.show')}</span>
+				</button>
+			{/if}
+			<Chatbox {session} {jwt} {user} />
+		</div>
+		
+		<!-- Feedback sidebar -->
+		<div class="absolute top-0 right-0 h-full w-[350px] transition-transform duration-300 ease-in-out overflow-hidden border-l border-base-300 bg-base-100" 
+			 class:translate-x-0={sidebarOpen}
+			 class:translate-x-full={!sidebarOpen}>
+			<FeedbackSidebar 
+				{session} 
+				{user}
+				isOpen={sidebarOpen}
+				onToggle={toggleSidebar} 
+			/>
+		</div>
 	</div>
 </div>
-
-<FeedbackSidebar {session} {user} />
 
 <WeeklySurvey {user} />

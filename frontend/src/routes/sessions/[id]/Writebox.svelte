@@ -78,10 +78,10 @@
 	}
 </script>
 
-<div class="flex flex-col w-full py-2 relative mb-2">
+<div class="flex flex-col w-full relative">
 	{#if replyTo}
 		<div
-			class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-1 text-sm text-gray-600"
+			class="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-2 text-sm text-gray-600"
 		>
 			<p class="text-xs text-gray-400">
 				Replying to: <span class="text-xs text-gray-400">{replyTo.content}</span>
@@ -93,7 +93,7 @@
 	{/if}
 
 	{#if showSpecials}
-		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap">
+		<ul class="flex justify-around divide-x-2 border-b-2 py-1 flex-wrap md:flex-nowrap mb-2">
 			{#each config.SPECIAL_CHARS as char (char)}
 				<button
 					class="border-none"
@@ -109,9 +109,11 @@
 			{/each}
 		</ul>
 	{/if}
-	<div class="w-full flex items-center relative">
+	
+	<div class="w-full flex items-center gap-3">
+		<!-- Emoji picker button -->
 		<div
-			class="text-2xl select-none cursor-pointer mx-4"
+			class="text-2xl select-none cursor-pointer flex-shrink-0"
 			onclick={() => (showPicker = !showPicker)}
 			data-tooltip-target="tooltip-emoji"
 			data-tooltip-placement="right"
@@ -119,9 +121,12 @@
 			aria-hidden={false}
 			role="button"
 			tabindex="0"
+			title="Add emoji"
 		>
 			😀
 		</div>
+		
+		<!-- Emoji picker -->
 		<div class="relative">
 			<div
 				id="tooltip-emoji"
@@ -132,7 +137,7 @@
 			>
 				<emoji-picker
 					class="light"
-					onemoji-click={(event) => {
+					onemoji-click={(event: any) => {
 						message += event.detail.unicode;
 						textearea.focus();
 					}}
@@ -140,27 +145,40 @@
 				</emoji-picker>
 			</div>
 		</div>
-		<textarea
-			bind:this={textearea}
-			class="flex-grow p-2 resize-none overflow-hidden py-4 pr-12 border rounded-[32px]"
-			placeholder={chatClosed ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
-			disabled={chatClosed}
-			bind:value={message}
-			use:autosize
-			rows={1}
-			onkeypress={keyPress}
-		></textarea>
-		<div
-			class="absolute right-28 kbd text-sm select-none cursor-pointer"
-			onclick={() => (showSpecials = !showSpecials)}
-			aria-hidden={false}
-			role="button"
-			tabindex="0"
-		>
-			É
+		
+		<!-- Textarea container -->
+		<div class="flex-grow relative">
+			<textarea
+				bind:this={textearea}
+				class="w-full p-3 resize-none overflow-hidden py-4 pr-12 border rounded-[32px] border-gray-300 focus:border-primary focus:outline-none transition-colors"
+				placeholder={chatClosed ? $t('chatbox.disabled') : $t('chatbox.placeholder')}
+				disabled={chatClosed}
+				bind:value={message}
+				use:autosize
+				rows={1}
+				onkeypress={keyPress}
+			></textarea>
+			<!-- Special characters button -->
+			<div
+				class="absolute right-3 top-1/2 transform -translate-y-1/2 kbd text-sm select-none cursor-pointer hover:bg-gray-200 transition-colors"
+				onclick={() => (showSpecials = !showSpecials)}
+				aria-hidden={false}
+				role="button"
+				tabindex="0"
+				title="Special characters"
+			>
+				É
+			</div>
 		</div>
-		<button class="btn btn-primary rounded-full size-14 mx-4" onclick={sendMessage}>
-			<Icon src={PaperAirplane} />
+		
+		<!-- Send button -->
+		<button 
+			class="btn btn-primary rounded-full size-14 flex-shrink-0 hover:scale-105 transition-transform" 
+			onclick={sendMessage}
+			title="Send message"
+			aria-label="Send message"
+		>
+			<Icon src={PaperAirplane} size="20" />
 		</button>
 	</div>
 </div>

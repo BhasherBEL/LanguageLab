@@ -132,7 +132,7 @@
 		new Date().getTime() < session.start_time.getTime() - 3600000;
 </script>
 
-<div class="flex flex-col w-full max-w-5xl mx-auto h-full scroll-smooth">
+<div class="flex flex-col w-full h-full scroll-smooth relative">
 	<div class="flex-grow h-48 overflow-auto flex-col-reverse px-4 flex mb-2">
 		<div class:hidden={!isTyping}>
 			<span class="loading loading-dots loading-md"></span>
@@ -156,8 +156,21 @@
 			Real-time sync lost. You may need to refresh the page to see new messages.
 		</div>
 	{/if}
-	<div class="flex flex-row">
-		<Writebox {user} {session} {chatClosed} bind:replyTo />
+	<div class="flex flex-row items-end px-4 py-2">
+		<div class="flex-grow">
+			<Writebox {user} {session} {chatClosed} bind:replyTo />
+		</div>
+		<!-- Satisfaction survey button -->
+		<button
+			onclick={() => {
+				satisfyModalElement.showModal();
+			}}
+			class="btn btn-primary btn-circle flex-shrink-0 mb-2 ml-3 hover:scale-105 transition-transform shadow-lg"
+			title="Satisfaction Survey"
+			aria-label="Open satisfaction survey"
+		>
+			<Icon src={PencilSquare} size="20" />
+		</button>
 	</div>
 </div>
 
@@ -212,14 +225,3 @@
 		</form>
 	</div>
 </dialog>
-
-<div class="absolute bottom-4 right-4">
-	<button
-		onclick={() => {
-			satisfyModalElement.showModal();
-		}}
-		class="btn btn-primary btn-circle"
-	>
-		<Icon src={PencilSquare} class="icon" size="32" />
-	</button>
-</div>

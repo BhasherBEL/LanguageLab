@@ -7,17 +7,56 @@
 	import Message from '$lib/types/message';
 	import type Feedback from '$lib/types/feedback';
 	import { displayTime } from '$lib/utils/date';
-	import { Icon, XMark } from 'svelte-hero-icons';
+	import { Icon, XMark, ArrowUturnLeft, ChatBubbleLeft, ArrowTopRightOnSquare } from 'svelte-hero-icons';
 
-	export let session: Session;
-	export let user: User;
+	let { 
+		session, 
+		user, 
+		isOpen = $bindable(true),  // Make isOpen bindable with default true
+		onToggle = $bindable(),     // Optional callback for toggle events
+		onNewFeedback = $bindable() // Optional callback for new feedback notifications
+	}: { 
+		session: Session; 
+		user: User; 
+		isOpen?: boolean;
+		onToggle?: () => void;
+		onNewFeedback?: () => void;
+	} = $props();
 	
-	let isOpen = false;
 	let allFeedbacks: Feedback[] = [];
 	let unsubscribers: (() => void)[] = [];
 	
+	// Group feedbacks by message and highlight range
+	function groupFeedbacksByHighlight(feedbacks: Feedback[]) {
+		const grouped = new Map();
+		
+		feedbacks.forEach(feedback => {
+			// Used message ID + highlight range as the key
+			const key = `${feedback.message.id}-${feedback.start}-${feedback.end}`;
+			
+			if (!grouped.has(key)) {
+				grouped.set(key, {
+					highlight: feedback.message.content.substring(feedback.start, feedback.end),
+					messageId: feedback.message.uuid,
+					comments: []
+				});
+			}
+			
+			grouped.get(key).comments.push(feedback);
+		});
+		
+		return Array.from(grouped.values());
+	}
+	
+	let groupedFeedbacks = $state([] as any[]);
+	
 	function toggleSidebar() {
-		isOpen = !isOpen;
+		if (onToggle) onToggle();
+	}
+
+	async function deleteFeedback(feedback: Feedback) {
+		if (!confirm($t('chatbox.deleteFeedback'))) return;
+		await feedback.message.deleteFeedback(feedback);
 	}
 
 	function extractAllFeedbacks(messages: (Message | null)[]) {
@@ -46,6 +85,7 @@
 				const unsubscribe = message.feedbacks.subscribe(() => {
 					const currentMessages = get(session.messages) as (Message | null)[];
 					allFeedbacks = extractAllFeedbacks(currentMessages);
+					groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
 				});
 				unsubscribers.push(unsubscribe);
 			}
@@ -53,18 +93,20 @@
 	}
 
 	// Subscribe to messages changes
-	$: {
+	$effect(() => {
 		const messages = get(session.messages) as (Message | null)[];
 		if (messages) {
 			allFeedbacks = extractAllFeedbacks(messages);
+			groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
 			setupMessageSubscriptions(messages);
 		}
-	}
+	});
 
 	onMount(() => {
 		const messages = get(session.messages) as (Message | null)[];
 		if (messages) {
 			allFeedbacks = extractAllFeedbacks(messages);
+			groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
 			setupMessageSubscriptions(messages);
 		}
 	});
@@ -73,75 +115,112 @@
 		// Cleanup all subscriptions
 		unsubscribers.forEach(unsub => unsub());
 	});
+	
+	// Function to handle reply to a comment
+	function handleReply(feedbackGroup: any) {
+		// This is a placeholder - the actual implementation would depend on backend API
+		console.log('Reply to comment:', feedbackGroup);
+	}
 </script>
 
-<!-- Button to toggle the sidebar -->
-<button 
-	class="fixed z-30 bottom-20 right-4 bg-primary text-white rounded-full p-3 shadow-lg hover:bg-primary-focus transition-colors duration-200"
-	on:click={toggleSidebar}
-	aria-label={isOpen ? $t('button.close') : $t('session.feedback.toggle')}
->
-	{#if isOpen}
-		<Icon src={XMark} size="20" />
-	{:else}
-		<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-		</svg>
-	{/if}
-</button>
-
-<!-- Feedback Sidebar -->
 <div 
-	class="fixed top-0 right-0 h-full z-20 bg-white shadow-lg transition-transform duration-300 overflow-y-auto"
-	class:translate-x-0={isOpen} 
-	class:translate-x-full={!isOpen}
-	style="width: 350px;"
+	class="h-full bg-white shadow-lg overflow-y-auto"
+	style="width: 100%;"
+	class:pointer-events-none={!isOpen}
+	aria-hidden={!isOpen}
 >
-	<div class="p-4 border-b">
-		<h2 class="text-xl font-semibold text-center">
-			{$t('session.feedback.title')}
-		</h2>
+	<div class="p-4 border-b bg-base-200">
+		<div class="flex items-center justify-between">
+			<h2 class="text-lg font-semibold text-base-content flex items-center gap-2">
+				<Icon src={ChatBubbleLeft} size="20" />
+				{$t('session.feedback.title')}
+			</h2>
+			<button 
+				class="btn btn-ghost btn-sm btn-circle"
+				onclick={toggleSidebar}
+				aria-label={$t('session.feedback.hide')}
+				title={$t('session.feedback.hide')}
+			>
+				<Icon src={XMark} size="18" />
+			</button>
+		</div>
 	</div>
 
-	{#if allFeedbacks.length === 0}
-		<div class="flex flex-col items-center justify-center h-48">
-			<p class="text-gray-500 text-center p-6">
+	{#if groupedFeedbacks.length === 0}
+		<div class="flex flex-col items-center justify-center h-48 text-center">
+			<Icon src={ChatBubbleLeft} size="48" class="text-base-300 mb-3" />
+			<p class="text-base-content/60 text-sm px-6">
 				{$t('session.feedback.empty')}
 			</p>
 		</div>
 	{:else}
 		<div class="p-4 space-y-4">
-			{#each allFeedbacks as feedback (feedback.uuid)}
-				<div class="bg-gray-50 p-3 rounded-lg shadow-sm border">
-					<div class="flex items-center gap-2 mb-1">
-						<div class="w-8 h-8 rounded-full overflow-hidden shadow-sm">
-							<img
-								src={`https://gravatar.com/avatar/${feedback.message.user.emailHash}?d=identicon`}
-								alt={feedback.message.user.nickname}
-								class="rounded-full"
-							/>
+			{#each groupedFeedbacks as feedbackGroup}
+				<div class="card card-compact bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow">
+					<div class="card-body">
+						<!-- Highlight text with "Voir le message" link on hover -->
+						<div class="relative mb-3 p-3 pb-6 bg-warning/10 rounded-lg break-words group border-l-4 border-warning">
+							<div class="text-sm font-medium text-base-content leading-relaxed">"{feedbackGroup.highlight}"</div>
+							<a 
+								href={`#${feedbackGroup.messageId}`} 
+								class="absolute bottom-2 right-2 text-xs text-warning opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-warning-content flex items-center gap-1"
+							>
+								<Icon src={ArrowTopRightOnSquare} size="12" />
+								{$t('session.feedback.viewMessage')}
+							</a>
 						</div>
-						<span class="text-sm font-medium">{feedback.message.user.nickname}</span>
-						<span class="text-xs text-gray-500 ml-auto">{displayTime(feedback.date)}</span>
+						
+						<!-- Comment thread -->
+						<div class="space-y-3">
+							{#each feedbackGroup.comments as feedback}
+								<div class="flex gap-3 group">
+									<div class="avatar">
+										<div class="w-8 h-8 rounded-full border-2 border-base-300">
+											<img
+												src={`https://gravatar.com/avatar/${feedback.message.user.emailHash}?d=identicon`}
+												alt=""
+												class="w-full h-full object-cover rounded-full"
+											/>
+										</div>
+									</div>
+									<div class="flex-grow relative min-w-0">
+										{#if feedback.content}
+											<div class="text-sm p-3 bg-base-200 rounded-lg break-words relative group/comment">
+												{feedback.content}
+												<button
+													class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
+													onclick={() => deleteFeedback(feedback)}
+													aria-label={$t('button.delete')}
+												>
+													<Icon src={XMark} class="w-3 h-3" />
+												</button>
+											</div>
+										{:else}
+											<div class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment">
+												{$t('session.feedback.noComment')}
+												<button
+													class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
+													onclick={() => deleteFeedback(feedback)}
+													aria-label={$t('button.delete')}
+												>
+													<Icon src={XMark} class="w-3 h-3" />
+												</button>
+											</div>
+										{/if}
+									</div>
+								</div>
+							{/each}
+						</div>
+						
+						<!-- Reply button -->
+						<button 
+							class="btn btn-ghost btn-sm mt-3 flex items-center gap-2 justify-start"
+							onclick={() => handleReply(feedbackGroup)}
+						>
+							<Icon src={ArrowUturnLeft} class="w-4 h-4" />
+							<span>{$t('session.feedback.reply')}</span>
+						</button>
 					</div>
-					
-					<div class="text-sm mb-2 p-2 bg-white rounded break-words">
-						"{feedback.message.content.substring(feedback.start, feedback.end)}"
-					</div>
-					
-					{#if feedback.content}
-						<div class="text-sm p-2 bg-blue-50 rounded break-words">
-							<span class="font-medium">{$t('session.feedback.comment')}:</span> {feedback.content}
-						</div>
-					{:else}
-						<div class="text-xs text-gray-500 italic">
-							{$t('session.feedback.noComment')}
-						</div>
-					{/if}
-					
-					<a href={`#${feedback.message.uuid}`} class="text-xs text-blue-500 inline-block mt-2 hover:underline">
-						{$t('session.feedback.viewMessage')}
-					</a>
 				</div>
 			{/each}
 		</div>
