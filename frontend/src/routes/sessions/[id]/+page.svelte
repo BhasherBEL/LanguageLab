@@ -197,10 +197,12 @@
 
 	<div class="flex flex-grow relative overflow-hidden">
 		<!-- Chat area -->
-		<div class="flex-grow transition-all duration-300 ease-in-out relative min-w-0" 
-			 style={`margin-right: ${sidebarOpen ? '350px' : '0px'}`}>
+		<div
+			class="flex-grow transition-all duration-300 ease-in-out relative min-w-0"
+			style={`margin-right: ${sidebarOpen ? '350px' : '0px'}`}
+		>
 			{#if !sidebarOpen}
-				<button 
+				<button
 					class="absolute top-4 right-4 z-20 btn btn-primary btn-sm shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
 					onclick={toggleSidebar}
 					aria-label={$t('session.feedback.show')}
@@ -212,17 +214,14 @@
 			{/if}
 			<Chatbox {session} {jwt} {user} />
 		</div>
-		
+
 		<!-- Feedback sidebar -->
-		<div class="absolute top-0 right-0 h-full w-[350px] transition-transform duration-300 ease-in-out overflow-hidden border-l border-base-300 bg-base-100" 
-			 class:translate-x-0={sidebarOpen}
-			 class:translate-x-full={!sidebarOpen}>
-			<FeedbackSidebar 
-				{session} 
-				{user}
-				isOpen={sidebarOpen}
-				onToggle={toggleSidebar} 
-			/>
+		<div
+			class="absolute top-0 right-0 h-full w-[350px] transition-transform duration-300 ease-in-out overflow-hidden border-l border-base-300 bg-base-100"
+			class:translate-x-0={sidebarOpen}
+			class:translate-x-full={!sidebarOpen}
+		>
+			<FeedbackSidebar {session} {user} isOpen={sidebarOpen} onToggle={toggleSidebar} />
 		</div>
 	</div>
 </div>

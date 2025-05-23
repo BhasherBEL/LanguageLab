@@ -7,33 +7,39 @@
 	import Message from '$lib/types/message';
 	import type Feedback from '$lib/types/feedback';
 	import { displayTime } from '$lib/utils/date';
-	import { Icon, XMark, ArrowUturnLeft, ChatBubbleLeft, ArrowTopRightOnSquare } from 'svelte-hero-icons';
+	import {
+		Icon,
+		XMark,
+		ArrowUturnLeft,
+		ChatBubbleLeft,
+		ArrowTopRightOnSquare
+	} from 'svelte-hero-icons';
 
-	let { 
-		session, 
-		user, 
-		isOpen = $bindable(true),  // Make isOpen bindable with default true
-		onToggle = $bindable(),     // Optional callback for toggle events
+	let {
+		session,
+		user,
+		isOpen = $bindable(true), // Make isOpen bindable with default true
+		onToggle = $bindable(), // Optional callback for toggle events
 		onNewFeedback = $bindable() // Optional callback for new feedback notifications
-	}: { 
-		session: Session; 
-		user: User; 
+	}: {
+		session: Session;
+		user: User;
 		isOpen?: boolean;
 		onToggle?: () => void;
 		onNewFeedback?: () => void;
 	} = $props();
-	
+
 	let allFeedbacks: Feedback[] = [];
 	let unsubscribers: (() => void)[] = [];
-	
+
 	// Group feedbacks by message and highlight range
 	function groupFeedbacksByHighlight(feedbacks: Feedback[]) {
 		const grouped = new Map();
-		
-		feedbacks.forEach(feedback => {
+
+		feedbacks.forEach((feedback) => {
 			// Used message ID + highlight range as the key
 			const key = `${feedback.message.id}-${feedback.start}-${feedback.end}`;
-			
+
 			if (!grouped.has(key)) {
 				grouped.set(key, {
 					highlight: feedback.message.content.substring(feedback.start, feedback.end),
@@ -41,15 +47,15 @@
 					comments: []
 				});
 			}
-			
+
 			grouped.get(key).comments.push(feedback);
 		});
-		
+
 		return Array.from(grouped.values());
 	}
-	
+
 	let groupedFeedbacks = $state([] as any[]);
-	
+
 	function toggleSidebar() {
 		if (onToggle) onToggle();
 	}
@@ -61,8 +67,8 @@
 
 	function extractAllFeedbacks(messages: (Message | null)[]) {
 		const feedbacks: Feedback[] = [];
-		
-		messages.forEach(message => {
+
+		messages.forEach((message) => {
 			if (message instanceof Message) {
 				const messageFeedbacks = get(message.feedbacks);
 				if (messageFeedbacks && messageFeedbacks.length > 0) {
@@ -70,17 +76,17 @@
 				}
 			}
 		});
-		
+
 		return feedbacks.sort((a, b) => b.date.getTime() - a.date.getTime());
 	}
 
 	function setupMessageSubscriptions(messages: (Message | null)[]) {
 		// Cleanup previous subscriptions
-		unsubscribers.forEach(unsub => unsub());
+		unsubscribers.forEach((unsub) => unsub());
 		unsubscribers = [];
 
 		// Subscribe to each message's feedbacks
-		messages.forEach(message => {
+		messages.forEach((message) => {
 			if (message instanceof Message) {
 				const unsubscribe = message.feedbacks.subscribe(() => {
 					const currentMessages = get(session.messages) as (Message | null)[];
@@ -113,9 +119,9 @@
 
 	onDestroy(() => {
 		// Cleanup all subscriptions
-		unsubscribers.forEach(unsub => unsub());
+		unsubscribers.forEach((unsub) => unsub());
 	});
-	
+
 	// Function to handle reply to a comment
 	function handleReply(feedbackGroup: any) {
 		// This is a placeholder - the actual implementation would depend on backend API
@@ -123,7 +129,7 @@
 	}
 </script>
 
-<div 
+<div
 	class="h-full bg-white shadow-lg overflow-y-auto"
 	style="width: 100%;"
 	class:pointer-events-none={!isOpen}
@@ -135,7 +141,7 @@
 				<Icon src={ChatBubbleLeft} size="20" />
 				{$t('session.feedback.title')}
 			</h2>
-			<button 
+			<button
 				class="btn btn-ghost btn-sm btn-circle"
 				onclick={toggleSidebar}
 				aria-label={$t('session.feedback.hide')}
@@ -156,20 +162,26 @@
 	{:else}
 		<div class="p-4 space-y-4">
 			{#each groupedFeedbacks as feedbackGroup}
-				<div class="card card-compact bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow">
+				<div
+					class="card card-compact bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow"
+				>
 					<div class="card-body">
 						<!-- Highlight text with "Voir le message" link on hover -->
-						<div class="relative mb-3 p-3 pb-6 bg-warning/10 rounded-lg break-words group border-l-4 border-warning">
-							<div class="text-sm font-medium text-base-content leading-relaxed">"{feedbackGroup.highlight}"</div>
-							<a 
-								href={`#${feedbackGroup.messageId}`} 
+						<div
+							class="relative mb-3 p-3 pb-6 bg-warning/10 rounded-lg break-words group border-l-4 border-warning"
+						>
+							<div class="text-sm font-medium text-base-content leading-relaxed">
+								"{feedbackGroup.highlight}"
+							</div>
+							<a
+								href={`#${feedbackGroup.messageId}`}
 								class="absolute bottom-2 right-2 text-xs text-warning opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-warning-content flex items-center gap-1"
 							>
 								<Icon src={ArrowTopRightOnSquare} size="12" />
 								{$t('session.feedback.viewMessage')}
 							</a>
 						</div>
-						
+
 						<!-- Comment thread -->
 						<div class="space-y-3">
 							{#each feedbackGroup.comments as feedback}
@@ -185,7 +197,9 @@
 									</div>
 									<div class="flex-grow relative min-w-0">
 										{#if feedback.content}
-											<div class="text-sm p-3 bg-base-200 rounded-lg break-words relative group/comment">
+											<div
+												class="text-sm p-3 bg-base-200 rounded-lg break-words relative group/comment"
+											>
 												{feedback.content}
 												<button
 													class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
@@ -196,7 +210,9 @@
 												</button>
 											</div>
 										{:else}
-											<div class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment">
+											<div
+												class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment"
+											>
 												{$t('session.feedback.noComment')}
 												<button
 													class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
@@ -211,9 +227,9 @@
 								</div>
 							{/each}
 						</div>
-						
+
 						<!-- Reply button -->
-						<button 
+						<button
 							class="btn btn-ghost btn-sm mt-3 flex items-center gap-2 justify-start"
 							onclick={() => handleReply(feedbackGroup)}
 						>

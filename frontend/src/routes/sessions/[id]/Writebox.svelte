@@ -109,7 +109,7 @@
 			{/each}
 		</ul>
 	{/if}
-	
+
 	<div class="w-full flex items-center gap-3">
 		<!-- Emoji picker button -->
 		<div
@@ -125,7 +125,7 @@
 		>
 			😀
 		</div>
-		
+
 		<!-- Emoji picker -->
 		<div class="relative">
 			<div
@@ -145,7 +145,7 @@
 				</emoji-picker>
 			</div>
 		</div>
-		
+
 		<!-- Textarea container -->
 		<div class="flex-grow relative">
 			<textarea
@@ -170,10 +170,10 @@
 				É
 			</div>
 		</div>
-		
+
 		<!-- Send button -->
-		<button 
-			class="btn btn-primary rounded-full size-14 flex-shrink-0 hover:scale-105 transition-transform" 
+		<button
+			class="btn btn-primary rounded-full size-14 flex-shrink-0 hover:scale-105 transition-transform"
 			onclick={sendMessage}
 			title="Send message"
 			aria-label="Send message"

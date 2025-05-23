@@ -35,24 +35,36 @@
 	let messageVersions = $state(message.versions);
 
 	// Highlight connection line
-	let activeHighlight: { element: HTMLElement | null, feedback: Feedback | null } = { element: null, feedback: null };
-	
-	function showHighlightConnection(part: { text: string; feedback: Feedback | null }, event: MouseEvent) {
+	let activeHighlight: { element: HTMLElement | null; feedback: Feedback | null } = {
+		element: null,
+		feedback: null
+	};
+
+	function showHighlightConnection(
+		part: { text: string; feedback: Feedback | null },
+		event: MouseEvent
+	) {
 		if (!part.feedback) return;
-		
+
 		const highlightElement = event.currentTarget as HTMLElement;
 		if (highlightElement) {
 			activeHighlight = { element: highlightElement, feedback: part.feedback };
-			
+
 			// Add a class to the element to show it's active
 			highlightElement.classList.add('active-highlight');
-			
+
 			// This would trigger the CSS to show the connection line
-			document.documentElement.style.setProperty('--highlight-top', `${highlightElement.getBoundingClientRect().top + window.scrollY}px`);
-			document.documentElement.style.setProperty('--highlight-right', `${highlightElement.getBoundingClientRect().right + window.scrollX}px`);
+			document.documentElement.style.setProperty(
+				'--highlight-top',
+				`${highlightElement.getBoundingClientRect().top + window.scrollY}px`
+			);
+			document.documentElement.style.setProperty(
+				'--highlight-right',
+				`${highlightElement.getBoundingClientRect().right + window.scrollX}px`
+			);
 		}
 	}
-	
+
 	function hideHighlightConnection() {
 		if (activeHighlight.element) {
 			activeHighlight.element.classList.remove('active-highlight');
@@ -213,30 +225,6 @@
 	}
 </script>
 
-<style>
-	:global(.active-highlight) {
-		position: relative;
-	}
-	
-	:global(.active-highlight::after) {
-		content: '';
-		position: absolute;
-		top: 50%;
-		right: -5px;
-		width: calc(100vw - var(--highlight-right) - 350px); /* Adjust width to reach sidebar */
-		height: 2px;
-		background-color: rgba(107, 114, 128, 0.2); /* Light grey */
-		z-index: 5;
-		pointer-events: none;
-		animation: fadeIn 0.2s ease-in-out;
-	}
-	
-	@keyframes fadeIn {
-		from { opacity: 0; }
-		to { opacity: 1; }
-	}
-</style>
-
 <div
 	class="chat group scroll-smooth target:bg-gray-200 rounded-xl"
 	id={message.uuid}
@@ -391,3 +379,31 @@
 		</div>
 	</div>
 </dialog>
+
+<style>
+	:global(.active-highlight) {
+		position: relative;
+	}
+
+	:global(.active-highlight::after) {
+		content: '';
+		position: absolute;
+		top: 50%;
+		right: -5px;
+		width: calc(100vw - var(--highlight-right) - 350px); /* Adjust width to reach sidebar */
+		height: 2px;
+		background-color: rgba(107, 114, 128, 0.2); /* Light grey */
+		z-index: 5;
+		pointer-events: none;
+		animation: fadeIn 0.2s ease-in-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+</style>
