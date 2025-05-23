@@ -92,7 +92,7 @@
 	},
 	"register": {
 		"confirmPassword": "Confirmar Contraseña",
-		"confirmTutor": "¿Confirmas haber seleccionado “{NAME}” como tu tutor?",
+		"confirmTutor": "¿Confirmas haber seleccionado \"{NAME}\" como tu tutor?",
 		"consent": {
 			"intro": "Estás invitado a participar en un estudio científico. \nEl objetivo de este estudio es comprender cómo interactúan los tutores y los estudiantes de lenguas extranjeras durante las sesiones de tutoría en línea. \nLos datos recopilados se utilizarán para mejorar las herramientas de tutoría en línea y comprender mejor los procesos cognitivos en ambos lados.",
 			"ok": "Acepto participar en el estudio como se describe anteriormente.",
@@ -187,7 +187,6 @@
 		"addAvailability": "Agregar disponibilidad",
 		"confirm": "Confirmar",
 		"endTime": "Tiempo de finalización",
-
 		"noAvailabilities": "Sin disponibilidad proporcionada",
 		"noTutorsAvailable": "No hay tutor disponible actualmente",
 		"notAvailable": "No disponible",
@@ -225,9 +224,12 @@
 			"title": "Comentarios",
 			"empty": "No hay comentarios para esta sesión",
 			"toggle": "Mostrar comentarios",
+			"hide": "Ocultar comentarios",
+			"show": "Mostrar comentarios",
 			"comment": "Comentario",
 			"noComment": "Sin comentario",
-			"viewMessage": "Ver mensaje"
+			"viewMessage": "Ver mensaje",
+			"reply": "Responder"
 		},
 		"modal": {
 			"satisfy": {
