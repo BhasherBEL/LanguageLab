@@ -127,6 +127,25 @@
 		// This is a placeholder - the actual implementation would depend on backend API
 		console.log('Reply to comment:', feedbackGroup);
 	}
+
+	// Function to scroll to message
+	function scrollToMessage(messageId: string) {
+		const element = document.getElementById(messageId);
+		if (element) {
+			element.scrollIntoView({ 
+				behavior: 'smooth', 
+				block: 'center',
+				inline: 'nearest'
+			});
+			element.classList.add('!bg-gray-300', 'transition-colors', 'duration-300');
+			setTimeout(() => {
+				element.classList.add('!bg-transparent');
+				setTimeout(() => {
+					element.classList.remove('!bg-gray-300', '!bg-transparent', 'transition-colors', 'duration-300');
+				}, 300);
+			}, 1500);
+		}
+	}
 </script>
 
 <div
@@ -163,23 +182,22 @@
 		<div class="p-4 space-y-4">
 			{#each groupedFeedbacks as feedbackGroup}
 				<div
-					class="card card-compact bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow"
+					class="card card-compact bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow relative"
 				>
 					<div class="card-body">
-						<!-- Highlight text with "Voir le message" link on hover -->
 						<div
-							class="relative mb-3 p-3 pb-6 bg-warning/10 rounded-lg break-words group border-l-4 border-warning"
+							class="relative mb-3 p-3 bg-warning/10 rounded-lg break-words group"
 						>
-							<div class="text-sm font-medium text-base-content leading-relaxed">
-								"{feedbackGroup.highlight}"
-							</div>
-							<a
-								href={`#${feedbackGroup.messageId}`}
-								class="absolute bottom-2 right-2 text-xs text-warning opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-warning-content flex items-center gap-1"
+							<button
+								onclick={() => scrollToMessage(feedbackGroup.messageId)}
+								class="absolute -top-6 left-1/2 transform -translate-x-1/2 btn btn-primary btn-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm hover:shadow-md hover:scale-102 flex items-center gap-1 z-10"
 							>
-								<Icon src={ArrowTopRightOnSquare} size="12" />
-								{$t('session.feedback.viewMessage')}
-							</a>
+								<Icon src={ArrowTopRightOnSquare} size="12" class="text-black" />
+								<span class="text-black text-xs font-normal">{$t('session.feedback.viewMessage')}</span>
+							</button>
+							<div class="text-sm font-medium text-base-content leading-relaxed">
+								{feedbackGroup.highlight}
+							</div>
 						</div>
 
 						<!-- Comment thread -->
@@ -230,11 +248,12 @@
 
 						<!-- Reply button -->
 						<button
-							class="btn btn-ghost btn-sm mt-3 flex items-center gap-2 justify-start"
+							class="absolute bottom-3 right-3 btn btn-primary btn-xs btn-circle shadow-sm hover:shadow-md transition-all hover:scale-105 z-10"
 							onclick={() => handleReply(feedbackGroup)}
+							title={$t('session.feedback.reply')}
+							aria-label={$t('session.feedback.reply')}
 						>
-							<Icon src={ArrowUturnLeft} class="w-4 h-4" />
-							<span>{$t('session.feedback.reply')}</span>
+							<Icon src={ArrowUturnLeft} class="w-3 h-3 text-black" />
 						</button>
 					</div>
 				</div>
