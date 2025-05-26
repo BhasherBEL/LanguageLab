@@ -46,7 +46,7 @@
 		const highlightElement = event.currentTarget as HTMLElement;
 		if (highlightElement) {
 			activeFeedback = part.feedback;
-			
+
 			// Store position for the connection line
 			const rect = highlightElement.getBoundingClientRect();
 			highlightPosition = {
@@ -278,7 +278,6 @@
 							onmouseenter={(e) => showHighlightConnection(part, e)}
 							onmouseleave={hideHighlightConnection}
 						>
-
 							<div
 								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-8 px-2 z-20 whitespace-nowrap"
 							>
@@ -374,5 +373,3 @@
 		</div>
 	</div>
 </dialog>
-
-
