@@ -145,10 +145,11 @@
 
 <div class="flex-row h-full flex py-4 flex-grow overflow-y-hidden">
 	<div class="flex flex-col border shadow-[0_0_6px_0_rgba(0,14,156,.2)] min-w-72 rounded-r-xl">
-		<div class="flex-grow">
+		<!-- Scrollable contacts list -->
+		<div class="flex-1 overflow-y-auto min-h-0">
 			{#each contacts as c (c.id)}
 				<div
-					class="h-24 flex border-gray-300 border-b-2 hover:bg-gray-200 hover:cursor-pointer p-4"
+					class="h-16 flex hover:bg-gray-200 hover:cursor-pointer p-2 border-b border-gray-100 last:border-b-0"
 					class:bg-gray-200={c.id === contact?.id}
 					onclick={() => selectContact(c)}
 					role="button"
@@ -156,27 +157,32 @@
 					tabindex="0"
 					onkeydown={(e) => e.key === 'Enter' && selectContact(c)}
 				>
-					<div class="w-16 ml-2 mr-4 p-4 bg-gray-300 rounded-2xl">
+					<div
+						class="w-12 h-12 ml-1 mr-3 p-2 bg-gray-300 rounded-xl flex items-center justify-center"
+					>
 						{#if c.type == 0}
-							<Icon src={Sparkles} class="mask mask-squircle" />
+							<Icon src={Sparkles} class="w-6 h-6" />
 						{:else if c.type == 1}
-							<Icon src={AcademicCap} class="" />
+							<Icon src={AcademicCap} class="w-6 h-6" />
 						{:else}
-							<Icon src={UserIcon} />
+							<Icon src={UserIcon} class="w-6 h-6" />
 						{/if}
 					</div>
-					<div class="text-lg font-bold capitalize flex items-center">
+					<div class="text-base font-semibold capitalize flex items-center truncate">
 						{c.nickname}
 					</div>
 				</div>
 			{/each}
 		</div>
-		<button
-			class="h-20 w-full flex justify-center items-center text-lg border-gray-200 border-t hover:bg-gray-200"
-			onclick={() => (modalNew = true)}
-		>
-			+
-		</button>
+		<div class="border-t border-gray-200 bg-white">
+			<button
+				class="h-14 w-full flex justify-center items-center text-xl font-semibold text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors"
+				onclick={() => (modalNew = true)}
+				aria-label={$t('home.newContact')}
+			>
+				<span class="text-2xl">+</span>
+			</button>
+		</div>
 	</div>
 	{#if contact}
 		<div class="flex flex-col xl:mx-auto xl:w-[60rem] m-4">
