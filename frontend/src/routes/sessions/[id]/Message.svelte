@@ -12,6 +12,7 @@
 	import Message from '$lib/types/message';
 	import type User from '$lib/types/user';
 	import { get } from 'svelte/store';
+	import { highlightedMessageId } from '$lib/stores/messageHighlight';
 
 	let {
 		user,
@@ -205,6 +206,17 @@
 
 	const isSender = message.user.id == user.id;
 
+	// Reactive variable for highlighting
+	let isHighlighted = $state(false);
+
+	// Subscribe to highlighted message changes
+	$effect(() => {
+		const unsubscribe = highlightedMessageId.subscribe((highlightedId) => {
+			isHighlighted = highlightedId === message.uuid;
+		});
+		return unsubscribe;
+	});
+
 	async function deleteFeedback(feedback: Feedback | null) {
 		if (!feedback) return;
 		if (!confirm($t('chatbox.deleteFeedback'))) return;
@@ -214,10 +226,13 @@
 </script>
 
 <div
-	class="chat group scroll-smooth target:bg-gray-200 rounded-xl"
-	id={message.uuid}
+	class="chat group scroll-smooth rounded-xl transition-colors duration-300"
+	class:bg-gray-300={isHighlighted}
+	class:target:bg-gray-200={!isHighlighted}
 	class:chat-start={!isSender}
 	class:chat-end={isSender}
+	id={message.uuid}
+	data-message-id={message.uuid}
 >
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
 		<img
@@ -279,7 +294,7 @@
 							onmouseleave={hideHighlightConnection}
 						>
 							<div
-								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-8 px-2 z-20 whitespace-nowrap"
+								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm h-6 items-center rounded left-1/2 -translate-x-1/2 -top-8 px-2 z-20 whitespace-nowrap"
 							>
 								{part.feedback.content}
 								{#if part.feedback.content}

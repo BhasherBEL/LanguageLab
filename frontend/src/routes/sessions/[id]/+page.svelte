@@ -26,6 +26,19 @@
 		sidebarOpen = !sidebarOpen;
 	}
 
+	// Function to handle message scrolling from feedback sidebar
+	function handleScrollToMessage(messageId: string) {
+		// Find the message element and scroll to it smoothly
+		const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+		if (messageElement) {
+			messageElement.scrollIntoView({
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'nearest'
+			});
+		}
+	}
+
 	async function startTask() {
 		const student = session.student;
 		if (!student || !currentTask) return;
@@ -221,7 +234,7 @@
 			class:translate-x-0={sidebarOpen}
 			class:translate-x-full={!sidebarOpen}
 		>
-			<FeedbackSidebar {session} {user} isOpen={sidebarOpen} onToggle={toggleSidebar} />
+			<FeedbackSidebar {session} {user} isOpen={sidebarOpen} onToggle={toggleSidebar} onScrollToMessage={handleScrollToMessage} />
 		</div>
 	</div>
 </div>

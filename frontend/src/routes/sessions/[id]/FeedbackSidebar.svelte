@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import { onMount, onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
 	import type Session from '$lib/types/session';
 	import type User from '$lib/types/user';
@@ -14,23 +13,25 @@
 		ChatBubbleLeft,
 		ArrowTopRightOnSquare
 	} from 'svelte-hero-icons';
+	import { highlightedMessageId } from '$lib/stores/messageHighlight';
 
 	let {
 		session,
 		user,
 		isOpen = $bindable(true), // Make isOpen bindable with default true
 		onToggle = $bindable(), // Optional callback for toggle events
-		onNewFeedback = $bindable() // Optional callback for new feedback notifications
+		onNewFeedback = $bindable(), // Optional callback for new feedback notifications
+		onScrollToMessage = $bindable() // Callback to handle message scrolling
 	}: {
 		session: Session;
 		user: User;
 		isOpen?: boolean;
 		onToggle?: () => void;
 		onNewFeedback?: () => void;
+		onScrollToMessage?: (messageId: string) => void;
 	} = $props();
 
 	let allFeedbacks: Feedback[] = [];
-	let unsubscribers: (() => void)[] = [];
 
 	// Group feedbacks by message and highlight range
 	function groupFeedbacksByHighlight(feedbacks: Feedback[]) {
@@ -80,46 +81,24 @@
 		return feedbacks.sort((a, b) => b.date.getTime() - a.date.getTime());
 	}
 
-	function setupMessageSubscriptions(messages: (Message | null)[]) {
-		// Cleanup previous subscriptions
-		unsubscribers.forEach((unsub) => unsub());
-		unsubscribers = [];
-
-		// Subscribe to each message's feedbacks
-		messages.forEach((message) => {
-			if (message instanceof Message) {
-				const unsubscribe = message.feedbacks.subscribe(() => {
-					const currentMessages = get(session.messages) as (Message | null)[];
-					allFeedbacks = extractAllFeedbacks(currentMessages);
-					groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
-				});
-				unsubscribers.push(unsubscribe);
-			}
-		});
-	}
-
-	// Subscribe to messages changes
+	//Handles all feedback management
 	$effect(() => {
 		const messages = get(session.messages) as (Message | null)[];
 		if (messages) {
 			allFeedbacks = extractAllFeedbacks(messages);
 			groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
-			setupMessageSubscriptions(messages);
+			
+			// Set up subscriptions
+			messages.forEach((message) => {
+				if (message instanceof Message) {
+					message.feedbacks.subscribe(() => {
+						const currentMessages = get(session.messages) as (Message | null)[];
+						allFeedbacks = extractAllFeedbacks(currentMessages);
+						groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
+					});
+				}
+			});
 		}
-	});
-
-	onMount(() => {
-		const messages = get(session.messages) as (Message | null)[];
-		if (messages) {
-			allFeedbacks = extractAllFeedbacks(messages);
-			groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
-			setupMessageSubscriptions(messages);
-		}
-	});
-
-	onDestroy(() => {
-		// Cleanup all subscriptions
-		unsubscribers.forEach((unsub) => unsub());
 	});
 
 	// Function to handle reply to a comment
@@ -130,32 +109,23 @@
 
 	// Function to scroll to message
 	function scrollToMessage(messageId: string) {
-		const element = document.getElementById(messageId);
-		if (element) {
-			element.scrollIntoView({
-				behavior: 'smooth',
-				block: 'center',
-				inline: 'nearest'
-			});
-			element.classList.add('!bg-gray-300', 'transition-colors', 'duration-300');
-			setTimeout(() => {
-				element.classList.add('!bg-transparent');
-				setTimeout(() => {
-					element.classList.remove(
-						'!bg-gray-300',
-						'!bg-transparent',
-						'transition-colors',
-						'duration-300'
-					);
-				}, 300);
-			}, 1500);
+		// Set the highlighted message in the store
+		highlightedMessageId.set(messageId);
+		
+		// Call parent callback if provided
+		if (onScrollToMessage) {
+			onScrollToMessage(messageId);
 		}
+		
+		// Clear highlight after animation duration
+		setTimeout(() => {
+			highlightedMessageId.set(null);
+		}, 2000);
 	}
 </script>
 
 <div
-	class="h-full bg-white shadow-lg overflow-y-auto"
-	style="width: 100%;"
+	class="h-full w-full bg-white shadow-lg overflow-y-auto"
 	class:pointer-events-none={!isOpen}
 	aria-hidden={!isOpen}
 >
@@ -193,7 +163,7 @@
 						<div class="relative mb-3 p-3 bg-warning/10 rounded-lg break-words group">
 							<button
 								onclick={() => scrollToMessage(feedbackGroup.messageId)}
-								class="absolute -top-6 left-1/2 transform -translate-x-1/2 btn btn-primary btn-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm hover:shadow-md hover:scale-102 flex items-center gap-1 z-10"
+								class="absolute -top-6 left-1/2 -translate-x-1/2 btn btn-primary btn-xs opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 flex items-center gap-1 z-10"
 							>
 								<Icon src={ArrowTopRightOnSquare} size="12" class="text-black" />
 								<span class="text-black text-xs font-normal"
