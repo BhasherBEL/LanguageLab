@@ -157,7 +157,9 @@
 					tabindex="0"
 					onkeydown={(e) => e.key === 'Enter' && selectContact(c)}
 				>
-					<div class="w-12 h-12 ml-1 mr-3 p-2 bg-gray-300 rounded-xl flex items-center justify-center">
+					<div
+						class="w-12 h-12 ml-1 mr-3 p-2 bg-gray-300 rounded-xl flex items-center justify-center"
+					>
 						{#if c.type == 0}
 							<Icon src={Sparkles} class="w-6 h-6" />
 						{:else if c.type == 1}
