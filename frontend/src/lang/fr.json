@@ -14,7 +14,8 @@
 			"sessions": "Sessions",
 			"studies": "Études",
 			"tasks": "Tâches"
-		}
+		},
+		"profile": "Mon profil"
 	},
 	"chatbox": {
 		"placeholder": "Écrivez votre message ici...",
@@ -428,6 +429,10 @@
 		"statusFail": "Echec du changement de status de la tâche",
 		"startTask": "Commencer cette tâche",
 		"achieveTask": "Tâche achevée"
+	},
+	"profile": {
+		"title": "Mon profile",
+		"save": "Sauvegarder les modifications"
 	},
 	"button": {
 		"create": "Créer",

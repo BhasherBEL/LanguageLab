@@ -28,7 +28,7 @@ export default class User {
 	private _ui_language: string | null;
 	private _home_language: string | null;
 	private _target_language: string | null;
-	private _birthdate: Date | null;
+	private _birthdate: string | null;
 	private _gender: string | null;
 	private _bio: string | null;
 	private _calcom_link: string | null;
@@ -51,7 +51,7 @@ export default class User {
 		ui_language: string | null,
 		home_language: string | null,
 		target_language: string | null,
-		birthdate: Date | null,
+		birthdate: string | null,
 		gender: string | null,
 		calcom_link: string | null,
 		studies_id: number[] | null,
@@ -130,8 +130,15 @@ export default class User {
 		return this._target_language;
 	}
 
-	get birthdate(): Date | null {
+	get birthdate(): string | null {
 		return this._birthdate;
+	}
+
+	get birthdateAsDay(): string | null {
+		if (this._birthdate) {
+			return this._birthdate.slice(0, 10); // Format as YYYY-MM-DD
+		}
+		return null;
 	}
 
 	get gender(): string | null {
