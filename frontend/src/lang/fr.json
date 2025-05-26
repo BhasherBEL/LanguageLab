@@ -62,6 +62,17 @@
 	},
 	"session": {
 		"feedbackInline": "Un feedback a été ajouté à",
+		"feedback": {
+			"title": "Commentaires",
+			"empty": "Aucun commentaire pour cette session",
+			"toggle": "Voir les commentaires",
+			"hide": "Masquer les commentaires",
+			"show": "Afficher les commentaires",
+			"comment": "Commentaire",
+			"noComment": "Pas de commentaire",
+			"viewMessage": "Voir le message",
+			"reply": "Répondre"
+		},
 		"modal": {
 			"satisfy": {
 				"title": "Questionnaire de satisfaction",
@@ -180,7 +191,7 @@
 			"tutor": "Erreur lors de la sélection du tuteur. Veuillez réessayer."
 		},
 		"consent": {
-			"title": "Document d’information et consentement éclairé",
+			"title": "Document d'information et consentement éclairé",
 			"intro": "Vous êtes invité·e à participer à une étude scientifique. L'objectif de cette étude est de comprendre comment les tuteurs et les apprenants de langue étrangère interagissent lors de sessions de tutorat en ligne. Les données collectées seront utilisées pour améliorer les outils de tutorat en ligne et pour mieux comprendre les processus cognitifs de part et d'autre.",
 			"participation": "Qu'implique votre participation ?",
 			"participationD": "Si vous acceptez de participer, vous serez invité·e à participer à des sessions de tutorat en ligne avec un tuteur de langue étrangère. Vous serez également invité à remplir des questionnaires avant et après les sessions de tutorat. Les sessions de tutorat seront enregistrées pour analyse ultérieure.</p><p>Nous vous demandons de prévoir de réaliser un minimum de <strong>8 sessions d'une heure</strong> de tutorat (donc 8 heures au total), au cours d'une période de 1 à 3 mois. Vous pouvez bien sûr en réaliser plus si vous le souhaitez. Vous pouvez cependant arrêter de participer à l'étude à tout moment.",
@@ -206,7 +217,7 @@
 			"ok": "J'accepte de participer à l'étude telle que décrite ci-dessus."
 		},
 		"consentTutor": {
-			"title": "Document d’information et consentement éclairé",
+			"title": "Document d'information et consentement éclairé",
 			"intro": "Vous êtes invité·e à participer à une étude scientifique. L'objectif de cette étude est de comprendre comment les tuteurs et les apprenants de langue étrangère interagissent lors de sessions de tutorat en ligne. Les données collectées seront utilisées pour améliorer les outils de tutorat en ligne et pour mieux comprendre les processus cognitifs de part et d'autre.",
 			"participation": "Qu'implique votre participation ?",
 			"participationD": "Si vous acceptez de participer, vous serez invité·e à participer à des sessions de tutorat en ligne avec un tuteur de langue étrangère. Vous serez également invité à remplir des questionnaires avant et après les sessions de tutorat. Les sessions de tutorat seront enregistrées pour analyse ultérieure.</p><p>Nous vous demandons de prévoir de réaliser un minimum de <strong>8 sessions d'une heure</strong> de tutorat (donc 8 heures au total), au cours d'une période de 1 à 3 mois. Vous pouvez bien sûr en réaliser plus si vous le souhaitez. Vous pouvez cependant arrêter de participer à l'étude à tout moment.",
@@ -294,7 +305,7 @@
 			"ok": "J'accepte de participer à l'étude telle que décrite ci-dessus."
 		},
 		"birthYear": "Quelle est votre année de naissance ?",
-		"gender": "À quel genre vous identifiez-vous ?",
+		"gender": "À quel genre vous identifiez-vous ?",
 		"genders": {
 			"male": "Un homme",
 			"female": "Une femme",
