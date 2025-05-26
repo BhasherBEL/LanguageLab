@@ -34,11 +34,8 @@
 	let historyModal: HTMLDialogElement;
 	let messageVersions = $state(message.versions);
 
-	// Highlight connection line
-	let activeHighlight: { element: HTMLElement | null; feedback: Feedback | null } = {
-		element: null,
-		feedback: null
-	};
+	let activeFeedback: Feedback | null = $state(null);
+	let highlightPosition = $state({ top: 0, right: 0 });
 
 	function showHighlightConnection(
 		part: { text: string; feedback: Feedback | null },
@@ -48,28 +45,19 @@
 
 		const highlightElement = event.currentTarget as HTMLElement;
 		if (highlightElement) {
-			activeHighlight = { element: highlightElement, feedback: part.feedback };
-
-			// Add a class to the element to show it's active
-			highlightElement.classList.add('active-highlight');
-
-			// This would trigger the CSS to show the connection line
-			document.documentElement.style.setProperty(
-				'--highlight-top',
-				`${highlightElement.getBoundingClientRect().top + window.scrollY}px`
-			);
-			document.documentElement.style.setProperty(
-				'--highlight-right',
-				`${highlightElement.getBoundingClientRect().right + window.scrollX}px`
-			);
+			activeFeedback = part.feedback;
+			
+			// Store position for the connection line
+			const rect = highlightElement.getBoundingClientRect();
+			highlightPosition = {
+				top: rect.top + window.scrollY + rect.height / 2,
+				right: rect.right + window.scrollX
+			};
 		}
 	}
 
 	function hideHighlightConnection() {
-		if (activeHighlight.element) {
-			activeHighlight.element.classList.remove('active-highlight');
-			activeHighlight = { element: null, feedback: null };
-		}
+		activeFeedback = null;
 	}
 
 	function startEdit() {
@@ -281,33 +269,32 @@
 					{#if isEdit || !part.feedback}
 						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 					{:else}
-						<!-- prettier-ignore -->
-						<span class=""
-							><!--
-						--><span
-								class="underline group/feedback relative decoration-wavy hover:cursor-help"
-								class:decoration-blue-500={part.feedback.content}
-								class:decoration-red-500={!part.feedback.content}
-								onmouseenter={(e) => showHighlightConnection(part, e)}
-								onmouseleave={hideHighlightConnection}
-								><div
-									class="absolute group-hover/feedback:flex hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10"
-								><!--
-									-->{part.feedback.content}<button
+						<span
+							class="underline relative decoration-wavy hover:cursor-help group/feedback"
+							class:decoration-blue-500={part.feedback.content}
+							class:decoration-red-500={!part.feedback.content}
+							role="button"
+							tabindex="0"
+							onmouseenter={(e) => showHighlightConnection(part, e)}
+							onmouseleave={hideHighlightConnection}
+						>
+
+							<div
+								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-8 px-2 z-20 whitespace-nowrap"
+							>
+								{part.feedback.content}
+								{#if part.feedback.content}
+									<button
 										aria-label="close"
-										class:ml-1={part.feedback.content}
-										class="hover:border-inherit border border-transparent rounded"
+										class="ml-1 hover:bg-gray-700 border border-transparent rounded p-0.5"
 										onclick={() => deleteFeedback(part.feedback)}
 									>
 										<CloseIcon />
 									</button>
-								</div
-								><!--
-						-->{part.text}<!--
-					--></span
-							><!--
-					--></span
-						>
+								{/if}
+							</div>
+							{part.text}
+						</span>
 					{/if}
 				{/each}
 			</div>
@@ -341,6 +328,14 @@
 		{/if}
 	</div>
 </div>
+
+{#if activeFeedback}
+	<div
+		class="fixed h-0.5 bg-gray-400/30 z-10 pointer-events-none animate-in fade-in duration-200"
+		style="top: {highlightPosition.top}px; left: {highlightPosition.right}px; width: calc(100vw - {highlightPosition.right}px - 350px);"
+	></div>
+{/if}
+
 <div
 	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
 	bind:this={hightlight}
@@ -380,30 +375,4 @@
 	</div>
 </dialog>
 
-<style>
-	:global(.active-highlight) {
-		position: relative;
-	}
 
-	:global(.active-highlight::after) {
-		content: '';
-		position: absolute;
-		top: 50%;
-		right: -5px;
-		width: calc(100vw - var(--highlight-right) - 350px); /* Adjust width to reach sidebar */
-		height: 2px;
-		background-color: rgba(107, 114, 128, 0.2); /* Light grey */
-		z-index: 5;
-		pointer-events: none;
-		animation: fadeIn 0.2s ease-in-out;
-	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
-	}
-</style>
