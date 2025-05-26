@@ -132,8 +132,8 @@
 	function scrollToMessage(messageId: string) {
 		const element = document.getElementById(messageId);
 		if (element) {
-			element.scrollIntoView({ 
-				behavior: 'smooth', 
+			element.scrollIntoView({
+				behavior: 'smooth',
 				block: 'center',
 				inline: 'nearest'
 			});
@@ -141,7 +141,12 @@
 			setTimeout(() => {
 				element.classList.add('!bg-transparent');
 				setTimeout(() => {
-					element.classList.remove('!bg-gray-300', '!bg-transparent', 'transition-colors', 'duration-300');
+					element.classList.remove(
+						'!bg-gray-300',
+						'!bg-transparent',
+						'transition-colors',
+						'duration-300'
+					);
 				}, 300);
 			}, 1500);
 		}
@@ -185,15 +190,15 @@
 					class="card card-compact bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow relative"
 				>
 					<div class="card-body">
-						<div
-							class="relative mb-3 p-3 bg-warning/10 rounded-lg break-words group"
-						>
+						<div class="relative mb-3 p-3 bg-warning/10 rounded-lg break-words group">
 							<button
 								onclick={() => scrollToMessage(feedbackGroup.messageId)}
 								class="absolute -top-6 left-1/2 transform -translate-x-1/2 btn btn-primary btn-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm hover:shadow-md hover:scale-102 flex items-center gap-1 z-10"
 							>
 								<Icon src={ArrowTopRightOnSquare} size="12" class="text-black" />
-								<span class="text-black text-xs font-normal">{$t('session.feedback.viewMessage')}</span>
+								<span class="text-black text-xs font-normal"
+									>{$t('session.feedback.viewMessage')}</span
+								>
 							</button>
 							<div class="text-sm font-medium text-base-content leading-relaxed">
 								{feedbackGroup.highlight}
