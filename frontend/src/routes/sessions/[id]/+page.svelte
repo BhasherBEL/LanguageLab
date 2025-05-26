@@ -234,7 +234,13 @@
 			class:translate-x-0={sidebarOpen}
 			class:translate-x-full={!sidebarOpen}
 		>
-			<FeedbackSidebar {session} {user} isOpen={sidebarOpen} onToggle={toggleSidebar} onScrollToMessage={handleScrollToMessage} />
+			<FeedbackSidebar
+				{session}
+				{user}
+				isOpen={sidebarOpen}
+				onToggle={toggleSidebar}
+				onScrollToMessage={handleScrollToMessage}
+			/>
 		</div>
 	</div>
 </div>

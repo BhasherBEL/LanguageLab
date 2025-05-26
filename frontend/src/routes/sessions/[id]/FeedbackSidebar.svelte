@@ -87,7 +87,7 @@
 		if (messages) {
 			allFeedbacks = extractAllFeedbacks(messages);
 			groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
-			
+
 			// Set up subscriptions
 			messages.forEach((message) => {
 				if (message instanceof Message) {
@@ -111,12 +111,12 @@
 	function scrollToMessage(messageId: string) {
 		// Set the highlighted message in the store
 		highlightedMessageId.set(messageId);
-		
+
 		// Call parent callback if provided
 		if (onScrollToMessage) {
 			onScrollToMessage(messageId);
 		}
-		
+
 		// Clear highlight after animation duration
 		setTimeout(() => {
 			highlightedMessageId.set(null);
