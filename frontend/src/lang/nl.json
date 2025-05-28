@@ -214,6 +214,7 @@
 			"show": "Toon opmerkingen",
 			"comment": "Opmerking",
 			"noComment": "Geen opmerking",
+			"markedText": "{user} markeerde deze tekst",
 			"viewMessage": "Bekijk bericht",
 			"reply": "Antwoorden"
 		},

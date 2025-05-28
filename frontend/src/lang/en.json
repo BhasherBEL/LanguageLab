@@ -389,6 +389,7 @@
 			"show": "Show comments",
 			"comment": "Comment",
 			"noComment": "No comment",
+			"markedText": "{user} marked this text",
 			"viewMessage": "View message",
 			"reply": "Reply"
 		},

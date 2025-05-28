@@ -19,7 +19,7 @@
 		session,
 		user,
 		isOpen = $bindable(true), // Make isOpen bindable with default true
-		onToggle = $bindable(), // Optional callback for toggle events
+		onToggle, // Optional callback for toggle events
 		onNewFeedback = $bindable(), // Optional callback for new feedback notifications
 		onScrollToMessage = $bindable() // Callback to handle message scrolling
 	}: {
@@ -33,29 +33,15 @@
 
 	let allFeedbacks: Feedback[] = [];
 
-	// Group feedbacks by message and highlight range
-	function groupFeedbacksByHighlight(feedbacks: Feedback[]) {
-		const grouped = new Map();
-
-		feedbacks.forEach((feedback) => {
-			// Used message ID + highlight range as the key
-			const key = `${feedback.message.id}-${feedback.start}-${feedback.end}`;
-
-			if (!grouped.has(key)) {
-				grouped.set(key, {
-					highlight: feedback.message.content.substring(feedback.start, feedback.end),
-					messageId: feedback.message.uuid,
-					comments: []
-				});
-			}
-
-			grouped.get(key).comments.push(feedback);
-		});
-
-		return Array.from(grouped.values());
+	function prepareFeedbackCards(feedbacks: Feedback[]) {
+		return feedbacks.map((feedback) => ({
+			highlight: feedback.message.content.substring(feedback.start, feedback.end),
+			messageId: feedback.message.uuid,
+			feedback: feedback
+		}));
 	}
 
-	let groupedFeedbacks = $state([] as any[]);
+	let feedbackCards = $state([] as any[]);
 
 	function toggleSidebar() {
 		if (onToggle) onToggle();
@@ -81,30 +67,46 @@
 		return feedbacks.sort((a, b) => b.date.getTime() - a.date.getTime());
 	}
 
+	// Track processed message IDs to avoid duplicate subscriptions
+	let processedMessageIds = new Set<string>();
+
 	//Handles all feedback management
 	$effect(() => {
-		const messages = get(session.messages) as (Message | null)[];
-		if (messages) {
-			allFeedbacks = extractAllFeedbacks(messages);
-			groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
+		// Subscribe to session messages changes
+		const unsubscribe = session.messages.subscribe((messages) => {
+			if (messages) {
+				// Filter to only Message instances for feedback extraction
+				const messageObjects = messages.filter((m): m is Message => m instanceof Message);
+				allFeedbacks = extractAllFeedbacks(messageObjects);
+				feedbackCards = prepareFeedbackCards(allFeedbacks);
 
-			// Set up subscriptions
-			messages.forEach((message) => {
-				if (message instanceof Message) {
-					message.feedbacks.subscribe(() => {
-						const currentMessages = get(session.messages) as (Message | null)[];
-						allFeedbacks = extractAllFeedbacks(currentMessages);
-						groupedFeedbacks = groupFeedbacksByHighlight(allFeedbacks);
-					});
-				}
-			});
-		}
+				// Set up subscriptions for new messages
+				messageObjects.forEach((message) => {
+					if (!processedMessageIds.has(message.uuid)) {
+						processedMessageIds.add(message.uuid);
+						message.feedbacks.subscribe(() => {
+							const currentMessages = get(session.messages);
+							const currentMessageObjects = currentMessages.filter(
+								(m): m is Message => m instanceof Message
+							);
+							allFeedbacks = extractAllFeedbacks(currentMessageObjects);
+							feedbackCards = prepareFeedbackCards(allFeedbacks);
+						});
+					}
+				});
+			}
+		});
+
+		// Cleanup function
+		return () => {
+			unsubscribe();
+		};
 	});
 
 	// Function to handle reply to a comment
-	function handleReply(feedbackGroup: any) {
+	function handleReply(feedbackCard: any) {
 		// This is a placeholder - the actual implementation would depend on backend API
-		console.log('Reply to comment:', feedbackGroup);
+		console.log('Reply to comment:', feedbackCard);
 	}
 
 	// Function to scroll to message
@@ -146,7 +148,7 @@
 		</div>
 	</div>
 
-	{#if groupedFeedbacks.length === 0}
+	{#if feedbackCards.length === 0}
 		<div class="flex flex-col items-center justify-center h-48 text-center">
 			<Icon src={ChatBubbleLeft} size="48" class="text-base-300 mb-3" />
 			<p class="text-base-content/60 text-sm px-6">
@@ -155,76 +157,71 @@
 		</div>
 	{:else}
 		<div class="p-4 space-y-4">
-			{#each groupedFeedbacks as feedbackGroup}
-				<div
-					class="card card-compact bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow relative"
-				>
+			{#each feedbackCards as feedbackCard}
+				<div class="card card-compact bg-base-100 shadow-sm border border-base-300 relative">
 					<div class="card-body">
-						<div class="relative mb-3 p-3 bg-warning/10 rounded-lg break-words group">
+						<div class="relative mb-2 break-words group">
 							<button
-								onclick={() => scrollToMessage(feedbackGroup.messageId)}
-								class="absolute -top-6 left-1/2 -translate-x-1/2 btn btn-primary btn-xs opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 flex items-center gap-1 z-10"
+								onclick={() => scrollToMessage(feedbackCard.messageId)}
+								class="absolute -top-1 -right-1 btn btn-primary btn-xs px-1 py-0.5 h-6 min-h-6 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 flex items-center gap-0.5 z-10"
 							>
-								<Icon src={ArrowTopRightOnSquare} size="12" class="text-black" />
+								<Icon src={ArrowTopRightOnSquare} size="10" class="text-black" />
 								<span class="text-black text-xs font-normal"
 									>{$t('session.feedback.viewMessage')}</span
 								>
 							</button>
-							<div class="text-sm font-medium text-base-content leading-relaxed">
-								{feedbackGroup.highlight}
+							<div class="text-sm text-base-content/70 leading-tight">
+								{feedbackCard.highlight}
 							</div>
 						</div>
 
-						<!-- Comment thread -->
-						<div class="space-y-3">
-							{#each feedbackGroup.comments as feedback}
-								<div class="flex gap-3 group">
-									<div class="avatar">
-										<div class="w-8 h-8 rounded-full border-2 border-base-300">
-											<img
-												src={`https://gravatar.com/avatar/${feedback.message.user.emailHash}?d=identicon`}
-												alt=""
-												class="w-full h-full object-cover rounded-full"
-											/>
-										</div>
-									</div>
-									<div class="flex-grow relative min-w-0">
-										{#if feedback.content}
-											<div
-												class="text-sm p-3 bg-base-200 rounded-lg break-words relative group/comment"
-											>
-												{feedback.content}
-												<button
-													class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
-													onclick={() => deleteFeedback(feedback)}
-													aria-label={$t('button.delete')}
-												>
-													<Icon src={XMark} class="w-3 h-3" />
-												</button>
-											</div>
-										{:else}
-											<div
-												class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment"
-											>
-												{$t('session.feedback.noComment')}
-												<button
-													class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
-													onclick={() => deleteFeedback(feedback)}
-													aria-label={$t('button.delete')}
-												>
-													<Icon src={XMark} class="w-3 h-3" />
-												</button>
-											</div>
-										{/if}
-									</div>
+						<div class="flex gap-3 group">
+							<div class="avatar">
+								<div class="w-8 h-8 rounded-full border-2 border-base-300">
+									<img
+										src={`https://gravatar.com/avatar/${feedbackCard.feedback.message.user.emailHash}?d=identicon`}
+										alt=""
+										class="w-full h-full object-cover rounded-full"
+									/>
 								</div>
-							{/each}
+							</div>
+							<div class="flex-grow relative min-w-0">
+								{#if feedbackCard.feedback.content}
+									<div
+										class="text-sm p-3 bg-base-200 rounded-lg break-words relative group/comment"
+									>
+										{feedbackCard.feedback.content}
+										<button
+											class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
+											onclick={() => deleteFeedback(feedbackCard.feedback)}
+											aria-label={$t('button.delete')}
+										>
+											<Icon src={XMark} class="w-3 h-3" />
+										</button>
+									</div>
+								{:else}
+									<div
+										class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment"
+									>
+										{$t('session.feedback.markedText', {
+											user: feedbackCard.feedback.message.user.nickname
+										})}
+										<button
+											class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
+											onclick={() => deleteFeedback(feedbackCard.feedback)}
+											aria-label={$t('button.delete')}
+										>
+											<Icon src={XMark} class="w-3 h-3" />
+										</button>
+									</div>
+								{/if}
+							</div>
 						</div>
 
 						<!-- Reply button -->
 						<button
 							class="absolute bottom-3 right-3 btn btn-primary btn-xs btn-circle shadow-sm hover:shadow-md transition-all hover:scale-105 z-10"
-							onclick={() => handleReply(feedbackGroup)}
+							onclick={() => handleReply(feedbackCard)}
 							title={$t('session.feedback.reply')}
 							aria-label={$t('session.feedback.reply')}
 						>

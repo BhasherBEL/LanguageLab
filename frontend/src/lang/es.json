@@ -228,6 +228,7 @@
 			"show": "Mostrar comentarios",
 			"comment": "Comentario",
 			"noComment": "Sin comentario",
+			"markedText": "{user} marcó este texto",
 			"viewMessage": "Ver mensaje",
 			"reply": "Responder"
 		},
