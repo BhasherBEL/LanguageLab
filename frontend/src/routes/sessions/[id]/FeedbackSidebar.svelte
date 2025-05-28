@@ -19,7 +19,7 @@
 		session,
 		user,
 		isOpen = $bindable(true), // Make isOpen bindable with default true
-		onToggle = $bindable(), // Optional callback for toggle events
+		onToggle, // Optional callback for toggle events
 		onNewFeedback = $bindable(), // Optional callback for new feedback notifications
 		onScrollToMessage = $bindable() // Callback to handle message scrolling
 	}: {
