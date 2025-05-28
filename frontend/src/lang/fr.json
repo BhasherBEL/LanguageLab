@@ -71,6 +71,7 @@
 			"show": "Afficher les commentaires",
 			"comment": "Commentaire",
 			"noComment": "Pas de commentaire",
+			"markedText": "{user} a marqué ce texte",
 			"viewMessage": "Voir le message",
 			"reply": "Répondre"
 		},
