@@ -35,32 +35,7 @@
 	let historyModal: HTMLDialogElement;
 	let messageVersions = $state(message.versions);
 
-	let activeFeedback: Feedback | null = $state(null);
-	let highlightPosition = $state({ top: 0, right: 0 });
 	let showButtonsTimeout: number | null = $state(null);
-
-	function showHighlightConnection(
-		part: { text: string; feedback: Feedback | null },
-		event: MouseEvent
-	) {
-		if (!part.feedback) return;
-
-		const highlightElement = event.currentTarget as HTMLElement;
-		if (highlightElement) {
-			activeFeedback = part.feedback;
-
-			// Store position for the connection line
-			const rect = highlightElement.getBoundingClientRect();
-			highlightPosition = {
-				top: rect.top + window.scrollY + rect.height / 2,
-				right: rect.right + window.scrollX
-			};
-		}
-	}
-
-	function hideHighlightConnection() {
-		activeFeedback = null;
-	}
 
 	function startEdit() {
 		isEdit = true;
@@ -319,8 +294,6 @@
 							class:decoration-red-500={!part.feedback.content}
 							role="button"
 							tabindex="0"
-							onmouseenter={(e) => showHighlightConnection(part, e)}
-							onmouseleave={hideHighlightConnection}
 						>
 							<div
 								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm h-6 items-center rounded left-1/2 -translate-x-1/2 -top-8 px-2 z-20 whitespace-nowrap"
@@ -372,12 +345,7 @@
 	</div>
 </div>
 
-{#if activeFeedback}
-	<div
-		class="fixed h-0.5 bg-gray-400/30 z-10 pointer-events-none animate-in fade-in duration-200"
-		style="top: {highlightPosition.top}px; left: {highlightPosition.right}px; width: calc(100vw - {highlightPosition.right}px - 350px);"
-	></div>
-{/if}
+
 
 <div
 	class="fixed invisible z-50 rounded-lg border border-gray-400 bg-white shadow-lg flex"
