@@ -19,12 +19,12 @@
 	let level = $state('all');
 	let currentTask: Task | null = $state(data.currentTask);
 	let taskInProgress: boolean = $state(data.currentTask !== null);
-	
+
 	// Function to check if there are any comments/feedbacks in the session
 	function hasComments(): boolean {
 		const messages = get(session.messages);
 		if (!messages) return false;
-		
+
 		return messages.some((message) => {
 			if (message instanceof Message) {
 				const feedbacks = get(message.feedbacks);
@@ -33,13 +33,13 @@
 			return false;
 		});
 	}
-	
+
 	// Initialize sidebar state based on whether there are existing comments
 	let sidebarOpen = $state(hasComments());
-	
+
 	// Track total feedback count reactively
 	let totalFeedbackCount = $state(0);
-	
+
 	// Track if user manually toggled the sidebar to prevent automatic behavior
 	let manuallyToggled = $state(false);
 
@@ -48,12 +48,12 @@
 	// Reactive effect to monitor feedback changes and manage sidebar state
 	$effect(() => {
 		let processedMessageIds = new Set<string>();
-		
+
 		const unsubscribe = session.messages.subscribe((messages) => {
 			if (messages) {
 				// Filter to only Message instances
 				const messageObjects = messages.filter((m): m is Message => m instanceof Message);
-				
+
 				// Calculate initial feedback count
 				let feedbackCount = 0;
 				messageObjects.forEach((message) => {
@@ -63,7 +63,7 @@
 					}
 				});
 				totalFeedbackCount = feedbackCount;
-				
+
 				// Set up subscriptions for new messages to track feedback changes
 				messageObjects.forEach((message) => {
 					if (!processedMessageIds.has(message.uuid)) {
@@ -90,7 +90,7 @@
 
 		return unsubscribe;
 	});
-	
+
 	// Reactive effect to manage sidebar state based on feedback count
 	$effect(() => {
 		// Only auto-manage sidebar if user hasn't manually toggled it
