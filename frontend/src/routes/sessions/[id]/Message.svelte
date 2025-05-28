@@ -345,8 +345,6 @@
 	</div>
 </div>
 
-
-
 <div
 	class="fixed invisible z-50 rounded-lg border border-gray-400 bg-white shadow-lg flex"
 	bind:this={hightlight}
