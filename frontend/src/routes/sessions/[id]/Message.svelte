@@ -37,6 +37,7 @@
 
 	let activeFeedback: Feedback | null = $state(null);
 	let highlightPosition = $state({ top: 0, right: 0 });
+	let showButtonsTimeout: number | null = $state(null);
 
 	function showHighlightConnection(
 		part: { text: string; feedback: Feedback | null },
@@ -132,22 +133,45 @@
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount < 1 || !hightlight) return;
 		const range = selection.getRangeAt(0);
-		const start = range.startOffset;
-		const end = range.endOffset;
-		if (range.commonAncestorContainer.parentElement === contentDiv && end - start > 0) {
+		
+		// Clear any existing timeout
+		if (showButtonsTimeout) {
+			clearTimeout(showButtonsTimeout);
+			showButtonsTimeout = null;
+		}
+		
+		// Check if the selection is within the contentDiv (including nested elements)
+		const isWithinContentDiv = contentDiv && (
+			contentDiv.contains(range.commonAncestorContainer) ||
+			range.commonAncestorContainer === contentDiv ||
+			(range.commonAncestorContainer.nodeType === Node.TEXT_NODE && 
+			 contentDiv.contains(range.commonAncestorContainer.parentElement))
+		);
+		
+		if (isWithinContentDiv && !selection.isCollapsed) {
 			const rects = range.getClientRects();
 			if (!rects.length) {
 				hightlight.style.visibility = 'hidden';
 				return;
 			}
-			const rect = rects[rects.length - 1];
+			const rect = rects[rects.length - 1]; // Use last rect for end of selection
 			if (!rect) {
 				hightlight.style.visibility = 'hidden';
 				return;
 			}
-			hightlight.style.top = (rect.top + rect.bottom - hightlight.clientHeight) / 2 + 'px';
-			hightlight.style.left = rect.right + 10 + 'px';
-			hightlight.style.visibility = 'visible';
+			// Position to the right of the selection, vertically centered
+			const rightX = rect.right + 8;
+			const centerY = rect.top + (rect.height / 2) - (hightlight.clientHeight / 2);
+			
+			hightlight.style.top = centerY + 'px';
+			hightlight.style.left = rightX + 'px';
+			
+			// Show buttons after a short delay (300ms)
+			showButtonsTimeout = setTimeout(() => {
+				if (hightlight) {
+					hightlight.style.visibility = 'visible';
+				}
+			}, 300);
 		} else {
 			hightlight.style.visibility = 'hidden';
 		}
@@ -175,6 +199,11 @@
 		if (res) {
 			selection.removeAllRanges();
 			hightlight.style.visibility = 'hidden';
+			// Clear any pending timeout
+			if (showButtonsTimeout) {
+				clearTimeout(showButtonsTimeout);
+				showButtonsTimeout = null;
+			}
 		}
 	}
 
@@ -227,7 +256,7 @@
 
 <div
 	class="chat group scroll-smooth rounded-xl transition-colors duration-300"
-	class:bg-gray-300={isHighlighted}
+	class:bg-gray-200={isHighlighted}
 	class:target:bg-gray-200={!isHighlighted}
 	class:chat-start={!isSender}
 	class:chat-end={isSender}
@@ -351,18 +380,23 @@
 {/if}
 
 <div
-	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
+	class="fixed invisible z-50 rounded-lg border border-gray-400 bg-white shadow-lg flex"
 	bind:this={hightlight}
 >
 	<button
 		onclick={() => onSelect(false)}
-		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
+		class="p-2 hover:bg-blue-100 rounded-l-lg transition-colors duration-200 flex items-center justify-center w-8 h-8"
+		title="Add underline feedback"
+		aria-label="Add underline feedback"
 	>
 		<SpellCheck />
-	</button><!---
-	--><button
+	</button>
+	<div class="w-px bg-gray-200"></div>
+	<button
 		onclick={() => onSelect(true)}
-		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
+		class="p-2 hover:bg-blue-100 rounded-r-lg transition-colors duration-200 flex items-center justify-center w-8 h-8"
+		title="Add comment feedback"
+		aria-label="Add comment feedback"
 	>
 		<ChatBubble />
 	</button>
