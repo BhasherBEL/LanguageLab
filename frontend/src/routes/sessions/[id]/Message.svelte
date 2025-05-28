@@ -133,21 +133,21 @@
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount < 1 || !hightlight) return;
 		const range = selection.getRangeAt(0);
-		
+
 		// Clear any existing timeout
 		if (showButtonsTimeout) {
 			clearTimeout(showButtonsTimeout);
 			showButtonsTimeout = null;
 		}
-		
+
 		// Check if the selection is within the contentDiv (including nested elements)
-		const isWithinContentDiv = contentDiv && (
-			contentDiv.contains(range.commonAncestorContainer) ||
-			range.commonAncestorContainer === contentDiv ||
-			(range.commonAncestorContainer.nodeType === Node.TEXT_NODE && 
-			 contentDiv.contains(range.commonAncestorContainer.parentElement))
-		);
-		
+		const isWithinContentDiv =
+			contentDiv &&
+			(contentDiv.contains(range.commonAncestorContainer) ||
+				range.commonAncestorContainer === contentDiv ||
+				(range.commonAncestorContainer.nodeType === Node.TEXT_NODE &&
+					contentDiv.contains(range.commonAncestorContainer.parentElement)));
+
 		if (isWithinContentDiv && !selection.isCollapsed) {
 			const rects = range.getClientRects();
 			if (!rects.length) {
@@ -161,11 +161,11 @@
 			}
 			// Position to the right of the selection, vertically centered
 			const rightX = rect.right + 8;
-			const centerY = rect.top + (rect.height / 2) - (hightlight.clientHeight / 2);
-			
+			const centerY = rect.top + rect.height / 2 - hightlight.clientHeight / 2;
+
 			hightlight.style.top = centerY + 'px';
 			hightlight.style.left = rightX + 'px';
-			
+
 			// Show buttons after a short delay (300ms)
 			showButtonsTimeout = setTimeout(() => {
 				if (hightlight) {

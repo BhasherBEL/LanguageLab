@@ -86,7 +86,9 @@
 						processedMessageIds.add(message.uuid);
 						message.feedbacks.subscribe(() => {
 							const currentMessages = get(session.messages);
-							const currentMessageObjects = currentMessages.filter((m): m is Message => m instanceof Message);
+							const currentMessageObjects = currentMessages.filter(
+								(m): m is Message => m instanceof Message
+							);
 							allFeedbacks = extractAllFeedbacks(currentMessageObjects);
 							feedbackCards = prepareFeedbackCards(allFeedbacks);
 						});
@@ -156,9 +158,7 @@
 	{:else}
 		<div class="p-4 space-y-4">
 			{#each feedbackCards as feedbackCard}
-				<div
-					class="card card-compact bg-base-100 shadow-sm border border-base-300 relative"
-				>
+				<div class="card card-compact bg-base-100 shadow-sm border border-base-300 relative">
 					<div class="card-body">
 						<div class="relative mb-2 break-words group">
 							<button
@@ -203,7 +203,9 @@
 									<div
 										class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment"
 									>
-										{$t('session.feedback.markedText', { user: feedbackCard.feedback.message.user.nickname })}
+										{$t('session.feedback.markedText', {
+											user: feedbackCard.feedback.message.user.nickname
+										})}
 										<button
 											class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
 											onclick={() => deleteFeedback(feedbackCard.feedback)}
