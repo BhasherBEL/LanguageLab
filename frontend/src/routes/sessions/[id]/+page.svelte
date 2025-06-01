@@ -39,9 +39,10 @@
 
 	// Track total feedback count reactively
 	let totalFeedbackCount = $state(0);
+	let lastKnownFeedbackCount = $state(0);
 
-	// Track if user manually toggled the sidebar to prevent automatic behavior
-	let manuallyToggled = $state(false);
+	// Track if user manually closed the sidebar to prevent automatic opening
+	let manuallyClosedSidebar = $state(false);
 
 	let availableLevels = new Set(tasks.map((task: Task) => task.level));
 
@@ -62,6 +63,7 @@
 						feedbackCount += feedbacks.length;
 					}
 				});
+				
 				totalFeedbackCount = feedbackCount;
 
 				// Set up subscriptions for new messages to track feedback changes
@@ -81,6 +83,14 @@
 									newFeedbackCount += msgFeedbacks.length;
 								}
 							});
+							
+							// Check if feedback count increased (new feedback added)
+							if (newFeedbackCount > totalFeedbackCount) {
+								// New feedback was added - open sidebar and reset manual close flag
+								sidebarOpen = true;
+								manuallyClosedSidebar = false;
+							}
+							
 							totalFeedbackCount = newFeedbackCount;
 						});
 					}
@@ -93,23 +103,32 @@
 
 	// Reactive effect to manage sidebar state based on feedback count
 	$effect(() => {
-		// Only auto-manage sidebar if user hasn't manually toggled it
-		if (!manuallyToggled) {
-			// Auto-close sidebar if no comments exist
-			if (totalFeedbackCount === 0 && sidebarOpen) {
-				sidebarOpen = false;
-			}
-			// Auto-open sidebar when first comment is added
-			else if (totalFeedbackCount > 0 && !sidebarOpen) {
-				sidebarOpen = true;
-			}
+		// Auto-close sidebar if no comments exist and it's currently open
+		if (totalFeedbackCount === 0 && sidebarOpen) {
+			sidebarOpen = false;
+			manuallyClosedSidebar = false; // Reset manual close flag when no comments exist
 		}
+		// Auto-open sidebar if there are comments and sidebar is closed, but only if user hasn't manually closed it
+		else if (totalFeedbackCount > 0 && !sidebarOpen && !manuallyClosedSidebar) {
+			sidebarOpen = true;
+		}
+		
+		// Update the last known count for future comparisons
+		lastKnownFeedbackCount = totalFeedbackCount;
 	});
 
 	// Function to toggle the sidebar
 	function toggleSidebar() {
+		const wasOpen = sidebarOpen;
 		sidebarOpen = !sidebarOpen;
-		manuallyToggled = true; // Mark as manually toggled to prevent automatic behavior
+		
+		// Only mark as manually closed if user is closing the sidebar when there are comments
+		if (wasOpen && !sidebarOpen && totalFeedbackCount > 0) {
+			manuallyClosedSidebar = true;
+		} else if (!wasOpen && sidebarOpen) {
+			// User manually opened the sidebar
+			manuallyClosedSidebar = false;
+		}
 	}
 
 	// Function to handle message scrolling from feedback sidebar
