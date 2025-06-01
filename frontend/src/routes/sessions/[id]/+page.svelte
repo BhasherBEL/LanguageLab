@@ -3,9 +3,13 @@
 	import type { PageData } from './$types.js';
 	import WeeklySurvey from './WeeklySurvey.svelte';
 	import Chatbox from './Chatbox.svelte';
+	import FeedbackSidebar from './FeedbackSidebar.svelte';
 	import type Task from '$lib/types/tasks';
 	import { toastAlert, toastSuccess } from '$lib/utils/toasts';
 	import { sendTaskStatusAPI } from '$lib/api/tasks';
+	import { Icon, ChatBubbleLeft } from 'svelte-hero-icons';
+	import Message from '$lib/types/message';
+	import { get } from 'svelte/store';
 
 	let { data }: { data: PageData } = $props();
 	let user = data.user!;
@@ -16,7 +20,110 @@
 	let currentTask: Task | null = $state(data.currentTask);
 	let taskInProgress: boolean = $state(data.currentTask !== null);
 
+	// Function to check if there are any comments/feedbacks in the session
+	function hasComments(): boolean {
+		const messages = get(session.messages);
+		if (!messages) return false;
+
+		return messages.some((message) => {
+			if (message instanceof Message) {
+				const feedbacks = get(message.feedbacks);
+				return feedbacks && feedbacks.length > 0;
+			}
+			return false;
+		});
+	}
+
+	// Initialize sidebar state based on whether there are existing comments
+	let sidebarOpen = $state(hasComments());
+
+	// Track total feedback count reactively
+	let totalFeedbackCount = $state(0);
+
+	// Track if user manually toggled the sidebar to prevent automatic behavior
+	let manuallyToggled = $state(false);
+
 	let availableLevels = new Set(tasks.map((task: Task) => task.level));
+
+	// Reactive effect to monitor feedback changes and manage sidebar state
+	$effect(() => {
+		let processedMessageIds = new Set<string>();
+
+		const unsubscribe = session.messages.subscribe((messages) => {
+			if (messages) {
+				// Filter to only Message instances
+				const messageObjects = messages.filter((m): m is Message => m instanceof Message);
+
+				// Calculate initial feedback count
+				let feedbackCount = 0;
+				messageObjects.forEach((message) => {
+					const feedbacks = get(message.feedbacks);
+					if (feedbacks) {
+						feedbackCount += feedbacks.length;
+					}
+				});
+				totalFeedbackCount = feedbackCount;
+
+				// Set up subscriptions for new messages to track feedback changes
+				messageObjects.forEach((message) => {
+					if (!processedMessageIds.has(message.uuid)) {
+						processedMessageIds.add(message.uuid);
+						message.feedbacks.subscribe((feedbacks) => {
+							// Recalculate total feedback count when any message's feedbacks change
+							let newFeedbackCount = 0;
+							const currentMessages = get(session.messages);
+							const currentMessageObjects = currentMessages.filter(
+								(m): m is Message => m instanceof Message
+							);
+							currentMessageObjects.forEach((msg) => {
+								const msgFeedbacks = get(msg.feedbacks);
+								if (msgFeedbacks) {
+									newFeedbackCount += msgFeedbacks.length;
+								}
+							});
+							totalFeedbackCount = newFeedbackCount;
+						});
+					}
+				});
+			}
+		});
+
+		return unsubscribe;
+	});
+
+	// Reactive effect to manage sidebar state based on feedback count
+	$effect(() => {
+		// Only auto-manage sidebar if user hasn't manually toggled it
+		if (!manuallyToggled) {
+			// Auto-close sidebar if no comments exist
+			if (totalFeedbackCount === 0 && sidebarOpen) {
+				sidebarOpen = false;
+			}
+			// Auto-open sidebar when first comment is added
+			else if (totalFeedbackCount > 0 && !sidebarOpen) {
+				sidebarOpen = true;
+			}
+		}
+	});
+
+	// Function to toggle the sidebar
+	function toggleSidebar() {
+		sidebarOpen = !sidebarOpen;
+		manuallyToggled = true; // Mark as manually toggled to prevent automatic behavior
+	}
+
+	// Function to handle message scrolling from feedback sidebar
+	function handleScrollToMessage(messageId: string) {
+		// Find the message element and scroll to it smoothly
+		const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+		if (messageElement) {
+			messageElement.scrollIntoView({
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'nearest'
+			});
+		}
+	}
 
 	async function startTask() {
 		const student = session.student;
@@ -78,7 +185,7 @@
 	}
 </script>
 
-<div class="h-full flex flex-col lg:flex-row pt-2 lg:pt-0 bg-gray-50 relative">
+<div class="h-full flex flex-row bg-gray-50 relative">
 	<input type="checkbox" id="toggleParticipants" class="hidden peer" />
 
 	<label
@@ -91,7 +198,7 @@
 
 	<div
 		class="group w-full max-w-md bg-white border rounded-lg shadow-md p-6 mx-4 my-2 h-fit text-base
-		lg:text-lg transition-all duration-300 ease-in-out hidden lg:block peer-checked:block"
+		lg:text-lg transition-all duration-300 ease-in-out hidden lg:block peer-checked:block flex-shrink-0"
 	>
 		<h2 class="text-xl truncate font-semibold text-gray-700 text-center mb-4">
 			{$t('utils.words.participants')}
@@ -187,8 +294,40 @@
 		{/if}
 	</div>
 
-	<div class="flex flex-row flex-grow col-span-5">
-		<Chatbox {session} {jwt} {user} />
+	<div class="flex flex-grow relative overflow-hidden">
+		<!-- Chat area -->
+		<div
+			class="flex-grow transition-all duration-300 ease-in-out relative min-w-0"
+			style={`margin-right: ${sidebarOpen ? '350px' : '0px'}`}
+		>
+			{#if !sidebarOpen}
+				<button
+					class="absolute top-4 right-4 z-20 btn btn-primary btn-sm shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
+					onclick={toggleSidebar}
+					aria-label={$t('session.feedback.show')}
+					title={$t('session.feedback.show')}
+				>
+					<Icon src={ChatBubbleLeft} size="16" />
+					<span class="font-medium hidden sm:inline">{$t('session.feedback.show')}</span>
+				</button>
+			{/if}
+			<Chatbox {session} {jwt} {user} />
+		</div>
+
+		<!-- Feedback sidebar -->
+		<div
+			class="absolute top-0 right-0 h-full w-[350px] transition-transform duration-300 ease-in-out overflow-hidden border-l border-base-300 bg-base-100"
+			class:translate-x-0={sidebarOpen}
+			class:translate-x-full={!sidebarOpen}
+		>
+			<FeedbackSidebar
+				{session}
+				{user}
+				isOpen={sidebarOpen}
+				onToggle={toggleSidebar}
+				onScrollToMessage={handleScrollToMessage}
+			/>
+		</div>
 	</div>
 </div>
 

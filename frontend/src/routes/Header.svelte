@@ -50,7 +50,7 @@
 		</h1>
 	</div>
 	<div class="navbar-end hidden sm:flex">
-		<ul class="menu menu-horizontal p-0 flex items-center">
+		<ul class="menu menu-horizontal p-0 flex items-center z-10">
 			{#if user}
 				<li>
 					<details>
@@ -63,6 +63,19 @@
 							{user.nickname}
 						</summary>
 						<ul class="menu menu-sm dropdown-content absolute right-0">
+							{#if user?.type < 2}
+								<li>
+									<a
+										class="btn btn-sm my-auto"
+										data-sveltekit-reload
+										href="/tutor/profile?redirect={encodeURIComponent(
+											$page.url.pathname + $page.url.search
+										)}"
+									>
+										{$t('header.profile')}
+									</a>
+								</li>
+							{/if}
 							<li>
 								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
 									{$t('header.signout')}

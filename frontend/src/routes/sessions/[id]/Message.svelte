@@ -12,6 +12,7 @@
 	import Message from '$lib/types/message';
 	import type User from '$lib/types/user';
 	import { get } from 'svelte/store';
+	import { highlightedMessageId } from '$lib/stores/messageHighlight';
 
 	let {
 		user,
@@ -33,6 +34,8 @@
 	let contentDiv: HTMLDivElement | null = $state(null);
 	let historyModal: HTMLDialogElement;
 	let messageVersions = $state(message.versions);
+
+	let showButtonsTimeout: number | null = $state(null);
 
 	function startEdit() {
 		isEdit = true;
@@ -105,22 +108,45 @@
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount < 1 || !hightlight) return;
 		const range = selection.getRangeAt(0);
-		const start = range.startOffset;
-		const end = range.endOffset;
-		if (range.commonAncestorContainer.parentElement === contentDiv && end - start > 0) {
+
+		// Clear any existing timeout
+		if (showButtonsTimeout) {
+			clearTimeout(showButtonsTimeout);
+			showButtonsTimeout = null;
+		}
+
+		// Check if the selection is within the contentDiv (including nested elements)
+		const isWithinContentDiv =
+			contentDiv &&
+			(contentDiv.contains(range.commonAncestorContainer) ||
+				range.commonAncestorContainer === contentDiv ||
+				(range.commonAncestorContainer.nodeType === Node.TEXT_NODE &&
+					contentDiv.contains(range.commonAncestorContainer.parentElement)));
+
+		if (isWithinContentDiv && !selection.isCollapsed) {
 			const rects = range.getClientRects();
 			if (!rects.length) {
 				hightlight.style.visibility = 'hidden';
 				return;
 			}
-			const rect = rects[rects.length - 1];
+			const rect = rects[rects.length - 1]; // Use last rect for end of selection
 			if (!rect) {
 				hightlight.style.visibility = 'hidden';
 				return;
 			}
-			hightlight.style.top = (rect.top + rect.bottom - hightlight.clientHeight) / 2 + 'px';
-			hightlight.style.left = rect.right + 10 + 'px';
-			hightlight.style.visibility = 'visible';
+			// Position to the right of the selection, vertically centered
+			const rightX = rect.right + 8;
+			const centerY = rect.top + rect.height / 2 - hightlight.clientHeight / 2;
+
+			hightlight.style.top = centerY + 'px';
+			hightlight.style.left = rightX + 'px';
+
+			// Show buttons after a short delay (300ms)
+			showButtonsTimeout = setTimeout(() => {
+				if (hightlight) {
+					hightlight.style.visibility = 'visible';
+				}
+			}, 300);
 		} else {
 			hightlight.style.visibility = 'hidden';
 		}
@@ -148,6 +174,11 @@
 		if (res) {
 			selection.removeAllRanges();
 			hightlight.style.visibility = 'hidden';
+			// Clear any pending timeout
+			if (showButtonsTimeout) {
+				clearTimeout(showButtonsTimeout);
+				showButtonsTimeout = null;
+			}
 		}
 	}
 
@@ -179,6 +210,17 @@
 
 	const isSender = message.user.id == user.id;
 
+	// Reactive variable for highlighting
+	let isHighlighted = $state(false);
+
+	// Subscribe to highlighted message changes
+	$effect(() => {
+		const unsubscribe = highlightedMessageId.subscribe((highlightedId) => {
+			isHighlighted = highlightedId === message.uuid;
+		});
+		return unsubscribe;
+	});
+
 	async function deleteFeedback(feedback: Feedback | null) {
 		if (!feedback) return;
 		if (!confirm($t('chatbox.deleteFeedback'))) return;
@@ -188,10 +230,13 @@
 </script>
 
 <div
-	class="chat group scroll-smooth target:bg-gray-200 rounded-xl"
-	id={message.uuid}
+	class="chat group scroll-smooth rounded-xl transition-colors duration-300"
+	class:bg-gray-200={isHighlighted}
+	class:target:bg-gray-200={!isHighlighted}
 	class:chat-start={!isSender}
 	class:chat-end={isSender}
+	id={message.uuid}
+	data-message-id={message.uuid}
 >
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
 		<img
@@ -243,31 +288,29 @@
 					{#if isEdit || !part.feedback}
 						{@html linkifyHtml(sanitize(part.text), { className: 'underline', target: '_blank' })}
 					{:else}
-						<!-- prettier-ignore -->
-						<span class=""
-							><!--
-						--><span
-								class="underline group/feedback relative decoration-wavy hover:cursor-help"
-								class:decoration-blue-500={part.feedback.content}
-								class:decoration-red-500={!part.feedback.content}
-								><div
-									class="absolute group-hover/feedback:flex hidden bg-secondary h-6 items-center rounded left-1/2 transform -translate-x-1/2 -top-6 px-2 z-10"
-								><!--
-									-->{part.feedback.content}<button
+						<span
+							class="underline relative decoration-wavy hover:cursor-help group/feedback"
+							class:decoration-blue-500={part.feedback.content}
+							class:decoration-red-500={!part.feedback.content}
+							role="button"
+							tabindex="0"
+						>
+							<div
+								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm h-6 items-center rounded left-1/2 -translate-x-1/2 -top-8 px-2 z-20 whitespace-nowrap"
+							>
+								{part.feedback.content}
+								{#if part.feedback.content}
+									<button
 										aria-label="close"
-										class:ml-1={part.feedback.content}
-										class="hover:border-inherit border border-transparent rounded"
+										class="ml-1 hover:bg-gray-700 border border-transparent rounded p-0.5"
 										onclick={() => deleteFeedback(part.feedback)}
 									>
 										<CloseIcon />
 									</button>
-								</div
-								><!--
-						-->{part.text}<!--
-					--></span
-							><!--
-					--></span
-						>
+								{/if}
+							</div>
+							{part.text}
+						</span>
 					{/if}
 				{/each}
 			</div>
@@ -301,19 +344,25 @@
 		{/if}
 	</div>
 </div>
+
 <div
-	class="absolute invisible rounded-xl border border-gray-400 bg-white divide-x"
+	class="fixed invisible z-50 rounded-lg border border-gray-400 bg-white shadow-lg flex"
 	bind:this={hightlight}
 >
 	<button
 		onclick={() => onSelect(false)}
-		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pl-4 rounded-l-xl"
+		class="p-2 hover:bg-blue-100 rounded-l-lg transition-colors duration-200 flex items-center justify-center w-8 h-8"
+		title="Add underline feedback"
+		aria-label="Add underline feedback"
 	>
 		<SpellCheck />
-	</button><!---
-	--><button
+	</button>
+	<div class="w-px bg-gray-200"></div>
+	<button
 		onclick={() => onSelect(true)}
-		class="bg-opacity-0 bg-blue-200 hover:bg-opacity-100 p-2 pr-4 rounded-r-xl"
+		class="p-2 hover:bg-blue-100 rounded-r-lg transition-colors duration-200 flex items-center justify-center w-8 h-8"
+		title="Add comment feedback"
+		aria-label="Add comment feedback"
 	>
 		<ChatBubble />
 	</button>

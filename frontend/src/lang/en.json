@@ -237,7 +237,7 @@
 		"birthyear": "Year of birth",
 		"birthyear.note": "In what year were you born?",
 		"confirmPassword": "Confirm password",
-		"confirmTutor": "Do you confirm selecting “{NAME}” as your guardian?",
+		"confirmTutor": "Do you confirm selecting \"{NAME}\" as your guardian?",
 		"availabilities": "Availabilities",
 		"noAvailabilities": "No availabilities provided",
 		"notAvailable": "Not available",
@@ -376,11 +376,23 @@
 			"addUser": "Error adding user to session",
 			"create": "Error creating session",
 			"delete": "Error deleting session",
-			"presence": "Error sending attendance",
+			"presence": "Error sending your current presence",
 			"removeUser": "Error removing a user from session",
 			"typing": "Error sending input indicator"
 		},
 		"feedbackInline": "Feedback was added to",
+		"feedback": {
+			"title": "Comments",
+			"empty": "No comments for this session",
+			"toggle": "Show comments",
+			"hide": "Hide comments",
+			"show": "Show comments",
+			"comment": "Comment",
+			"noComment": "No comment",
+			"markedText": "{user} marked this text",
+			"viewMessage": "View message",
+			"reply": "Reply"
+		},
 		"modal": {
 			"satisfy": {
 				"q1": "How useful is this app?",
