@@ -117,7 +117,6 @@
 				class="input input-bordered w-full"
 				value={user?.birthdateAsDay}
 			/>
-			required />
 		</div>
 		<div>
 			<label class="block text-sm font-medium mb-1" for="bio">
@@ -131,7 +130,6 @@
 				class="textarea textarea-bordered w-full"
 				bind:value={bio}
 				maxlength={MAX_BIO_LENGTH}
-				required
 			></textarea>
 		</div>
 		<div>
