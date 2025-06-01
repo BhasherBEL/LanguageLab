@@ -63,7 +63,7 @@
 						feedbackCount += feedbacks.length;
 					}
 				});
-				
+
 				totalFeedbackCount = feedbackCount;
 
 				// Set up subscriptions for new messages to track feedback changes
@@ -83,14 +83,14 @@
 									newFeedbackCount += msgFeedbacks.length;
 								}
 							});
-							
+
 							// Check if feedback count increased (new feedback added)
 							if (newFeedbackCount > totalFeedbackCount) {
 								// New feedback was added - open sidebar and reset manual close flag
 								sidebarOpen = true;
 								manuallyClosedSidebar = false;
 							}
-							
+
 							totalFeedbackCount = newFeedbackCount;
 						});
 					}
@@ -112,7 +112,7 @@
 		else if (totalFeedbackCount > 0 && !sidebarOpen && !manuallyClosedSidebar) {
 			sidebarOpen = true;
 		}
-		
+
 		// Update the last known count for future comparisons
 		lastKnownFeedbackCount = totalFeedbackCount;
 	});
@@ -121,7 +121,7 @@
 	function toggleSidebar() {
 		const wasOpen = sidebarOpen;
 		sidebarOpen = !sidebarOpen;
-		
+
 		// Only mark as manually closed if user is closing the sidebar when there are comments
 		if (wasOpen && !sidebarOpen && totalFeedbackCount > 0) {
 			manuallyClosedSidebar = true;
