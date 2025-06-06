@@ -79,28 +79,69 @@
 	function getSelectionCharacterOffsetWithin() {
 		if (!contentDiv) return { start: 0, end: 0 };
 
-		var start = 0;
-		var end = 0;
-		var doc = contentDiv.ownerDocument;
-		var win = doc.defaultView;
-		if (!doc || !win) return { start: 0, end: 0 };
-		var sel;
-		if (typeof win.getSelection === 'undefined') {
+		const selection = window.getSelection();
+		if (!selection || selection.rangeCount === 0) return { start: 0, end: 0 };
+
+		const range = selection.getRangeAt(0);
+		
+		// Get the original message content for position calculation
+		const originalContent = message.content;
+		
+		try {
+			// Get all text content from the contentDiv to reconstruct the original text
+			const allTextContent = contentDiv.textContent || '';
+			
+			// If the text content doesn't match the original, something is wrong
+			if (allTextContent !== originalContent) {
+				console.warn('Text content mismatch:', { allTextContent, originalContent });
+				// Fallback: try to use the range's toString() method and find it in original content
+				const selectedText = range.toString();
+				const startIndex = originalContent.indexOf(selectedText);
+				if (startIndex !== -1) {
+					return { start: startIndex, end: startIndex + selectedText.length };
+				}
+				return { start: 0, end: 0 };
+			}
+
+			// Create a temporary range to calculate positions
+			const tempRange = document.createRange();
+			tempRange.selectNodeContents(contentDiv);
+			
+			// Calculate start position
+			const beforeRange = tempRange.cloneRange();
+			beforeRange.setEnd(range.startContainer, range.startOffset);
+			const start = beforeRange.toString().length;
+			
+			// Calculate end position
+			beforeRange.setEnd(range.endContainer, range.endOffset);
+			const end = beforeRange.toString().length;
+
+			// Ensure positions are within bounds
+			const finalStart = Math.max(0, Math.min(start, originalContent.length));
+			const finalEnd = Math.max(finalStart, Math.min(end, originalContent.length));
+
+			// Debug logging
+			console.log('Selection calculation:', {
+				originalContent: originalContent,
+				selectedText: originalContent.slice(finalStart, finalEnd),
+				rangeText: range.toString(),
+				start: finalStart,
+				end: finalEnd,
+				textContentMatch: allTextContent === originalContent
+			});
+
+			return { start: finalStart, end: finalEnd };
+
+		} catch (error) {
+			console.error('Error calculating selection offset:', error);
+			// Fallback: try to find the selected text in the original content
+			const selectedText = range.toString();
+			const startIndex = originalContent.indexOf(selectedText);
+			if (startIndex !== -1) {
+				return { start: startIndex, end: startIndex + selectedText.length };
+			}
 			return { start: 0, end: 0 };
 		}
-		sel = win.getSelection();
-		if (!sel) return { start: 0, end: 0 };
-		if (sel.rangeCount <= 0) return { start: 0, end: 0 };
-
-		var range = sel.getRangeAt(0);
-		var preCaretRange = range.cloneRange();
-		preCaretRange.selectNodeContents(contentDiv);
-		preCaretRange.setEnd(range.startContainer, range.startOffset);
-		start = preCaretRange.toString().length;
-		preCaretRange.setEnd(range.endContainer, range.endOffset);
-		end = preCaretRange.toString().length;
-
-		return { start: start, end: end };
 	}
 
 	function onTextSelect() {
@@ -158,7 +199,12 @@
 			if (hightlight) hightlight.style.visibility = 'hidden';
 			return;
 		}
+		
+		console.log('onSelect called with hasComment:', hasComment);
+		console.log('Current selection:', selection.toString());
+		
 		const range = getSelectionCharacterOffsetWithin();
+		console.log('Calculated range:', range);
 
 		const start = range.start;
 		const end = range.end;
@@ -169,7 +215,9 @@
 			if (!comment) return;
 		}
 
+		console.log('Adding feedback:', { start, end, comment, messageId: message.id });
 		const res = await message.addFeedback(start, end, comment);
+		console.log('Feedback result:', res);
 
 		if (res) {
 			selection.removeAllRanges();
@@ -183,25 +231,65 @@
 	}
 
 	function getParts(content: string, feedbacks: Feedback[]) {
-		let parts: { text: string; feedback: Feedback | null }[] = [];
-		let current = 0;
-		feedbacks.sort((a: Feedback, b: Feedback) => a.start - b.start);
-		for (const feedback of feedbacks) {
-			if (feedback.start > current) {
-				parts.push({ text: content.slice(current, feedback.start), feedback: null });
-			}
-			parts.push({ text: content.slice(feedback.start, feedback.end), feedback });
-			current = feedback.end;
-		}
-		if (current < content.length) {
-			parts.push({ text: content.slice(current), feedback: null });
+		if (feedbacks.length === 0) {
+			return [{ text: content, feedback: null, allFeedbacks: [] }];
 		}
 
-		return parts;
+		// Create an array to track all feedback boundaries
+		const boundaries: { position: number; type: 'start' | 'end'; feedback: Feedback }[] = [];
+		
+		feedbacks.forEach(feedback => {
+			boundaries.push({ position: feedback.start, type: 'start', feedback });
+			boundaries.push({ position: feedback.end, type: 'end', feedback });
+		});
+
+		// Sort boundaries by position, with 'end' events before 'start' events at the same position
+		boundaries.sort((a, b) => {
+			if (a.position !== b.position) {
+				return a.position - b.position;
+			}
+			// If positions are equal, process 'end' before 'start' to handle adjacent ranges
+			return a.type === 'end' ? -1 : 1;
+		});
+
+		const parts: { text: string; feedback: Feedback | null; allFeedbacks: Feedback[] }[] = [];
+		let currentPos = 0;
+		const activeFeedbacks: Feedback[] = [];
+
+		boundaries.forEach(boundary => {
+			// Add text part before this boundary if there's content
+			if (boundary.position > currentPos) {
+				const text = content.slice(currentPos, boundary.position);
+				// Use the first active feedback (prioritize by order they were added)
+				const activeFeedback = activeFeedbacks.length > 0 ? activeFeedbacks[0] : null;
+				parts.push({ text, feedback: activeFeedback, allFeedbacks: [...activeFeedbacks] });
+			}
+
+			// Update active feedbacks
+			if (boundary.type === 'start') {
+				activeFeedbacks.push(boundary.feedback);
+			} else {
+				const index = activeFeedbacks.findIndex(f => f.id === boundary.feedback.id);
+				if (index !== -1) {
+					activeFeedbacks.splice(index, 1);
+				}
+			}
+
+			currentPos = boundary.position;
+		});
+
+		// Add remaining text if any
+		if (currentPos < content.length) {
+			parts.push({ text: content.slice(currentPos), feedback: null, allFeedbacks: [] });
+		}
+
+		const result = parts.filter(part => part.text.length > 0);
+		
+		return result;
 	}
 
 	let fbs = $state([] as Feedback[]);
-	let parts = $state([] as { text: string; feedback: Feedback | null }[]);
+	let parts = $state([] as { text: string; feedback: Feedback | null; allFeedbacks: Feedback[] }[]);
 	fbs = get(message.feedbacks);
 	message.feedbacks.subscribe((value) => {
 		fbs = value;
@@ -290,23 +378,49 @@
 					{:else}
 						<span
 							class="underline relative decoration-wavy hover:cursor-help group/feedback"
-							class:decoration-blue-500={part.feedback.content}
-							class:decoration-red-500={!part.feedback.content}
+							class:decoration-blue-500={part.allFeedbacks.some(f => f.content)}
+							class:decoration-red-500={part.allFeedbacks.every(f => !f.content)}
 							role="button"
 							tabindex="0"
 						>
 							<div
-								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm h-6 items-center rounded left-1/2 -translate-x-1/2 -top-8 px-2 z-20 whitespace-nowrap"
+								class="absolute group-hover/feedback:flex hidden bg-gray-800 text-white text-sm rounded left-1/2 -translate-x-1/2 -top-2 px-2 py-1 z-20 whitespace-nowrap max-w-xs"
+								style="transform: translateX(-50%) translateY(-100%);"
 							>
-								{part.feedback.content}
-								{#if part.feedback.content}
-									<button
-										aria-label="close"
-										class="ml-1 hover:bg-gray-700 border border-transparent rounded p-0.5"
-										onclick={() => deleteFeedback(part.feedback)}
-									>
-										<CloseIcon />
-									</button>
+								{#if part.allFeedbacks.length === 1}
+									<!-- Single feedback -->
+									<div class="flex items-center">
+										{part.allFeedbacks[0].content || 'Marked text'}
+										{#if part.allFeedbacks[0].content}
+											<button
+												aria-label="close"
+												class="ml-1 hover:bg-gray-700 border border-transparent rounded p-0.5"
+												onclick={() => deleteFeedback(part.allFeedbacks[0])}
+											>
+												<CloseIcon />
+											</button>
+										{/if}
+									</div>
+								{:else}
+									<!-- Multiple overlapping feedbacks -->
+									<div class="flex flex-col gap-1 max-w-xs">
+										{#each part.allFeedbacks as feedback, index}
+											<div class="flex items-center text-xs border-b border-gray-600 pb-1 last:border-b-0">
+												<span class="flex-1 truncate">
+													{feedback.content || 'Marked text'}
+												</span>
+												{#if feedback.content}
+													<button
+														aria-label="close"
+														class="ml-1 hover:bg-gray-700 border border-transparent rounded p-0.5"
+														onclick={() => deleteFeedback(feedback)}
+													>
+														<CloseIcon />
+													</button>
+												{/if}
+											</div>
+										{/each}
+									</div>
 								{/if}
 							</div>
 							{part.text}
