@@ -1,4 +1,4 @@
-import { shuffle } from '$lib/utils/arrays';
+import { seededRandom, shuffleWithSeed } from '../utils/arrays.js';
 
 export abstract class TestTaskQuestion {
 	private _id: number;
@@ -68,8 +68,8 @@ export class TestTaskQuestionQcm extends TestTaskQuestion {
 
 	get optionsRandomized(): { type: string; value: string; index: number }[] {
 		let options = this.options.map((option, index) => ({ ...option, index }));
-		shuffle(options);
-		return options;
+
+		return shuffleWithSeed(options, this.id);
 	}
 
 	get correct(): number {

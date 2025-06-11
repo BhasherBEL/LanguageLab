@@ -136,7 +136,7 @@ def get_score(db: Session, rid: str):
 
         if entry.entry_task.entry_task_qcm:
             selected_id = entry.entry_task.entry_task_qcm.selected_id
-            correct_id = entry.entry_task.test_question.question_qcm.correct
+            correct_id = entry.entry_task.test_question.question_qcm.correct - 1
             corrects += selected_id == correct_id
 
         if entry.entry_task.entry_task_gapfill:
