@@ -136,7 +136,7 @@ export default class User {
 
 	get birthdateAsDay(): string | null {
 		if (this._birthdate) {
-			return this._birthdate.slice(0, 10); // Format as YYYY-MM-DD
+			return this._birthdate.slice(0, 4); // Format as YYYY-MM-DD
 		}
 		return null;
 	}

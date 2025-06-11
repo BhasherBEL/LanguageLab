@@ -1,4 +1,4 @@
-import { fail, redirect, type Actions } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 import { patchUserAPI } from '$lib/api/users';
 import { safeRedirectAuto } from '$lib/utils/security';
 
@@ -11,9 +11,15 @@ export const actions: Actions = {
 		const nickname = formData.get('nickname') as string;
 		const email = formData.get('email') as string;
 		const gender = formData.get('gender') as string;
-		const birthdate = formData.get('birthdate') as string;
+		const birthyear = formData.get('birthdate') as string;
 		const bio = formData.get('bio') as string;
 		const availabilitiesRaw = formData.getAll('availability[]') as string[];
+
+		if (!birthyear || birthyear.length !== 4 || isNaN(Number(birthyear))) {
+			return fail(400, { message: 'Invalid birth year.' });
+		}
+
+		const birthdate = `${birthyear}-01-01`;
 
 		let availabilities: { day: string; start: string; end: string }[] = [];
 		for (const availability of availabilitiesRaw) {

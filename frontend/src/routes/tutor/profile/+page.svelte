@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import autosize from 'svelte-autosize';
 
-	let { data, form }: { data: PageData; form: FormData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let user = $state(data.user);
 
 	let isLoading = false;
@@ -113,7 +113,7 @@
 			<input
 				id="birthdate"
 				name="birthdate"
-				type="date"
+				type="number"
 				class="input input-bordered w-full"
 				value={user?.birthdateAsDay}
 			/>
