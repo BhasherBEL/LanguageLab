@@ -4,11 +4,11 @@
 	import { displayDate } from '$lib/utils/date';
 	import { t } from '$lib/services/i18n';
 	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import Consent from '$lib/components/surveys/consent.svelte';
 	import type Study from '$lib/types/study';
 
-	let { data, form }: { data: PageData; form: FormData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let study: Study | undefined | null = $state(data.study);
 	let studies: Study[] | undefined = $state(data.studies);
 	let user = $state(data.user);
@@ -77,7 +77,7 @@
 	async function confirmMeeting() {
 		if (!selectedSlot) return;
 
-		const updatedSlots = [...(user.my_slots || []), selectedSlot];
+		const updatedSlots = [...(user?.my_slots || []), selectedSlot];
 		selectedTutorEmail = selectedTutor.email;
 		showSchedulePopup = false;
 
@@ -546,8 +546,13 @@
 	{:else if current_step == 6}
 		<h2 class="my-4 text-xl">{$t('timeslots.setAvailabilities')}</h2>
 		<div class="form-control mt-4">
-			<select id="weekday" bind:value={selectedWeekday} class="select select-bordered w-full">
-				<option disabled value="">{$t('register.weekday')}</option>
+			<select
+				id="weekday"
+				data-testid="weekday"
+				bind:value={selectedWeekday}
+				class="select select-bordered w-full"
+			>
+				<option disabled selected value="">{$t('register.weekday')}</option>
 				{#each days as dayKey}
 					<option value={dayKey}>{$t(`utils.days.${dayKey}`)}</option>
 				{/each}
@@ -555,8 +560,13 @@
 		</div>
 
 		<div class="form-control mt-4">
-			<select id="timeStart" bind:value={selectedTimeStart} class="select select-bordered w-full">
-				<option disabled value="">{$t('register.startTime')}</option>
+			<select
+				id="timeStart"
+				data-testid="startTime"
+				bind:value={selectedTimeStart}
+				class="select select-bordered w-full"
+			>
+				<option disabled selected value="">{$t('register.startTime')}</option>
 				{#each Array.from({ length: 24 }, (_, i) => `${i}:00`) as time}
 					<option value={time}>{time}</option>
 				{/each}
@@ -564,8 +574,13 @@
 		</div>
 
 		<div class="form-control mt-4">
-			<select id="timeEnd" bind:value={selectedTimeEnd} class="select select-bordered w-full">
-				<option disabled value="">{$t('register.endTime')}</option>
+			<select
+				id="timeEnd"
+				data-testid="endTime"
+				bind:value={selectedTimeEnd}
+				class="select select-bordered w-full"
+			>
+				<option disabled selected value="">{$t('register.endTime')}</option>
 				{#each Array.from({ length: 24 }, (_, i) => `${i}:00`) as time}
 					<option value={time}>{time}</option>
 				{/each}

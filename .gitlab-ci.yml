@@ -20,8 +20,14 @@ lint_backend:
 
 playwright_tests:
   stage: test
+  only:
+    - main
+    - dev
+    - e2e
+    - merge_requests
   image: node:lts
   before_script:
+    - cd e2e-tests
     - npm install -g pnpm
     - pnpm install
     - pnpm exec playwright install --with-deps
