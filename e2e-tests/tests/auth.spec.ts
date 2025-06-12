@@ -95,13 +95,13 @@ test("Register a tutor", async ({ page }) => {
     .fill("Une courte biographie");
   await page.getByRole("button", { name: "Envoyer" }).click();
 
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(500);
   await page.getByTestId("weekday").selectOption("thursday");
   await page.getByTestId("startTime").selectOption("10:00");
   await page.getByTestId("endTime").selectOption("11:00");
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(500);
   await page.getByRole("button", { name: "Ajouter disponibilité" }).click();
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(500);
   await page.getByRole("button", { name: "Envoyer" }).click();
 
   await page.getByRole("link", { name: "LanguageLab" }).click();

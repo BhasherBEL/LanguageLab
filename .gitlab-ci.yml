@@ -27,16 +27,30 @@ playwright_tests:
     - merge_requests
   image: node:lts
   before_script:
-    - cd e2e-tests
+    # Install Python and pip
+    - apt-get update -y
+    - apt-get install -y python3 python3-pip python3-venv
+    # Set up backend Python environment
+    - cd backend
+    - python3 -m venv .env
+    - source .env/bin/activate
+    - pip install -r requirements.txt
+    - cd ../
+    # Set up frontend Node.js environment
+    - cd frontend
     - npm install -g pnpm
     - pnpm install
-    - pnpm exec playwright install --with-deps
+    - cd ../
+    # Set up e2e-tests environment
+    - cd e2e-tests
+    - pnpm install
+    - pnpm exec playwright install chromium --with-deps
   script:
     - pnpm exec playwright test
   artifacts:
     when: always
     paths:
-      - playwright-report/
+      - e2e-tests/playwright-report/
     expire_in: 30 days
   timeout: 60m
 
