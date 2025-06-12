@@ -6,6 +6,11 @@ stages:
 
 lint_frontend:
   stage: lint
+  only:
+    - main
+    - dev
+    - merge_requests
+    - web
   image: node
   script:
     - cd frontend
@@ -14,6 +19,11 @@ lint_frontend:
 
 lint_backend:
   stage: lint
+  only:
+    - main
+    - dev
+    - merge_requests
+    - web
   image: registry.gitlab.com/pipeline-components/black:latest
   script:
     - black --check --verbose -- .
