@@ -16,7 +16,8 @@
 			"tasks": "Tâches",
 			"tests": "Tests",
 			"groups": "Groupes",
-			"questions": "Questions"
+			"questions": "Questions",
+			"agents": "Agents"
 		},
 		"profile": "Mon profil"
 	},
@@ -478,6 +479,24 @@
 		"title": "Mon profile",
 		"save": "Sauvegarder les modifications"
 	},
+	"agents": {
+		"title": "Agents",
+		"no_agents_found": "Aucun agent trouvé",
+		"create_new": "Créer un nouvel agent",
+		"nickname": "Nom",
+		"model": "Modèle",
+		"system_prompt": "Invite système",
+		"in_pool": "Dans le pool",
+		"active": "Actif",
+		"actions": "Actions",
+		"in_pool_help": "Un agent dans le pool est un agent qui peut être utilisé pour les sessions. Il est présent dans le pool d'agents et peut être sélectionné pour les sessions.",
+		"active_help": "Comme n'importe quel utilisateur, un agent peut être désactivé. Un agent désactivé ne sera pas visible dans le pool d'agents et ne pourra pas être utilisé pour les sessions, même déjà créées.",
+		"model_help": "Le modèle est le modèle de langage utilisé par l'agent. La liste exhausive se trouve sur <a style=\"color: blue;\" href=\"https://openrouter.ai/models\" target=\"_blank\">OpenRouter</a>.",
+		"model_placeholder": "Par exemple, google/gemini-2.0-flash-001, deepseek/deepseek-chat-v3-0324, openai/o4-mini-high, etc.",
+		"system_prompt_placeholder": "Par exemple, \"Vous êtes un tuteur de langue. Vous aidez les apprenants à améliorer leur vocabulaire et leur grammaire. Répondez aux questions de l'apprenant de manière claire et concise.\"",
+		"nickname_placeholder": "Par exemple, \"Tuteur de vocabulaire\"",
+		"edit": "Modifier l'agent"
+	},
 	"button": {
 		"create": "Créer",
 		"submit": "Envoyer",
@@ -496,7 +515,8 @@
 		"remove": "Retirer",
 		"continue": "Continuer",
 		"select": "Sélectionner",
-		"finish": "Terminer"
+		"finish": "Terminer",
+		"back": "Retour"
 	},
 	"utils": {
 		"month": {

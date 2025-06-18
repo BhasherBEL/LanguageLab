@@ -81,6 +81,11 @@
 									</a>
 								</li>
 								<li class="m-0 p-0">
+									<a data-sveltekit-reload href="/admin/agents">
+										{$t('header.admin.agents')}
+									</a>
+								</li>
+								<li class="m-0 p-0">
 									<a data-sveltekit-reload href="/admin/tasks">
 										{$t('header.admin.tasks')}
 									</a>
