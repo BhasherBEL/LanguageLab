@@ -18,12 +18,101 @@ def create_test(
     return crud.create_test(db, test).id
 
 
+@require_admin("You do not have permission to update a test.")
+@testRouter.put("/{test_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_test(
+    test_id: int,
+    test: schemas.TestCreate,
+    db: Session = Depends(get_db),
+):
+    db_test = crud.get_test(db, test_id)
+    if db_test is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Test not found"
+        )
+    crud.update_test(db, test, test_id)
+
+
 @testRouter.get("")
 def get_tests(
     skip: int = 0,
     db: Session = Depends(get_db),
 ):
     return crud.get_tests(db, skip)
+
+
+@require_admin("You do not have permission to get all the groups.")
+@testRouter.get("/groups", response_model=list[schemas.TestTaskGroup])
+def get_groups(
+    db: Session = Depends(get_db),
+):
+    return crud.get_groups(db)
+
+
+@require_admin("You do not have permission to get a group.")
+@testRouter.get("/groups/{group_id}", response_model=schemas.TestTaskGroup)
+def get_group(
+    group_id: int,
+    db: Session = Depends(get_db),
+):
+    group = crud.get_group(db, group_id)
+    if group is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Group not found"
+        )
+    return group
+
+
+@require_admin("You do not have permission to edit a group.")
+@testRouter.put("/groups/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_group(
+    group_id: int,
+    group: schemas.TestTaskGroupCreate,
+    db: Session = Depends(get_db),
+):
+    db_group = crud.get_group(db, group_id)
+    if db_group is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Group not found"
+        )
+    crud.update_group(db, group, group_id)
+
+
+@require_admin("You do not have permission to get all the questions.")
+@testRouter.get("/questions", response_model=list[schemas.TestTaskQuestion])
+def get_questions(
+    db: Session = Depends(get_db),
+):
+    return crud.get_questions(db)
+
+
+@require_admin("You do not have permission to get a question.")
+@testRouter.get("/questions/{question_id}", response_model=schemas.TestTaskQuestion)
+def get_question(
+    question_id: int,
+    db: Session = Depends(get_db),
+):
+    question = crud.get_question(db, question_id)
+    if question is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Question not found"
+        )
+    return question
+
+
+@require_admin("You do not have permission to update a question.")
+@testRouter.put("/questions/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_question(
+    question_id: int,
+    question: schemas.TestTaskQuestionCreate,
+    db: Session = Depends(get_db),
+):
+    db_question = crud.get_question(db, question_id)
+    if db_question is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Question not found"
+        )
+    crud.update_question(db, question, question_id)
 
 
 @testRouter.get("/{test_id}", response_model=schemas.Test)

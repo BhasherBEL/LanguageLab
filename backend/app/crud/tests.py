@@ -6,11 +6,53 @@ import schemas
 
 
 def create_test(db: Session, test: schemas.TestCreate) -> models.Test:
-    db_test = models.Test(**test.model_dump())
+    db_test = models.Test(**test.model_dump(exclude_unset=True, exclude={"test_task"}))
+
+    if test.test_task:
+        db_test.test_task = models.TestTask(
+            groups=db.query(models.TestTaskGroup)
+            .filter(models.TestTaskGroup.id.in_(test.test_task.groups))
+            .all(),
+        )
+
     db.add(db_test)
     db.commit()
     db.refresh(db_test)
     return db_test
+
+
+def update_test(db: Session, test: schemas.TestCreate, test_id: int) -> None:
+    db.query(models.Test).filter(models.Test.id == test_id).update(
+        {**test.model_dump(exclude_unset=True, exclude={"test_typing", "test_task"})}
+    )
+
+    if test.test_typing:
+        db.query(models.TestTyping).filter(models.TestTyping.test_id == test_id).update(
+            {**test.test_typing.model_dump(exclude_unset=True)}
+        )
+    else:
+        db.query(models.TestTyping).filter(
+            models.TestTyping.test_id == test_id
+        ).delete()
+
+    if test.test_task:
+
+        test_task = (
+            db.query(models.TestTask).filter(models.TestTask.test_id == test_id).first()
+        )
+
+        if test_task:
+            groups = (
+                db.query(models.TestTaskGroup)
+                .filter(models.TestTaskGroup.id.in_(test.test_task.groups))
+                .all()
+            )
+
+            test_task.groups = groups
+    else:
+        db.query(models.TestTask).filter(models.TestTask.test_id == test_id).delete()
+
+    db.commit()
 
 
 def get_tests(db: Session, skip: int = 0) -> list[models.Test]:
@@ -48,11 +90,42 @@ def remove_group_from_test_task(
 def create_group(
     db: Session, group: schemas.TestTaskGroupCreate
 ) -> models.TestTaskGroup:
-    db_group = models.TestTaskGroup(**group.model_dump())
+    db_group = models.TestTaskGroup(
+        **group.model_dump(exclude_unset=True, exclude={"questions"})
+    )
+
+    if group.questions:
+        db_group.questions = (
+            db.query(models.TestTaskQuestion)
+            .filter(models.TestTaskQuestion.id.in_(group.questions))
+            .all()
+        )
     db.add(db_group)
     db.commit()
     db.refresh(db_group)
     return db_group
+
+
+def update_group(
+    db: Session, group: schemas.TestTaskGroupCreate, group_id: int
+) -> None:
+    current = db.query(models.TestTaskGroup).filter(models.TestTaskGroup.id == group_id)
+    current.update(
+        {
+            **group.model_dump(exclude_unset=True, exclude={"questions"}),
+        }
+    )
+
+    first = current.first()
+
+    if first:
+        first.questions = (
+            db.query(models.TestTaskQuestion)
+            .filter(models.TestTaskQuestion.id.in_(group.questions))
+            .all()
+        )
+
+    db.commit()
 
 
 def get_group(db: Session, group_id: int) -> models.TestTaskGroup | None:
@@ -88,11 +161,54 @@ def remove_question_from_group(
 
 
 def create_question(db: Session, question: schemas.TestTaskQuestionCreate):
-    db_question = models.TestTaskQuestion(**question.model_dump())
+    db_question = models.TestTaskQuestion(
+        **question.model_dump(exclude={"question_qcm"})
+    )
     db.add(db_question)
     db.commit()
     db.refresh(db_question)
+
+    # Create QCM options if present
+    if question.question_qcm:
+        db_qcm = models.TestTaskQuestionQCM(
+            **question.question_qcm.model_dump(), question_id=db_question.id
+        )
+        db.add(db_qcm)
+        db.commit()
+        db.refresh(db_qcm)
+
     return db_question
+
+
+def update_question(
+    db: Session, question: schemas.TestTaskQuestionCreate, question_id: int
+) -> None:
+    db.query(models.TestTaskQuestion).filter(
+        models.TestTaskQuestion.id == question_id
+    ).update({**question.model_dump(exclude_unset=True, exclude={"question_qcm"})})
+
+    if question.question_qcm:
+        existing_qcm = (
+            db.query(models.TestTaskQuestionQCM)
+            .filter(models.TestTaskQuestionQCM.question_id == question_id)
+            .first()
+        )
+
+        if existing_qcm:
+            db.query(models.TestTaskQuestionQCM).filter(
+                models.TestTaskQuestionQCM.question_id == question_id
+            ).update({**question.question_qcm.model_dump(exclude_unset=True)})
+        else:
+            db_qcm = models.TestTaskQuestionQCM(
+                **question.question_qcm.model_dump(), question_id=question_id
+            )
+            db.add(db_qcm)
+    else:
+        db.query(models.TestTaskQuestionQCM).filter(
+            models.TestTaskQuestionQCM.question_id == question_id
+        ).delete()
+
+    db.commit()
 
 
 def get_question(db: Session, question_id: int):
@@ -150,3 +266,11 @@ def get_score(db: Session, rid: str):
         return 0
 
     return corrects / total
+
+
+def get_groups(db: Session):
+    return db.query(models.TestTaskGroup).all()
+
+
+def get_questions(db: Session):
+    return db.query(models.TestTaskQuestion).all()

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DateInput from '$lib/components/utils/dateInput.svelte';
-	import Draggable from './Draggable.svelte';
+	import Draggable from '$lib/components/utils/Draggable.svelte';
 	import autosize from 'svelte-autosize';
 	import { toastWarning, toastAlert } from '$lib/utils/toasts';
 	import { getUserByEmailAPI } from '$lib/api/users';
