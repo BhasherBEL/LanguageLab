@@ -52,6 +52,7 @@
 		{/each}
 	</tbody>
 </table>
-<div class="mt-8 w-[64rem] mx-auto">
+<div class="mt-8 mx-auto w-[64rem] flex justify-between">
 	<a class="button" href="/admin/studies/new">{$t('studies.create')}</a>
+	<a class="btn" href="/admin/tests">{$t('tests.manage')}</a>
 </div>

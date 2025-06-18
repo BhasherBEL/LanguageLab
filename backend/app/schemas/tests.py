@@ -65,6 +65,7 @@ class TestTaskGroupCreate(BaseModel):
     title: str
     demo: bool = False
     randomize: bool = True
+    questions: list[int] = []
 
 
 class TestTypingCreate(BaseModel):
@@ -74,17 +75,20 @@ class TestTypingCreate(BaseModel):
     duration: int | None = None
 
 
-class TestTaskGroup(TestTaskGroupCreate):
-    # id: int
+class TestTaskGroup(BaseModel):
+    id: int | None = None
+    title: str
+    demo: bool = False
+    randomize: bool = True
     questions: list[TestTaskQuestion] = []
 
 
 class TestTaskCreate(BaseModel):
+    groups: list[int] = []
+
+
+class TestTask(BaseModel):
     groups: list[TestTaskGroup] = []
-
-
-class TestTask(TestTaskCreate):
-    pass
 
 
 class TestCreate(BaseModel):

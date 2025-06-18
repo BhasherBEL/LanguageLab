@@ -103,4 +103,3 @@ export const actions: Actions = {
 		return redirect(303, '/admin/studies');
 	}
 };
-null as any as Actions;
