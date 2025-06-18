@@ -240,7 +240,9 @@
 >
 	<div class="rounded-full mx-2 chat-image size-12" title={message.user.nickname}>
 		<img
-			src={`https://gravatar.com/avatar/${message.user.emailHash}?d=identicon`}
+			src={user.is_human
+				? `https://gravatar.com/avatar/${user.emailHash}?d=identicon`
+				: 'https://kagi.com/proxy/i?c=lWla4SiEvVNmj85b_dW2HcBDkb-62vZXR0vAz8RZagrJAq-uBHz_ZPgDAhAjEFBBVAgZajhLcQwLCzs3rqJkAErjciPVInG9yIs59P_iME2LlRYKsHHbmqTN3IM-opwDi1tbTtM9VQuuFHT6vK-jnaGME1IXira-_R5CPTq9rd4%3D'}
 			alt={user.nickname}
 			class="rounded-full border border-neutral-400 text-sm"
 		/>

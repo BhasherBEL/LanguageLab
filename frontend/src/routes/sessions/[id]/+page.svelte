@@ -212,9 +212,12 @@
 						title={sessionUser.nickname}
 					>
 						<img
-							src={`https://gravatar.com/avatar/${sessionUser.emailHash}?d=identicon`}
+							src={sessionUser.is_human
+								? `https://gravatar.com/avatar/${sessionUser.emailHash}?d=identicon`
+								: 'https://kagi.com/proxy/i?c=lWla4SiEvVNmj85b_dW2HcBDkb-62vZXR0vAz8RZagrJAq-uBHz_ZPgDAhAjEFBBVAgZajhLcQwLCzs3rqJkAErjciPVInG9yIs59P_iME2LlRYKsHHbmqTN3IM-opwDi1tbTtM9VQuuFHT6vK-jnaGME1IXira-_R5CPTq9rd4%3D'}
 							alt={sessionUser.nickname}
 							class="rounded-full border-2 {sessionUser.id == user?.id ||
+							sessionUser.is_agent ||
 							$onlineUsers.has(sessionUser.id)
 								? 'border-green-500'
 								: 'border-red-500'}"

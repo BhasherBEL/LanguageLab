@@ -161,7 +161,7 @@ export default class User {
 	}
 
 	get bio(): string | null {
-		return this._human_user!.bio;
+		return this._human_user?.bio || null;
 	}
 
 	get is_active(): boolean {
@@ -169,10 +169,12 @@ export default class User {
 	}
 
 	get is_admin(): boolean {
+		if (this._human_user === null) return false;
 		return this.type === 0;
 	}
 
 	get is_tutor(): boolean {
+		if (this._human_user === null) return false;
 		return this.type === 1;
 	}
 
@@ -185,19 +187,19 @@ export default class User {
 	}
 
 	get ui_language(): string | null {
-		return this._human_user!.ui_language;
+		return this._human_user?.ui_language || null;
 	}
 
 	get home_language(): string | null {
-		return this._human_user!.home_language;
+		return this._human_user?.home_language || null;
 	}
 
 	get target_language(): string | null {
-		return this._human_user!.target_language;
+		return this._human_user?.target_language || null;
 	}
 
 	get birthdate(): string | null {
-		return this._human_user!.birthdate;
+		return this._human_user?.birthdate || null;
 	}
 
 	get birthdateAsDay(): string | null {
@@ -208,11 +210,11 @@ export default class User {
 	}
 
 	get gender(): string | null {
-		return this._human_user!.gender;
+		return this._human_user?.gender || null;
 	}
 
 	get calcom_link(): string | null {
-		return this._human_user!.calcom_link;
+		return this._human_user?.calcom_link || null;
 	}
 
 	get studies_id(): number[] {
@@ -220,7 +222,7 @@ export default class User {
 	}
 
 	get last_survey(): Date | null {
-		return this._human_user!.last_survey;
+		return this._human_user?.last_survey || null;
 	}
 
 	get sessions_added(): Writable<Session[]> {
@@ -228,15 +230,15 @@ export default class User {
 	}
 
 	get my_tutor(): string | null {
-		return this._human_user!.my_tutor;
+		return this._human_user?.my_tutor || null;
 	}
 
 	get tutor_list(): string[] {
-		return this._human_user!.tutor_list;
+		return this._human_user?.tutor_list || [];
 	}
 
 	get availabilities(): { day: string; start: string; end: string }[] {
-		return this._human_user!.availabilities;
+		return this._human_user?.availabilities || [];
 	}
 
 	set availabilities(value: { day: string; start: string; end: string }[]) {
@@ -244,7 +246,7 @@ export default class User {
 	}
 
 	get my_slots(): { day: string; start: string; end: string }[] {
-		return this._human_user!.my_slots;
+		return this._human_user?.my_slots || [];
 	}
 
 	set my_slots(value: { day: string; start: string; end: string }[]) {

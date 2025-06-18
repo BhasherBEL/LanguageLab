@@ -126,7 +126,7 @@ export default class Session {
 	}
 
 	get student(): User | null {
-		return this._users.find((u) => u.type === 2) ?? null;
+		return this._users.find((u) => u.is_human && u.type === 2) ?? null;
 	}
 
 	usersList(maxLength = 30): string {

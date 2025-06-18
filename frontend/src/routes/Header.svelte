@@ -45,7 +45,9 @@
 					<details>
 						<summary class="px-3">
 							<img
-								src={`https://gravatar.com/avatar/${user.emailHash}?d=identicon`}
+								src={user.is_human
+									? `https://gravatar.com/avatar/${user.emailHash}?d=identicon`
+									: 'https://kagi.com/proxy/i?c=lWla4SiEvVNmj85b_dW2HcBDkb-62vZXR0vAz8RZagrJAq-uBHz_ZPgDAhAjEFBBVAgZajhLcQwLCzs3rqJkAErjciPVInG9yIs59P_iME2LlRYKsHHbmqTN3IM-opwDi1tbTtM9VQuuFHT6vK-jnaGME1IXira-_R5CPTq9rd4%3D'}
 								alt={''}
 								class="rounded-full border text-sm size-8 border-neutral-400"
 							/>

@@ -28,6 +28,7 @@ from security import jwt_cookie, get_jwt_user
 from routes.tests import testRouter
 from routes.studies import studiesRouter
 from routes.tasks import taskRouter
+from agent_handler import handle_agent_response, should_trigger_agent_response
 
 websocket_users = defaultdict(lambda: defaultdict(set))
 websocket_users_global = defaultdict(set)
@@ -837,7 +838,7 @@ def store_metadata(db, message_id, metadata: list[schemas.MessageMetadataCreate]
 
 
 @sessionsRouter.post("/{session_id}/messages", status_code=status.HTTP_201_CREATED)
-def create_message(
+async def create_message(
     session_id: int,
     entryMessage: schemas.MessageCreate,
     background_tasks: BackgroundTasks,
@@ -868,6 +869,20 @@ def create_message(
         schemas.Message.model_validate(message),
         action,
     )
+
+    # Check if we should trigger agent responses
+    agent_users = should_trigger_agent_response(db, db_session, current_user)
+
+    # Trigger agent responses for each agent in the session
+    for agent_user in agent_users:
+        background_tasks.add_task(
+            handle_agent_response,
+            db,
+            session_id,
+            schemas.Message.model_validate(message),
+            agent_user,
+            background_tasks,
+        )
 
     return {
         "id": message.id,
