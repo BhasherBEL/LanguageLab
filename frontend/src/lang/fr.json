@@ -444,7 +444,18 @@
 		"questions": {
 			"manage": "Gérer les questions",
 			"create": "Créer une question",
-			"backtogroups": "Revenir aux groupes"
+			"backtogroups": "Revenir aux groupes",
+			"type": "Type de question",
+			"subtype": "Sous-type de question",
+			"gapfill": "Texte à trous",
+			"options": "Options",
+			"option": "Option",
+			"correct": "Correct",
+			"addOption": "Ajouter une option",
+			"title": {
+				"edit": "Modifier la question",
+				"create": "Créer une question"
+			}
 		}
 	},
 	"tasks": {
@@ -584,7 +595,8 @@
 			"audio": "Audio",
 			"dropdown": "Menu déroulant",
 			"radio": "Boutons radio",
-			"gapfill": "Texte à trous"
+			"gapfill": "Texte à trous",
+			"question": "Question"
 		}
 	},
 	"inputs": {

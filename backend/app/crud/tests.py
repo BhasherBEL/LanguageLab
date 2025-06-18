@@ -161,11 +161,54 @@ def remove_question_from_group(
 
 
 def create_question(db: Session, question: schemas.TestTaskQuestionCreate):
-    db_question = models.TestTaskQuestion(**question.model_dump())
+    db_question = models.TestTaskQuestion(
+        **question.model_dump(exclude={"question_qcm"})
+    )
     db.add(db_question)
     db.commit()
     db.refresh(db_question)
+
+    # Create QCM options if present
+    if question.question_qcm:
+        db_qcm = models.TestTaskQuestionQCM(
+            **question.question_qcm.model_dump(), question_id=db_question.id
+        )
+        db.add(db_qcm)
+        db.commit()
+        db.refresh(db_qcm)
+
     return db_question
+
+
+def update_question(
+    db: Session, question: schemas.TestTaskQuestionCreate, question_id: int
+) -> None:
+    db.query(models.TestTaskQuestion).filter(
+        models.TestTaskQuestion.id == question_id
+    ).update({**question.model_dump(exclude_unset=True, exclude={"question_qcm"})})
+
+    if question.question_qcm:
+        existing_qcm = (
+            db.query(models.TestTaskQuestionQCM)
+            .filter(models.TestTaskQuestionQCM.question_id == question_id)
+            .first()
+        )
+
+        if existing_qcm:
+            db.query(models.TestTaskQuestionQCM).filter(
+                models.TestTaskQuestionQCM.question_id == question_id
+            ).update({**question.question_qcm.model_dump(exclude_unset=True)})
+        else:
+            db_qcm = models.TestTaskQuestionQCM(
+                **question.question_qcm.model_dump(), question_id=question_id
+            )
+            db.add(db_qcm)
+    else:
+        db.query(models.TestTaskQuestionQCM).filter(
+            models.TestTaskQuestionQCM.question_id == question_id
+        ).delete()
+
+    db.commit()
 
 
 def get_question(db: Session, question_id: int):

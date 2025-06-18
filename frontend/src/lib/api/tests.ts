@@ -290,3 +290,95 @@ export async function updateTestTaskGroupAPI(
 	});
 	return response.ok;
 }
+
+export async function getTestQuestionAPI(fetch: fetchType, id: number): Promise<any> {
+	const response = await fetch(`/api/tests/questions/${id}`);
+	if (!response.ok) return null;
+	const question = await response.json();
+	return question;
+}
+
+export async function createTestQuestionQcmAPI(
+	fetch: fetchType,
+	question: string,
+	options: string[],
+	correct: number
+): Promise<number | null> {
+	const response = await fetch(`/api/tests/questions`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			question,
+			question_qcm: {
+				correct,
+				...Object.assign({}, ...options.map((option, i) => ({ [`option${i + 1}`]: option })))
+			}
+		})
+	});
+	if (!response.ok) return null;
+	const questionData = await response.json();
+	return questionData.id;
+}
+
+export async function createTestQuestionGapfillAPI(
+	fetch: fetchType,
+	question: string
+): Promise<number | null> {
+	const response = await fetch(`/api/tests/questions`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			question
+		})
+	});
+	if (!response.ok) return null;
+	const questionData = await response.json();
+	return questionData.id;
+}
+
+export async function updateTestQuestionQcmAPI(
+	fetch: fetchType,
+	id: number,
+	question: string,
+	options: string[],
+	correct: number
+): Promise<boolean> {
+	const body = {
+		question,
+		question_qcm: {
+			correct,
+			...Object.assign({}, ...options.map((option, i) => ({ [`option${i + 1}`]: option })))
+		}
+	};
+
+	console.log(body);
+
+	const response = await fetch(`/api/tests/questions/${id}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body)
+	});
+	return response.ok;
+}
+
+export async function updateTestQuestionGapfillAPI(
+	fetch: fetchType,
+	id: number,
+	question: string
+): Promise<boolean> {
+	const response = await fetch(`/api/tests/questions/${id}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			question
+		})
+	});
+	return response.ok;
+}
+
+export async function deleteTestQuestionAPI(fetch: fetchType, id: number): Promise<boolean> {
+	const response = await fetch(`/api/tests/questions/${id}`, {
+		method: 'DELETE'
+	});
+	return response.ok;
+}

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import GroupForm from '$lib/components/tests/GroupForm.svelte';
-	import type { PageData } from './$types';
+	import QuestionForm from '$lib/components/tests/QuestionForm.svelte';
+	import type { ActionData, PageData } from './$types';
 
-	const { data, form }: { data: PageData; form: FormData } = $props();
-	const { group, possibleQuestions } = data;
+	const { data, form }: { data: PageData; form?: ActionData } = $props();
+	const { question } = data;
 </script>
 
-<GroupForm {group} {possibleQuestions} message={form?.message} />
+<QuestionForm {question} message={form?.message} />

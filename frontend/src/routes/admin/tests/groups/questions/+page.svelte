@@ -1,44 +1,53 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
 	import type { PageData } from './$types';
-	import type TestTaskGroup from '$lib/types/testTaskGroups';
+	import {
+		TestTaskQuestionQcm,
+		TestTaskQuestionGapfill,
+		type TestTaskQuestion
+	} from '$lib/types/testTaskQuestions';
 
 	const { data }: { data: PageData } = $props();
 
-	let groups: TestTaskGroup[] = $state(data.groups);
+	let questions: TestTaskQuestion[] = $state(data.questions);
 </script>
 
-<h1 class="text-xl font-bold m-5 text-center">{$t('header.admin.groups')}</h1>
+<h1 class="text-xl font-bold m-5 text-center">{$t('header.admin.questions')}</h1>
 
 <table class="table max-w-5xl mx-auto text-left">
 	<thead>
 		<tr>
 			<th>#</th>
-			<th>{$t('utils.words.title')}</th>
-			<th>{$t('utils.words.demo')}</th>
-			<th>{$t('utils.words.randomize')}</th>
-			<th class="capitalize"># {$t('utils.words.questions')}</th>
+			<th>{$t('utils.words.type')}</th>
+			<th>{$t('utils.words.question')}</th>
 		</tr>
 	</thead>
 	<tbody>
-		{#each groups as group (group.id)}
+		{#each questions as question (question.id)}
 			<tr
 				class="hover:bg-gray-100 hover:cursor-pointer"
-				onclick={() => (window.location.href = `/admin/tests/groups/${group.id}`)}
+				onclick={() => (window.location.href = `/admin/tests/groups/questions/${question.id}`)}
 			>
-				<td>{group.id}</td>
-				<td>{group.title}</td>
-				<td>{$t(`utils.bool.${group.demo}`)}</td>
-				<td>{$t(`utils.bool.${group.randomize}`)}</td>
-				<td>{group.questions.length}</td>
+				<td>{question.id}</td>
+				<td>
+					{#if question instanceof TestTaskQuestionQcm}
+						{$t('utils.words.qcm')} - {$t(`utils.words.${question.subType}`)}
+					{:else if question instanceof TestTaskQuestionGapfill}
+						{$t('tests.questions.gapfill')}
+					{:else}
+						{$t('utils.words.unknown')}
+					{/if}
+				</td>
+				<td class="max-w-md truncate" title={question.question}>
+					{question.question.substring(0, 100)}{question.question.length > 100 ? '...' : ''}
+				</td>
 			</tr>
 		{/each}
 	</tbody>
 </table>
 <div class="mt-8 mx-auto w-[64rem] flex justify-between pb-8">
-	<a class="button" href="/admin/tests/groups/new">{$t('tests.groups.create')}</a>
+	<a class="button" href="/admin/tests/groups/questions/new">{$t('tests.questions.create')}</a>
 	<span>
-		<a class="btn" href="/admin/tests">⏎ {$t('tests.groups.backtotests')}</a>
-		<a class="btn" href="/admin/tests/groups/questions">{$t('tests.questions.manage')}</a>
+		<a class="btn" href="/admin/tests/groups">⏎ {$t('tests.questions.backtogroups')}</a>
 	</span>
 </div>

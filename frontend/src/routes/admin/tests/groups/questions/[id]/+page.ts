@@ -1,5 +1,4 @@
-import { getTestQuestionsAPI, getTestTaskGroupAPI } from '$lib/api/tests';
-import TestTaskGroup from '$lib/types/testTaskGroups';
+import { getTestQuestionAPI } from '$lib/api/tests';
 import { TestTaskQuestion } from '$lib/types/testTaskQuestions';
 import { error, type Load } from '@sveltejs/kit';
 
@@ -16,16 +15,13 @@ export const load: Load = async ({ fetch, params }) => {
 		return error(400, 'Invalid ID');
 	}
 
-	const groupRaw = await getTestTaskGroupAPI(fetch, id);
+	const questionRaw = await getTestQuestionAPI(fetch, id);
 
-	if (!groupRaw) {
-		return error(404, 'Group not found');
+	if (!questionRaw) {
+		return error(404, 'Question not found');
 	}
 
-	const group = TestTaskGroup.parse(groupRaw);
+	const question = TestTaskQuestion.parse(questionRaw);
 
-	const questionsRaw = await getTestQuestionsAPI(fetch);
-	const questions = TestTaskQuestion.parseAll(questionsRaw);
-
-	return { group, possibleQuestions: questions };
+	return { question };
 };
