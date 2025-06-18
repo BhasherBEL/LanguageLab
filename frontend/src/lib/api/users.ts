@@ -114,3 +114,31 @@ export async function createWeeklySurveyAPI(
 
 	return parseInt(await response.text());
 }
+
+export async function getAgentUsersAPI(fetch: fetchType): Promise<any[]> {
+	console.log('Calling getAgentUsersAPI...');
+	const response = await fetch(`/api/users/agents`);
+	console.log('Agent users response:', response.status, response.ok);
+	if (!response.ok) {
+		console.error('Failed to fetch agents:', response.status, await response.text());
+		return [];
+	}
+
+	const data = await response.json();
+	console.log('Agent users data:', data);
+	return data;
+}
+
+export async function getLLMSessionsAPI(fetch: fetchType, user_id: number): Promise<any[]> {
+	console.log('Calling getLLMSessionsAPI for user:', user_id);
+	const response = await fetch(`/api/users/${user_id}/llm-sessions`);
+	console.log('LLM sessions response:', response.status, response.ok);
+	if (!response.ok) {
+		console.error('Failed to fetch LLM sessions:', response.status, await response.text());
+		return [];
+	}
+
+	const data = await response.json();
+	console.log('LLM sessions data:', data);
+	return data;
+}

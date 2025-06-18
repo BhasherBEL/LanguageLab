@@ -344,3 +344,47 @@ def delete_message_feedback(db: Session, feedback_id: int):
         models.MessageFeedback.id == feedback_id
     ).delete()
     db.commit()
+
+
+def get_agent_users(db: Session):
+    """Get all active agent users"""
+    return (
+        db.query(models.User)
+        .join(models.AgentUser)
+        .filter(models.User.is_active == True)
+        .all()
+    )
+
+
+def get_user_llm_sessions(db: Session, user_id: int):
+    """Get all sessions involving LLM agents for a user"""
+    # Get all agent user IDs
+    agent_user_ids = (
+        db.query(models.User.id)
+        .join(models.AgentUser)
+        .filter(models.User.is_active == True)
+        .all()
+    )
+
+    agent_ids = [agent_id[0] for agent_id in agent_user_ids]
+
+    if not agent_ids:
+        return []
+
+    # Get sessions where the user is involved AND at least one agent is involved
+    sessions = (
+        db.query(models.Session)
+        .filter(models.Session.users.any(models.User.id == user_id))
+        .filter(models.Session.users.any(models.User.id.in_(agent_ids)))
+        .all()
+    )
+
+    # Add message count to each session
+    for session in sessions:
+        session.length = (
+            db.query(models.Message)
+            .filter(models.Message.session_id == session.id)
+            .count()
+        )
+
+    return sessions

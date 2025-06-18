@@ -15,25 +15,34 @@
 	import {
 		createUserContactFromEmailAPI,
 		getUserContactsAPI,
-		getUserContactSessionsAPI
+		getUserContactSessionsAPI,
+		getAgentUsersAPI,
+		getLLMSessionsAPI
 	} from '$lib/api/users';
 	import { createSessionFromCalComAPI } from '$lib/api/sessions';
-	import { toastAlert, toastSuccess, toastWarning } from '$lib/utils/toasts';
+	import { toastSuccess, toastWarning } from '$lib/utils/toasts';
 	import { get } from 'svelte/store';
 
 	let { data } = $props();
 	let user = data.user!;
-	let contacts: User[] = $state(data.contacts);
+	let contacts: User[] = $state(data.contacts || []);
 	let contact: User | undefined = $state(data.contact);
-	let contactSessions: Session[] = $state(data.sessions);
+	let contactSessions: Session[] = $state(data.sessions || []);
+
+	// Special agent contact - flattened from all agent users
+	let agentContact: User | undefined = $state(undefined);
+	let agentSessions: Session[] = $state([]);
+	let agentUsers: User[] = $state([]); // Store actual agent users
 
 	let modalNew = $state(false);
 	let nickname = $state('');
 
 	let showTerminatedSessions = $state(false);
+	let isAgentSelected = $state(false);
 
 	async function selectContact(c: User | undefined) {
 		showTerminatedSessions = false;
+		isAgentSelected = false;
 		contact = c;
 		if (!contact) {
 			contactSessions = [];
@@ -43,6 +52,64 @@
 		contactSessions = Session.parseAll(
 			await getUserContactSessionsAPI(fetch, user.id, contact.id)
 		).sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
+	}
+
+	async function selectAgentContact() {
+		showTerminatedSessions = false;
+		isAgentSelected = true;
+		contact = undefined;
+
+		// Load agent users if not already loaded
+		if (agentUsers.length === 0) {
+			await loadAgentUsers();
+		}
+
+		// Get all LLM sessions for this user
+		agentSessions = Session.parseAll(await getLLMSessionsAPI(fetch, user.id)).sort(
+			(a, b) => b.start_time.getTime() - a.start_time.getTime()
+		);
+		contactSessions = agentSessions;
+
+		// Create flattened agent contact representing all agents
+		agentContact = User.parse({
+			id: -1, // Special ID for flattened agent contact
+			nickname: $t('agents.contact_name'),
+			is_active: true,
+			studies_id: [],
+			human_user: {
+				email: 'agents@system.local',
+				type: 2, // Special type for agents
+				bio: null,
+				ui_language: null,
+				home_language: null,
+				target_language: null,
+				birthdate: null,
+				gender: null,
+				calcom_link: null,
+				last_survey: null,
+				availabilities: [],
+				tutor_list: [],
+				my_tutor: null,
+				my_slots: []
+			},
+			agent_user: null
+		});
+
+		contact = agentContact;
+	}
+
+	async function loadAgentUsers() {
+		try {
+			console.log('Loading agent users...');
+			// Get all active agent users
+			const rawAgents = await getAgentUsersAPI(fetch);
+			console.log('Raw agents received:', rawAgents);
+			agentUsers = User.parseAll(rawAgents);
+			console.log('Parsed agent users:', agentUsers);
+		} catch (error) {
+			console.error('Error loading agent users:', error);
+			agentUsers = [];
+		}
 	}
 
 	onMount(async () => {
@@ -121,12 +188,41 @@
 
 	async function createSession() {
 		if (!contact) return;
-		let session = await Session.create();
-		if (!session) return;
-		await session.addUser(contact);
-		contactSessions = [...contactSessions, session].sort(
-			(a, b) => b.start_time.getTime() - a.start_time.getTime()
-		);
+
+		if (isAgentSelected) {
+			// Load agent users if not already loaded
+			if (agentUsers.length === 0) {
+				await loadAgentUsers();
+			}
+
+			// Pick a random agent from available agents
+			if (agentUsers.length === 0) {
+				toastWarning('No active agents available');
+				return;
+			}
+
+			const randomAgent = agentUsers[Math.floor(Math.random() * agentUsers.length)];
+
+			// Create session and add the random agent
+			let session = await Session.create();
+			if (!session) return;
+
+			await session.addUser(randomAgent);
+
+			// Refresh the LLM sessions list
+			agentSessions = Session.parseAll(await getLLMSessionsAPI(fetch, user.id)).sort(
+				(a, b) => b.start_time.getTime() - a.start_time.getTime()
+			);
+			contactSessions = agentSessions;
+		} else {
+			// Regular user session
+			let session = await Session.create();
+			if (!session) return;
+			await session.addUser(contact);
+			contactSessions = [...contactSessions, session].sort(
+				(a, b) => b.start_time.getTime() - a.start_time.getTime()
+			);
+		}
 	}
 
 	async function searchNickname() {
@@ -147,10 +243,30 @@
 	<div class="flex flex-col border shadow-[0_0_6px_0_rgba(0,14,156,.2)] min-w-72 rounded-r-xl">
 		<!-- Scrollable contacts list -->
 		<div class="flex-1 overflow-y-auto min-h-0">
+			<!-- Agent contact -->
+			<div
+				class="h-16 flex hover:bg-gray-200 hover:cursor-pointer p-2 border-b border-gray-100"
+				class:bg-gray-200={isAgentSelected}
+				onclick={() => selectAgentContact()}
+				role="button"
+				aria-label={$t('agents.contact_name')}
+				tabindex="0"
+				onkeydown={(e) => e.key === 'Enter' && selectAgentContact()}
+			>
+				<div
+					class="w-12 h-12 ml-1 mr-3 p-2 bg-blue-300 rounded-xl flex items-center justify-center"
+				>
+					<Icon src={Sparkles} class="w-6 h-6" />
+				</div>
+				<div class="text-base font-semibold capitalize flex items-center truncate">
+					{$t('agents.contact_name')}
+				</div>
+			</div>
+
 			{#each contacts as c (c.id)}
 				<div
 					class="h-16 flex hover:bg-gray-200 hover:cursor-pointer p-2 border-b border-gray-100 last:border-b-0"
-					class:bg-gray-200={c.id === contact?.id}
+					class:bg-gray-200={c.id === contact?.id && !isAgentSelected}
 					onclick={() => selectContact(c)}
 					role="button"
 					aria-label={c.nickname}

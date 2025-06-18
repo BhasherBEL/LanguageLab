@@ -495,7 +495,8 @@
 		"model_placeholder": "Par exemple, google/gemini-2.0-flash-001, deepseek/deepseek-chat-v3-0324, openai/o4-mini-high, etc.",
 		"system_prompt_placeholder": "Par exemple, \"Vous êtes un tuteur de langue. Vous aidez les apprenants à améliorer leur vocabulaire et leur grammaire. Répondez aux questions de l'apprenant de manière claire et concise.\"",
 		"nickname_placeholder": "Par exemple, \"Tuteur de vocabulaire\"",
-		"edit": "Modifier l'agent"
+		"edit": "Modifier l'agent",
+		"contact_name": "AI agent"
 	},
 	"button": {
 		"create": "Créer",
