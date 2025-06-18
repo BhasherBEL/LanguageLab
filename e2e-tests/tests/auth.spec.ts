@@ -20,7 +20,7 @@ test("Create a new study", async ({ page }) => {
 
   await page.getByRole("link", { name: "Créer une nouvelle étude" }).click();
 
-  await page.getByLabel("Titre de l'étude *").fill("Test study");
+  await page.getByLabel("Titre *").fill("Test study");
   await page
     .getByLabel(
       "Projet de recherche (titre et/ou financement du projet dans lequel s'inscrit cette étude)",
