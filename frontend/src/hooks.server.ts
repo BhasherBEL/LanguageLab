@@ -8,7 +8,6 @@ const PROXY_PATH = '/api';
 const handleApiProxy = async (event: RequestEvent, cookies: { name: string; value: string }[]) => {
 	const strippedPath = event.url.pathname.substring(PROXY_PATH.length);
 
-	console.log('redirect to ', `${config.API_URL}/v1${strippedPath}${event.url.search}`);
 	const urlPath = `${config.API_URL}/v1${strippedPath}${event.url.search}`;
 	const proxiedUrl = new URL(urlPath);
 
@@ -35,7 +34,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const cookies = event.cookies.getAll();
 
 	if (event.url.pathname.startsWith(PROXY_PATH)) {
-		console.log(event.url.pathname);
 		return await handleApiProxy(event, cookies);
 	}
 

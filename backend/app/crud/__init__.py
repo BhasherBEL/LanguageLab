@@ -19,14 +19,19 @@ def get_user(db: Session, user_id: int):
 
 
 def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email.lower()).first()
+    return (
+        db.query(models.User)
+        .join(models.HumanUser)
+        .filter(models.HumanUser.email == email.lower())
+        .first()
+    )
 
 
 def get_user_by_email_and_password(db: Session, email: str, password: str):
     user_db = get_user_by_email(db, email)
     if user_db is None:
         return None
-    if not Hasher.verify_password(password, user_db.password):
+    if not Hasher.verify_password(password, user_db.human_user.password):
         return None
     return user_db
 
@@ -36,15 +41,46 @@ def get_users(db: Session, skip: int = 0):
 
 
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
-    password = Hasher.get_password_hash(user.password)
-    nickname = user.nickname if user.nickname else user.email.split("@")[0]
-    db_user = models.User(
-        email=user.email.lower(),
-        nickname=nickname,
-        password=password,
-        type=user.type,
-        is_active=user.is_active,
-    )
+    if user.human_user:
+        password = Hasher.get_password_hash(user.human_user.password)
+        nickname = (
+            user.nickname if user.nickname else user.human_user.email.split("@")[0]
+        )
+        db_user = models.User(
+            nickname=nickname,
+            is_active=user.is_active,
+            human_user=models.HumanUser(
+                email=user.human_user.email.lower(),
+                password=password,
+                type=user.human_user.type,
+                bio=user.human_user.bio,
+                ui_language=user.human_user.ui_language,
+                home_language=user.human_user.home_language,
+                target_language=user.human_user.target_language,
+                birthdate=user.human_user.birthdate,
+                gender=user.human_user.gender,
+                calcom_link=user.human_user.calcom_link,
+                last_survey=user.human_user.last_survey,
+                availabilities=user.human_user.availabilities,
+                tutor_list=user.human_user.tutor_list,
+                my_tutor=user.human_user.my_tutor,
+                my_slots=user.human_user.my_slots,
+            ),
+        )
+    elif user.agent_user:
+        nickname = user.nickname if user.nickname else "Agent"
+        db_user = models.User(
+            nickname=nickname,
+            is_active=user.is_active,
+            agent_user=models.AgentUser(
+                model=user.agent_user.model,
+                system_prompt=user.agent_user.system_prompt,
+                is_in_pool=user.agent_user.is_in_pool,
+            ),
+        )
+    else:
+        raise ValueError("Either human_user or agent_user user data must be provided")
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -58,13 +94,40 @@ def delete_user(db: Session, user_id: int):
 
 
 def update_user(db: Session, user: schemas.UserUpdate, user_id: int):
-    cnt = (
-        db.query(models.User)
-        .filter(models.User.id == user_id)
-        .update(user.dict(exclude_unset=True))
-    )
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        return False
+
+    # Update base user fields
+    user_updates = {}
+    if user.nickname is not None:
+        user_updates["nickname"] = user.nickname
+    if user.is_active is not None:
+        user_updates["is_active"] = user.is_active
+
+    if user_updates:
+        db.query(models.User).filter(models.User.id == user_id).update(user_updates)
+
+    # Update human user fields
+    if user.human_user and db_user.human_user:
+        human_data = user.human_user.model_dump(exclude_unset=True)
+        if "password" in human_data:
+            human_data["password"] = Hasher.get_password_hash(human_data["password"])
+        if human_data:
+            db.query(models.HumanUser).filter(
+                models.HumanUser.user_id == user_id
+            ).update(human_data)
+
+    # Update agent user fields
+    if user.agent_user and db_user.agent_user:
+        agent_data = user.agent_user.model_dump(exclude_unset=True)
+        if agent_data:
+            db.query(models.AgentUser).filter(
+                models.AgentUser.user_id == user_id
+            ).update(agent_data)
+
     db.commit()
-    return cnt > 0
+    return True
 
 
 def create_contact(db: Session, user, contact):
@@ -74,8 +137,12 @@ def create_contact(db: Session, user, contact):
     return user
 
 
-def create_user_survey_weekly(db: Session, user_id: int, survey: schemas.SurveyCreate):
-    db_user_survey_weekly = models.UserSurveyWeekly(user_id=user_id, **survey.dict())
+def create_user_survey_weekly(
+    db: Session, user_id: int, survey: schemas.UserSurveyWeeklyCreate
+):
+    db_user_survey_weekly = models.UserSurveyWeekly(
+        user_id=user_id, **survey.model_dump()
+    )
     db.add(db_user_survey_weekly)
     db.commit()
     db.refresh(db_user_survey_weekly)
@@ -130,15 +197,25 @@ def get_session(db: Session, session_id: int):
 
 
 def get_sessions(db: Session, user: schemas.User, skip: int = 0):
-    sessions = (
-        db.query(models.Session)
-        .filter(models.Session.users.any(models.User.id == user.id))
-        .filter(models.Session.is_active or user.type < 2)
-        # .filter(models.Session.end_time >= datetime.datetime.now())
-        # .filter(models.Session.start_time <= datetime.datetime.now())
-        .offset(skip)
-        .all()
-    )
+    # Check if user is admin (type 0) or tutor (type 1)
+    user_type = user.human_user.type if user.human_user else 999
+    if user_type < 2:
+        # Admin or tutor can see all sessions they're part of
+        sessions = (
+            db.query(models.Session)
+            .filter(models.Session.users.any(models.User.id == user.id))
+            .offset(skip)
+            .all()
+        )
+    else:
+        # Students can only see active sessions
+        sessions = (
+            db.query(models.Session)
+            .filter(models.Session.users.any(models.User.id == user.id))
+            .filter(models.Session.is_active == True)
+            .offset(skip)
+            .all()
+        )
 
     return sessions
 
@@ -163,7 +240,7 @@ def delete_session(db: Session, session_id: int):
 
 def update_session(db: Session, session: schemas.SessionUpdate, session_id: int):
     db.query(models.Session).filter(models.Session.id == session_id).update(
-        session.dict(exclude_unset=True)
+        session.model_dump(exclude_unset=True)
     )
     db.commit()
 
@@ -172,7 +249,7 @@ def create_session_satisfy(
     db: Session, user_id: int, session_id: int, satisfy: schemas.SessionSatisfyCreate
 ):
     db_satisfy = models.SessionSatisfy(
-        user_id=user_id, session_id=session_id, **satisfy.dict()
+        user_id=user_id, session_id=session_id, **satisfy.model_dump()
     )
     db.add(db_satisfy)
     db.commit()
@@ -232,7 +309,7 @@ def create_message_metadata(
     db: Session, message_id: int, metadata: schemas.MessageMetadataCreate
 ):
     db_message_metadata = models.MessageMetadata(
-        message_id=message_id, **metadata.dict()
+        message_id=message_id, **metadata.model_dump()
     )
     db.add(db_message_metadata)
     db.commit()
@@ -246,7 +323,7 @@ def create_message_feedback(
     feedback: schemas.MessageFeedbackCreate,
 ):
     db_message_feedback = models.MessageFeedback(
-        message_id=message_id, **feedback.dict()
+        message_id=message_id, **feedback.model_dump()
     )
     db.add(db_message_feedback)
     db.commit()
@@ -267,21 +344,3 @@ def delete_message_feedback(db: Session, feedback_id: int):
         models.MessageFeedback.id == feedback_id
     ).delete()
     db.commit()
-
-
-def create_test_typing(db: Session, test: schemas.TestTypingCreate):
-    db_test = models.TestTyping(code=test.code)
-    db.add(db_test)
-    db.commit()
-    db.refresh(db_test)
-    return db_test
-
-
-def create_test_typing_entry(
-    db: Session, entry: schemas.TestTypingEntryCreate, typing_id: int
-):
-    db_entry = models.TestTypingEntry(typing_id=typing_id, **entry.dict())
-    db.add(db_entry)
-    db.commit()
-    db.refresh(db_entry)
-    return db_entry

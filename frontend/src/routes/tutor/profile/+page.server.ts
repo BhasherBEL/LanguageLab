@@ -34,22 +34,15 @@ export const actions: Actions = {
 			});
 		}
 
-		console.log('Updating profile with data:', {
-			nickname,
-			email,
-			gender,
-			birthdate,
-			bio,
-			availabilities
-		});
-
 		const data: any = {
 			nickname,
-			email,
-			gender,
-			birthdate,
-			bio,
-			availabilities
+			human_user: {
+				email,
+				gender,
+				birthdate,
+				bio,
+				availabilities
+			}
 		};
 
 		const ok = await patchUserAPI(fetch, locals.user.id, data);

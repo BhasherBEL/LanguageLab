@@ -75,7 +75,7 @@ export const actions: Actions = {
 		const bio = formData.get('bio');
 		let my_tutor = formData.get('myTutor');
 
-		if (locals.user.type == 2) {
+		if (locals.user.human_user.type == 2) {
 			if (!homeLanguage || !targetLanguage || !birthyear || !gender) {
 				return { message: 'Invalid request' };
 			}
@@ -92,16 +92,18 @@ export const actions: Actions = {
 			}
 
 			let response = await patchUserAPI(fetch, locals.user.id, {
-				home_language: homeLanguage,
-				target_language: targetLanguage,
-				gender,
-				birthdate,
-				my_tutor: my_tutor
+				human_user: {
+					home_language: homeLanguage,
+					target_language: targetLanguage,
+					gender,
+					birthdate,
+					my_tutor: my_tutor
+				}
 			});
 			if (!response) return { message: 'Unknown error occurred' };
 
 			redirect(303, `/register/`);
-		} else if (locals.user.type == 1) {
+		} else if (locals.user.human_user.type == 1) {
 			if (!homeLanguage || !birthyear || !gender || !bio) {
 				return { message: 'Invalid request' };
 			}
@@ -114,11 +116,13 @@ export const actions: Actions = {
 			}
 
 			let response = await patchUserAPI(fetch, locals.user.id, {
-				home_language: homeLanguage,
-				target_language: targetLanguage,
-				gender,
-				birthdate,
-				bio
+				human_user: {
+					home_language: homeLanguage,
+					target_language: targetLanguage,
+					gender,
+					birthdate,
+					bio
+				}
 			});
 			if (!response) return { message: 'Unknown error occurred' };
 			redirect(303, `/register/`);

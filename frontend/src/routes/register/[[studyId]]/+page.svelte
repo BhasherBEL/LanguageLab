@@ -138,7 +138,9 @@
 		let res;
 		if (user && user.id) {
 			res = await patchUserAPI(fetch, user.id, {
-				availabilities: availability
+				human_user: {
+					availabilities: availability
+				}
 			});
 		}
 

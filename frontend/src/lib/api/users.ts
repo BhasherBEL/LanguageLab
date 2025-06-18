@@ -70,7 +70,15 @@ export async function createUserAPI(
 	const response = await fetch(`/api/users`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ nickname, email, password, type, is_active })
+		body: JSON.stringify({
+			nickname,
+			is_active,
+			human: {
+				email,
+				password,
+				type
+			}
+		})
 	});
 
 	if (!response.ok) return null;
@@ -79,6 +87,7 @@ export async function createUserAPI(
 }
 
 export async function patchUserAPI(fetch: fetchType, user_id: number, data: any) {
+	console.log('patchUserAPI', user_id, data);
 	const response = await fetch(`/api/users/${user_id}`, {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json' },

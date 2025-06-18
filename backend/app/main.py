@@ -14,8 +14,7 @@ from fastapi.websockets import WebSocket
 from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
 import json
-from jose import jwt
-from jose import ExpiredSignatureError
+from jose import jwt, JWTError, ExpiredSignatureError
 from io import StringIO
 import csv
 
@@ -42,10 +41,12 @@ async def lifespan(app: FastAPI):
             crud.create_user(
                 db,
                 schemas.UserCreate(
-                    email=config.ADMIN_EMAIL,
                     nickname=config.ADMIN_NICKNAME,
-                    password=config.ADMIN_PASSWORD,
-                    type=models.UserType.ADMIN.value,
+                    human_user=schemas.HumanUserCreate(
+                        email=config.ADMIN_EMAIL,
+                        password=config.ADMIN_PASSWORD,
+                        type=models.UserType.ADMIN.value,
+                    ),
                 ),
             )
     finally:
@@ -89,7 +90,11 @@ def login(
     if db_user is None:
         raise HTTPException(status_code=401, detail="Incorrect email or password")
 
-    subject = {"uid": db_user.id, "email": db_user.email, "nickname": db_user.nickname}
+    subject = {
+        "uid": db_user.id,
+        "email": db_user.human_user.email,
+        "nickname": db_user.nickname,
+    }
     access_token = jwt_cookie.create_access_token(subject)
 
     jwt_cookie.set_access_cookie(
@@ -117,13 +122,15 @@ def register(
         raise HTTPException(status_code=400, detail="User already registered")
 
     user_data = schemas.UserCreate(
-        email=register.email,
-        password=register.password,
         nickname=register.nickname,
-        type=(
-            models.UserType.TUTOR.value
-            if register.is_tutor
-            else models.UserType.STUDENT.value
+        human_user=schemas.HumanUserCreate(
+            email=register.email,
+            password=register.password,
+            type=(
+                models.UserType.TUTOR.value
+                if register.is_tutor
+                else models.UserType.STUDENT.value
+            ),
         ),
     )
 
@@ -150,9 +157,10 @@ def create_user(
             status_code=401, detail="You do not have permission to create a user"
         )
 
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="User already registered")
+    if user.human_user:
+        db_user = crud.get_user_by_email(db, email=user.human_user.email)
+        if db_user:
+            raise HTTPException(status_code=400, detail="User already registered")
 
     user = crud.create_user(db=db, user=user)
 
@@ -211,8 +219,12 @@ def update_user(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
+    # Check if user is trying to update user type and they're not admin
+    is_updating_type = (user.human_user and user.human_user.type is not None) or (
+        user.agent_user and user.agent_user.model is not None
+    )
     if not check_user_level(current_user, models.UserType.ADMIN) and (
-        current_user.id != user_id or user.type is not None
+        current_user.id != user_id or is_updating_type
     ):
         raise HTTPException(
             status_code=401, detail="You do not have permission to update this user"
@@ -977,7 +989,7 @@ async def websocket_session(
     except ExpiredSignatureError:
         await websocket.close(code=1008, reason="Token expired")
         return
-    except jwt.JWTError:
+    except Exception:
         await websocket.close(code=1008, reason="Invalid token")
         return
 
@@ -1028,7 +1040,7 @@ async def websocket_global(
     except ExpiredSignatureError:
         await websocket.close(code=1008, reason="Token expired")
         return
-    except jwt.JWTError:
+    except JWTError:
         await websocket.close(code=1008, reason="Invalid token")
         return
 

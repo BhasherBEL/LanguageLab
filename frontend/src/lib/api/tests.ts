@@ -351,8 +351,6 @@ export async function updateTestQuestionQcmAPI(
 		}
 	};
 
-	console.log(body);
-
 	const response = await fetch(`/api/tests/questions/${id}`, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },

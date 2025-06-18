@@ -19,67 +19,125 @@ export const users = {
 	fetch: async () => User.parseAll(await getUsersAPI(fetch))
 };
 
+export class HumanUser {
+	email: string;
+	password?: string;
+	type: number;
+	bio: string | null;
+	ui_language: string | null;
+	home_language: string | null;
+	target_language: string | null;
+	birthdate: string | null;
+	gender: string | null;
+	calcom_link: string | null;
+	last_survey: Date | null;
+	availabilities: { day: string; start: string; end: string }[];
+	tutor_list: string[];
+	my_tutor: string | null;
+	my_slots: { day: string; start: string; end: string }[];
+
+	constructor(
+		email: string,
+		password: string | undefined,
+		type: number,
+		bio: string | null = null,
+		ui_language: string | null = null,
+		home_language: string | null = null,
+		target_language: string | null = null,
+		birthdate: string | null = null,
+		gender: string | null = null,
+		calcom_link: string | null = null,
+		last_survey: Date | null = null,
+		availabilities: { day: string; start: string; end: string }[] = [],
+		tutor_list: string[] = [],
+		my_tutor: string | null = null,
+		my_slots: { day: string; start: string; end: string }[] = []
+	) {
+		this.email = email;
+		this.password = password;
+		this.type = type;
+		this.bio = bio;
+		this.ui_language = ui_language;
+		this.home_language = home_language;
+		this.target_language = target_language;
+		this.birthdate = birthdate;
+		this.gender = gender;
+		this.calcom_link = calcom_link;
+		this.last_survey = last_survey;
+		this.availabilities = availabilities;
+		this.tutor_list = tutor_list;
+		this.my_tutor = my_tutor;
+		this.my_slots = my_slots;
+	}
+
+	static parse(json: any): HumanUser | null {
+		if (!json) return null;
+		if (json.email === undefined || json.type === undefined) return null;
+
+		return new HumanUser(
+			json.email,
+			json.password,
+			json.type,
+			json.bio || null,
+			json.ui_language || null,
+			json.home_language || null,
+			json.target_language || null,
+			json.birthdate || null,
+			json.gender || null,
+			json.calcom_link || null,
+			json.last_survey === null ? null : parseToLocalDate(json.last_survey),
+			json.availabilities || [],
+			json.tutor_list || [],
+			json.my_tutor || null,
+			json.my_slots || []
+		);
+	}
+}
+
+export class AgentUser {
+	model: string;
+	system_prompt: string | null;
+	is_in_pool: boolean;
+
+	constructor(model: string, system_prompt: string | null = null, is_in_pool: boolean = false) {
+		this.model = model;
+		this.system_prompt = system_prompt;
+		this.is_in_pool = is_in_pool;
+	}
+
+	static parse(json: any): AgentUser | null {
+		if (!json) return null;
+		if (json.model === undefined) return null;
+
+		return new AgentUser(json.model, json.system_prompt || null, json.is_in_pool || false);
+	}
+}
+
 export default class User {
 	private _id: number;
-	private _email: string;
 	private _nickname: string;
-	private _type: number;
 	private _is_active: boolean;
-	private _ui_language: string | null;
-	private _home_language: string | null;
-	private _target_language: string | null;
-	private _birthdate: string | null;
-	private _gender: string | null;
-	private _bio: string | null;
-	private _calcom_link: string | null;
 	private _studies_id: number[];
-	private _last_survey: Date | null;
-	private _tutor_list: string[];
-	private _my_tutor: string | null;
+	private _human_user: HumanUser | null;
+	private _agent_user: AgentUser | null;
 	private _ws_connected: boolean = false;
 	private _ws: WebSocket | null = null;
 	private _sessions_added: Writable<Session[]> = writable([]);
-	private _availabilities: { day: string; start: string; end: string }[];
-	private _my_slots: { day: string; start: string; end: string }[];
 
 	private constructor(
 		id: number,
-		email: string,
 		nickname: string,
-		type: number,
 		is_active: boolean,
-		ui_language: string | null,
-		home_language: string | null,
-		target_language: string | null,
-		birthdate: string | null,
-		gender: string | null,
-		calcom_link: string | null,
 		studies_id: number[] | null,
-		last_survey: Date | null,
-		tutor_list: string[] = [],
-		my_tutor: string | null = null,
-		bio: string | null = null,
-		availabilities: { day: string; start: string; end: string }[] = [],
-		my_slots: { day: string; start: string; end: string }[] = []
+		human_user: HumanUser | null = null,
+		agent_user: AgentUser | null = null
 	) {
 		this._id = id;
-		this._email = email;
 		this._nickname = nickname;
-		this._type = type;
 		this._is_active = is_active;
-		this._ui_language = ui_language;
-		this._home_language = home_language;
-		this._target_language = target_language;
-		this._birthdate = birthdate;
-		this._gender = gender;
-		this._calcom_link = calcom_link;
 		this._studies_id = studies_id || [];
-		this._last_survey = last_survey;
-		this._tutor_list = tutor_list;
-		this._my_tutor = my_tutor;
-		this._bio = bio;
-		this._availabilities = availabilities;
-		this._my_slots = my_slots;
+		this._human_user = human_user;
+		this._agent_user = agent_user;
 	}
 
 	get id(): number {
@@ -87,11 +145,11 @@ export default class User {
 	}
 
 	get email(): string {
-		return this._email;
+		return this._human_user!.email;
 	}
 
 	get emailHash(): string {
-		return sha256(this._email.toLowerCase());
+		return sha256(this.email.toLowerCase());
 	}
 
 	get nickname(): string {
@@ -99,11 +157,11 @@ export default class User {
 	}
 
 	get type(): number {
-		return this._type;
+		return this._human_user!.type;
 	}
 
 	get bio(): string | null {
-		return this._bio;
+		return this._human_user!.bio;
 	}
 
 	get is_active(): boolean {
@@ -111,42 +169,50 @@ export default class User {
 	}
 
 	get is_admin(): boolean {
-		return this._type === 0;
+		return this.type === 0;
 	}
 
 	get is_tutor(): boolean {
-		return this._type === 1;
+		return this.type === 1;
+	}
+
+	get is_human(): boolean {
+		return this._human_user !== null;
+	}
+
+	get is_agent(): boolean {
+		return this._agent_user !== null;
 	}
 
 	get ui_language(): string | null {
-		return this._ui_language;
+		return this._human_user!.ui_language;
 	}
 
 	get home_language(): string | null {
-		return this._home_language;
+		return this._human_user!.home_language;
 	}
 
 	get target_language(): string | null {
-		return this._target_language;
+		return this._human_user!.target_language;
 	}
 
 	get birthdate(): string | null {
-		return this._birthdate;
+		return this._human_user!.birthdate;
 	}
 
 	get birthdateAsDay(): string | null {
-		if (this._birthdate) {
-			return this._birthdate.slice(0, 4); // Format as YYYY-MM-DD
+		if (this.birthdate) {
+			return this.birthdate.slice(0, 4); // Format as YYYY-MM-DD
 		}
 		return null;
 	}
 
 	get gender(): string | null {
-		return this._gender;
+		return this._human_user!.gender;
 	}
 
 	get calcom_link(): string | null {
-		return this._calcom_link;
+		return this._human_user!.calcom_link;
 	}
 
 	get studies_id(): number[] {
@@ -154,7 +220,7 @@ export default class User {
 	}
 
 	get last_survey(): Date | null {
-		return this._last_survey;
+		return this._human_user!.last_survey;
 	}
 
 	get sessions_added(): Writable<Session[]> {
@@ -162,31 +228,39 @@ export default class User {
 	}
 
 	get my_tutor(): string | null {
-		return this._my_tutor;
+		return this._human_user!.my_tutor;
 	}
 
 	get tutor_list(): string[] {
-		return this._tutor_list;
+		return this._human_user!.tutor_list;
 	}
 
 	get availabilities(): { day: string; start: string; end: string }[] {
-		return this._availabilities;
+		return this._human_user!.availabilities;
 	}
 
 	set availabilities(value: { day: string; start: string; end: string }[]) {
-		this._availabilities = value;
+		this._human_user!.availabilities = value;
 	}
 
 	get my_slots(): { day: string; start: string; end: string }[] {
-		return this._my_slots;
+		return this._human_user!.my_slots;
 	}
 
 	set my_slots(value: { day: string; start: string; end: string }[]) {
-		this._my_slots = value;
+		this._human_user!.my_slots = value;
 	}
 
 	set tutor_list(value: string[]) {
-		this._tutor_list = value;
+		this._human_user!.tutor_list = value;
+	}
+
+	get human_user(): HumanUser | null {
+		return this._human_user;
+	}
+
+	get agent_user(): AgentUser | null {
+		return this._agent_user;
 	}
 
 	equals<T>(obj: T): boolean {
@@ -199,8 +273,10 @@ export default class User {
 
 	async setAvailability(availability: bigint, calcom_link: string): Promise<boolean> {
 		return await patchUserAPI(fetch, this.id, {
-			availability: availability.toString(),
-			calcom_link: calcom_link
+			human_user: {
+				availability: availability.toString(),
+				calcom_link: calcom_link
+			}
 		});
 	}
 
@@ -211,46 +287,30 @@ export default class User {
 	toJson(): string {
 		return JSON.stringify({
 			id: this.id,
-			email: this.email,
 			nickname: this.nickname,
-			type: this.type,
 			is_active: this.is_active,
-			ui_language: this.ui_language,
-			home_language: this.home_language,
-			target_language: this.target_language,
-			birthdate: this.birthdate,
-			gender: this.gender,
-			calcom_link: this.calcom_link,
 			studies_id: this.studies_id,
-			last_survey: this.last_survey,
-			tutor_list: this._tutor_list,
-			my_tutor: this.my_tutor,
-			bio: this.bio,
-			availabilities: this._availabilities,
-			my_slots: this._my_slots
+			human_user: this._human_user,
+			agent_user: this._agent_user
 		});
 	}
 
 	async patch(data: any): Promise<boolean> {
 		const res = await patchUserAPI(fetch, this.id, data);
 		if (res) {
-			if (data.email) this._email = data.email;
 			if (data.nickname) this._nickname = data.nickname;
-			if (data.type) this._type = data.type;
-			if (data.is_active) this._is_active = data.is_active;
-			if (data.ui_language) this._ui_language = data.ui_language;
-			if (data.home_language) this._home_language = data.home_language;
-			if (data.target_language) this._target_language = data.target_language;
-			if (data.birthdate) this._birthdate = data.birthdate;
-			if (data.gender) this._gender = data.gender;
-			if (data.calcum_link) this._calcom_link = data.calcom_link;
+			if (data.is_active !== undefined) this._is_active = data.is_active;
 			if (data.studies_id) this._studies_id = data.studies_id;
-			if (data.last_survey) this._last_survey = data.last_survey;
-			if (data.tutor_list) this._tutor_list = data.tutor_list;
-			if (data.my_tutor) this._my_tutor = data.my_tutor;
-			if (data.bio) this._bio = data.bio;
-			if (data.availabilities) this._availabilities = data.availabilities;
-			if (data.my_slots) this._my_slots = data.my_slots;
+
+			// Update human user fields
+			if (data.human && this._human_user) {
+				Object.assign(this._human_user, data.human);
+			}
+
+			// Update agent user fields
+			if (data.agent && this._agent_user) {
+				Object.assign(this._agent_user, data.agent);
+			}
 		}
 		return res;
 	}
@@ -269,12 +329,10 @@ export default class User {
 		const id = await createUserAPI(fetch, nickname, email, password, type, is_active);
 		if (id == null) return null;
 
-		const user = new User(
-			id,
+		const human_user = new HumanUser(
 			email,
-			nickname,
+			password,
 			type,
-			is_active,
 			null,
 			null,
 			null,
@@ -284,11 +342,12 @@ export default class User {
 			null,
 			null,
 			[],
-			null,
-			null,
 			[],
+			null,
 			[]
 		);
+
+		const user = new User(id, nickname, is_active, [], human_user, null);
 		users.add(user);
 		return user;
 	}
@@ -350,25 +409,25 @@ export default class User {
 			return json;
 		}
 
+		// Parse human_user if present
+		let human_user: HumanUser | null = null;
+		if (json.human_user) {
+			human_user = HumanUser.parse(json.human_user);
+		}
+
+		// Create agent_user if it's an agent user
+		let agent_user: AgentUser | null = null;
+		if (json.agent_user) {
+			agent_user = AgentUser.parse(json.agent_user);
+		}
+
 		const user = new User(
 			json.id,
-			json.email,
 			json.nickname,
-			json.type,
 			json.is_active,
-			json.ui_language,
-			json.home_language,
-			json.target_language,
-			json.birthdate,
-			json.gender,
-			json.calcom_link,
 			json.studies_id,
-			json.last_survey === null ? null : parseToLocalDate(json.last_survey),
-			json.tutor_list || [],
-			json.my_tutor,
-			json.bio,
-			json.availabilities || [],
-			json.my_slots || []
+			human_user,
+			agent_user
 		);
 
 		users.update((us) => {

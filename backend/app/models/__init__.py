@@ -9,7 +9,7 @@ from sqlalchemy import (
     DateTime,
     UniqueConstraint,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 from enum import Enum
 
 from database import Base
@@ -36,15 +36,12 @@ class Contact(Base):
     UniqueConstraint("user_id", "contact_id", name="unique_contact")
 
 
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
+class HumanUser(Base):
+    __tablename__ = "human_users"
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    nickname = Column(String, index=True)
     password = Column(String)
     type = Column(Integer, default=UserType.STUDENT.value)
-    is_active = Column(Boolean, default=True)
     bio = Column(String, default="")
     ui_language = Column(String, default="fr")
     home_language = Column(String, default="en")
@@ -57,6 +54,30 @@ class User(Base):
     tutor_list = Column(JSON, default=[])
     my_tutor = Column(String, default="")
     my_slots = Column(JSON, default=[])
+
+    user = relationship(
+        "User", uselist=False, back_populates="human_user", lazy="selectin"
+    )
+
+
+class AgentUser(Base):
+    __tablename__ = "agent_users"
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True, index=True)
+    model = Column(String, nullable=False)
+    system_prompt = Column(String, nullable=False)
+    is_in_pool = Column(Boolean, default=False)
+
+    user = relationship(
+        "User", uselist=False, back_populates="agent_user", lazy="selectin"
+    )
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nickname = Column(String, index=True)
+    is_active = Column(Boolean, default=True)
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"
@@ -79,6 +100,32 @@ class User(Base):
     )
 
     studies = relationship("Study", secondary="study_users", back_populates="users")
+
+    human_user = relationship(
+        "HumanUser", uselist=False, back_populates="user", lazy="selectin"
+    )
+
+    agent_user = relationship(
+        "AgentUser", uselist=False, back_populates="user", lazy="selectin"
+    )
+
+    @validates("human_user")
+    def adjust_human_user(self, _, value) -> HumanUser | None:
+        if value:
+            if isinstance(value, dict):
+                return HumanUser(**value, user_id=self.id)
+            else:
+                value.user_id = self.id
+                return value
+
+    @validates("agent_user")
+    def adjust_agent_user(self, _, value) -> AgentUser | None:
+        if value:
+            if isinstance(value, dict):
+                return AgentUser(**value, user_id=self.id)
+            else:
+                value.user_id = self.id
+                return value
 
 
 class UserSurveyWeekly(Base):

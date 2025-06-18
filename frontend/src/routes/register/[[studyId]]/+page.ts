@@ -5,7 +5,6 @@ import type { Load } from '@sveltejs/kit';
 
 export const load: Load = async ({ parent, fetch, params, url }) => {
 	const { user } = await parent();
-	console.log(user);
 
 	const sStudyId: string | undefined = params.studyId;
 	let study = null;

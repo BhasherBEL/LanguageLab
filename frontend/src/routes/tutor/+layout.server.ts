@@ -5,7 +5,7 @@ export const load: ServerLoad = async ({ locals }) => {
 		redirect(303, '/login');
 	}
 
-	if (locals.user == null || locals.user == undefined || locals.user.type > 1) {
+	if (locals.user == null || locals.user == undefined || locals.user.human_user.type > 1) {
 		error(403, 'Forbidden');
 	}
 };
