@@ -472,7 +472,8 @@
 		"taskFinished": "Tâche terminée avec succès",
 		"statusFail": "Echec du changement de status de la tâche",
 		"startTask": "Commencer cette tâche",
-		"achieveTask": "Tâche achevée"
+		"achieveTask": "Tâche achevée",
+		"noStudent": "Aucun apprenant n'est actuellement présent dans cette session."
 	},
 	"profile": {
 		"title": "Mon profile",

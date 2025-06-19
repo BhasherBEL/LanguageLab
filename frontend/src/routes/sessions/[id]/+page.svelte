@@ -127,7 +127,10 @@
 
 	async function startTask() {
 		const student = session.student;
-		if (!student || !currentTask) return;
+		if (!student || !currentTask) {
+			toastAlert($t('tasks.noStudent'));
+			return;
+		}
 		const ok = await sendTaskStatusAPI(
 			fetch,
 			'start',
