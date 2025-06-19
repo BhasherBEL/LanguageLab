@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Session from '$lib/types/session';
-	import { onMount } from 'svelte';
 	import { displayShortTime, displayTimeSince } from '$lib/utils/date';
 	import {
 		AcademicCap,
@@ -17,9 +16,7 @@
 		getUserContactsAPI,
 		getUserContactSessionsAPI
 	} from '$lib/api/users';
-	import { createSessionFromCalComAPI } from '$lib/api/sessions';
-	import { toastAlert, toastSuccess, toastWarning } from '$lib/utils/toasts';
-	import { get } from 'svelte/store';
+	import { toastWarning } from '$lib/utils/toasts';
 
 	let { data } = $props();
 	let user = data.user!;
@@ -44,80 +41,6 @@
 			await getUserContactSessionsAPI(fetch, user.id, contact.id)
 		).sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
 	}
-
-	onMount(async () => {
-		contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
-
-		if (contacts.length === 0 && user.my_tutor) {
-			const res = await createUserContactFromEmailAPI(fetch, user.id, user.my_tutor);
-			if (res) {
-				contacts = User.parseAll(await getUserContactsAPI(fetch, user.id));
-			}
-		}
-
-		if (user.my_slots && user.my_slots.length > 0) {
-			const firstSlot = user.my_slots[0];
-
-			let sessionDate = new Date();
-
-			while (
-				sessionDate.toLocaleString('en-US', { weekday: 'long' }).toLowerCase() !== firstSlot.day
-			) {
-				sessionDate.setDate(sessionDate.getDate() + 1);
-			}
-
-			const [startHour, startMinute] = firstSlot.start.split(':').map(Number);
-			const [endHour, endMinute] = firstSlot.end.split(':').map(Number);
-
-			sessionDate.setHours(startHour, startMinute, 0, 0);
-
-			if (!contact) {
-				console.warn('No contact selected, cannot create a session.');
-				return;
-			}
-
-			contactSessions = Session.parseAll(
-				await getUserContactSessionsAPI(fetch, user.id, contact.id)
-			);
-
-			for (let i = 0; i < 8; i++) {
-				let sessionStartDate = new Date(sessionDate);
-				sessionStartDate.setDate(sessionStartDate.getDate() + 7 * i);
-
-				let sessionEndDate = new Date(sessionStartDate);
-				sessionEndDate.setHours(endHour, endMinute, 0, 0);
-
-				const sessionExists = contactSessions.some(
-					(s) =>
-						s.start_time.getTime() === sessionStartDate.getTime() &&
-						s.end_time.getTime() === sessionEndDate.getTime()
-				);
-
-				if (sessionExists) {
-					continue;
-				}
-
-				const sess_id: number | null = await createSessionFromCalComAPI(
-					fetch,
-					user.id,
-					contact.id,
-					sessionStartDate,
-					sessionEndDate
-				);
-
-				if (!sess_id) {
-					console.warn(`Failed to create session for ${sessionStartDate}`);
-					continue;
-				}
-
-				contactSessions = Session.parseAll(
-					await getUserContactSessionsAPI(fetch, user.id, contact.id)
-				).sort((a, b) => b.start_time.getTime() - a.start_time.getTime());
-			}
-
-			toastSuccess(get(t)('home.bookingSuccessful'));
-		}
-	});
 
 	async function createSession() {
 		if (!contact) return;
@@ -195,13 +118,6 @@
 					class="button float-start mr-2"
 				>
 					{$t('home.createSession')}
-				</button>
-				<button
-					class="button float-start"
-					class:btn-disabled={!contact || !contact.calcom_link}
-					data-cal-link={`${contact.calcom_link}?email=${user?.email}&name=${user?.nickname}`}
-				>
-					{$t('home.bookSession')}
 				</button>
 			</div>
 			<div
