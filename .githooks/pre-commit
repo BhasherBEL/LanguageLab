@@ -1,15 +1,56 @@
 #!/bin/sh
 
-git stash -q --keep-index
+changed_files=$(git diff --cached --name-only)
 
-cd frontend 
-npm run format
-npm run lint
-cd ..
+if [ -z "$changed_files" ]; then
+    echo "No files to commit"
+    exit 0
+fi
 
-black backend
-black --check backend
+frontend_changed=$(echo "$changed_files" | grep -E '^frontend/')
+backend_changed=$(echo "$changed_files" | grep -E '^backend/')
 
-git stash pop -q
+echo "Running pre-commit hooks..."
 
+if [ -n "$frontend_changed" ]; then
+    echo "Frontend files changed, running frontend checks..."
+    cd frontend
+    
+    npm run format
+    
+    if ! npm run lint; then
+        echo "Frontend linting failed"
+        cd ..
+        exit 1
+    fi
+    
+    cd ..
+    
+    frontend_formatted_files=$(echo "$frontend_changed" | xargs)
+    if [ -n "$frontend_formatted_files" ]; then
+        git add $frontend_formatted_files
+    fi
+fi
+
+if [ -n "$backend_changed" ]; then
+    echo "Backend files changed, running backend checks..."
+    
+    black backend
+    
+    if ! black --check backend; then
+        echo "Backend formatting check failed"
+        exit 1
+    fi
+    
+    backend_formatted_files=$(echo "$backend_changed" | xargs)
+    if [ -n "$backend_formatted_files" ]; then
+        git add $backend_formatted_files
+    fi
+fi
+
+if [ -z "$frontend_changed" ] && [ -z "$backend_changed" ]; then
+    echo "No frontend or backend files changed, skipping checks"
+fi
+
+echo "Pre-commit hooks completed successfully"
 exit 0
