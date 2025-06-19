@@ -376,7 +376,7 @@
 			"addUser": "Error adding user to session",
 			"create": "Error creating session",
 			"delete": "Error deleting session",
-			"presence": "Error sending attendance",
+			"presence": "Error sending your current presence",
 			"removeUser": "Error removing a user from session",
 			"typing": "Error sending input indicator"
 		},

@@ -1,4 +1,6 @@
+import { deleteTestAPI } from '$lib/api/tests';
 import { toastAlert } from '$lib/utils/toasts';
+import type { fetchType } from '$lib/utils/types';
 import TestTaskGroup from './testTaskGroups';
 
 export abstract class Test {
@@ -16,6 +18,19 @@ export abstract class Test {
 
 	get title(): string {
 		return this._title;
+	}
+
+	get type(): string {
+		if (this instanceof TestTask) {
+			return 'task';
+		} else if (this instanceof TestTyping) {
+			return 'typing';
+		}
+		return 'unknown';
+	}
+
+	async delete(f: fetchType = fetch): Promise<boolean> {
+		return await deleteTestAPI(f, this._id);
 	}
 
 	static parse(data: any): Test | null {
@@ -79,7 +94,7 @@ export class TestTyping extends Test {
 	private _text: string;
 	private _duration: number;
 	private _repeat: number;
-	private _explainations: string;
+	private _explanations: string;
 
 	constructor(
 		id: number,
@@ -87,13 +102,13 @@ export class TestTyping extends Test {
 		text: string,
 		duration: number,
 		repeat: number,
-		explainations: string
+		explanations: string
 	) {
 		super(id, title);
 		this._text = text;
 		this._duration = duration;
 		this._repeat = repeat;
-		this._explainations = explainations;
+		this._explanations = explanations;
 	}
 
 	get text(): string {
@@ -108,8 +123,8 @@ export class TestTyping extends Test {
 		return this._repeat;
 	}
 
-	get explainations(): string {
-		return this._explainations;
+	get explanations(): string {
+		return this._explanations;
 	}
 
 	get initialDuration(): number {
@@ -143,7 +158,7 @@ export class TestTyping extends Test {
 			data.test_typing.text,
 			data.test_typing.duration,
 			data.test_typing.repeat,
-			data.test_typing.explainations
+			data.test_typing.explanations
 		);
 	}
 }

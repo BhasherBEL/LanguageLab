@@ -26,17 +26,6 @@
 				tabindex="-1"
 				class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 			>
-				{#if user}
-					<li><a href="/">Item 1</a></li>
-					<li>
-						<a href="/">Parent</a>
-						<ul class="p-2">
-							<li><a href="/">Submenu 1</a></li>
-							<li><a href="/">Submenu 2</a></li>
-						</ul>
-					</li>
-					<li><a href="/">Item 3</a></li>
-				{/if}
 				<li>
 					<span>{$t('header.language')}</span>
 					<ul class="p-2">
@@ -62,11 +51,10 @@
 							/>
 							{user.nickname}
 						</summary>
-						<ul class="menu menu-sm dropdown-content absolute right-0">
+						<ul class="menu menu-sm dropdown-content absolute right-0 z-10 p-l-2 m-0">
 							{#if user?.type < 2}
-								<li>
+								<li class="m-0 p-0">
 									<a
-										class="btn btn-sm my-auto"
 										data-sveltekit-reload
 										href="/tutor/profile?redirect={encodeURIComponent(
 											$page.url.pathname + $page.url.search
@@ -76,45 +64,36 @@
 									</a>
 								</li>
 							{/if}
-							<li>
-								<a data-sveltekit-reload href="/logout" class="whitespace-nowrap">
+							{#if user?.type === 0}
+								<li class="m-0 p-0">
+									<a data-sveltekit-reload href="/admin/users">
+										{$t('header.admin.users')}
+									</a>
+								</li>
+								<li class="m-0 p-0">
+									<a data-sveltekit-reload href="/admin/sessions">
+										{$t('header.admin.sessions')}
+									</a>
+								</li>
+								<li class="m-0 p-0">
+									<a data-sveltekit-reload href="/admin/studies">
+										{$t('header.admin.studies')}
+									</a>
+								</li>
+								<li class="m-0 p-0">
+									<a data-sveltekit-reload href="/admin/tasks">
+										{$t('header.admin.tasks')}
+									</a>
+								</li>
+							{/if}
+							<li class="border-t m-0 p-0">
+								<a data-sveltekit-reload href="/logout">
 									{$t('header.signout')}
 								</a>
 							</li>
 						</ul>
 					</details>
 				</li>
-				{#if user?.type === 0}
-					<li>
-						<details>
-							<summary class="p-3">
-								<Icon src={Cog6Tooth} class="h-5 w-5" />
-							</summary>
-							<ul class="menu menu-sm dropdown-content absolute right-0 z-10">
-								<li>
-									<a data-sveltekit-reload href="/admin/users">
-										{$t('header.admin.users')}
-									</a>
-								</li>
-								<li>
-									<a data-sveltekit-reload href="/admin/sessions">
-										{$t('header.admin.sessions')}
-									</a>
-								</li>
-								<li>
-									<a data-sveltekit-reload href="/admin/studies">
-										{$t('header.admin.studies')}
-									</a>
-								</li>
-								<li>
-									<a data-sveltekit-reload href="/admin/tasks">
-										{$t('header.admin.tasks')}
-									</a>
-								</li>
-							</ul>
-						</details>
-					</li>
-				{/if}
 			{:else}
 				<li>
 					<a

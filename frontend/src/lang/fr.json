@@ -13,7 +13,10 @@
 			"users": "Utilisateurs",
 			"sessions": "Sessions",
 			"studies": "Études",
-			"tasks": "Tâches"
+			"tasks": "Tâches",
+			"tests": "Tests",
+			"groups": "Groupes",
+			"questions": "Questions"
 		},
 		"profile": "Mon profil"
 	},
@@ -413,7 +416,47 @@
 	},
 	"tests": {
 		"taskTests": "Tests de langue",
-		"typingTests": "Tests de frappe"
+		"typingTests": "Tests de frappe",
+		"manage": "Gerer les tests",
+		"create": "Créer un nouveau test",
+		"backtostudies": "Revenir aux études",
+		"title": {
+			"edit": "Modifier le test",
+			"create": "Créer un test"
+		},
+		"label": {
+			"title": "Titre",
+			"type": "Type",
+			"explanation": "Explication",
+			"text": "Contenu",
+			"repeat": "Nombre de répétitions",
+			"duration": "Durée"
+		},
+		"groups": {
+			"manage": "Gérer les groupes",
+			"create": "Créer un groupe",
+			"backtotests": "Revenir aux tests",
+			"title": {
+				"edit": "Modifier le groupe",
+				"create": "Créer un groupe"
+			}
+		},
+		"questions": {
+			"manage": "Gérer les questions",
+			"create": "Créer une question",
+			"backtogroups": "Revenir aux groupes",
+			"type": "Type de question",
+			"subtype": "Sous-type de question",
+			"gapfill": "Texte à trous",
+			"options": "Options",
+			"option": "Option",
+			"correct": "Correct",
+			"addOption": "Ajouter une option",
+			"title": {
+				"edit": "Modifier la question",
+				"create": "Créer une question"
+			}
+		}
 	},
 	"tasks": {
 		"title": "Nouvelle tâche cible",
@@ -529,7 +572,7 @@
 			"inProgress": "En cours",
 			"finished": "Terminée",
 			"topics": "Topics",
-			"title": "Titre de l'étude",
+			"title": "Titre",
 			"users": "Utilisateurs",
 			"description": "Description",
 			"email": "E-mail",
@@ -542,7 +585,18 @@
 			"all": "Tous",
 			"instructions": "Instructions",
 			"examples": "Exemples",
-			"tasks": "Tâches"
+			"tasks": "Tâches",
+			"type": "Type",
+			"demo": "Demo",
+			"randomize": "Aléatoire",
+			"qcm": "QCM",
+			"image": "Image",
+			"text": "Texte",
+			"audio": "Audio",
+			"dropdown": "Menu déroulant",
+			"radio": "Boutons radio",
+			"gapfill": "Texte à trous",
+			"question": "Question"
 		}
 	},
 	"inputs": {

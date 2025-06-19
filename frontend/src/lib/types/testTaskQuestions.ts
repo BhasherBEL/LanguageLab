@@ -1,4 +1,4 @@
-import { shuffle } from '$lib/utils/arrays';
+import { seededRandom, shuffleWithSeed } from '../utils/arrays.js';
 
 export abstract class TestTaskQuestion {
 	private _id: number;
@@ -15,6 +15,15 @@ export abstract class TestTaskQuestion {
 
 	get question(): string {
 		return this._question;
+	}
+
+	get type(): string {
+		if (this instanceof TestTaskQuestionQcm) {
+			return 'qcm';
+		} else if (this instanceof TestTaskQuestionGapfill) {
+			return 'gapfill';
+		}
+		return 'unknown';
 	}
 
 	static parse(data: any): TestTaskQuestion | null {
@@ -68,15 +77,15 @@ export class TestTaskQuestionQcm extends TestTaskQuestion {
 
 	get optionsRandomized(): { type: string; value: string; index: number }[] {
 		let options = this.options.map((option, index) => ({ ...option, index }));
-		shuffle(options);
-		return options;
+
+		return shuffleWithSeed(options, this.id);
 	}
 
 	get correct(): number {
 		return this._correct;
 	}
 
-	get type(): TestTaskQuestionQcmType | null {
+	get subType(): TestTaskQuestionQcmType | null {
 		switch (this.question.split(':')[0]) {
 			case 'image':
 				return TestTaskQuestionQcmType.image;
@@ -136,6 +145,10 @@ export class TestTaskQuestionGapfill extends TestTaskQuestion {
 		}
 
 		return parts;
+	}
+
+	get value(): string {
+		return super.question.split(':').slice(1).join(':');
 	}
 
 	static parse(data: any): TestTaskQuestionGapfill | null {
