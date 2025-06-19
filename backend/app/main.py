@@ -189,6 +189,14 @@ def read_users(
     return crud.get_users(db, skip=skip)
 
 
+@usersRouter.get("/tutors/study/{study_id}", response_model=list[schemas.User])
+def get_tutors_by_study(
+    study_id: int,
+    db: Session = Depends(get_db),
+):
+    return crud.get_tutors_by_study(db, study_id)
+
+
 @usersRouter.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(
     user_id: int,
