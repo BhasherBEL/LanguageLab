@@ -57,6 +57,7 @@ class User(Base):
     tutor_list = Column(JSON, default=[])
     my_tutor = Column(String, default="")
     my_slots = Column(JSON, default=[])
+    max_learners = Column(Integer, default=10)
 
     sessions = relationship(
         "Session", secondary="user_sessions", back_populates="users"

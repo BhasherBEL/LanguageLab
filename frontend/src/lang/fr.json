@@ -168,6 +168,8 @@
 		"firstLanguage": "Langue principale :",
 		"role": "Rôle",
 		"ScheduleWith": "Planifier une réunion avec",
+		"maxLearners": "Nombre maximum d'apprenants",
+		"availableSlots": "{n, plural, one {# créneau disponible} other {# créneaux disponibles}}",
 		"roles": {
 			"note": "Sélectionnez le rôle que vous souhaitez jouer dans l'application",
 			"learner": "Apprenant",
@@ -355,7 +357,9 @@
 			"other": "Autre",
 			"na": "Je préfère ne pas répondre"
 		},
-		"availability": "Disponibilités"
+		"availability": "Disponibilités",
+		"available_slots": "Créneaux disponibles",
+		"no_slots_available": "Aucun créneau disponible"
 	},
 	"studies": {
 		"study": "Étude",
@@ -477,7 +481,8 @@
 	},
 	"profile": {
 		"title": "Mon profile",
-		"save": "Sauvegarder les modifications"
+		"save": "Sauvegarder les modifications",
+		"maxLearners": "Nombre maximum d'apprenants"
 	},
 	"button": {
 		"create": "Créer",

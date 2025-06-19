@@ -96,6 +96,7 @@ test("Register a tutor", async ({ page }) => {
   await page.getByRole("button", { name: "Envoyer" }).click();
 
   await page.waitForTimeout(500);
+  await page.getByTestId("maxLearners").fill("4");
   await page.getByTestId("weekday").selectOption("thursday");
   await page.getByTestId("startTime").selectOption("10:00");
   await page.getByTestId("endTime").selectOption("11:00");

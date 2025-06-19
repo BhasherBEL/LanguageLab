@@ -10,6 +10,7 @@
 	let email = user.email;
 	let type = user.type.toString();
 	let is_active = user.is_active;
+	let max_learners = user.max_learners || 5;
 
 	let inEdit = false;
 	let isChanged = false;
@@ -24,6 +25,7 @@
 		email = user.email;
 		type = user.type.toString();
 		is_active = user.is_active;
+		max_learners = user.max_learners || 5;
 
 		inEdit = false;
 		isChanged = false;
@@ -40,7 +42,8 @@
 			nickname,
 			email,
 			type: parseInt(type),
-			is_active
+			is_active,
+			max_learners
 		});
 
 		if (res) {
@@ -101,6 +104,24 @@
 			<span>{$t('utils.bool.true')}</span>
 		{:else}
 			<span>{$t('utils.bool.false')}</span>
+		{/if}
+	</td>
+	<td>
+		{#if user.type === 1}
+			{#if inEdit}
+				<input
+					type="number"
+					class="input input-sm w-20"
+					min="1"
+					max="100"
+					bind:value={max_learners}
+					on:input={() => (isChanged = true)}
+				/>
+			{:else}
+				{user.max_learners || 5}
+			{/if}
+		{:else}
+			-
 		{/if}
 	</td>
 	<td class="py-3 px-6 flex justify-center space-x-4 items-center">
