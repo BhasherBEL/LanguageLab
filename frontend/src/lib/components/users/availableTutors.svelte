@@ -5,7 +5,6 @@
 	import { ArrowRight, Icon } from 'svelte-hero-icons';
 
 	export let users: User[];
-	export let timeslots: bigint;
 	export let onSelect: ((user: User) => void) | null = null;
 </script>
 
@@ -20,6 +19,7 @@
 				<th class="border-2">{$t('users.email')}</th>
 				<th class="border-2">{$t('users.gender')}</th>
 				<th class="border-2">{$t('users.availability')}</th>
+				<th class="border-2">{$t('users.available_slots')}</th>
 				{#if onSelect}
 					<th class="border-2"></th>
 				{/if}
@@ -29,25 +29,36 @@
 			{#each users as user}
 				<tr>
 					<td class="border-2">
-						<Gravatar email={user.email} size={32} title={user.nickname} class="rounded" />
+						<Gravatar email={user.email} size={32} />
 					</td>
 					<td class="border-2">{user.nickname}</td>
 					<td class="border-2">{user.email}</td>
 					<td class="border-2">{$t('users.genders.' + user.gender)}</td>
 					<td class="border-2">
-						{#each Array.from({ length: 8 }, (_, i) => i) as i}
-							{@const time = i * 2 + 8}
-							{#each Array.from({ length: 7 }, (_, day) => day) as day}
-								{@const bin = 1n << BigInt(i * 7 + day + 1)}
-								{#if user.availability & bin}
-									<span class:font-bold={timeslots & bin}>
-										{$t('utils.days.' + day)}
-										{time}h - {time + 2}h
-										<br />
-									</span>
-								{/if}
+						{#if user.availabilities && user.availabilities.length > 0}
+							{#each user.availabilities as availability}
+								<span>
+									{$t('utils.days.' + availability.day)}
+									{availability.start} - {availability.end}
+									<br />
+								</span>
 							{/each}
-						{/each}
+						{:else}
+							<span class="text-gray-400">{$t('users.no_slots_available')}</span>
+						{/if}
+					</td>
+					<td class="border-2">
+						{#if user.available_slots !== null && user.available_slots !== undefined}
+							<span
+								class="font-semibold"
+								class:text-green-600={user.available_slots > 0}
+								class:text-red-600={user.available_slots === 0}
+							>
+								{user.available_slots}
+							</span>
+						{:else}
+							<span class="text-gray-400">N/A</span>
+						{/if}
 					</td>
 					{#if onSelect}
 						<td class="border-2 text-center">

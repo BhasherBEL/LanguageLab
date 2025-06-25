@@ -1,5 +1,5 @@
 import { getStudiesAPI, getStudyAPI } from '$lib/api/studies';
-import { getUsersAPI } from '$lib/api/users';
+import { getUsersAPI, getTutorsByStudyAPI } from '$lib/api/users';
 import Study from '$lib/types/study';
 import type { Load } from '@sveltejs/kit';
 
@@ -23,8 +23,10 @@ export const load: Load = async ({ parent, fetch, params, url }) => {
 
 	const studies = Study.parseAll(await getStudiesAPI(fetch));
 
-	const users = await getUsersAPI(fetch);
-	const tutors = users.filter((user) => user.type === 1);
+	let tutors: any[] = [];
+	if (study && study.id) {
+		tutors = await getTutorsByStudyAPI(fetch, study.id);
+	}
 
 	let role = 'learner';
 	if (url.searchParams.has('role')) {

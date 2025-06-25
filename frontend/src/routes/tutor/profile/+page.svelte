@@ -133,6 +133,21 @@
 			></textarea>
 		</div>
 		<div>
+			<label class="block text-sm font-medium mb-1" for="max_learners">
+				{$t('profile.maxLearners')}
+			</label>
+			<input
+				id="max_learners"
+				name="max_learners"
+				type="number"
+				class="input input-bordered w-full"
+				value={user?.max_learners || 5}
+				min="1"
+				max="100"
+				required
+			/>
+		</div>
+		<div>
 			<h2 class="text-lg font-semibold">
 				{$t('register.availabilities')}
 			</h2>

@@ -35,6 +35,25 @@ def get_users(db: Session, skip: int = 0):
     return db.query(models.User).offset(skip).all()
 
 
+def get_tutors_by_study(db: Session, study_id: int):
+    tutors = (
+        db.query(models.User)
+        .filter(models.User.type == models.UserType.TUTOR.value)
+        .filter(models.User.studies.any(models.Study.id == study_id))
+        .all()
+    )
+
+    for tutor in tutors:
+        current_learners = (
+            db.query(models.User).filter(models.User.my_tutor == tutor.email).count()
+        )
+        tutor.current_learners = current_learners
+        tutor.available_slots = max(0, (tutor.max_learners or 10) - current_learners)
+        tutor.is_available = tutor.available_slots > 0
+
+    return tutors
+
+
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     password = Hasher.get_password_hash(user.password)
     nickname = user.nickname if user.nickname else user.email.split("@")[0]

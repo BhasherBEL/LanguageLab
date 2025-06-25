@@ -7,6 +7,13 @@ export async function getUsersAPI(fetch: fetchType): Promise<any[]> {
 	return await response.json();
 }
 
+export async function getTutorsByStudyAPI(fetch: fetchType, study_id: number): Promise<any[]> {
+	const response = await fetch(`/api/users/tutors/study/${study_id}`);
+	if (!response.ok) return [];
+
+	return await response.json();
+}
+
 export async function getUserAPI(fetch: fetchType, user_id: number): Promise<any | null> {
 	const response = await fetch(`/api/users/${user_id}`);
 	if (!response.ok) return null;

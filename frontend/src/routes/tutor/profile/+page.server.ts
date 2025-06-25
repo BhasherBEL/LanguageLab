@@ -13,6 +13,7 @@ export const actions: Actions = {
 		const gender = formData.get('gender') as string;
 		const birthyear = formData.get('birthdate') as string;
 		const bio = formData.get('bio') as string;
+		const max_learners = parseInt(formData.get('max_learners') as string) || 5;
 		const availabilitiesRaw = formData.getAll('availability[]') as string[];
 
 		if (!birthyear || birthyear.length !== 4 || isNaN(Number(birthyear))) {
@@ -40,6 +41,7 @@ export const actions: Actions = {
 			gender,
 			birthdate,
 			bio,
+			max_learners,
 			availabilities
 		});
 
@@ -49,6 +51,7 @@ export const actions: Actions = {
 			gender,
 			birthdate,
 			bio,
+			max_learners,
 			availabilities
 		};
 
