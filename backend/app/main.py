@@ -1053,7 +1053,8 @@ def update_feedback_reply(
     if db_reply is None:
         raise HTTPException(status_code=404, detail="Reply not found")
 
-    # Check permissions: users can edit their own replies, tutors can edit any reply, admins can edit any reply
+    # Check permissions: users can edit their own replies, tutors can edit any reply,
+    # admins can edit any reply
     if (
         not check_user_level(current_user, models.UserType.TUTOR)
         and db_reply.user_id != current_user.id
@@ -1114,7 +1115,8 @@ def delete_feedback_reply(
     if db_reply is None:
         raise HTTPException(status_code=404, detail="Reply not found")
 
-    # Check permissions: users can delete their own replies, tutors can delete any reply, admins can delete any reply
+    # Check permissions: users can delete their own replies, tutors can delete any reply,
+    # admins can delete any reply
     if (
         not check_user_level(current_user, models.UserType.TUTOR)
         and db_reply.user_id != current_user.id

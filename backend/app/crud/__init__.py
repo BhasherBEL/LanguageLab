@@ -282,10 +282,12 @@ def get_message_feedback(db: Session, feedback_id: int):
 
 def delete_message_feedback(db: Session, feedback_id: int):
     # First get the feedback object to trigger cascade deletion
-    db_feedback = db.query(models.MessageFeedback).filter(
-        models.MessageFeedback.id == feedback_id
-    ).first()
-    
+    db_feedback = (
+        db.query(models.MessageFeedback)
+        .filter(models.MessageFeedback.id == feedback_id)
+        .first()
+    )
+
     if db_feedback:
         # Delete the object (this will trigger cascade deletion of replies)
         db.delete(db_feedback)
