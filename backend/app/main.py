@@ -939,6 +939,7 @@ def create_feedback_reply(
     message_id: int,
     feedback_id: int,
     reply: schemas.FeedbackReplyCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
@@ -964,6 +965,16 @@ def create_feedback_reply(
         raise HTTPException(status_code=404, detail="Feedback not found")
 
     reply_obj = crud.create_feedback_reply(db, feedback_id, current_user.id, reply)
+
+    reply_data = schemas.FeedbackReply.model_validate(reply_obj).to_dict()
+    reply_data["message_id"] = message_id
+    
+    background_tasks.add_task(
+        send_websoket_feedback,
+        session_id,
+        "createReply",
+        reply_data,
+    )
 
     return reply_obj.id
 
@@ -1013,6 +1024,7 @@ def update_feedback_reply(
     feedback_id: int,
     reply_id: int,
     reply: schemas.FeedbackReplyUpdate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
@@ -1053,6 +1065,16 @@ def update_feedback_reply(
 
     updated_reply = crud.update_feedback_reply(db, reply_id, reply)
 
+    reply_data = schemas.FeedbackReply.model_validate(updated_reply).to_dict()
+    reply_data["message_id"] = message_id
+    
+    background_tasks.add_task(
+        send_websoket_feedback,
+        session_id,
+        "updateReply",
+        reply_data,
+    )
+
 
 @sessionsRouter.delete(
     "/{session_id}/messages/{message_id}/feedback/{feedback_id}/replies/{reply_id}",
@@ -1063,6 +1085,7 @@ def delete_feedback_reply(
     message_id: int,
     feedback_id: int,
     reply_id: int,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(get_jwt_user),
 ):
@@ -1102,6 +1125,17 @@ def delete_feedback_reply(
         )
 
     crud.delete_feedback_reply(db, reply_id)
+
+    background_tasks.add_task(
+        send_websoket_feedback,
+        session_id,
+        "deleteReply",
+        {
+            "message_id": message_id,
+            "feedback_id": feedback_id,
+            "reply_id": reply_id,
+        },
+    )
 
 
 async def send_websoket_typing(session_id: int, user_id: int):
