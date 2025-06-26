@@ -185,3 +185,25 @@ class MessageFeedback(Base):
 
     def raw(self):
         return [self.id, self.message_id, self.start, self.end, self.content, self.date]
+
+    replies = relationship(
+        "FeedbackReply",
+        back_populates="feedback",
+        cascade="all, delete-orphan",
+        order_by="FeedbackReply.created_at.desc()"
+    )
+
+
+class FeedbackReply(Base):
+    __tablename__ = "feedback_replies"
+
+    id = Column(Integer, primary_key=True, index=True)
+    feedback_id = Column(Integer, ForeignKey("message_feedbacks.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime_aware)
+    updated_at = Column(DateTime, default=None)
+    deleted_at = Column(DateTime, default=None)
+
+    feedback = relationship("MessageFeedback", back_populates="replies")
+    user = relationship("User")
