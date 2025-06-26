@@ -27,7 +27,8 @@
 		"edited": "modifié",
 		"history": "Historique",
 		"replyingTo": "En réponse à : ",
-		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible."
+		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible.",
+		"deleteReply": "Êtes-vous sûr de vouloir supprimer cette réponse ? Cette action est irréversible."
 	},
 	"home": {
 		"email": "E-mail",
@@ -76,7 +77,12 @@
 			"noComment": "Pas de commentaire",
 			"markedText": "{user} a marqué ce texte",
 			"viewMessage": "Voir le message",
-			"reply": "Répondre"
+			"reply": "Répondre",
+			"replies": "{count, plural, one {réponse} other {réponses}}",
+			"replyPlaceholder": "Écrivez une réponse...",
+			"editReplyPlaceholder": "Modifiez votre réponse...",
+			"expandReplies": "Développer les réponses",
+			"collapseReplies": "Réduire les réponses"
 		},
 		"modal": {
 			"satisfy": {
@@ -502,7 +508,9 @@
 		"remove": "Retirer",
 		"continue": "Continuer",
 		"select": "Sélectionner",
-		"finish": "Terminer"
+		"finish": "Terminer",
+		"edit": "Modifier",
+		"reply": "Répondre"
 	},
 	"utils": {
 		"month": {
