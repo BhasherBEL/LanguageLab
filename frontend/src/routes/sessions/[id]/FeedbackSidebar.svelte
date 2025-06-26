@@ -45,7 +45,7 @@
 
 	// Reactive replies for each feedback
 	let feedbackReplies = $state(new Map<number, FeedbackReply[]>());
-	
+
 	// Track collapsed state for each feedback's replies
 	let collapsedReplies = $state(new Map<number, boolean>());
 
@@ -95,16 +95,16 @@
 				// Filter to only Message instances for feedback extraction
 				const messageObjects = messages.filter((m): m is Message => m instanceof Message);
 				const newFeedbacks = extractAllFeedbacks(messageObjects);
-				
+
 				// Clean up replies for deleted feedbacks
-				const currentFeedbackIds = new Set(newFeedbacks.map(f => f.id));
+				const currentFeedbackIds = new Set(newFeedbacks.map((f) => f.id));
 				for (const [feedbackId] of feedbackReplies) {
 					if (!currentFeedbackIds.has(feedbackId)) {
 						feedbackReplies.delete(feedbackId);
 						processedFeedbackIds.delete(feedbackId);
 					}
 				}
-				
+
 				allFeedbacks = newFeedbacks;
 				feedbackCards = prepareFeedbackCards(allFeedbacks);
 
@@ -118,16 +118,16 @@
 								(m): m is Message => m instanceof Message
 							);
 							const updatedFeedbacks = extractAllFeedbacks(currentMessageObjects);
-							
+
 							// Clean up replies for deleted feedbacks
-							const updatedFeedbackIds = new Set(updatedFeedbacks.map(f => f.id));
+							const updatedFeedbackIds = new Set(updatedFeedbacks.map((f) => f.id));
 							for (const [feedbackId] of feedbackReplies) {
 								if (!updatedFeedbackIds.has(feedbackId)) {
 									feedbackReplies.delete(feedbackId);
 									processedFeedbackIds.delete(feedbackId);
 								}
 							}
-							
+
 							allFeedbacks = updatedFeedbacks;
 							feedbackCards = prepareFeedbackCards(allFeedbacks);
 						});
@@ -140,7 +140,9 @@
 						processedFeedbackIds.add(feedback.id);
 						feedback.replies.subscribe((replies) => {
 							// Sort replies by creation date (oldest first)
-							const sortedReplies = [...replies].sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
+							const sortedReplies = [...replies].sort(
+								(a, b) => a.created_at.getTime() - b.created_at.getTime()
+							);
 							feedbackReplies.set(feedback.id, sortedReplies);
 							// Force Svelte reactivity by reassigning the Map
 							feedbackReplies = new Map(feedbackReplies);
@@ -167,14 +169,18 @@
 			processedFeedbackIds.add(feedback.id);
 			feedback.replies.subscribe((replies) => {
 				// Sort replies by creation date (oldest first)
-				const sortedReplies = [...replies].sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
+				const sortedReplies = [...replies].sort(
+					(a, b) => a.created_at.getTime() - b.created_at.getTime()
+				);
 				feedbackReplies.set(feedback.id, sortedReplies);
 				feedbackReplies = new Map(feedbackReplies);
 			});
 		}
 		// Update the feedbackReplies map with current replies
 		const replies = get(feedback.replies);
-		const sortedReplies = [...replies].sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
+		const sortedReplies = [...replies].sort(
+			(a, b) => a.created_at.getTime() - b.created_at.getTime()
+		);
 		feedbackReplies.set(feedback.id, sortedReplies);
 		feedbackReplies = new Map(feedbackReplies);
 	}
@@ -186,9 +192,9 @@
 
 	async function submitReply() {
 		if (!replyingTo || !replyContent.trim()) return;
-		
+
 		const success = await replyingTo.addReply(replyContent.trim(), user);
-		
+
 		if (success) {
 			replyingTo = null;
 			replyContent = '';
@@ -207,7 +213,7 @@
 
 	async function submitEditReply() {
 		if (!editingReply || !editContent.trim()) return;
-		
+
 		const success = await editingReply.update(editContent.trim());
 		if (success) {
 			editingReply = null;
@@ -288,7 +294,13 @@
 		<div class="p-4 space-y-4">
 			{#each feedbackCards as feedbackCard}
 				<div class="card card-compact bg-base-100 shadow-sm border border-base-300 relative">
-					<div class="card-body" class:pb-12={replyingTo !== feedbackCard.feedback && (feedbackReplies.get(feedbackCard.feedback.id) || []).length === 0} class:pb-16={(feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0 || replyingTo === feedbackCard.feedback}>
+					<div
+						class="card-body"
+						class:pb-12={replyingTo !== feedbackCard.feedback &&
+							(feedbackReplies.get(feedbackCard.feedback.id) || []).length === 0}
+						class:pb-16={(feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0 ||
+							replyingTo === feedbackCard.feedback}
+					>
 						<div class="relative mb-2 break-words group">
 							<button
 								onclick={() => scrollToMessage(feedbackCard.messageId)}
@@ -357,21 +369,22 @@
 										onclick={() => toggleRepliesCollapse(feedbackCard.feedback.id)}
 									>
 										<span class="w-6 h-px bg-base-content/20"></span>
-										{collapsedReplies.get(feedbackCard.feedback.id) 
+										{collapsedReplies.get(feedbackCard.feedback.id)
 											? `View ${(feedbackReplies.get(feedbackCard.feedback.id) || []).length} ${$t('session.feedback.replies', { count: (feedbackReplies.get(feedbackCard.feedback.id) || []).length })}`
-											: 'Hide replies'
-										}
+											: 'Hide replies'}
 									</button>
 								{/if}
 
 								<!-- Replies List (Collapsible, Instagram style) -->
 								{#if !collapsedReplies.get(feedbackCard.feedback.id)}
 									<div class="space-y-2.5 mt-2">
-										{#each (feedbackReplies.get(feedbackCard.feedback.id) || []) as reply (reply.id)}
+										{#each feedbackReplies.get(feedbackCard.feedback.id) || [] as reply (reply.id)}
 											<div class="flex gap-2 ml-6 relative">
 												<!-- Connecting line -->
-												<div class="absolute -left-3 top-0 w-6 h-4 border-l-2 border-b-2 border-base-content/10 rounded-bl-lg"></div>
-												
+												<div
+													class="absolute -left-3 top-0 w-6 h-4 border-l-2 border-b-2 border-base-content/10 rounded-bl-lg"
+												></div>
+
 												<div class="avatar flex-shrink-0">
 													<div class="w-6 h-6 rounded-full">
 														<img
@@ -419,16 +432,21 @@
 															<div class="text-sm text-base-content break-words flex-grow min-w-0">
 																{reply.content}
 															</div>
-															
+
 															<!-- Reply Actions   -->
-															<div class="flex items-center gap-1 opacity-0 group-hover/reply:opacity-100 transition-opacity flex-shrink-0">
+															<div
+																class="flex items-center gap-1 opacity-0 group-hover/reply:opacity-100 transition-opacity flex-shrink-0"
+															>
 																{#if canEditReply(reply)}
 																	<button
 																		class="p-1 hover:bg-base-200 rounded-full transition-colors"
 																		onclick={() => startEditReply(reply)}
 																		aria-label={$t('button.edit')}
 																	>
-																		<Icon src={Pencil} class="w-3 h-3 text-base-content/50 hover:text-base-content/70" />
+																		<Icon
+																			src={Pencil}
+																			class="w-3 h-3 text-base-content/50 hover:text-base-content/70"
+																		/>
 																	</button>
 																{/if}
 																{#if canDeleteReply(reply)}
@@ -437,7 +455,10 @@
 																		onclick={() => deleteReply(reply)}
 																		aria-label={$t('button.delete')}
 																	>
-																		<Icon src={Trash} class="w-3 h-3 text-base-content/50 hover:text-red-500" />
+																		<Icon
+																			src={Trash}
+																			class="w-3 h-3 text-base-content/50 hover:text-red-500"
+																		/>
 																	</button>
 																{/if}
 															</div>
@@ -453,8 +474,10 @@
 								{#if replyingTo === feedbackCard.feedback}
 									<div class="flex gap-2 ml-6 mt-2 mb-4 relative">
 										<!-- Connecting line for reply form -->
-										<div class="absolute -left-3 top-0 w-6 h-4 border-l-2 border-b-2 border-base-content/10 rounded-bl-lg"></div>
-										
+										<div
+											class="absolute -left-3 top-0 w-6 h-4 border-l-2 border-b-2 border-base-content/10 rounded-bl-lg"
+										></div>
+
 										<div class="avatar flex-shrink-0">
 											<div class="w-6 h-6 rounded-full">
 												<img

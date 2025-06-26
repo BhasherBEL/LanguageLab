@@ -130,8 +130,7 @@ def create_session_with_users(
     db: Session,
     users: list[schemas.User],
     start_time: datetime.datetime | None = datetime_aware(),
-    end_time: datetime.datetime | None = datetime_aware()
-    + datetime.timedelta(hours=12),
+    end_time: datetime.datetime | None = datetime_aware() + datetime.timedelta(hours=12),
 ):
     db_session = models.Session(
         is_active=True, users=users, start_time=start_time, end_time=end_time

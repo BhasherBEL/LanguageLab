@@ -968,7 +968,7 @@ def create_feedback_reply(
 
     reply_data = schemas.FeedbackReply.model_validate(reply_obj).to_dict()
     reply_data["message_id"] = message_id
-    
+
     background_tasks.add_task(
         send_websoket_feedback,
         session_id,
@@ -1067,7 +1067,7 @@ def update_feedback_reply(
 
     reply_data = schemas.FeedbackReply.model_validate(updated_reply).to_dict()
     reply_data["message_id"] = message_id
-    
+
     background_tasks.add_task(
         send_websoket_feedback,
         session_id,

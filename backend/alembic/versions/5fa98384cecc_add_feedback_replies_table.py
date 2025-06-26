@@ -43,4 +43,4 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_feedback_replies_user_id'), table_name='feedback_replies')
     op.drop_index(op.f('ix_feedback_replies_feedback_id'), table_name='feedback_replies')
     op.drop_index(op.f('ix_feedback_replies_id'), table_name='feedback_replies')
-    op.drop_table('feedback_replies') 
+    op.drop_table('feedback_replies')

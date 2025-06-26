@@ -1,8 +1,8 @@
-import { 
-	createFeedbackReplyAPI, 
-	getFeedbackRepliesAPI, 
-	updateFeedbackReplyAPI, 
-	deleteFeedbackReplyAPI 
+import {
+	createFeedbackReplyAPI,
+	getFeedbackRepliesAPI,
+	updateFeedbackReplyAPI,
+	deleteFeedbackReplyAPI
 } from '$lib/api/sessions';
 import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
@@ -74,7 +74,7 @@ export default class FeedbackReply {
 			toastAlert('Failed to parse user data for feedback reply');
 			return null;
 		}
-		
+
 		const reply = new FeedbackReply(
 			json.id,
 			feedback,
@@ -172,10 +172,10 @@ export default class FeedbackReply {
 				email: this._user.email,
 				nickname: this._user.nickname,
 				type: this._user.type,
-				is_active: this._user.is_active,
+				is_active: this._user.is_active
 			},
 			content: this._content,
-			created_at: this._created_at.toISOString(),
+			created_at: this._created_at.toISOString()
 		};
 	}
-} 
+}

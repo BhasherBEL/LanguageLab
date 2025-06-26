@@ -336,13 +336,16 @@ export default class Session {
 					}
 				} else if (data['action'] == 'createReply') {
 					// Handle feedback reply creation
-					console.log('Processing createReply WebSocket message for feedback:', data['data']['feedback_id']);
+					console.log(
+						'Processing createReply WebSocket message for feedback:',
+						data['data']['feedback_id']
+					);
 					const message = get(this._messages).find(
 						(m) => m instanceof Message && m.id === data['data']['message_id']
 					);
 					if (message && message instanceof Message) {
 						const feedbacks = get(message.feedbacks);
-						const feedback = feedbacks.find(f => f.id === data['data']['feedback_id']);
+						const feedback = feedbacks.find((f) => f.id === data['data']['feedback_id']);
 						if (feedback) {
 							const reply = FeedbackReply.parse(data['data'], feedback);
 							if (reply) {
@@ -364,10 +367,12 @@ export default class Session {
 						(m) => m instanceof Message && m.id === data['data']['message_id']
 					);
 					if (message && message instanceof Message) {
-						const feedback = get(message.feedbacks).find(f => f.id === data['data']['feedback_id']);
+						const feedback = get(message.feedbacks).find(
+							(f) => f.id === data['data']['feedback_id']
+						);
 						if (feedback) {
 							const replies = get(feedback.replies);
-							const existingReply = replies.find(r => r.id === data['data']['id']);
+							const existingReply = replies.find((r) => r.id === data['data']['id']);
 							if (existingReply) {
 								existingReply.localUpdate(data['data']['content']);
 								return;
@@ -380,7 +385,9 @@ export default class Session {
 						(m) => m instanceof Message && m.id === data['data']['message_id']
 					);
 					if (message && message instanceof Message) {
-						const feedback = get(message.feedbacks).find(f => f.id === data['data']['feedback_id']);
+						const feedback = get(message.feedbacks).find(
+							(f) => f.id === data['data']['feedback_id']
+						);
 						if (feedback) {
 							feedback.deleteLocalReply(data['data']['reply_id']);
 							return;

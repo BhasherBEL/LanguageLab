@@ -120,7 +120,7 @@ export async function createFeedbackReplyAPI(
 			body: JSON.stringify({ content })
 		}
 	);
-	
+
 	if (!response.ok) return null;
 
 	return parseInt(await response.text());
