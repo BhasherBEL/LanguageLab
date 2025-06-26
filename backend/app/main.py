@@ -791,7 +791,7 @@ async def send_websoket_feedback(session_id: int, action: str, feedback: dict):
                 sent_count += 1
             except Exception as e:
                 print(f"Failed to send WebSocket message to user {user_id}: {e}")
-    
+
     print(f"WebSocket message sent to {sent_count} connections")
 
 

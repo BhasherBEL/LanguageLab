@@ -130,7 +130,8 @@ def create_session_with_users(
     db: Session,
     users: list[schemas.User],
     start_time: datetime.datetime | None = datetime_aware(),
-    end_time: datetime.datetime | None = datetime_aware() + datetime.timedelta(hours=12),
+    end_time: datetime.datetime | None = datetime_aware()
+    + datetime.timedelta(hours=12),
 ):
     db_session = models.Session(
         is_active=True, users=users, start_time=start_time, end_time=end_time
@@ -352,9 +353,9 @@ def update_feedback_reply(
     reply_id: int,
     reply: schemas.FeedbackReplyUpdate,
 ):
-    db.query(models.FeedbackReply).filter(
-        models.FeedbackReply.id == reply_id
-    ).update(reply.dict(exclude_unset=True))
+    db.query(models.FeedbackReply).filter(models.FeedbackReply.id == reply_id).update(
+        reply.dict(exclude_unset=True)
+    )
     db.commit()
     db.refresh(
         db.query(models.FeedbackReply)
@@ -369,7 +370,5 @@ def update_feedback_reply(
 
 
 def delete_feedback_reply(db: Session, reply_id: int):
-    db.query(models.FeedbackReply).filter(
-        models.FeedbackReply.id == reply_id
-    ).delete()
+    db.query(models.FeedbackReply).filter(models.FeedbackReply.id == reply_id).delete()
     db.commit()

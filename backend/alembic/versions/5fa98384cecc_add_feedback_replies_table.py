@@ -5,6 +5,7 @@ Revises: add_max_learners_to_user_table, cef049467e32
 Create Date: 2025-06-26 03:41:41.223160
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -52,9 +53,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Drop feedback_replies table
-    op.drop_index(
-        op.f("ix_feedback_replies_user_id"), table_name="feedback_replies"
-    )
+    op.drop_index(op.f("ix_feedback_replies_user_id"), table_name="feedback_replies")
     op.drop_index(
         op.f("ix_feedback_replies_feedback_id"), table_name="feedback_replies"
     )
