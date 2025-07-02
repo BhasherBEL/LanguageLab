@@ -782,10 +782,17 @@ async def send_websoket_message(session_id: int, message: schemas.Message, actio
 
 async def send_websoket_feedback(session_id: int, action: str, feedback: dict):
     content = json.dumps({"type": "message", "action": action, "data": feedback})
+    sent_count = 0
 
-    for _, user_websockets in websocket_users[session_id].items():
+    for user_id, user_websockets in websocket_users[session_id].items():
         for user_websocket in user_websockets:
-            await user_websocket.send_text(content)
+            try:
+                await user_websocket.send_text(content)
+                sent_count += 1
+            except Exception as e:
+                print(f"Failed to send WebSocket message to user {user_id}: {e}")
+
+    print(f"WebSocket message sent to {sent_count} connections")
 
 
 def store_metadata(db, message_id, metadata: list[schemas.MessageMetadataCreate]):
@@ -918,6 +925,217 @@ async def delete_feedback(
         {
             "message_id": message_id,
             "feedback_id": feedback_id,
+        },
+    )
+
+
+# Feedback Reply endpoints
+@sessionsRouter.post(
+    "/{session_id}/messages/{message_id}/feedback/{feedback_id}/replies",
+    status_code=status.HTTP_201_CREATED,
+)
+def create_feedback_reply(
+    session_id: int,
+    message_id: int,
+    feedback_id: int,
+    reply: schemas.FeedbackReplyCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user not in db_session.users
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to create replies in this session",
+        )
+
+    db_message = crud.get_message(db, message_id)
+    if db_message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    db_feedback = crud.get_message_feedback(db, feedback_id)
+    if db_feedback is None:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+
+    reply_obj = crud.create_feedback_reply(db, feedback_id, current_user.id, reply)
+
+    reply_data = schemas.FeedbackReply.model_validate(reply_obj).to_dict()
+    reply_data["message_id"] = message_id
+
+    background_tasks.add_task(
+        send_websoket_feedback,
+        session_id,
+        "createReply",
+        reply_data,
+    )
+
+    return reply_obj.id
+
+
+@sessionsRouter.get(
+    "/{session_id}/messages/{message_id}/feedback/{feedback_id}/replies",
+    response_model=list[schemas.FeedbackReply],
+)
+def get_feedback_replies(
+    session_id: int,
+    message_id: int,
+    feedback_id: int,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user not in db_session.users
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to view replies in this session",
+        )
+
+    db_message = crud.get_message(db, message_id)
+    if db_message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    db_feedback = crud.get_message_feedback(db, feedback_id)
+    if db_feedback is None:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+
+    return crud.get_feedback_replies(db, feedback_id)
+
+
+@sessionsRouter.patch(
+    "/{session_id}/messages/{message_id}/feedback/{feedback_id}/replies/{reply_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def update_feedback_reply(
+    session_id: int,
+    message_id: int,
+    feedback_id: int,
+    reply_id: int,
+    reply: schemas.FeedbackReplyUpdate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user not in db_session.users
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to update replies in this session",
+        )
+
+    db_message = crud.get_message(db, message_id)
+    if db_message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    db_feedback = crud.get_message_feedback(db, feedback_id)
+    if db_feedback is None:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+
+    db_reply = crud.get_feedback_reply(db, reply_id)
+    if db_reply is None:
+        raise HTTPException(status_code=404, detail="Reply not found")
+
+    # Check permissions: users can edit their own replies, tutors can edit any reply,
+    # admins can edit any reply
+    if (
+        not check_user_level(current_user, models.UserType.TUTOR)
+        and db_reply.user_id != current_user.id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to update this reply",
+        )
+
+    updated_reply = crud.update_feedback_reply(db, reply_id, reply)
+
+    reply_data = schemas.FeedbackReply.model_validate(updated_reply).to_dict()
+    reply_data["message_id"] = message_id
+
+    background_tasks.add_task(
+        send_websoket_feedback,
+        session_id,
+        "updateReply",
+        reply_data,
+    )
+
+
+@sessionsRouter.delete(
+    "/{session_id}/messages/{message_id}/feedback/{feedback_id}/replies/{reply_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_feedback_reply(
+    session_id: int,
+    message_id: int,
+    feedback_id: int,
+    reply_id: int,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_jwt_user),
+):
+    db_session = crud.get_session(db, session_id)
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if (
+        not check_user_level(current_user, models.UserType.ADMIN)
+        and current_user not in db_session.users
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to delete replies in this session",
+        )
+
+    db_message = crud.get_message(db, message_id)
+    if db_message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    db_feedback = crud.get_message_feedback(db, feedback_id)
+    if db_feedback is None:
+        raise HTTPException(status_code=404, detail="Feedback not found")
+
+    db_reply = crud.get_feedback_reply(db, reply_id)
+    if db_reply is None:
+        raise HTTPException(status_code=404, detail="Reply not found")
+
+    # Check permissions: users can delete their own replies, tutors can delete any reply,
+    # admins can delete any reply
+    if (
+        not check_user_level(current_user, models.UserType.TUTOR)
+        and db_reply.user_id != current_user.id
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permission to delete this reply",
+        )
+
+    crud.delete_feedback_reply(db, reply_id)
+
+    background_tasks.add_task(
+        send_websoket_feedback,
+        session_id,
+        "deleteReply",
+        {
+            "message_id": message_id,
+            "feedback_id": feedback_id,
+            "reply_id": reply_id,
         },
     )
 

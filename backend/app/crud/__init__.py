@@ -282,10 +282,17 @@ def get_message_feedback(db: Session, feedback_id: int):
 
 
 def delete_message_feedback(db: Session, feedback_id: int):
-    db.query(models.MessageFeedback).filter(
-        models.MessageFeedback.id == feedback_id
-    ).delete()
-    db.commit()
+    # First get the feedback object to trigger cascade deletion
+    db_feedback = (
+        db.query(models.MessageFeedback)
+        .filter(models.MessageFeedback.id == feedback_id)
+        .first()
+    )
+
+    if db_feedback:
+        # Delete the object (this will trigger cascade deletion of replies)
+        db.delete(db_feedback)
+        db.commit()
 
 
 def create_test_typing(db: Session, test: schemas.TestTypingCreate):
@@ -304,3 +311,64 @@ def create_test_typing_entry(
     db.commit()
     db.refresh(db_entry)
     return db_entry
+
+
+# Feedback Reply CRUD operations
+def create_feedback_reply(
+    db: Session,
+    feedback_id: int,
+    user_id: int,
+    reply: schemas.FeedbackReplyCreate,
+):
+    db_feedback_reply = models.FeedbackReply(
+        feedback_id=feedback_id,
+        user_id=user_id,
+        content=reply.content,
+    )
+    db.add(db_feedback_reply)
+    db.commit()
+    db.refresh(db_feedback_reply)
+    return db_feedback_reply
+
+
+def get_feedback_replies(db: Session, feedback_id: int):
+    return (
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.feedback_id == feedback_id)
+        .order_by(models.FeedbackReply.created_at.desc())
+        .all()
+    )
+
+
+def get_feedback_reply(db: Session, reply_id: int):
+    return (
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.id == reply_id)
+        .first()
+    )
+
+
+def update_feedback_reply(
+    db: Session,
+    reply_id: int,
+    reply: schemas.FeedbackReplyUpdate,
+):
+    db.query(models.FeedbackReply).filter(models.FeedbackReply.id == reply_id).update(
+        reply.dict(exclude_unset=True)
+    )
+    db.commit()
+    db.refresh(
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.id == reply_id)
+        .first()
+    )
+    return (
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.id == reply_id)
+        .first()
+    )
+
+
+def delete_feedback_reply(db: Session, reply_id: int):
+    db.query(models.FeedbackReply).filter(models.FeedbackReply.id == reply_id).delete()
+    db.commit()

@@ -19,16 +19,19 @@
 		"thank-you": "¡Gracias!",
 		"tryit": "Para probar",
 		"update": "Para actualizar",
-		"updated": "¡Actualizado!"
+		"updated": "¡Actualizado!",
+		"edit": "Editar",
+		"reply": "Responder"
 	},
 	"chatbox": {
 		"deleteFeedback": "¿Estás seguro de que quieres eliminar estos comentarios? \nEsta acción es irreversible.",
-		"disabled": "Esta sesión sólo es visible para la memoria.",
-		"edited": "modificado",
-		"history": "Histórico",
+		"deleteReply": "¿Estás seguro de que quieres eliminar esta respuesta? \nEsta acción es irreversible.",
+		"disabled": "Esta sesión solo es visible como archivo.",
+		"edited": "editado",
+		"history": "Historial",
 		"placeholder": "Escribe tu mensaje aquí...",
-		"replyingTo": "En respuesta a:",
-		"sendError": "Error al enviar mensaje"
+		"replyingTo": "Respondiendo a: ",
+		"sendError": "Error al enviar el mensaje"
 	},
 	"header": {
 		"admin": {
@@ -230,7 +233,12 @@
 			"noComment": "Sin comentario",
 			"markedText": "{user} marcó este texto",
 			"viewMessage": "Ver mensaje",
-			"reply": "Responder"
+			"reply": "Responder",
+			"replies": "{count, plural, one {respuesta} other {respuestas}}",
+			"replyPlaceholder": "Escribe una respuesta...",
+			"editReplyPlaceholder": "Edita tu respuesta...",
+			"expandReplies": "Expandir respuestas",
+			"collapseReplies": "Contraer respuestas"
 		},
 		"modal": {
 			"satisfy": {

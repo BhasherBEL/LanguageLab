@@ -2,6 +2,10 @@ import { deleteMessageFeedbackAPI } from '$lib/api/sessions';
 import { parseToLocalDate } from '$lib/utils/date';
 import { toastAlert } from '$lib/utils/toasts';
 import Message from './message';
+import FeedbackReply from './feedbackReply';
+import type User from './user';
+import { writable, type Writable } from 'svelte/store';
+import { get } from 'svelte/store';
 
 export default class Feedback {
 	private _id: number;
@@ -10,6 +14,7 @@ export default class Feedback {
 	private _end: number;
 	private _content: string | null;
 	private _date: Date;
+	private _replies = writable<FeedbackReply[]>([]);
 
 	public constructor(
 		id: number,
@@ -55,8 +60,40 @@ export default class Feedback {
 		return this._date;
 	}
 
+	get replies(): Writable<FeedbackReply[]> {
+		return this._replies;
+	}
+
 	get uuid(): string {
 		return `feedback-${this._id}`;
+	}
+
+	async addReply(content: string, user: User): Promise<boolean> {
+		const reply = new FeedbackReply(0, this, user, content);
+		const success = await reply.create();
+		if (success) {
+			this.localReply(reply);
+		}
+		return success;
+	}
+
+	localReply(reply: FeedbackReply): void {
+		console.log('Adding reply to feedback:', reply.id);
+		this._replies.update((r) => {
+			if (!r.find((rep) => rep.id == reply.id)) {
+				return [...r, reply];
+			}
+			return r.map((rep) => (rep.id == reply.id ? reply : rep));
+		});
+	}
+
+	deleteLocalReply(reply_id: number): void {
+		this._replies.update((r) => r.filter((rep) => rep.id != reply_id));
+	}
+
+	async loadReplies(): Promise<void> {
+		const replies = await FeedbackReply.getReplies(this);
+		this._replies.set(replies);
 	}
 
 	static parse(json: any, message: Message): Feedback | null {
@@ -78,6 +115,12 @@ export default class Feedback {
 			json.content,
 			parseToLocalDate(json.date)
 		);
+
+		// Parse and set replies if they exist
+		if (json.replies && Array.isArray(json.replies)) {
+			const replies = FeedbackReply.parseAll(json.replies, feedback);
+			feedback._replies.set(replies);
+		}
 
 		return feedback;
 	}
