@@ -45,7 +45,7 @@ class User(BaseModel):
             "email": self.email,
             "nickname": self.nickname,
             "type": self.type,
-            "availability": self.availability,
+            "availabilities": self.availabilities,
             "is_active": self.is_active,
             "ui_language": self.ui_language,
             "home_language": self.home_language,

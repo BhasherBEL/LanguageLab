@@ -85,6 +85,7 @@ class MessageFeedback(BaseModel):
     end: int
     content: str
     date: NaiveDatetime
+    replies: list["FeedbackReply"] = []
 
     class Config:
         from_attributes = True
@@ -97,6 +98,7 @@ class MessageFeedback(BaseModel):
             "end": self.end,
             "content": self.content,
             "date": self.date.isoformat(),
+            "replies": [reply.to_dict() for reply in self.replies],
         }
 
 
@@ -104,6 +106,42 @@ class MessageFeedbackCreate(BaseModel):
     start: int
     end: int
     content: str | None = None
+
+
+class FeedbackReply(BaseModel):
+    id: int
+    feedback_id: int
+    user_id: int
+    user: User
+    content: str
+    created_at: NaiveDatetime
+
+    class Config:
+        from_attributes = True
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "feedback_id": self.feedback_id,
+            "user_id": self.user_id,
+            "user": self.user.to_dict(),
+            "content": self.content,
+            "created_at": self.created_at.isoformat(),
+        }
+
+
+class FeedbackReplyCreate(BaseModel):
+    content: str
+
+    class Config:
+        from_attributes = True
+
+
+class FeedbackReplyUpdate(BaseModel):
+    content: str
+
+    class Config:
+        from_attributes = True
 
 
 class Message(BaseModel):
