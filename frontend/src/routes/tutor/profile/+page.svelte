@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { t } from '$lib/services/i18n';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import autosize from 'svelte-autosize';
 
-	let { data, form }: { data: PageData; form: FormData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let user = $state(data.user);
 
 	let isLoading = false;
@@ -113,7 +113,7 @@
 			<input
 				id="birthdate"
 				name="birthdate"
-				type="date"
+				type="number"
 				class="input input-bordered w-full"
 				value={user?.birthdateAsDay}
 			/>
@@ -131,6 +131,21 @@
 				bind:value={bio}
 				maxlength={MAX_BIO_LENGTH}
 			></textarea>
+		</div>
+		<div>
+			<label class="block text-sm font-medium mb-1" for="max_learners">
+				{$t('profile.maxLearners')}
+			</label>
+			<input
+				id="max_learners"
+				name="max_learners"
+				type="number"
+				class="input input-bordered w-full"
+				value={user?.max_learners || 5}
+				min="1"
+				max="100"
+				required
+			/>
 		</div>
 		<div>
 			<h2 class="text-lg font-semibold">

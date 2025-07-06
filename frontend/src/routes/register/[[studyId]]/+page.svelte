@@ -4,11 +4,11 @@
 	import { displayDate } from '$lib/utils/date';
 	import { t } from '$lib/services/i18n';
 	import { Icon, Envelope, Key, UserCircle } from 'svelte-hero-icons';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import Consent from '$lib/components/surveys/consent.svelte';
 	import type Study from '$lib/types/study';
 
-	let { data, form }: { data: PageData; form: FormData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let study: Study | undefined | null = $state(data.study);
 	let studies: Study[] | undefined = $state(data.studies);
 	let user = $state(data.user);
@@ -32,6 +32,7 @@
 	let selectedWeekday: string = $state('');
 	let selectedTimeStart: string = $state('');
 	let selectedTimeEnd: string = $state('');
+	let maxLearners: number = $state(5);
 
 	const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 	let availability: Availability[] = $state([]);
@@ -77,7 +78,7 @@
 	async function confirmMeeting() {
 		if (!selectedSlot) return;
 
-		const updatedSlots = [...(user.my_slots || []), selectedSlot];
+		const updatedSlots = [...(user?.my_slots || []), selectedSlot];
 		selectedTutorEmail = selectedTutor.email;
 		showSchedulePopup = false;
 
@@ -138,7 +139,8 @@
 		let res;
 		if (user && user.id) {
 			res = await patchUserAPI(fetch, user.id, {
-				availabilities: availability
+				availabilities: availability,
+				max_learners: maxLearners
 			});
 		}
 
@@ -189,7 +191,7 @@
 	</ul>
 </div>
 
-<div class="max-w-screen-md mx-auto p-5">
+<div class="max-w-5xl w-full mx-auto p-5">
 	{#if form?.message}
 		<div class="alert alert-error text-content text-base-100 py-2 mb-4">
 			{form.message}
@@ -487,7 +489,7 @@
 		{:else if tutors && tutors.length > 0}
 			<div class="max-w-4xl mx-auto">
 				<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-gray-100">
-					{#each tutors as tutor}
+					{#each tutors.filter((tutor) => tutor.is_available !== false) as tutor}
 						<li
 							class="card shadow-lg bg-white border border-gray-200 rounded-lg hover:shadow-xl transition-shadow w-full max-w-[300px] mx-auto"
 						>
@@ -514,6 +516,11 @@
 									{tutor.home_language || 'Not specified'}
 								</p>
 								<p class="text-xs text-gray-500 mt-1">{tutor.bio || 'No bio available.'}</p>
+								{#if tutor.available_slots !== undefined}
+									<p class="text-sm text-blue-600 font-semibold mt-2">
+										{$t('register.availableSlots', { n: tutor.available_slots })}
+									</p>
+								{/if}
 								{#if tutor.availabilities?.length > 0}
 									<p class="text-sm text-gray-800 mt-2">{$t('register.availabilities')}</p>
 									<ul class="text-xs text-gray-500">
@@ -545,31 +552,68 @@
 		{/if}
 	{:else if current_step == 6}
 		<h2 class="my-4 text-xl">{$t('timeslots.setAvailabilities')}</h2>
-		<div class="form-control mt-4">
-			<select id="weekday" bind:value={selectedWeekday} class="select select-bordered w-full">
-				<option disabled value="">{$t('register.weekday')}</option>
-				{#each days as dayKey}
-					<option value={dayKey}>{$t(`utils.days.${dayKey}`)}</option>
-				{/each}
-			</select>
+
+		<div class="form-control my-4">
+			<label for="max_learners" class="label">
+				<span class="label-text">{$t('register.maxLearners')}</span>
+			</label>
+			<input
+				data-testid="maxLearners"
+				id="max_learners"
+				name="max_learners"
+				type="number"
+				class="input input-bordered w-full"
+				bind:value={maxLearners}
+				min="1"
+				max="100"
+				required
+			/>
 		</div>
 
-		<div class="form-control mt-4">
-			<select id="timeStart" bind:value={selectedTimeStart} class="select select-bordered w-full">
-				<option disabled value="">{$t('register.startTime')}</option>
-				{#each Array.from({ length: 24 }, (_, i) => `${i}:00`) as time}
-					<option value={time}>{time}</option>
-				{/each}
-			</select>
-		</div>
+		<span class="label-text">{$t('register.availabilities')}</span>
 
-		<div class="form-control mt-4">
-			<select id="timeEnd" bind:value={selectedTimeEnd} class="select select-bordered w-full">
-				<option disabled value="">{$t('register.endTime')}</option>
-				{#each Array.from({ length: 24 }, (_, i) => `${i}:00`) as time}
-					<option value={time}>{time}</option>
-				{/each}
-			</select>
+		<div class="md:flex gap-4">
+			<div class="form-control mt-4 flex-grow">
+				<select
+					id="weekday"
+					data-testid="weekday"
+					bind:value={selectedWeekday}
+					class="select select-bordered w-full"
+				>
+					<option disabled selected value="">{$t('register.weekday')}</option>
+					{#each days as dayKey}
+						<option value={dayKey}>{$t(`utils.days.${dayKey}`)}</option>
+					{/each}
+				</select>
+			</div>
+
+			<div class="form-control mt-4 flex-grow">
+				<select
+					id="timeStart"
+					data-testid="startTime"
+					bind:value={selectedTimeStart}
+					class="select select-bordered w-full"
+				>
+					<option disabled selected value="">{$t('register.startTime')}</option>
+					{#each Array.from({ length: 24 }, (_, i) => `${i}:00`) as time}
+						<option value={time}>{time}</option>
+					{/each}
+				</select>
+			</div>
+
+			<div class="form-control mt-4 flex-grow">
+				<select
+					id="timeEnd"
+					data-testid="endTime"
+					bind:value={selectedTimeEnd}
+					class="select select-bordered w-full"
+				>
+					<option disabled selected value="">{$t('register.endTime')}</option>
+					{#each Array.from({ length: 24 }, (_, i) => `${i}:00`) as time}
+						<option value={time}>{time}</option>
+					{/each}
+				</select>
+			</div>
 		</div>
 
 		<div class="form-control mt-4">

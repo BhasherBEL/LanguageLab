@@ -22,6 +22,10 @@ class User(BaseModel):
     my_tutor: str | None = None
     my_slots: list[dict] | None = []
     studies_id: list[int] = []
+    max_learners: int | None = 10
+    current_learners: int | None = None
+    available_slots: int | None = None
+    is_available: bool | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -41,7 +45,7 @@ class User(BaseModel):
             "email": self.email,
             "nickname": self.nickname,
             "type": self.type,
-            "availability": self.availability,
+            "availabilities": self.availabilities,
             "is_active": self.is_active,
             "ui_language": self.ui_language,
             "home_language": self.home_language,
@@ -89,6 +93,7 @@ class UserUpdate(BaseModel):
     tutor_list: list[str] | None = []
     my_tutor: str | None = None
     my_slots: list[dict] | None = None
+    max_learners: int | None = None
 
     class Config:
         from_attributes = True

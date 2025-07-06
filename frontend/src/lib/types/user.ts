@@ -41,6 +41,10 @@ export default class User {
 	private _sessions_added: Writable<Session[]> = writable([]);
 	private _availabilities: { day: string; start: string; end: string }[];
 	private _my_slots: { day: string; start: string; end: string }[];
+	private _max_learners: number | null;
+	private _current_learners: number | null;
+	private _available_slots: number | null;
+	private _is_available: boolean | null;
 
 	private constructor(
 		id: number,
@@ -60,7 +64,11 @@ export default class User {
 		my_tutor: string | null = null,
 		bio: string | null = null,
 		availabilities: { day: string; start: string; end: string }[] = [],
-		my_slots: { day: string; start: string; end: string }[] = []
+		my_slots: { day: string; start: string; end: string }[] = [],
+		max_learners: number | null = null,
+		current_learners: number | null = null,
+		available_slots: number | null = null,
+		is_available: boolean | null = null
 	) {
 		this._id = id;
 		this._email = email;
@@ -80,6 +88,10 @@ export default class User {
 		this._bio = bio;
 		this._availabilities = availabilities;
 		this._my_slots = my_slots;
+		this._max_learners = max_learners;
+		this._current_learners = current_learners;
+		this._available_slots = available_slots;
+		this._is_available = is_available;
 	}
 
 	get id(): number {
@@ -136,7 +148,7 @@ export default class User {
 
 	get birthdateAsDay(): string | null {
 		if (this._birthdate) {
-			return this._birthdate.slice(0, 10); // Format as YYYY-MM-DD
+			return this._birthdate.slice(0, 4); // Format as YYYY-MM-DD
 		}
 		return null;
 	}
@@ -183,6 +195,22 @@ export default class User {
 
 	set my_slots(value: { day: string; start: string; end: string }[]) {
 		this._my_slots = value;
+	}
+
+	get max_learners(): number | null {
+		return this._max_learners;
+	}
+
+	get current_learners(): number | null {
+		return this._current_learners;
+	}
+
+	get available_slots(): number | null {
+		return this._available_slots;
+	}
+
+	get is_available(): boolean | null {
+		return this._is_available;
 	}
 
 	set tutor_list(value: string[]) {
@@ -287,7 +315,11 @@ export default class User {
 			null,
 			null,
 			[],
-			[]
+			[],
+			null,
+			null,
+			null,
+			null
 		);
 		users.add(user);
 		return user;
@@ -368,7 +400,11 @@ export default class User {
 			json.my_tutor,
 			json.bio,
 			json.availabilities || [],
-			json.my_slots || []
+			json.my_slots || [],
+			json.max_learners,
+			json.current_learners,
+			json.available_slots,
+			json.is_available
 		);
 
 		users.update((us) => {

@@ -35,6 +35,25 @@ def get_users(db: Session, skip: int = 0):
     return db.query(models.User).offset(skip).all()
 
 
+def get_tutors_by_study(db: Session, study_id: int):
+    tutors = (
+        db.query(models.User)
+        .filter(models.User.type == models.UserType.TUTOR.value)
+        .filter(models.User.studies.any(models.Study.id == study_id))
+        .all()
+    )
+
+    for tutor in tutors:
+        current_learners = (
+            db.query(models.User).filter(models.User.my_tutor == tutor.email).count()
+        )
+        tutor.current_learners = current_learners
+        tutor.available_slots = max(0, (tutor.max_learners or 10) - current_learners)
+        tutor.is_available = tutor.available_slots > 0
+
+    return tutors
+
+
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     password = Hasher.get_password_hash(user.password)
     nickname = user.nickname if user.nickname else user.email.split("@")[0]
@@ -263,10 +282,17 @@ def get_message_feedback(db: Session, feedback_id: int):
 
 
 def delete_message_feedback(db: Session, feedback_id: int):
-    db.query(models.MessageFeedback).filter(
-        models.MessageFeedback.id == feedback_id
-    ).delete()
-    db.commit()
+    # First get the feedback object to trigger cascade deletion
+    db_feedback = (
+        db.query(models.MessageFeedback)
+        .filter(models.MessageFeedback.id == feedback_id)
+        .first()
+    )
+
+    if db_feedback:
+        # Delete the object (this will trigger cascade deletion of replies)
+        db.delete(db_feedback)
+        db.commit()
 
 
 def create_test_typing(db: Session, test: schemas.TestTypingCreate):
@@ -285,3 +311,64 @@ def create_test_typing_entry(
     db.commit()
     db.refresh(db_entry)
     return db_entry
+
+
+# Feedback Reply CRUD operations
+def create_feedback_reply(
+    db: Session,
+    feedback_id: int,
+    user_id: int,
+    reply: schemas.FeedbackReplyCreate,
+):
+    db_feedback_reply = models.FeedbackReply(
+        feedback_id=feedback_id,
+        user_id=user_id,
+        content=reply.content,
+    )
+    db.add(db_feedback_reply)
+    db.commit()
+    db.refresh(db_feedback_reply)
+    return db_feedback_reply
+
+
+def get_feedback_replies(db: Session, feedback_id: int):
+    return (
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.feedback_id == feedback_id)
+        .order_by(models.FeedbackReply.created_at.desc())
+        .all()
+    )
+
+
+def get_feedback_reply(db: Session, reply_id: int):
+    return (
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.id == reply_id)
+        .first()
+    )
+
+
+def update_feedback_reply(
+    db: Session,
+    reply_id: int,
+    reply: schemas.FeedbackReplyUpdate,
+):
+    db.query(models.FeedbackReply).filter(models.FeedbackReply.id == reply_id).update(
+        reply.dict(exclude_unset=True)
+    )
+    db.commit()
+    db.refresh(
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.id == reply_id)
+        .first()
+    )
+    return (
+        db.query(models.FeedbackReply)
+        .filter(models.FeedbackReply.id == reply_id)
+        .first()
+    )
+
+
+def delete_feedback_reply(db: Session, reply_id: int):
+    db.query(models.FeedbackReply).filter(models.FeedbackReply.id == reply_id).delete()
+    db.commit()

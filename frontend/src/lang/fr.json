@@ -13,7 +13,10 @@
 			"users": "Utilisateurs",
 			"sessions": "Sessions",
 			"studies": "Études",
-			"tasks": "Tâches"
+			"tasks": "Tâches",
+			"tests": "Tests",
+			"groups": "Groupes",
+			"questions": "Questions"
 		},
 		"profile": "Mon profil"
 	},
@@ -24,7 +27,8 @@
 		"edited": "modifié",
 		"history": "Historique",
 		"replyingTo": "En réponse à : ",
-		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible."
+		"deleteFeedback": "Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible.",
+		"deleteReply": "Êtes-vous sûr de vouloir supprimer cette réponse ? Cette action est irréversible."
 	},
 	"home": {
 		"email": "E-mail",
@@ -73,7 +77,12 @@
 			"noComment": "Pas de commentaire",
 			"markedText": "{user} a marqué ce texte",
 			"viewMessage": "Voir le message",
-			"reply": "Répondre"
+			"reply": "Répondre",
+			"replies": "{count, plural, one {réponse} other {réponses}}",
+			"replyPlaceholder": "Écrivez une réponse...",
+			"editReplyPlaceholder": "Modifiez votre réponse...",
+			"expandReplies": "Développer les réponses",
+			"collapseReplies": "Réduire les réponses"
 		},
 		"modal": {
 			"satisfy": {
@@ -165,6 +174,8 @@
 		"firstLanguage": "Langue principale :",
 		"role": "Rôle",
 		"ScheduleWith": "Planifier une réunion avec",
+		"maxLearners": "Nombre maximum d'apprenants",
+		"availableSlots": "{n, plural, one {# créneau disponible} other {# créneaux disponibles}}",
 		"roles": {
 			"note": "Sélectionnez le rôle que vous souhaitez jouer dans l'application",
 			"learner": "Apprenant",
@@ -352,7 +363,9 @@
 			"other": "Autre",
 			"na": "Je préfère ne pas répondre"
 		},
-		"availability": "Disponibilités"
+		"availability": "Disponibilités",
+		"available_slots": "Créneaux disponibles",
+		"no_slots_available": "Aucun créneau disponible"
 	},
 	"studies": {
 		"study": "Étude",
@@ -413,7 +426,47 @@
 	},
 	"tests": {
 		"taskTests": "Tests de langue",
-		"typingTests": "Tests de frappe"
+		"typingTests": "Tests de frappe",
+		"manage": "Gerer les tests",
+		"create": "Créer un nouveau test",
+		"backtostudies": "Revenir aux études",
+		"title": {
+			"edit": "Modifier le test",
+			"create": "Créer un test"
+		},
+		"label": {
+			"title": "Titre",
+			"type": "Type",
+			"explanation": "Explication",
+			"text": "Contenu",
+			"repeat": "Nombre de répétitions",
+			"duration": "Durée"
+		},
+		"groups": {
+			"manage": "Gérer les groupes",
+			"create": "Créer un groupe",
+			"backtotests": "Revenir aux tests",
+			"title": {
+				"edit": "Modifier le groupe",
+				"create": "Créer un groupe"
+			}
+		},
+		"questions": {
+			"manage": "Gérer les questions",
+			"create": "Créer une question",
+			"backtogroups": "Revenir aux groupes",
+			"type": "Type de question",
+			"subtype": "Sous-type de question",
+			"gapfill": "Texte à trous",
+			"options": "Options",
+			"option": "Option",
+			"correct": "Correct",
+			"addOption": "Ajouter une option",
+			"title": {
+				"edit": "Modifier la question",
+				"create": "Créer une question"
+			}
+		}
 	},
 	"tasks": {
 		"title": "Nouvelle tâche cible",
@@ -429,11 +482,13 @@
 		"taskFinished": "Tâche terminée avec succès",
 		"statusFail": "Echec du changement de status de la tâche",
 		"startTask": "Commencer cette tâche",
-		"achieveTask": "Tâche achevée"
+		"achieveTask": "Tâche achevée",
+		"noStudent": "Aucun apprenant n'est actuellement présent dans cette session."
 	},
 	"profile": {
 		"title": "Mon profile",
-		"save": "Sauvegarder les modifications"
+		"save": "Sauvegarder les modifications",
+		"maxLearners": "Nombre maximum d'apprenants"
 	},
 	"button": {
 		"create": "Créer",
@@ -453,7 +508,9 @@
 		"remove": "Retirer",
 		"continue": "Continuer",
 		"select": "Sélectionner",
-		"finish": "Terminer"
+		"finish": "Terminer",
+		"edit": "Modifier",
+		"reply": "Répondre"
 	},
 	"utils": {
 		"month": {
@@ -529,7 +586,7 @@
 			"inProgress": "En cours",
 			"finished": "Terminée",
 			"topics": "Topics",
-			"title": "Titre de l'étude",
+			"title": "Titre",
 			"users": "Utilisateurs",
 			"description": "Description",
 			"email": "E-mail",
@@ -542,7 +599,18 @@
 			"all": "Tous",
 			"instructions": "Instructions",
 			"examples": "Exemples",
-			"tasks": "Tâches"
+			"tasks": "Tâches",
+			"type": "Type",
+			"demo": "Demo",
+			"randomize": "Aléatoire",
+			"qcm": "QCM",
+			"image": "Image",
+			"text": "Texte",
+			"audio": "Audio",
+			"dropdown": "Menu déroulant",
+			"radio": "Boutons radio",
+			"gapfill": "Texte à trous",
+			"question": "Question"
 		}
 	},
 	"inputs": {

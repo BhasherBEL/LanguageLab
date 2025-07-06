@@ -104,6 +104,79 @@ export async function deleteMessageFeedbackAPI(
 	return response.ok;
 }
 
+// Feedback Reply API functions
+export async function createFeedbackReplyAPI(
+	fetch: fetchType,
+	session_id: number,
+	message_id: number,
+	feedback_id: number,
+	content: string
+): Promise<number | null> {
+	const response = await fetch(
+		`/api/sessions/${session_id}/messages/${message_id}/feedback/${feedback_id}/replies`,
+		{
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ content })
+		}
+	);
+
+	if (!response.ok) return null;
+
+	return parseInt(await response.text());
+}
+
+export async function getFeedbackRepliesAPI(
+	fetch: fetchType,
+	session_id: number,
+	message_id: number,
+	feedback_id: number
+): Promise<any[] | null> {
+	const response = await fetch(
+		`/api/sessions/${session_id}/messages/${message_id}/feedback/${feedback_id}/replies`
+	);
+	if (!response.ok) return null;
+
+	return await response.json();
+}
+
+export async function updateFeedbackReplyAPI(
+	fetch: fetchType,
+	session_id: number,
+	message_id: number,
+	feedback_id: number,
+	reply_id: number,
+	content: string
+): Promise<boolean> {
+	const response = await fetch(
+		`/api/sessions/${session_id}/messages/${message_id}/feedback/${feedback_id}/replies/${reply_id}`,
+		{
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ content })
+		}
+	);
+
+	return response.ok;
+}
+
+export async function deleteFeedbackReplyAPI(
+	fetch: fetchType,
+	session_id: number,
+	message_id: number,
+	feedback_id: number,
+	reply_id: number
+): Promise<boolean> {
+	const response = await fetch(
+		`/api/sessions/${session_id}/messages/${message_id}/feedback/${feedback_id}/replies/${reply_id}`,
+		{
+			method: 'DELETE'
+		}
+	);
+
+	return response.ok;
+}
+
 export async function patchLanguageAPI(
 	fetch: fetchType,
 	id: number,

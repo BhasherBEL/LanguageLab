@@ -10,3 +10,17 @@ export function shuffle(array: any[]) {
 		[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
 	}
 }
+
+export function seededRandom(seed: number): number {
+	const x = Math.sin(seed) * 10000;
+	return x - Math.floor(x);
+}
+
+export function shuffleWithSeed(array: any[], seed: number): any[] {
+	const optionsWithRandom = array.map((item, index) => ({
+		item,
+		random: seededRandom(seed + index)
+	}));
+	const shuffled = optionsWithRandom.sort((a, b) => a.random - b.random).map(({ item }) => item);
+	return shuffled;
+}

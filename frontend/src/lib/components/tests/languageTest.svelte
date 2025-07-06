@@ -9,6 +9,7 @@
 		TestTaskQuestionQcmType
 	} from '$lib/types/testTaskQuestions';
 	import type User from '$lib/types/user';
+	import { shuffleWithSeed } from '$lib/utils/arrays';
 	import Gapfill from '../surveys/gapfill.svelte';
 
 	let {
@@ -27,9 +28,7 @@
 		onFinish: Function;
 	} = $props();
 
-	function getSortedQuestions(questions: TestTaskQuestion[]) {
-		return questions.sort(() => Math.random() - 0.5);
-	}
+	let randomSeed = (user?.id || 0) + languageTest.id + study_id;
 
 	let nAnswers = $state(1);
 
@@ -39,7 +38,9 @@
 	let currentGroup = $derived(languageTest.groups[currentGroupId]);
 
 	let questions = $derived(
-		currentGroup.randomize ? getSortedQuestions(currentGroup.questions) : currentGroup.questions
+		currentGroup.randomize
+			? shuffleWithSeed(currentGroup.questions, randomSeed + currentGroupId)
+			: currentGroup.questions
 	);
 
 	let currentQuestionId = $state(0);
@@ -68,7 +69,6 @@
 			setGroupId(currentGroupId + 1);
 			//special group id for end of survey questions
 		} else {
-			console.log('END');
 			onFinish();
 		}
 	}

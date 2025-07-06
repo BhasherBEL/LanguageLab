@@ -19,15 +19,18 @@
 		"thank-you": "Bedankt !",
 		"tryit": "Om te proberen",
 		"update": "Om bij te werken",
-		"updated": "Bijgewerkt!"
+		"updated": "Bijgewerkt!",
+		"edit": "Bewerken",
+		"reply": "Antwoorden"
 	},
 	"chatbox": {
 		"deleteFeedback": "Weet je zeker dat je deze feedback wilt verwijderen? \nDeze actie is onomkeerbaar.",
-		"disabled": "Deze sessie is alleen voor de goede orde zichtbaar.",
-		"edited": "gewijzigd",
-		"history": "Historisch",
-		"placeholder": "Schrijf hier uw bericht...",
-		"replyingTo": "In reactie op:",
+		"deleteReply": "Weet je zeker dat je dit antwoord wilt verwijderen? \nDeze actie is onomkeerbaar.",
+		"disabled": "Deze sessie is alleen zichtbaar als archief.",
+		"edited": "bewerkt",
+		"history": "Geschiedenis",
+		"placeholder": "Typ hier je bericht...",
+		"replyingTo": "Beantwoorden aan: ",
 		"sendError": "Fout bij het verzenden van het bericht"
 	},
 	"header": {
@@ -216,7 +219,12 @@
 			"noComment": "Geen opmerking",
 			"markedText": "{user} markeerde deze tekst",
 			"viewMessage": "Bekijk bericht",
-			"reply": "Antwoorden"
+			"reply": "Antwoorden",
+			"replies": "{count, plural, one {antwoord} other {antwoorden}}",
+			"replyPlaceholder": "Schrijf een antwoord...",
+			"editReplyPlaceholder": "Bewerk je antwoord...",
+			"expandReplies": "Antwoorden uitklappen",
+			"collapseReplies": "Antwoorden inklappen"
 		},
 		"modal": {
 			"satisfy": {

@@ -17,6 +17,7 @@ import {
 import Message from './message';
 import config from '$lib/config';
 import Feedback from './feedback';
+import FeedbackReply from './feedbackReply';
 import { parseToLocalDate } from '$lib/utils/date';
 import { t } from '$lib/services/i18n';
 import type { fetchType } from '$lib/utils/types';
@@ -332,6 +333,65 @@ export default class Session {
 					if (message && message instanceof Message) {
 						message.deleteLocalFeedback(data['data']['feedback_id']);
 						return;
+					}
+				} else if (data['action'] == 'createReply') {
+					// Handle feedback reply creation
+					console.log(
+						'Processing createReply WebSocket message for feedback:',
+						data['data']['feedback_id']
+					);
+					const message = get(this._messages).find(
+						(m) => m instanceof Message && m.id === data['data']['message_id']
+					);
+					if (message && message instanceof Message) {
+						const feedbacks = get(message.feedbacks);
+						const feedback = feedbacks.find((f) => f.id === data['data']['feedback_id']);
+						if (feedback) {
+							const reply = FeedbackReply.parse(data['data'], feedback);
+							if (reply) {
+								feedback.localReply(reply);
+								console.log('Reply added successfully via WebSocket');
+								return;
+							} else {
+								console.error('Failed to parse reply from WebSocket');
+							}
+						} else {
+							console.error('Feedback not found with id:', data['data']['feedback_id']);
+						}
+					} else {
+						console.error('Message not found with id:', data['data']['message_id']);
+					}
+				} else if (data['action'] == 'updateReply') {
+					// Handle feedback reply update
+					const message = get(this._messages).find(
+						(m) => m instanceof Message && m.id === data['data']['message_id']
+					);
+					if (message && message instanceof Message) {
+						const feedback = get(message.feedbacks).find(
+							(f) => f.id === data['data']['feedback_id']
+						);
+						if (feedback) {
+							const replies = get(feedback.replies);
+							const existingReply = replies.find((r) => r.id === data['data']['id']);
+							if (existingReply) {
+								existingReply.localUpdate(data['data']['content']);
+								return;
+							}
+						}
+					}
+				} else if (data['action'] == 'deleteReply') {
+					// Handle feedback reply deletion
+					const message = get(this._messages).find(
+						(m) => m instanceof Message && m.id === data['data']['message_id']
+					);
+					if (message && message instanceof Message) {
+						const feedback = get(message.feedbacks).find(
+							(f) => f.id === data['data']['feedback_id']
+						);
+						if (feedback) {
+							feedback.deleteLocalReply(data['data']['reply_id']);
+							return;
+						}
 					}
 				}
 			} else if (data['type'] === 'presence') {
