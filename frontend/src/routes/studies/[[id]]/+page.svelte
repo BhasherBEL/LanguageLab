@@ -9,9 +9,9 @@
 	import { TestTask, TestTyping } from '$lib/types/tests';
 	import Typingbox from '$lib/components/tests/typingbox.svelte';
 	import { getTestEntriesScoreAPI } from '$lib/api/tests';
-	import EndQuestions from '$lib/components/surveys/endQuestions.svelte';
+	import Consent from '$lib/components/surveys/consent.svelte';
 
-	let { data, form }: { data: PageData; form: FormData } = $props();
+	let { data }: { data: PageData; form: FormData } = $props();
 	let study: Study | undefined = $state(data.study);
 	let studies: Study[] | undefined = $state(data.studies);
 	let user = $state(data.user);
@@ -50,11 +50,14 @@
 			{$t('studies.tab.study')}
 		</li>
 		<li class="step" class:step-primary={current_step >= 1}>
+			{$t('register.tab.consent')}
+		</li>
+		<li class="step" class:step-primary={current_step >= 2}>
 			{$t('studies.tab.code')}
 		</li>
 		{#if study}
 			{#each study.tests as test, i (test.id)}
-				<li class="step" class:step-primary={current_step >= i + 2}>
+				<li class="step" class:step-primary={current_step >= i + 3}>
 					{test.title}
 				</li>
 			{/each}
@@ -63,9 +66,6 @@
 				{$t('studies.tab.tests')}
 			</li>
 		{/if}
-		<li class="step" class:step-primary={study && current_step >= study.tests.length + 2}>
-			{$t('studies.tab.infos')}
-		</li>
 		<li class="step" class:step-primary={study && current_step >= study.tests.length + 3}>
 			{$t('studies.tab.end')}
 		</li>
@@ -115,6 +115,22 @@
 		</div>
 	{:else if study}
 		{#if current_step == 1}
+			<div class="max-w-5xl w-full mx-auto p-5">
+				<Consent
+					introText={$t('register.consent.intro')}
+					participation={$t('register.consent.participation')}
+					participationD={$t('register.consent.participationD')}
+					privacy={$t('register.consent.privacy')}
+					privacyD={$t('register.consent.privacyD')}
+					rights={$t('register.consent.rights')}
+				/>
+				<div class="form-control">
+					<button class="button mt-4" onclick={() => current_step++}>
+						{$t('register.consent.ok')}
+					</button>
+				</div>
+			</div>
+		{:else if current_step == 2}
 			<div class="flex flex-col items-center min-h-screen">
 				<h2 class="mb-10 text-xl text-center">{study.title}</h2>
 				<p class="mb-4 text-lg font-semibold">{$t('surveys.code')}</p>
@@ -133,8 +149,8 @@
 					{$t('button.next')}
 				</button>
 			</div>
-		{:else if current_step < study.tests.length + 2}
-			{@const test = study.tests[current_step - 2]}
+		{:else if current_step < study.tests.length + 3}
+			{@const test = study.tests[current_step - 3]}
 			{#key test}
 				{#if test instanceof TestTask}
 					<LanguageTest
@@ -165,7 +181,7 @@
 			<!-- 	<div class="flex flex-col h-full"> -->
 			<!-- 		<EndQuestions study_id={study.id} {rid} onFinish={() => current_step++} /> -->
 			<!-- 	</div> -->
-		{:else if current_step == study.tests.length + 2}
+		{:else}
 			<div class="flex flex-col h-full">
 				<div class="flex-grow text-center mt-16">
 					<span>{$t('studies.complete')}</span>

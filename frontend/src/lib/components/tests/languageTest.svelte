@@ -3,7 +3,6 @@
 	import { t } from '$lib/services/i18n';
 	import type { TestTask } from '$lib/types/tests';
 	import {
-		TestTaskQuestion,
 		TestTaskQuestionGapfill,
 		TestTaskQuestionQcm,
 		TestTaskQuestionQcmType
@@ -154,15 +153,17 @@
 	</div>
 {:else if currentQuestion instanceof TestTaskQuestionQcm}
 	<div class="mx-auto mt-16 text-center">
-		{#if currentQuestion.type === TestTaskQuestionQcmType.text}
+		{#if currentQuestion.subType === TestTaskQuestionQcmType.text}
 			<p class="text-center font-bold py-4 px-6 m-auto max-w-5xl">{@html currentQuestion.value}</p>
-		{:else if currentQuestion.type === TestTaskQuestionQcmType.image}
+		{:else if currentQuestion.subType === TestTaskQuestionQcmType.image}
 			<img src={currentQuestion.value} alt="Question" />
-		{:else if currentQuestion.type === TestTaskQuestionQcmType.audio}
+		{:else if currentQuestion.subType === TestTaskQuestionQcmType.audio}
 			<audio bind:this={soundPlayer} controls autoplay class="rounded-lg mx-auto">
 				<source src={currentQuestion.value} type="audio/mpeg" />
 				Your browser does not support the audio element.
 			</audio>
+		{:else}
+			<p>Unknown question type ({currentQuestion.type}). Value: {currentQuestion.value}</p>
 		{/if}
 	</div>
 
@@ -171,9 +172,9 @@
 			{#each currentQuestion.optionsRandomized as option (option)}
 				<div
 					class="h-48 w-48 overflow-hidden rounded-lg border border-black"
-					onclick={() => selectOption(option.index)}
+					onclick={() => selectOption(option.index + 1)}
 					role="button"
-					onkeydown={() => selectOption(option.index)}
+					onkeydown={() => selectOption(option.index + 1)}
 					tabindex="0"
 				>
 					{#if option.type === TestTaskQuestionQcmType.text}
@@ -200,6 +201,8 @@
 							<source src={option.value} type="audio/mpeg" />
 							Your browser does not support the audio element.
 						</audio>
+					{:else}
+						<p>Unknown option type ({option.type}). Value: {option.value}</p>
 					{/if}
 				</div>
 			{/each}
