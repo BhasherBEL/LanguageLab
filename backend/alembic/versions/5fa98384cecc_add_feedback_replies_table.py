@@ -33,21 +33,28 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["feedback_id"], ["message_feedbacks.id"]),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
         sa.PrimaryKeyConstraint("id"),
+        if_not_exists=True,
     )
     op.create_index(
-        op.f("ix_feedback_replies_id"), "feedback_replies", ["id"], unique=False
+        op.f("ix_feedback_replies_id"),
+        "feedback_replies",
+        ["id"],
+        unique=False,
+        if_not_exists=True,
     )
     op.create_index(
         op.f("ix_feedback_replies_feedback_id"),
         "feedback_replies",
         ["feedback_id"],
         unique=False,
+        if_not_exists=True,
     )
     op.create_index(
         op.f("ix_feedback_replies_user_id"),
         "feedback_replies",
         ["user_id"],
         unique=False,
+        if_not_exists=True,
     )
 
 
