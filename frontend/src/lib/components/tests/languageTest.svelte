@@ -172,9 +172,9 @@
 			{#each currentQuestion.optionsRandomized as option (option)}
 				<div
 					class="h-48 w-48 overflow-hidden rounded-lg border border-black"
-					onclick={() => selectOption(option.index)}
+					onclick={() => selectOption(option.index + 1)}
 					role="button"
-					onkeydown={() => selectOption(option.index)}
+					onkeydown={() => selectOption(option.index + 1)}
 					tabindex="0"
 				>
 					{#if option.type === TestTaskQuestionQcmType.text}
