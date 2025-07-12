@@ -86,7 +86,6 @@ def download_study(db: Session, study_id: int):
         "study_id",
         "test_id",
         "group_id",
-        "group_name",
         "item_id",
         "user_id",
         "code",
@@ -123,7 +122,6 @@ def download_study(db: Session, study_id: int):
                 study_id,
                 test_id,
                 group_id,
-                group,
                 item,
                 user_id,
                 code,
@@ -146,7 +144,6 @@ def download_study(db: Session, study_id: int):
                 study_id,
                 test_id,
                 group_id,
-                group,
                 item,
                 user_id,
                 code,
@@ -162,7 +159,7 @@ def download_study(db: Session, study_id: int):
     return StreamingResponse(
         output,
         media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename={study_id}-surveys.csv"},
+        headers={"Content-Disposition": f"attachment; filename=surveys-long-{study_id}.csv"},
     )
 
 
@@ -239,7 +236,7 @@ def download_study_wide(db: Session, study_id: int):
         output,
         media_type="text/csv",
         headers={
-            "Content-Disposition": f"attachment; filename={study_id}-surveys-wide.csv"
+            "Content-Disposition": f"attachment; filename=surveys-wide-{study_id}.csv"
         },
     )
 
