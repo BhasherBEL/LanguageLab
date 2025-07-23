@@ -78,7 +78,6 @@ def delete_study(db: Session, study_id: int) -> None:
 
 
 def download_study(db: Session, study_id: int):
-
     output = StringIO()
     writer = csv.writer(output)
 
@@ -106,7 +105,6 @@ def download_study(db: Session, study_id: int):
 
         test_id = entry.test_id
         group_id = entry.entry_task.test_group_id
-        group = crud.get_group(db, group_id).title
         item = entry.entry_task.test_question_id
         user_id = entry.user_id
         code = entry.code
