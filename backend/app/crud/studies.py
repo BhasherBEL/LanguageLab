@@ -159,7 +159,9 @@ def download_study(db: Session, study_id: int):
     return StreamingResponse(
         output,
         media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=surveys-long-{study_id}.csv"},
+        headers={
+            "Content-Disposition": f"attachment; filename=surveys-long-{study_id}.csv"
+        },
     )
 
 
