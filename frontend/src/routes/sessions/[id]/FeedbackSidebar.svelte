@@ -80,7 +80,7 @@
 			}
 		});
 
-		return feedbacks.sort((a, b) => b.date.getTime() - a.date.getTime());
+		return feedbacks.sort((a, b) => a.date.getTime() - b.date.getTime());
 	}
 
 	// Track processed message IDs and feedback IDs to avoid duplicate subscriptions
