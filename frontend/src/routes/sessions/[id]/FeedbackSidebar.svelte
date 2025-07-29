@@ -196,6 +196,27 @@
 		const success = await replyingTo.addReply(replyContent.trim(), user);
 
 		if (success) {
+			// Ensure subscription is set up for this feedback if not already done
+			if (!processedFeedbackIds.has(replyingTo.id)) {
+				processedFeedbackIds.add(replyingTo.id);
+				replyingTo.replies.subscribe((replies) => {
+					// Sort replies by creation date (oldest first)
+					const sortedReplies = [...replies].sort(
+						(a, b) => a.created_at.getTime() - b.created_at.getTime()
+					);
+					feedbackReplies.set(replyingTo!.id, sortedReplies);
+					feedbackReplies = new Map(feedbackReplies);
+				});
+			}
+
+			// Immediately update the feedbackReplies map with current replies
+			const replies = get(replyingTo.replies);
+			const sortedReplies = [...replies].sort(
+				(a, b) => a.created_at.getTime() - b.created_at.getTime()
+			);
+			feedbackReplies.set(replyingTo.id, sortedReplies);
+			feedbackReplies = new Map(feedbackReplies);
+
 			replyingTo = null;
 			replyContent = '';
 		}
