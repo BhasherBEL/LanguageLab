@@ -6,7 +6,6 @@
 	import Message from '$lib/types/message';
 	import type Feedback from '$lib/types/feedback';
 	import type FeedbackReply from '$lib/types/feedbackReply';
-	import { displayTime } from '$lib/utils/date';
 	import {
 		Icon,
 		XMark,
@@ -17,7 +16,8 @@
 		Pencil,
 		Trash,
 		ChevronDown,
-		ChevronUp
+		ChevronUp,
+		Bars3
 	} from 'svelte-hero-icons';
 	import { highlightedMessageId } from '$lib/stores/messageHighlight';
 
@@ -314,88 +314,79 @@
 	{:else}
 		<div class="p-4 space-y-4">
 			{#each feedbackCards as feedbackCard}
-				<div class="card card-compact bg-base-100 shadow-sm border border-base-300 relative">
-					<div
-						class="card-body"
-						class:pb-12={replyingTo !== feedbackCard.feedback &&
-							(feedbackReplies.get(feedbackCard.feedback.id) || []).length === 0}
-						class:pb-16={(feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0 ||
-							replyingTo === feedbackCard.feedback}
-					>
-						<div class="relative mb-2 break-words group">
-							<button
-								onclick={() => scrollToMessage(feedbackCard.messageId)}
-								class="absolute -top-1 -right-1 btn btn-primary btn-xs px-1 py-0.5 h-6 min-h-6 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 flex items-center gap-0.5 z-10"
+				<div
+					class="card card-compact bg-base-100 shadow-sm border border-base-300 relative group/card"
+				>
+					<div class="card-body">
+						<div
+							class="relative break-words group"
+							class:pb-5={!feedbackCard.feedback.content &&
+								(feedbackReplies.get(feedbackCard.feedback.id) || []).length === 0 &&
+								replyingTo !== feedbackCard.feedback}
+						>
+							<div
+								class="absolute -top-2 -right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
 							>
-								<Icon src={ArrowTopRightOnSquare} size="10" class="text-black" />
-								<span class="text-black text-xs font-normal"
-									>{$t('session.feedback.viewMessage')}</span
+								<button
+									onclick={() => scrollToMessage(feedbackCard.messageId)}
+									class="btn btn-primary btn-xs px-1 py-0.5 h-6 min-h-6 shadow-sm hover:shadow-md hover:scale-105 flex items-center gap-0.5"
 								>
-							</button>
-							<div class="text-sm text-base-content/70 leading-tight">
+									<Icon src={ArrowTopRightOnSquare} size="10" class="text-black" />
+									<span class="text-black text-xs font-normal"
+										>{$t('session.feedback.viewMessage')}</span
+									>
+								</button>
+								<button
+									onclick={() => deleteFeedback(feedbackCard.feedback)}
+									class="btn btn-error btn-xs btn-circle h-6 w-6 min-h-6 shadow-sm hover:shadow-md hover:scale-105"
+									aria-label={$t('button.delete')}
+									title={$t('button.delete')}
+								>
+									<Icon src={XMark} size="12" class="text-white" />
+								</button>
+								{#if (feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0}
+									<button
+										class="btn btn-ghost btn-xs btn-circle h-6 w-6 min-h-6 shadow-sm hover:shadow-md hover:scale-105"
+										onclick={() => toggleRepliesCollapse(feedbackCard.feedback.id)}
+										title={collapsedReplies.get(feedbackCard.feedback.id)
+											? 'Show replies'
+											: 'Hide replies'}
+									>
+										<Icon src={Bars3} class="w-3 h-3 text-base-content/70" />
+									</button>
+								{/if}
+							</div>
+							<div
+								class="text-sm text-base-content/70 leading-tight underline decoration-wavy pr-4"
+								class:decoration-blue-500={feedbackCard.feedback.content}
+								class:decoration-red-500={!feedbackCard.feedback.content}
+							>
 								{feedbackCard.highlight}
 							</div>
 						</div>
 
-						<div class="flex gap-3 group">
-							<div class="avatar">
-								<div class="w-8 h-8 rounded-full border-2 border-base-300">
-									<img
-										src={`https://gravatar.com/avatar/${feedbackCard.feedback.message.user.emailHash}?d=identicon`}
-										alt=""
-										class="w-full h-full object-cover rounded-full"
-									/>
+						{#if feedbackCard.feedback.content}
+							<div class="flex gap-2 ml-6 relative">
+								<div class="avatar flex-shrink-0">
+									<div class="w-6 h-6 rounded-full">
+										<img
+											src={`https://gravatar.com/avatar/${feedbackCard.feedback.message.user.emailHash}?d=identicon`}
+											alt=""
+											class="w-full h-full object-cover rounded-full"
+										/>
+									</div>
+								</div>
+								<div class="flex-grow min-w-0">
+									<div class="text-sm text-base-content break-words">
+										{feedbackCard.feedback.content}
+									</div>
 								</div>
 							</div>
-							<div class="flex-grow relative min-w-0">
-								{#if feedbackCard.feedback.content}
-									<div
-										class="text-sm p-3 bg-base-200 rounded-lg break-words relative group/comment"
-									>
-										{feedbackCard.feedback.content}
-										<button
-											class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
-											onclick={() => deleteFeedback(feedbackCard.feedback)}
-											aria-label={$t('button.delete')}
-										>
-											<Icon src={XMark} class="w-3 h-3" />
-										</button>
-									</div>
-								{:else}
-									<div
-										class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment"
-									>
-										{$t('session.feedback.markedText', {
-											user: feedbackCard.feedback.message.user.nickname
-										})}
-										<button
-											class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
-											onclick={() => deleteFeedback(feedbackCard.feedback)}
-											aria-label={$t('button.delete')}
-										>
-											<Icon src={XMark} class="w-3 h-3" />
-										</button>
-									</div>
-								{/if}
-							</div>
-						</div>
+						{/if}
 
 						<!-- Replies Section -->
 						{#if (feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0 || replyingTo === feedbackCard.feedback}
 							<div class="mt-2" class:mb-4={!collapsedReplies.get(feedbackCard.feedback.id)}>
-								<!-- Reply Counter with Collapse Button   -->
-								{#if (feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0}
-									<button
-										class="text-xs text-base-content/50 hover:text-base-content/70 font-medium flex items-center gap-1 transition-colors"
-										onclick={() => toggleRepliesCollapse(feedbackCard.feedback.id)}
-									>
-										<span class="w-6 h-px bg-base-content/20"></span>
-										{collapsedReplies.get(feedbackCard.feedback.id)
-											? `View ${(feedbackReplies.get(feedbackCard.feedback.id) || []).length} ${$t('session.feedback.replies', { count: (feedbackReplies.get(feedbackCard.feedback.id) || []).length })}`
-											: 'Hide replies'}
-									</button>
-								{/if}
-
 								<!-- Replies List (Collapsible, Instagram style) -->
 								{#if !collapsedReplies.get(feedbackCard.feedback.id)}
 									<div class="space-y-2.5 mt-2">
@@ -422,9 +413,17 @@
 															<div class="relative">
 																<textarea
 																	bind:value={editContent}
-																	class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[60px] leading-relaxed"
+																	class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[32px] leading-relaxed resize-y"
 																	placeholder="Edit comment..."
-																	rows="3"
+																	rows="1"
+																	onkeydown={(e) => {
+																		if (e.key === 'Enter' && !e.shiftKey) {
+																			e.preventDefault();
+																			if (editContent.trim()) {
+																				submitEditReply();
+																			}
+																		}
+																	}}
 																></textarea>
 																<div class="absolute right-2 top-2 flex gap-1">
 																	<button
@@ -512,9 +511,17 @@
 											<div class="relative">
 												<textarea
 													bind:value={replyContent}
-													class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[60px] leading-relaxed"
+													class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[32px] leading-relaxed resize-y"
 													placeholder="Add a reply..."
-													rows="2"
+													rows="1"
+													onkeydown={(e) => {
+														if (e.key === 'Enter' && !e.shiftKey) {
+															e.preventDefault();
+															if (replyContent.trim()) {
+																submitReply();
+															}
+														}
+													}}
 												></textarea>
 												<div class="absolute right-2 top-2 flex gap-1">
 													<button
