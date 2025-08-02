@@ -15,8 +15,6 @@
 		PaperAirplane,
 		Pencil,
 		Trash,
-		ChevronDown,
-		ChevronUp,
 		Bars3
 	} from 'svelte-hero-icons';
 	import { highlightedMessageId } from '$lib/stores/messageHighlight';
@@ -42,6 +40,31 @@
 	let replyContent = $state('');
 	let editingReply = $state<FeedbackReply | null>(null);
 	let editContent = $state('');
+	let editTextareaRef = $state<HTMLTextAreaElement>();
+	let replyTextareaRef = $state<HTMLTextAreaElement>();
+
+	// Function to auto-resize textarea
+	function autoResizeTextarea(textarea: HTMLTextAreaElement) {
+		const minHeight = 36; // Fixed minimum height of 36px
+
+		// Temporarily set to minimum height to get accurate scrollHeight
+		textarea.style.height = minHeight + 'px';
+
+		// Only expand if content actually needs more space
+		if (textarea.scrollHeight > minHeight) {
+			textarea.style.height = textarea.scrollHeight + 'px';
+		}
+	}
+
+	// Handle keydown for textareas
+	function handleTextareaKeydown(e: KeyboardEvent, submitFunction: () => void, content: string) {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			if (content.trim()) {
+				submitFunction();
+			}
+		}
+	}
 
 	// Reactive replies for each feedback
 	let feedbackReplies = $state(new Map<number, FeedbackReply[]>());
@@ -225,7 +248,28 @@
 	function startEditReply(reply: FeedbackReply) {
 		editingReply = reply;
 		editContent = reply.content;
+		// Auto-resize the textarea after content is set
+		setTimeout(() => {
+			if (editTextareaRef) {
+				autoResizeTextarea(editTextareaRef);
+			}
+		}, 0);
 	}
+
+	// Initialize textarea height on mount
+	function initializeTextarea(textarea: HTMLTextAreaElement) {
+		// Set initial height to one line
+		setTimeout(() => {
+			autoResizeTextarea(textarea);
+		}, 0);
+	}
+
+	// Effect to initialize reply textarea when it's available
+	$effect(() => {
+		if (replyTextareaRef) {
+			initializeTextarea(replyTextareaRef);
+		}
+	});
 
 	function cancelEditReply() {
 		editingReply = null;
@@ -413,17 +457,17 @@
 															<div class="relative">
 																<textarea
 																	bind:value={editContent}
-																	class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[32px] leading-relaxed resize-y"
-																	placeholder="Edit comment..."
+																	bind:this={editTextareaRef}
+																	class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors resize-none overflow-hidden"
+																	style="line-height: 1.25; height: 36px; min-height: 36px; max-height: none; box-sizing: border-box;"
 																	rows="1"
-																	onkeydown={(e) => {
-																		if (e.key === 'Enter' && !e.shiftKey) {
-																			e.preventDefault();
-																			if (editContent.trim()) {
-																				submitEditReply();
-																			}
-																		}
+																	placeholder="Edit comment..."
+																	oninput={(e) => {
+																		const target = e.target as HTMLTextAreaElement;
+																		if (target) autoResizeTextarea(target);
 																	}}
+																	onkeydown={(e) =>
+																		handleTextareaKeydown(e, submitEditReply, editContent)}
 																></textarea>
 																<div class="absolute right-2 top-2 flex gap-1">
 																	<button
@@ -511,17 +555,16 @@
 											<div class="relative">
 												<textarea
 													bind:value={replyContent}
-													class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[32px] leading-relaxed resize-y"
-													placeholder="Add a reply..."
+													bind:this={replyTextareaRef}
+													class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors resize-none overflow-hidden"
+													style="line-height: 1.25; height: 36px; min-height: 36px; max-height: none; box-sizing: border-box;"
 													rows="1"
-													onkeydown={(e) => {
-														if (e.key === 'Enter' && !e.shiftKey) {
-															e.preventDefault();
-															if (replyContent.trim()) {
-																submitReply();
-															}
-														}
+													placeholder="Add a reply..."
+													oninput={(e) => {
+														const target = e.target as HTMLTextAreaElement;
+														if (target) autoResizeTextarea(target);
 													}}
+													onkeydown={(e) => handleTextareaKeydown(e, submitReply, replyContent)}
 												></textarea>
 												<div class="absolute right-2 top-2 flex gap-1">
 													<button
