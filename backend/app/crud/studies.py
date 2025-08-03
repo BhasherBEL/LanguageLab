@@ -194,9 +194,23 @@ def download_study_wide(db: Session, study_id: int):
                     "target_language": user.target_language,
                     "gender": user.gender,
                     "birthdate": user.birthdate,
+                    "test_start_time": entry.created_at,
+                    "test_end_time": entry.created_at,
                 }
             else:
-                data[key] = {"study_id": study_id, "user_id": user_id, "code": code}
+                data[key] = {
+                    "study_id": study_id,
+                    "user_id": user_id,
+                    "code": code,
+                    "test_start_time": entry.created_at,
+                    "test_end_time": entry.created_at,
+                }
+        else:
+            # Update test start time (earliest) and end time (latest)
+            if entry.created_at < data[key]["test_start_time"]:
+                data[key]["test_start_time"] = entry.created_at
+            if entry.created_at > data[key]["test_end_time"]:
+                data[key]["test_end_time"] = entry.created_at
 
         if entry.entry_task.entry_task_qcm:
             selected_id = entry.entry_task.entry_task_qcm.selected_id
@@ -224,6 +238,8 @@ def download_study_wide(db: Session, study_id: int):
         "target_language",
         "gender",
         "birthdate",
+        "test_start_time",
+        "test_end_time",
     ] + question_ids
     writer.writerow(header)
     for (user_id, code), values in data.items():
