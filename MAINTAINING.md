@@ -8,7 +8,7 @@
 
 ### Known potential issues
 
-### The CI/CD passed but the application fail or isn't up to date
+#### The CI/CD passed but the application fail or isn't up to date.
 
 This can happend when something went wrong in the CD script. There is currently no feedback if it worked or not. Logs are available in /tmp. Usually, running the script by hand (`sh scripts/update(.dev).sh`) solve/highlight the issue.  
 
@@ -17,6 +17,8 @@ This can happend when something went wrong in the CD script. There is currently 
 The CI/CD always run the latest version of `black` (python linter). The same version should be used locally to avoid conflicts.
 
 ## Server maintenance
+
+The server is accessible trough SSH using personal user accounts. To access it, it's necessary to be first connected to the VPN.
 
 ### Reccuring actions
 
