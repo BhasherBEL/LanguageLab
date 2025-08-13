@@ -35,18 +35,29 @@ export async function sendTestEntryTaskQcmAPI(
 	return response.ok;
 }
 
-export async function sendTestEntryTaskGapfillAPI(
-	fetch: fetchType,
-	code: string,
-	rid: string | null,
-	user_id: number | null,
-	test_id: number,
-	test_group_id: number,
-	study_id: number,
-	test_question_id: number,
-	response_time: number,
-	text: string
-) {
+export async function sendTestEntryTaskGapfillAPI({
+	fetch,
+	code,
+	rid,
+	user_id,
+	test_id,
+	study_id,
+	test_group_id,
+	test_question_id,
+	response_time,
+	text
+}: {
+	fetch: fetchType;
+	code: string;
+	rid: string | null;
+	user_id: number | null;
+	test_id: number;
+	test_group_id: number;
+	study_id: number;
+	test_question_id: number;
+	response_time: number;
+	text: string;
+}) {
 	const response = await fetch(`/api/tests/entries`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
