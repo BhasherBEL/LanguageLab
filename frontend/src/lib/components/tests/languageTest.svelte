@@ -84,18 +84,18 @@
 				.join('|');
 
 			if (
-				!(await sendTestEntryTaskGapfillAPI(
+				!(await sendTestEntryTaskGapfillAPI({
 					fetch,
-					code || user?.email || '',
+					code: code || user?.email || '',
 					rid,
-					user?.id || null,
-					languageTest.id,
-					study_id,
-					currentGroup.id,
-					questions[currentQuestionId].id,
-					(new Date().getTime() - startTime) / 1000,
-					gapTexts
-				))
+					user_id: user?.id || null,
+					test_id: languageTest.id,
+					study_id: study_id,
+					test_group_id: currentGroup.id,
+					test_question_id: questions[currentQuestionId].id,
+					response_time: (new Date().getTime() - startTime) / 1000,
+					text: gapTexts
+				}))
 			) {
 				return;
 			}

@@ -16,7 +16,7 @@ The issues are categorised using tags. There are two types of tags. Gray tags ar
 - Open for discussions: Features and improvements that still need more discussions before being started.
 - Won't: Rejected features and improvements.
 
-To keep track of who is working on what, it's better to assign our-self an issue when working on it (or plan to work on it in a near future), and unassign if we plan to not work anymore (or anytime soon) on it.
+To keep track of who is working on what, it's better to assign yourself an issue when working on it (or plan to work on it in a near future), and unassign if you plan to not work anymore (or anytime soon) on it.
 
 The different planned versions and the issues assigned to them are presented in the form of [milestones](https://forge.uclouvain.be/sbibauw/languagelab/-/milestones). The general idea is to finish a milestone before working on the next one.
 
@@ -25,8 +25,8 @@ The different planned versions and the issues assigned to them are presented in 
 #### Requirements
 
 - OS: Tested on Linux and macOS, untested and unmaintained on Windows.
-- Backend: The deployment currently use `python3.12`, so it's recommanded to use the same version for development. It also requires `virtualenv` to manage the virtual environment.
-- Frontend: `npm` is currently used (more precisely, `npm10.8.2`). `Prettier` is also used for linting and formatting, so is highly recommanded.
+- Backend: The deployment currently use `python3.12`, so it's recommended to use the same version for development. It also requires `virtualenv` to manage the virtual environment.
+- Frontend: `npm` is currently used (more precisely, `npm10.8.2`). `Prettier` is also used for linting and formatting, so it is highly recommended.
 
 #### Configuration
 
@@ -77,7 +77,7 @@ git config --local core.hooksPath .githooks
 
 #### up-to-date PR
 
-The project is more and more complex, integrated, tested, etc. To avoid conflicts, ensure you're PR is always up-to-date with the `dev` branch.
+The project is more and more complex, integrated, tested, etc. To avoid conflicts, ensure your PR is always up-to-date with the `dev` branch.
 
 ## Useful tips
 

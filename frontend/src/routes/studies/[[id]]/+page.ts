@@ -8,6 +8,7 @@ export const load: Load = async ({ fetch, params }) => {
 		const studyId = parseInt(sStudyId);
 		if (studyId) {
 			const study = Study.parse(await getStudyAPI(fetch, studyId));
+
 			if (study) {
 				return {
 					study
