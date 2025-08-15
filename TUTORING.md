@@ -9,4 +9,3 @@
 ### Pourquoi il n'y pas de réactions/likes (👍) sur les messages ?
 
 Parce qu'on veut vous faire parler.
-

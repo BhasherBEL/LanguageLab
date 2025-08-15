@@ -11,7 +11,7 @@
 
 #### The CI/CD passed, but the application fail or isn't up-to-date.
 
-This can happen when something went wrong in the CD script. There is currently no feedback if it worked or not. Logs are available in /tmp. Usually, running the script by hand (`sh scripts/update(.dev).sh`) solve/highlight the issue.  
+This can happen when something went wrong in the CD script. There is currently no feedback if it worked or not. Logs are available in /tmp. Usually, running the script by hand (`sh scripts/update(.dev).sh`) solve/highlight the issue.
 
 #### Linting pass locally but not in the CI/CD.
 
@@ -23,9 +23,20 @@ The server is accessible trough SSH using personal user accounts. To access it, 
 
 ### Recurring actions
 
-- Ensure that the container's log do not report suspicious errors
-- Clean up space on the disk (mainly old docker images)
-- Ensure that the server is up-to-date (Email the first of each month for that, can be a good remember to do all those preventive tasks)
+- Ensure that the container's log do not report suspicious errors (~biweekly; after merge, important changes on DB)
+  - `docker logs --details <container>`
+    - containers: `docker ps` (languagelab-frontend languagelab-backend(-dev))
+  - or see docs docker
+- Clean up space on the disk (mainly old docker images) (every month)
+  - Server limit = 40 GB
+  - Mainly erase previous docker images
+    - `docker system prune` (`--all`)
+  - `df -h`
+    - /!\ if higher than 90%
+  - [ ] Any way to do this automatically after x days?
+- Ensure that the server is up-to-date (Email the first of each month for that, can be a good remember to do all those preventive tasks) (ideally every month)
+  - `sudo apt update`
+  - `sudo apt upgrade`
 
 ### Known potential issues
 
