@@ -79,8 +79,6 @@
 	function getSelectionCharacterOffsetWithin() {
 		if (!contentDiv) return { start: 0, end: 0 };
 
-		var start = 0;
-		var end = 0;
 		var doc = contentDiv.ownerDocument;
 		var win = doc.defaultView;
 		if (!doc || !win) return { start: 0, end: 0 };
@@ -93,12 +91,32 @@
 		if (sel.rangeCount <= 0) return { start: 0, end: 0 };
 
 		var range = sel.getRangeAt(0);
-		var preCaretRange = range.cloneRange();
-		preCaretRange.selectNodeContents(contentDiv);
-		preCaretRange.setEnd(range.startContainer, range.startOffset);
-		start = preCaretRange.toString().length;
-		preCaretRange.setEnd(range.endContainer, range.endOffset);
-		end = preCaretRange.toString().length;
+
+		// Get the selected text
+		var selectedText = range.toString();
+
+		// Get the full text content from the container (this gives us the rendered text)
+		var fullText = contentDiv.textContent || '';
+
+		// Find the start position of the selected text within the full text
+		var rangeStart = range.cloneRange();
+		rangeStart.selectNodeContents(contentDiv);
+		rangeStart.setEnd(range.startContainer, range.startOffset);
+		var textBeforeSelection = rangeStart.toString();
+
+		var start = textBeforeSelection.length;
+		var end = start + selectedText.length;
+
+		// Validate that our calculation matches the original message content
+		var expectedSelectedText = message.content.slice(start, end);
+		if (selectedText !== expectedSelectedText) {
+			// If there's a mismatch, try to find the correct position in the original content
+			var correctedStart = message.content.indexOf(selectedText, 0);
+			if (correctedStart !== -1) {
+				start = correctedStart;
+				end = start + selectedText.length;
+			}
+		}
 
 		return { start: start, end: end };
 	}

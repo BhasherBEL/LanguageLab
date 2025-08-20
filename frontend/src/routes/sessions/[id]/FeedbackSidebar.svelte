@@ -6,7 +6,6 @@
 	import Message from '$lib/types/message';
 	import type Feedback from '$lib/types/feedback';
 	import type FeedbackReply from '$lib/types/feedbackReply';
-	import { displayTime } from '$lib/utils/date';
 	import {
 		Icon,
 		XMark,
@@ -16,8 +15,7 @@
 		PaperAirplane,
 		Pencil,
 		Trash,
-		ChevronDown,
-		ChevronUp
+		Bars3
 	} from 'svelte-hero-icons';
 	import { highlightedMessageId } from '$lib/stores/messageHighlight';
 
@@ -42,6 +40,31 @@
 	let replyContent = $state('');
 	let editingReply = $state<FeedbackReply | null>(null);
 	let editContent = $state('');
+	let editTextareaRef = $state<HTMLTextAreaElement>();
+	let replyTextareaRef = $state<HTMLTextAreaElement>();
+
+	// Function to auto-resize textarea
+	function autoResizeTextarea(textarea: HTMLTextAreaElement) {
+		const minHeight = 36; // Fixed minimum height of 36px
+
+		// Temporarily set to minimum height to get accurate scrollHeight
+		textarea.style.height = minHeight + 'px';
+
+		// Only expand if content actually needs more space
+		if (textarea.scrollHeight > minHeight) {
+			textarea.style.height = textarea.scrollHeight + 'px';
+		}
+	}
+
+	// Handle keydown for textareas
+	function handleTextareaKeydown(e: KeyboardEvent, submitFunction: () => void, content: string) {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			if (content.trim()) {
+				submitFunction();
+			}
+		}
+	}
 
 	// Reactive replies for each feedback
 	let feedbackReplies = $state(new Map<number, FeedbackReply[]>());
@@ -80,7 +103,7 @@
 			}
 		});
 
-		return feedbacks.sort((a, b) => b.date.getTime() - a.date.getTime());
+		return feedbacks.sort((a, b) => a.date.getTime() - b.date.getTime());
 	}
 
 	// Track processed message IDs and feedback IDs to avoid duplicate subscriptions
@@ -196,6 +219,27 @@
 		const success = await replyingTo.addReply(replyContent.trim(), user);
 
 		if (success) {
+			// Ensure subscription is set up for this feedback if not already done
+			if (!processedFeedbackIds.has(replyingTo.id)) {
+				processedFeedbackIds.add(replyingTo.id);
+				replyingTo.replies.subscribe((replies) => {
+					// Sort replies by creation date (oldest first)
+					const sortedReplies = [...replies].sort(
+						(a, b) => a.created_at.getTime() - b.created_at.getTime()
+					);
+					feedbackReplies.set(replyingTo!.id, sortedReplies);
+					feedbackReplies = new Map(feedbackReplies);
+				});
+			}
+
+			// Immediately update the feedbackReplies map with current replies
+			const replies = get(replyingTo.replies);
+			const sortedReplies = [...replies].sort(
+				(a, b) => a.created_at.getTime() - b.created_at.getTime()
+			);
+			feedbackReplies.set(replyingTo.id, sortedReplies);
+			feedbackReplies = new Map(feedbackReplies);
+
 			replyingTo = null;
 			replyContent = '';
 		}
@@ -204,7 +248,28 @@
 	function startEditReply(reply: FeedbackReply) {
 		editingReply = reply;
 		editContent = reply.content;
+		// Auto-resize the textarea after content is set
+		setTimeout(() => {
+			if (editTextareaRef) {
+				autoResizeTextarea(editTextareaRef);
+			}
+		}, 0);
 	}
+
+	// Initialize textarea height on mount
+	function initializeTextarea(textarea: HTMLTextAreaElement) {
+		// Set initial height to one line
+		setTimeout(() => {
+			autoResizeTextarea(textarea);
+		}, 0);
+	}
+
+	// Effect to initialize reply textarea when it's available
+	$effect(() => {
+		if (replyTextareaRef) {
+			initializeTextarea(replyTextareaRef);
+		}
+	});
 
 	function cancelEditReply() {
 		editingReply = null;
@@ -293,88 +358,79 @@
 	{:else}
 		<div class="p-4 space-y-4">
 			{#each feedbackCards as feedbackCard}
-				<div class="card card-compact bg-base-100 shadow-sm border border-base-300 relative">
-					<div
-						class="card-body"
-						class:pb-12={replyingTo !== feedbackCard.feedback &&
-							(feedbackReplies.get(feedbackCard.feedback.id) || []).length === 0}
-						class:pb-16={(feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0 ||
-							replyingTo === feedbackCard.feedback}
-					>
-						<div class="relative mb-2 break-words group">
-							<button
-								onclick={() => scrollToMessage(feedbackCard.messageId)}
-								class="absolute -top-1 -right-1 btn btn-primary btn-xs px-1 py-0.5 h-6 min-h-6 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 flex items-center gap-0.5 z-10"
+				<div
+					class="card card-compact bg-base-100 shadow-sm border border-base-300 relative group/card"
+				>
+					<div class="card-body">
+						<div
+							class="relative break-words group"
+							class:pb-5={!feedbackCard.feedback.content &&
+								(feedbackReplies.get(feedbackCard.feedback.id) || []).length === 0 &&
+								replyingTo !== feedbackCard.feedback}
+						>
+							<div
+								class="absolute -top-2 -right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
 							>
-								<Icon src={ArrowTopRightOnSquare} size="10" class="text-black" />
-								<span class="text-black text-xs font-normal"
-									>{$t('session.feedback.viewMessage')}</span
+								<button
+									onclick={() => scrollToMessage(feedbackCard.messageId)}
+									class="btn btn-primary btn-xs px-1 py-0.5 h-6 min-h-6 shadow-sm hover:shadow-md hover:scale-105 flex items-center gap-0.5"
 								>
-							</button>
-							<div class="text-sm text-base-content/70 leading-tight">
+									<Icon src={ArrowTopRightOnSquare} size="10" class="text-black" />
+									<span class="text-black text-xs font-normal"
+										>{$t('session.feedback.viewMessage')}</span
+									>
+								</button>
+								<button
+									onclick={() => deleteFeedback(feedbackCard.feedback)}
+									class="btn btn-error btn-xs btn-circle h-6 w-6 min-h-6 shadow-sm hover:shadow-md hover:scale-105"
+									aria-label={$t('button.delete')}
+									title={$t('button.delete')}
+								>
+									<Icon src={XMark} size="12" class="text-white" />
+								</button>
+								{#if (feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0}
+									<button
+										class="btn btn-ghost btn-xs btn-circle h-6 w-6 min-h-6 shadow-sm hover:shadow-md hover:scale-105"
+										onclick={() => toggleRepliesCollapse(feedbackCard.feedback.id)}
+										title={collapsedReplies.get(feedbackCard.feedback.id)
+											? 'Show replies'
+											: 'Hide replies'}
+									>
+										<Icon src={Bars3} class="w-3 h-3 text-base-content/70" />
+									</button>
+								{/if}
+							</div>
+							<div
+								class="text-sm text-base-content/70 leading-tight underline decoration-wavy pr-4"
+								class:decoration-blue-500={feedbackCard.feedback.content}
+								class:decoration-red-500={!feedbackCard.feedback.content}
+							>
 								{feedbackCard.highlight}
 							</div>
 						</div>
 
-						<div class="flex gap-3 group">
-							<div class="avatar">
-								<div class="w-8 h-8 rounded-full border-2 border-base-300">
-									<img
-										src={`https://gravatar.com/avatar/${feedbackCard.feedback.message.user.emailHash}?d=identicon`}
-										alt=""
-										class="w-full h-full object-cover rounded-full"
-									/>
+						{#if feedbackCard.feedback.content}
+							<div class="flex gap-2 ml-6 relative">
+								<div class="avatar flex-shrink-0">
+									<div class="w-6 h-6 rounded-full">
+										<img
+											src={`https://gravatar.com/avatar/${feedbackCard.feedback.message.user.emailHash}?d=identicon`}
+											alt=""
+											class="w-full h-full object-cover rounded-full"
+										/>
+									</div>
+								</div>
+								<div class="flex-grow min-w-0">
+									<div class="text-sm text-base-content break-words">
+										{feedbackCard.feedback.content}
+									</div>
 								</div>
 							</div>
-							<div class="flex-grow relative min-w-0">
-								{#if feedbackCard.feedback.content}
-									<div
-										class="text-sm p-3 bg-base-200 rounded-lg break-words relative group/comment"
-									>
-										{feedbackCard.feedback.content}
-										<button
-											class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
-											onclick={() => deleteFeedback(feedbackCard.feedback)}
-											aria-label={$t('button.delete')}
-										>
-											<Icon src={XMark} class="w-3 h-3" />
-										</button>
-									</div>
-								{:else}
-									<div
-										class="text-xs text-base-content/60 italic p-3 bg-base-200 rounded-lg relative group/comment"
-									>
-										{$t('session.feedback.markedText', {
-											user: feedbackCard.feedback.message.user.nickname
-										})}
-										<button
-											class="absolute -top-1 -right-1 opacity-0 group-hover/comment:opacity-100 transition-opacity btn btn-xs btn-circle btn-error"
-											onclick={() => deleteFeedback(feedbackCard.feedback)}
-											aria-label={$t('button.delete')}
-										>
-											<Icon src={XMark} class="w-3 h-3" />
-										</button>
-									</div>
-								{/if}
-							</div>
-						</div>
+						{/if}
 
 						<!-- Replies Section -->
 						{#if (feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0 || replyingTo === feedbackCard.feedback}
 							<div class="mt-2" class:mb-4={!collapsedReplies.get(feedbackCard.feedback.id)}>
-								<!-- Reply Counter with Collapse Button   -->
-								{#if (feedbackReplies.get(feedbackCard.feedback.id) || []).length > 0}
-									<button
-										class="text-xs text-base-content/50 hover:text-base-content/70 font-medium flex items-center gap-1 transition-colors"
-										onclick={() => toggleRepliesCollapse(feedbackCard.feedback.id)}
-									>
-										<span class="w-6 h-px bg-base-content/20"></span>
-										{collapsedReplies.get(feedbackCard.feedback.id)
-											? `View ${(feedbackReplies.get(feedbackCard.feedback.id) || []).length} ${$t('session.feedback.replies', { count: (feedbackReplies.get(feedbackCard.feedback.id) || []).length })}`
-											: 'Hide replies'}
-									</button>
-								{/if}
-
 								<!-- Replies List (Collapsible, Instagram style) -->
 								{#if !collapsedReplies.get(feedbackCard.feedback.id)}
 									<div class="space-y-2.5 mt-2">
@@ -401,9 +457,17 @@
 															<div class="relative">
 																<textarea
 																	bind:value={editContent}
-																	class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[60px] leading-relaxed"
+																	bind:this={editTextareaRef}
+																	class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors resize-none overflow-hidden"
+																	style="line-height: 1.25; height: 36px; min-height: 36px; max-height: none; box-sizing: border-box;"
+																	rows="1"
 																	placeholder="Edit comment..."
-																	rows="3"
+																	oninput={(e) => {
+																		const target = e.target as HTMLTextAreaElement;
+																		if (target) autoResizeTextarea(target);
+																	}}
+																	onkeydown={(e) =>
+																		handleTextareaKeydown(e, submitEditReply, editContent)}
 																></textarea>
 																<div class="absolute right-2 top-2 flex gap-1">
 																	<button
@@ -491,9 +555,16 @@
 											<div class="relative">
 												<textarea
 													bind:value={replyContent}
-													class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors min-h-[60px] leading-relaxed"
+													bind:this={replyTextareaRef}
+													class="textarea w-full text-xs border-base-300 focus:border-primary focus:outline-none rounded-lg px-3 py-2 pr-16 bg-base-50 focus:bg-white transition-colors resize-none overflow-hidden"
+													style="line-height: 1.25; height: 36px; min-height: 36px; max-height: none; box-sizing: border-box;"
+													rows="1"
 													placeholder="Add a reply..."
-													rows="2"
+													oninput={(e) => {
+														const target = e.target as HTMLTextAreaElement;
+														if (target) autoResizeTextarea(target);
+													}}
+													onkeydown={(e) => handleTextareaKeydown(e, submitReply, replyContent)}
 												></textarea>
 												<div class="absolute right-2 top-2 flex gap-1">
 													<button
