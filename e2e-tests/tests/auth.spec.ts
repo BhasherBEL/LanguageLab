@@ -64,7 +64,7 @@ test("Register a tutor", async ({ page }) => {
 
   await page
     .getByLabel("Étude Nom de l'étude à laquelle vous participez")
-    .selectOption({ label: "Test study (1 janvier - 31 décembre)" });
+    .selectOption({ label: "Test study (1 janvier 2025 - 31 décembre 2025)" });
   await page.getByRole("link", { name: "Continuer" }).click();
 
   await page
@@ -113,7 +113,7 @@ test("Register a user", async ({ page }) => {
   await page.goto("./register");
   await page
     .getByLabel("Étude Nom de l'étude à laquelle vous participez")
-    .selectOption({ label: "Test study (1 janvier - 31 décembre)" });
+    .selectOption({ label: "Test study (1 janvier 2025 - 31 décembre 2025)" });
   await page.getByRole("link", { name: "Continuer" }).click();
 
   await page
