@@ -92,6 +92,7 @@ def download_study(db: Session, study_id: int):
         "response",
         "correct",
         "response_time",
+        "created_at",
     ]
     writer.writerow(header)
 
@@ -115,6 +116,13 @@ def download_study(db: Session, study_id: int):
             correct_id = entry.entry_task.test_question.question_qcm.correct
             correct_answer = int(selected_id == correct_id)
 
+            # Format the created_at datetime
+            formatted_datetime = (
+                entry.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                if entry.created_at
+                else None
+            )
+
             item_type = "qcm"
             row = [
                 study_id,
@@ -127,6 +135,7 @@ def download_study(db: Session, study_id: int):
                 selected_id,
                 correct_answer,
                 response_time,
+                formatted_datetime,
             ]
             writer.writerow(row)
 
@@ -136,6 +145,13 @@ def download_study(db: Session, study_id: int):
                 entry.entry_task.test_question.question
             )
             correct_answer = int(answer == correct)
+
+            # Format the created_at datetime
+            formatted_datetime = (
+                entry.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                if entry.created_at
+                else None
+            )
 
             item_type = "gapfill"
             row = [
@@ -149,6 +165,7 @@ def download_study(db: Session, study_id: int):
                 answer,
                 correct_answer,
                 response_time,
+                formatted_datetime,
             ]
             writer.writerow(row)
 

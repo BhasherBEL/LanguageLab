@@ -48,7 +48,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#each sessions.toReversed() as session (session.id)}
+		{#each sessions.slice().reverse() as session (session.id)}
 			<tr>
 				<td>{session.id}</td>
 				<td>{displayTime(session.start_time)}</td>
