@@ -18,6 +18,7 @@ from jose import jwt
 from jose import ExpiredSignatureError
 from io import StringIO
 import csv
+from datetime import datetime
 
 import schemas
 import crud
@@ -541,9 +542,34 @@ def download_session(
     output = StringIO()
     writer = csv.writer(output)
 
-    writer.writerow(models.Message.__table__.columns.keys())
+    # Write header with custom column names for better readability
+    header = [
+        "id",
+        "message_id",
+        "content",
+        "user_id",
+        "session_id",
+        "reply_to_message_id",
+        "created_at",
+    ]
+    writer.writerow(header)
+
+    # Write rows with formatted datetime
     for row in data:
-        writer.writerow(row.raw())
+        # Format the created_at datetime
+        formatted_datetime = (
+            row.created_at.strftime("%Y-%m-%d %H:%M:%S") if row.created_at else None
+        )
+        formatted_row = [
+            row.id,
+            row.message_id,
+            row.content,
+            row.user_id,
+            row.session_id,
+            row.reply_to_message_id,
+            formatted_datetime,
+        ]
+        writer.writerow(formatted_row)
 
     output.seek(0)
 
@@ -570,9 +596,36 @@ def download_sessions_messages(
     data = crud.get_all_messages(db)
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(models.Message.__table__.columns.keys())
+
+    # Write header with custom column names for better readability
+    header = [
+        "id",
+        "message_id",
+        "content",
+        "user_id",
+        "session_id",
+        "reply_to_message_id",
+        "created_at",
+    ]
+    writer.writerow(header)
+
+    # Write rows with formatted datetime
     for row in data:
-        writer.writerow(row.raw())
+        # Format the created_at datetime
+        formatted_datetime = (
+            row.created_at.strftime("%Y-%m-%d %H:%M:%S") if row.created_at else None
+        )
+        formatted_row = [
+            row.id,
+            row.message_id,
+            row.content,
+            row.user_id,
+            row.session_id,
+            row.reply_to_message_id,
+            formatted_datetime,
+        ]
+        writer.writerow(formatted_row)
+
     output.seek(0)
     return StreamingResponse(
         output,
@@ -594,9 +647,20 @@ def download_sessions_metadata(
     data = crud.get_all_metadata(db)
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(models.MessageMetadata.__table__.columns.keys())
+
+    # Write header with custom column names for better readability
+    header = ["id", "message_id", "message", "datetime"]
+    writer.writerow(header)
+
+    # Write rows with formatted datetime
     for row in data:
-        writer.writerow(row.raw())
+        # Convert timestamp to readable datetime format
+        formatted_datetime = datetime.fromtimestamp(row.date / 1000).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        formatted_row = [row.id, row.message_id, row.message, formatted_datetime]
+        writer.writerow(formatted_row)
+
     output.seek(0)
     return StreamingResponse(
         output,
@@ -618,9 +682,27 @@ def download_sessions_feedbacks(
     data = crud.get_all_feedbacks(db)
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(models.MessageFeedback.__table__.columns.keys())
+
+    # Write header with custom column names for better readability
+    header = ["id", "message_id", "start", "end", "content", "date"]
+    writer.writerow(header)
+
+    # Write rows with formatted datetime
     for row in data:
-        writer.writerow(row.raw())
+        # Format the date datetime
+        formatted_datetime = (
+            row.date.strftime("%Y-%m-%d %H:%M:%S") if row.date else None
+        )
+        formatted_row = [
+            row.id,
+            row.message_id,
+            row.start,
+            row.end,
+            row.content,
+            formatted_datetime,
+        ]
+        writer.writerow(formatted_row)
+
     output.seek(0)
     return StreamingResponse(
         output,

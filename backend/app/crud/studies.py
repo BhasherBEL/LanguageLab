@@ -92,6 +92,7 @@ def download_study(db: Session, study_id: int):
         "response",
         "correct",
         "response_time",
+        "created_at",
     ]
     writer.writerow(header)
 
@@ -115,6 +116,13 @@ def download_study(db: Session, study_id: int):
             correct_id = entry.entry_task.test_question.question_qcm.correct
             correct_answer = int(selected_id == correct_id)
 
+            # Format the created_at datetime
+            formatted_datetime = (
+                entry.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                if entry.created_at
+                else None
+            )
+
             item_type = "qcm"
             row = [
                 study_id,
@@ -127,6 +135,7 @@ def download_study(db: Session, study_id: int):
                 selected_id,
                 correct_answer,
                 response_time,
+                formatted_datetime,
             ]
             writer.writerow(row)
 
@@ -136,6 +145,13 @@ def download_study(db: Session, study_id: int):
                 entry.entry_task.test_question.question
             )
             correct_answer = int(answer == correct)
+
+            # Format the created_at datetime
+            formatted_datetime = (
+                entry.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                if entry.created_at
+                else None
+            )
 
             item_type = "gapfill"
             row = [
@@ -149,6 +165,7 @@ def download_study(db: Session, study_id: int):
                 answer,
                 correct_answer,
                 response_time,
+                formatted_datetime,
             ]
             writer.writerow(row)
 
@@ -194,9 +211,23 @@ def download_study_wide(db: Session, study_id: int):
                     "target_language": user.target_language,
                     "gender": user.gender,
                     "birthdate": user.birthdate,
+                    "test_start_time": entry.created_at,
+                    "test_end_time": entry.created_at,
                 }
             else:
-                data[key] = {"study_id": study_id, "user_id": user_id, "code": code}
+                data[key] = {
+                    "study_id": study_id,
+                    "user_id": user_id,
+                    "code": code,
+                    "test_start_time": entry.created_at,
+                    "test_end_time": entry.created_at,
+                }
+        else:
+            # Update test start time (earliest) and end time (latest)
+            if entry.created_at < data[key]["test_start_time"]:
+                data[key]["test_start_time"] = entry.created_at
+            if entry.created_at > data[key]["test_end_time"]:
+                data[key]["test_end_time"] = entry.created_at
 
         if entry.entry_task.entry_task_qcm:
             selected_id = entry.entry_task.entry_task_qcm.selected_id
@@ -224,6 +255,8 @@ def download_study_wide(db: Session, study_id: int):
         "target_language",
         "gender",
         "birthdate",
+        "test_start_time",
+        "test_end_time",
     ] + question_ids
     writer.writerow(header)
     for (user_id, code), values in data.items():
