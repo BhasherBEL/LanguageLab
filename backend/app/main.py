@@ -572,9 +572,10 @@ def download_session(
         writer.writerow(formatted_row)
 
     output.seek(0)
+    csv_content = output.getvalue()
 
     return StreamingResponse(
-        output,
+        iter([csv_content]),
         media_type="text/csv",
         headers={
             "Content-Disposition": f"attachment; filename={session_id}-messages.csv"
@@ -627,8 +628,10 @@ def download_sessions_messages(
         writer.writerow(formatted_row)
 
     output.seek(0)
+    csv_content = output.getvalue()
+
     return StreamingResponse(
-        output,
+        iter([csv_content]),
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=messages.csv"},
     )
@@ -662,8 +665,10 @@ def download_sessions_metadata(
         writer.writerow(formatted_row)
 
     output.seek(0)
+    csv_content = output.getvalue()
+
     return StreamingResponse(
-        output,
+        iter([csv_content]),
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=metadata.csv"},
     )
@@ -704,8 +709,10 @@ def download_sessions_feedbacks(
         writer.writerow(formatted_row)
 
     output.seek(0)
+    csv_content = output.getvalue()
+
     return StreamingResponse(
-        output,
+        iter([csv_content]),
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=feedbacks.csv"},
     )
