@@ -170,9 +170,10 @@ def download_study(db: Session, study_id: int):
             writer.writerow(row)
 
     output.seek(0)
+    csv_content = output.getvalue()
 
     return StreamingResponse(
-        output,
+        iter([csv_content]),
         media_type="text/csv",
         headers={
             "Content-Disposition": f"attachment; filename=surveys-long-{study_id}.csv"
@@ -264,9 +265,10 @@ def download_study_wide(db: Session, study_id: int):
         writer.writerow(row)
 
     output.seek(0)
+    csv_content = output.getvalue()
 
     return StreamingResponse(
-        output,
+        iter([csv_content]),
         media_type="text/csv",
         headers={
             "Content-Disposition": f"attachment; filename=surveys-wide-{study_id}.csv"

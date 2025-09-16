@@ -1,6 +1,12 @@
 from passlib.context import CryptContext
 from jose import jwt, exceptions as jwte
-from datetime import date, datetime, timedelta, UTC, timezone
+from datetime import date, datetime, timedelta, timezone
+
+try:
+    from datetime import UTC
+except ImportError:
+    # Python < 3.11 compatibility
+    UTC = timezone.utc
 from pydantic import ValidationError
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
